@@ -1,0 +1,4 @@
+software/*.tar.gz
+software/*.tgz
+software/*.patch
+build/*

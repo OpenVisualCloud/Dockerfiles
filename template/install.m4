@@ -1,0 +1,2 @@
+COPY --from=build /home/build /
+defn(`INSTALL_NGINX',`INSTALL_MEDIA_DRIVER',`INSTALL_GST_PLUGIN_VAAPI')dnl
