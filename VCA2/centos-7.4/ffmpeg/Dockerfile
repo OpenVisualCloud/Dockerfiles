@@ -249,13 +249,32 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
+ARG FFMPEG_MA_PATCH_REPO_01=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0001-Intel-inference-engine-detection-filter.patch
+ARG FFMPEG_MA_PATCH_REPO_02=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0002-New-filter-to-do-inference-classify.patch
+ARG FFMPEG_MA_PATCH_REPO_03=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0003-iemetadata-convertor-muxer.patch
+ARG FFMPEG_MA_PATCH_REPO_04=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0004-Kafka-protocol-producer.patch
+ARG FFMPEG_MA_PATCH_REPO_05=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0005-Support-object-detection-and-featured-face-identific.patch
+ARG FFMPEG_MA_PATCH_REPO_06=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0006-Send-metadata-in-a-packet-and-refine-the-json-format.patch
+ARG FFMPEG_MA_PATCH_REPO_07=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0007-Refine-features-of-IE-filters.patch
+ARG FFMPEG_MA_PATCH_REPO_08=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch
+ARG FFMPEG_MA_PATCH_REPO_09=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch
 
 RUN yum install -y -q SDL2-devel libxcb-devel libvdpau-devel zlib-devel openssl-devel
+
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg && \
     wget -O - ${FFMPEG_FLV_PATCH_REPO} | patch -p1 && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
-    wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1;
+    wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_01} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_02} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_03} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_04} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_05} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_06} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_07} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_08} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_09} | patch -p1;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \

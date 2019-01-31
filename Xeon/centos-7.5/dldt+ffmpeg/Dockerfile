@@ -192,8 +192,9 @@ RUN git clone ${SVT_VP9_REPO} && \
 
 #include(transform360.m4)
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2018_R4
+ARG DLDT_VER=2018_R5
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
 
@@ -202,6 +203,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     git submodule init && \
     git submodule update --recursive && \
     cd inference-engine && \
+    wget -O - ${DLDT_C_API_REPO} | patch -p2 && \
     mkdir build && \
     cd build && \
     cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr -DLIB_INSTALL_PATH=/usr/lib64 -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES_CORE=OFF  ..; \
@@ -215,6 +217,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
         cp -r ../include/* $p/include/dldt; \
         libdir="$p/lib64"; \
         cp -r ../bin/intel64/Release/lib/* "$libdir"; \
+        cp -r ../temp/omp/lib/* "$libdir"; \
         mkdir -p "$libdir/pkgconfig"; \
         pc="$libdir/pkgconfig/dldt.pc"; \
         echo "prefix=/usr" > "$pc"; \
@@ -223,11 +226,23 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
         echo "" >> "$pc"; \
         echo "Name: DLDT" >> "$pc"; \
         echo "Description: Intel Deep Learning Deployment Toolkit" >> "$pc"; \
-        echo "Version: 4.0" >> "$pc"; \
+        echo "Version: 5.0" >> "$pc"; \
         echo "" >> "$pc"; \
-        echo "Libs: -L\${libdir} -linference_engine" >> "$pc"; \
+        echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper" >> "$pc"; \
         echo "Cflags: -I\${includedir}" >> "$pc"; \
     done;
+
+# Build librdkafka
+ARG LIBRDKAFKA_VER=0.11.6
+ARG FILE_NAME=v${LIBRDKAFKA_VER}
+ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
+
+RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
+    cd librdkafka-${LIBRDKAFKA_VER} && \
+    ./configure --prefix=/usr --libdir=/usr/lib64 && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
 
 # Fetch FFmpeg source
 ARG FFMPEG_VER=n4.1
@@ -235,13 +250,32 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
+ARG FFMPEG_MA_PATCH_REPO_01=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0001-Intel-inference-engine-detection-filter.patch
+ARG FFMPEG_MA_PATCH_REPO_02=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0002-New-filter-to-do-inference-classify.patch
+ARG FFMPEG_MA_PATCH_REPO_03=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0003-iemetadata-convertor-muxer.patch
+ARG FFMPEG_MA_PATCH_REPO_04=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0004-Kafka-protocol-producer.patch
+ARG FFMPEG_MA_PATCH_REPO_05=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0005-Support-object-detection-and-featured-face-identific.patch
+ARG FFMPEG_MA_PATCH_REPO_06=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0006-Send-metadata-in-a-packet-and-refine-the-json-format.patch
+ARG FFMPEG_MA_PATCH_REPO_07=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0007-Refine-features-of-IE-filters.patch
+ARG FFMPEG_MA_PATCH_REPO_08=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch
+ARG FFMPEG_MA_PATCH_REPO_09=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch
 
 RUN yum install -y -q zlib-devel openssl-devel
+
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg && \
     wget -O - ${FFMPEG_FLV_PATCH_REPO} | patch -p1 && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
-    wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1;
+    wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_01} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_02} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_03} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_04} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_05} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_06} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_07} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_08} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_09} | patch -p1;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
@@ -249,7 +283,7 @@ RUN cd /home/FFmpeg && \
 
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl  --disable-xlib --disable-sdl2 --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc  && \
+    ./configure --prefix="/usr" --libdir=/usr/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl  --disable-xlib --disable-sdl2 --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libinference_engine --enable-librdkafka  && \
     make -j8 && \
     make install DESTDIR="/home/build"
 
