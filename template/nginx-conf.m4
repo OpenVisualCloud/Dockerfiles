@@ -1,6 +1,5 @@
 
-worker_processes 5;
-worker_rlimit_nofile 8192;
+worker_processes auto;
 daemon off;
 
 events {
@@ -39,13 +38,18 @@ rtmp {
 http {
     include mime.types;
     default_type application/octet-stream;
+    directio 512;
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    aio on;
 
     ssl_ciphers HIGH:!aNULL:!MD5; 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
 
-    aio on;
     proxy_cache_path /var/www/cache levels=1:2 keys_zone=one:10m use_temp_path=off;
 
     server {

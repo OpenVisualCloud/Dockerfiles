@@ -9,4 +9,4 @@ RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ; \
      make install DESTDIR=/home/build; \
      make install
 
-define(`INSTALL_PKGS_GST_PLUGIN_BASE',ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,libpng12-0 libxv1 )ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,libpng16-16 libxv1 )ifelse(index(DOCKER_IMAGE,centos),-1,,libpng12 libXv))dnl
+define(`INSTALL_PKGS_GST_PLUGIN_BASE',ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,libpng12-0 libxv1 )ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,libpng16-16 libxv1 )ifelse(index(DOCKER_IMAGE,centos),-1,,libpng12 libXv ))dnl

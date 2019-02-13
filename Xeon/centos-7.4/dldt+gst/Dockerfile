@@ -134,7 +134,7 @@ RUN  git clone ${X264_REPO}; \
 ARG X265_VER=2.9
 ARG X265_REPO=https://github.com/videolan/x265/archive/${X265_VER}.tar.gz
 
-RUN  yum install -y -q numactl-devel
+RUN  yum install -y -q numactl-devel libpciaccess-devel
 
 RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265; \
      cd x265/build/linux; \
@@ -281,7 +281,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN yum install -y epel-release; \
-    yum install -y -q numactl glib2-2.56.1 libpng12 libXv; \
+    yum install -y -q numactl openssl glib2-2.56.1 libpng12 libXv ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
 

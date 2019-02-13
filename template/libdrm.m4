@@ -16,4 +16,4 @@ RUN wget -O - ${LIBDRM_REPO} | tar xz; \
     make install DESTDIR=/home/build; \
     make install;
 
-define(`INSTALL_PKGS_LIBDRM',libpciaccess)dnl
+define(`INSTALL_PKGS_LIBDRM',libpciaccess )dnl

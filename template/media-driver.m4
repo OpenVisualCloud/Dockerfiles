@@ -6,7 +6,7 @@ ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libpciaccess-dev libx11-dev xorg-dev libgl1-mesa-dev
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
-RUN yum install -y -q libX11-devel mesa-libGL-devel
+RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-devel
 )dnl
 
 RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver; \
@@ -21,3 +21,5 @@ define(`INSTALL_MEDIA_DRIVER',dnl
 ENV LIBVA_DRIVERS_PATH=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/dri
 ENV LIBVA_DRIVER_NAME=iHD
 )dnl
+
+define(`INSTALL_PKGS_MEDIA_DRIVER',libpciaccess libX11 )dnl

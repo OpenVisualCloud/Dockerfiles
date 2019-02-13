@@ -12,3 +12,13 @@ The build and test scripts additionally require "sudo" to be available on the no
 Ubuntu: apt-get install -y sudo 
 CentOS: yum install -y sudo
 ```
+
+### For GStreamer dockers
+VAAPI expects rendering device to be set in order to work. Dockers readily spin up with this config. Specify the display device on host by doing following.
+
+
+```bash
+export DISPLAY=:0.0
+```
+
+Note: If the host is not connected with a display, it may need to run "xhost +" on host to allow docker session connecting to host X server.

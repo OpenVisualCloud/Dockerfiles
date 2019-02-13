@@ -134,7 +134,7 @@ RUN  git clone ${X264_REPO}; \
 ARG X265_VER=2.9
 ARG X265_REPO=https://github.com/videolan/x265/archive/${X265_VER}.tar.gz
 
-RUN  yum install -y -q numactl-devel
+RUN  yum install -y -q numactl-devel libpciaccess-devel
 
 RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265; \
      cd x265/build/linux; \
@@ -169,25 +169,12 @@ ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/${GMMLIB_VER}.tar.gz
 RUN wget -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
 
 
-# Build libdrm
-ARG LIBDRM_VER=2.4.96
-ARG LIBDRM_REPO=https://dri.freedesktop.org/libdrm/libdrm-${LIBDRM_VER}.tar.gz
-
-RUN yum install -y -q libpciaccess-devel
-
-RUN wget -O - ${LIBDRM_REPO} | tar xz; \
-    cd libdrm-${LIBDRM_VER}; \
-    ./configure --prefix=/usr --libdir=/usr/lib64; \
-    make -j8; \
-    make install DESTDIR=/home/build; \
-    make install;
-
-
+#include(libdrm.m4)
 # Build libva
 ARG LIBVA_VER=2.3.0
 ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
 
-RUN yum install -y -q libX11-devel mesa-libGL-devel
+RUN yum install -y -q libX11-devel mesa-libGL-devel which libdrm-devel
 
 RUN wget -O - ${LIBVA_REPO} | tar xz; \
     cd libva-${LIBVA_VER}; \
@@ -201,7 +188,7 @@ RUN wget -O - ${LIBVA_REPO} | tar xz; \
 ARG MEDIA_DRIVER_VER=intel-media-16.9.1
 ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVER_VER}.tar.gz
 
-RUN yum install -y -q libX11-devel mesa-libGL-devel
+RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-devel
 
 RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver; \
     mkdir -p media-driver/build; \
@@ -210,6 +197,7 @@ RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VE
     make -j8; \
     make install DESTDIR=/home/build; \
     make install
+
 
 
 # Build Intel(R) Media SDK
@@ -388,7 +376,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN yum install -y epel-release; \
-    yum install -y -q   libxcb SDL2 libass numactl libvdpau  glib2-2.56.1 libpciaccesslibxcb mesa-libGL libXrandr libpng12 libXv; \
+    yum install -y -q   libxcb SDL2 libass numactl libvdpau  glib2-2.56.1 libxcb libXrandr libdrm libpng12 libXv libpciaccess libX11 mesa-dri-drivers mesa-libGL ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
 
@@ -397,4 +385,5 @@ COPY --from=build /home/build /
 ENV LIBVA_DRIVERS_PATH=/usr/lib64/dri
 ENV LIBVA_DRIVER_NAME=iHD
 ENV GST_VAAPI_ALL_DRIVERS=1
+ENV DISPLAY=:0.0
 

@@ -6,7 +6,7 @@ ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
 RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma-dev
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-RUN  yum install -y -q numactl-devel
+RUN  yum install -y -q numactl-devel libpciaccess-devel
 )dnl
 
 define(`FFMPEG_CONFIG_X265',--enable-libx265 )dnl

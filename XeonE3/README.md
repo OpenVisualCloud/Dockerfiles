@@ -24,3 +24,12 @@ Kernel version 4.18 or later is recommended for feature and performance. The fol
 (8) sudo update-grub   
 (9) sudo shutdown -r now   
 
+### For GStreamer dockers
+VAAPI expects rendering device to be set in order to work. Dockers readily spin up with this config. Specify the display device on host by doing following.
+
+
+```bash
+export DISPLAY=:0.0
+```
+
+Note: If the host is not connected with a display, it may need to run "xhost +" on host to allow docker session connecting to host X server.

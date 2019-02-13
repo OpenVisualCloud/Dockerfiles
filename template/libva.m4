@@ -6,7 +6,7 @@ ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
-RUN yum install -y -q libX11-devel mesa-libGL-devel
+RUN yum install -y -q libX11-devel mesa-libGL-devel which libdrm-devel
 )dnl
 
 RUN wget -O - ${LIBVA_REPO} | tar xz; \
@@ -16,3 +16,4 @@ RUN wget -O - ${LIBVA_REPO} | tar xz; \
     make install DESTDIR=/home/build; \
     make install;
 
+define(`INSTALL_PKGS_LIBVA',mesa-dri-drivers mesa-libGL )dnl
