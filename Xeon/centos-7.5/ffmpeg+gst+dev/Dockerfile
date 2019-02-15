@@ -17,7 +17,8 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz;
 # Build NASM
 ARG NASM_VER=2.13.03
 ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.bz2
-RUN  wget -O - ${NASM_REPO} | tar xj; \
+RUN  wget ${NASM_REPO}; \
+     tar -xaf nasm*; \
      cd nasm-${NASM_VER}; \
      ./autogen.sh; \
      ./configure --prefix="/usr" --libdir=/usr/lib64; \
