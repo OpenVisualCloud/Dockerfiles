@@ -145,7 +145,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265; \
      make install
 
 # Fetch SVT-HEVC
-ARG SVT_HEVC_VER=36ea5fa
+ARG SVT_HEVC_VER=v1.3.0
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
 RUN git clone ${SVT_HEVC_REPO}; \
