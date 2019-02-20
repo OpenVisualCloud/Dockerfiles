@@ -70,7 +70,7 @@ If you are behind a firewall, setup proxy as follows:
 ### Run shell:
 
 ```bash
-(1) Xeon/ubuntu-16.04/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_image_>
+Xeon/ubuntu-16.04/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_image_>
 ```
 
 ### Customize:
