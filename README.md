@@ -43,17 +43,17 @@ Please see each platform folder README for the platform setup instructions.
    
 ### Install docker.ce:        
 
-(1) Follow the [instructions](https://docs.docker.com/install) to install docker.ce.
+Follow the [instructions](https://docs.docker.com/install) to install docker.ce.
 
 ### Setup docker proxy:
 
 If you are behind a firewall, setup proxy as follows:
 
 ```bash
-(2) sudo mkdir -p /etc/systemd/system/docker.service.d    
-(3) printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/docker.service.d/proxy.conf    
-(4) sudo systemctl daemon-reload     
-(5) sudo systemctl restart docker     
+(1) sudo mkdir -p /etc/systemd/system/docker.service.d    
+(2) printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/docker.service.d/proxy.conf    
+(3) sudo systemctl daemon-reload     
+(4) sudo systemctl restart docker     
 ```
 
 ### Build docker image(s): 
@@ -70,7 +70,7 @@ If you are behind a firewall, setup proxy as follows:
 ### Run shell:
 
 ```bash
-(1) Xeon/ubuntu-16.04/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_image_>
+Xeon/ubuntu-16.04/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_image_>
 ```
 
 ### Customize:
