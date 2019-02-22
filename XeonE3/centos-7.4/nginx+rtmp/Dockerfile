@@ -18,14 +18,16 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz;
 # Build nginx-rtmp
 ARG NGINX_RTMP_VER=v1.2.1
 ARG NGINX_RTMP_REPO=https://github.com/arut/nginx-rtmp-module/archive/${NGINX_RTMP_VER}.tar.gz
-ARG NGINX_RTMP_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/Add-hevc-support-for-rtmp-dash-and-hls.patch
+ARG NGINX_RTMP_PATCH_HLS=https://raw.githubusercontent.com/VCDP/CDN/master/0001-add-hevc-support-for-rtmp-and-hls.patch
+ARG NGINX_RTMP_PATCH_DASH=https://raw.githubusercontent.com/VCDP/CDN/master/0002-add-HEVC-support-for-dash.patch
+
 
 RUN wget -O - ${NGINX_RTMP_REPO} | tar xz && mv nginx-rtmp-module-${NGINX_RTMP_VER#v} nginx-rtmp-module; \
     cd nginx-rtmp-module; \
     mkdir -p /home/build/var/www/html; \
-    cp -f stat.xsl /home/build/var/www/html;
-#    wget -O - ${NGINX_RTMP_PATCH_REPO} | patch -p1;
-
+    cp -f stat.xsl /home/build/var/www/html; \
+    wget -O - ${NGINX_RTMP_PATCH_HLS} | patch -p1; \
+    wget -O - ${NGINX_RTMP_PATCH_DASH} | patch -p1;
 
 # Build nginx & nginx-rtmp
 ARG NGINX_VER=1.14.2
