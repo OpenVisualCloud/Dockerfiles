@@ -1,5 +1,14 @@
 NGINX is a popular web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy.
 
+### Patches
+
+The NGINX builds included the following patches for feature enhancement, better performance or bug fixes:
+
+| Patch | Description |
+|-------|-------------|
+|[H.265 DASH](https://raw.githubusercontent.com/VCDP/CDN/master/0002-add-HEVC-support-for-dash.patch)|Support H.265 in NGINX DASH.|
+|[H.265 HLS](https://raw.githubusercontent.com/VCDP/CDN/master/0001-add-hevc-support-for-rtmp-and-hls.patch)|Support H.265 in NGINX RTMP/HLS.|
+
 ### NGINX Modules
 
 The NGINX images are compiled with the following modules:
