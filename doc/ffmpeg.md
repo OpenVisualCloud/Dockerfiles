@@ -1,4 +1,4 @@
-FFmpeg is a set of open source tools for audio and video processing, such as creating, converting/transcoding, and publishing media content. 
+FFmpeg is a set of open source tools for audio and video processing, such as creating, converting/transcoding, and publishing media content.
 
 ### Audio/Video Codecs
 
@@ -6,11 +6,13 @@ The FFmpeg docker images are compiled with the following audio and video codecs:
 
 | Codec | Version | Codec | Version |
 |-------|:-------:|-------|:-------:|
-|fdk-acc|0.1.6|x264|stable|
-|mp3lame|3.100|x265|2.9|
-|opus|1.2.1|vpx|1.7.0|
-|ogg|1.3.3|aom|1.0.0|
-|vorbis|1.3.6|SVT-HEVC|custom|
+|fdk-acc|0.1.6|x265|2.9|
+|mp3lame|3.100|vpx|1.7.0|
+|opus|1.2.1|aom|1.0.0|
+|ogg|1.3.3|SVT-HEVC|1.3.0|
+|vorbis|1.3.6|SVT-AV1|custom|
+|x264|stable|SVT-VP9|custom|
+
 
 ### Patches
 
