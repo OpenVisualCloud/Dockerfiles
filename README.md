@@ -26,7 +26,7 @@ Status:
 | Platform: VCA2 | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
 |-----|:---:|:---:|:---:|:---:|:---:|
 | FFmpeg | V | V | V | V | V |
-| GStreamer | T | T | T | T | T | 
+| GStreamer | T | T | T | T | T |
 | FFmpeg+GStreamer (Dev) | T | T | T | T | T |
 | NGINX+RTMP | V | V | V | V | V |
 
@@ -37,34 +37,42 @@ Status:
 | FFmpeg+GStreamer (Dev) | T | T | T | T | T |
 | NGINX+RTMP | V | V | V | V | V |
 
-### Update kernel and firmware:    
+### Update kernel and firmware:
 
 Please see each platform folder README for the platform setup instructions.
-   
-### Install docker.ce:        
+
+### Install docker.ce:
 
 Follow the [instructions](https://docs.docker.com/install) to install docker.ce.
+
+Do not forget to add yourself to the `docker` group to escape usage of the `sudo` and typing password each time you run docker commands:
+
+```sh
+$ sudo usermod -aG docker $USER
+```
+
+Re-login might be required.
 
 ### Setup docker proxy:
 
 If you are behind a firewall, setup proxy as follows:
 
 ```bash
-(1) sudo mkdir -p /etc/systemd/system/docker.service.d    
-(2) printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/docker.service.d/proxy.conf    
-(3) sudo systemctl daemon-reload     
-(4) sudo systemctl restart docker     
+(1) sudo mkdir -p /etc/systemd/system/docker.service.d
+(2) printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/docker.service.d/proxy.conf
+(3) sudo systemctl daemon-reload
+(4) sudo systemctl restart docker
 ```
 
-### Build docker image(s): 
+### Build docker image(s):
 
 ```bash
-(1) mkdir build    
-(2) cd build     
-(3) cmake ..    
-(4) cd Xeon/ubuntu-16.04/ffmpeg # please build your specific <_platform_>/<_OS_>/<_image_> only as a full build takes a long time.     
-(5) make # build on the target processor for best performance.    
-(6) ctest   
+(1) mkdir build
+(2) cd build
+(3) cmake ..
+(4) cd Xeon/ubuntu-16.04/ffmpeg # please build your specific <_platform_>/<_OS_>/<_image_> only as a full build takes a long time.
+(5) make # build on the target processor for best performance.
+(6) ctest
 ```
 
 ### Run shell:
@@ -75,40 +83,40 @@ Xeon/ubuntu-16.04/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_image_>
 
 ### Customize:
 
-You can modify any Dockerfile.m4 template for customization.     
-For example, uncomment #include(transform360.m4) in Xeon/ubuntu-16.04/ffmpeg/Dockerfile.m4 to add essential 360 video transformation in the FFmpeg build.    
-After modification, please rerun cmake and make.     
+You can modify any Dockerfile.m4 template for customization.
+For example, uncomment #include(transform360.m4) in Xeon/ubuntu-16.04/ffmpeg/Dockerfile.m4 to add essential 360 video transformation in the FFmpeg build.
+After modification, please rerun cmake and make.
 
 ### Use alternative repo:
 
 Certain source repo might be blocked in certain network. You can specify alternative repos before the build command as follows:
 
 ```bash
-export AOM_REPO=...       
-export VPX_REPO=...     
+export AOM_REPO=...
+export VPX_REPO=...
 make
 ```
 
 For a list of all REPOs and their versions, run the following command:
 
 ```bash
-grep -E '_(REPO|VER)=' template/*.m4         
+grep -E '_(REPO|VER)=' template/*.m4
 ```
 
 ### Use Dockerfile(s) in other project:
 
 It is recommended that you copy the Dockerfile(s) of your platform, OS and image directly into your other project. The following shell scripts show how to sync (if needed) and build the NGINX+RTMP Dockerfile (and its dependency FFmpeg):
 
-update.sh:   
+update.sh:
 ```bash
-DOCKER_REPO=${DOCKER_REPO="https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles/master/Xeon/ubuntu-18.04"}    
-(echo "# xeon-ubuntu1804-ffmpeg" && curl ${DOCKER_REPO}/ffmpeg/Dockerfile) > Dockerfile.2    
-(echo "# xeon-ubuntu1804-nginx-rtmp" && curl ${DOCKER_REPO}/nginx+rtmp/Dockerfile) > Dockerfile.1    
+DOCKER_REPO=${DOCKER_REPO="https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles/master/Xeon/ubuntu-18.04"}
+(echo "# xeon-ubuntu1804-ffmpeg" && curl ${DOCKER_REPO}/ffmpeg/Dockerfile) > Dockerfile.2
+(echo "# xeon-ubuntu1804-nginx-rtmp" && curl ${DOCKER_REPO}/nginx+rtmp/Dockerfile) > Dockerfile.1
 ```
-build.sh:   
+build.sh:
 ```bash
-for dep in .2 .1; do   
-    image=$(grep -m1 '#' "Dockerfile$dep" | cut -d' ' -f2)   
-    sudo docker build --network=host --file="Dockerfile$dep" -t "$image:latest" . $(env | grep -E '_(proxy)=' | sed 's/^/--build-arg /')   
-done  
+for dep in .2 .1; do
+    image=$(grep -m1 '#' "Dockerfile$dep" | cut -d' ' -f2)
+    docker build --network=host --file="Dockerfile$dep" -t "$image:latest" . $(env | grep -E '_(proxy)=' | sed 's/^/--build-arg /')
+done
 ```
