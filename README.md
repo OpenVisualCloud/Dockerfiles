@@ -45,6 +45,12 @@ Please see each platform folder README for the platform setup instructions.
 
 Follow the [instructions](https://docs.docker.com/install) to install docker.ce.
 
+Do not forget to add yourself to the `docker` group to escape usage of the `sudo` and typing password each time you run docker commands:
+
+```sh
+$ sudo usermod -aG docker $USER
+```
+
 ### Setup docker proxy:
 
 If you are behind a firewall, setup proxy as follows:
