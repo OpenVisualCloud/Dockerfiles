@@ -51,6 +51,8 @@ Do not forget to add yourself to the `docker` group to escape usage of the `sudo
 $ sudo usermod -aG docker $USER
 ```
 
+Re-login might be required.
+
 ### Setup docker proxy:
 
 If you are behind a firewall, setup proxy as follows:
