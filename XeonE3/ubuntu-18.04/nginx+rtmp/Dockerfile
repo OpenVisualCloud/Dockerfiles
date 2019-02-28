@@ -28,7 +28,6 @@ RUN wget -O - ${NGINX_RTMP_REPO} | tar xz && mv nginx-rtmp-module-${NGINX_RTMP_V
     wget -O - ${NGINX_RTMP_PATCH_HLS} | patch -p1; \
     wget -O - ${NGINX_RTMP_PATCH_DASH} | patch -p1;
 
-
 # Build nginx & nginx-rtmp
 ARG NGINX_VER=1.14.2
 ARG NGINX_REPO=https://nginx.org/download/nginx-${NGINX_VER}.tar.gz
