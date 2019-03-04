@@ -194,6 +194,11 @@ RUN git clone ${SVT_VP9_REPO}; \
 # Build DLDT-Inference Engine
 ARG DLDT_VER=2018_R4
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
+
+RUN yum install -y -q centos-release-scl tar xz p7zip unzip yum-plugin-ovl which libssl-dev ca-certificates \
+boost-devel libtool glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc glibc-static.i686 \
+glibc-devel.i686 libstdc++-static.i686 \ libstdc++.i686 libgcc.i686 libusbx-devel openblas-devel libusbx-devel;
+
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO}; \
     cd dldt; \
     git submodule init; \
@@ -201,7 +206,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO}; \
     cd inference-engine; \
     mkdir build; \
     cd build; \
-    cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr -DLIB_INSTALL_PATH=/usr/lib64 -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLE_CORE=OFF  ..; \
+    cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr -DLIB_INSTALL_PATH=/usr/lib64 -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES_CORE=OFF  ..; \
     make -j16; \
     rm -rf ../bin/intel64/Release/lib/libgtest*; \
     rm -rf ../bin/intel64/Release/lib/libgmock*; \
