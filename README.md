@@ -1,5 +1,5 @@
 # Open Visual Cloud Dockerfiles
-[![Travis Build Status](https://travis-ci.org/jhou5/Dockerfiles.svg?branch=master)](https://travis-ci.org/jhou5/Dockerfiles)
+[![Travis Build Status](https://travis-ci.org/OpenVisualCloud/Dockerfiles.svg?branch=master)](https://travis-ci.org/OpenVisualCloud/Dockerfiles)
 
 This repository hosts docker build files for multiple platform/OS/image combinations. Each image is tagged with development status.
 
