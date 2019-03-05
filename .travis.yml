@@ -1,7 +1,9 @@
 language: bash
 dist: xenial
 services: docker
-cache: /var/lib/apt/lists
+cache: 
+  directories:
+    - /var/lib/apt/lists
 
 matrix:
   allow_failures:
