@@ -1,0 +1,239 @@
+language: bash
+dist: xenial
+services: docker
+cache: 
+  directories:
+    - /var/lib/apt/lists
+
+matrix:
+  allow_failures:
+    - name: centos-7.4/ffmpeg+gst+dev
+    - name: centos-7.5/ffmpeg+gst+dev
+    - name: centos-7.6/ffmpeg+gst+dev
+    - name: ubuntu-16.04/ffmpeg+gst+dev
+    - name: ubuntu-18.04/ffmpeg+gst+dev
+
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y install docker-ce
+  - docker version
+
+jobs:
+  include:
+    # centos-7.4 job
+    - name: centos-7.4/dldt+ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.4/dldt+ffmpeg 
+        - make 
+    - name: centos-7.4/dldt+gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.4/dldt+gst 
+        - make 
+    - name: centos-7.4/ffmpeg+gst+dev
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.4/ffmpeg+gst+dev 
+        - make 
+    - name: centos-7.4/ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.4/ffmpeg 
+        - make 
+    - name: centos-7.4/gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.4/gst 
+        - make 
+    - name: centos-7.4/nginx+rtmp
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.4/nginx+rtmp 
+        - make 
+    # centos-7.5 job
+    - name: centos-7.5/dldt+ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.5/dldt+ffmpeg 
+        - make 
+    - name: centos-7.5/dldt+gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.5/dldt+gst 
+        - make 
+    - name: centos-7.5/ffmpeg+gst+dev
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.5/ffmpeg+gst+dev 
+        - make 
+    - name: centos-7.5/ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.5/ffmpeg 
+        - make 
+    - name: centos-7.5/gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.5/gst 
+        - make 
+    - name: centos-7.5/nginx+rtmp
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.5/nginx+rtmp 
+        - make 
+    # centos-7.6 job
+    - name: centos-7.6/dldt+ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.6/dldt+ffmpeg 
+        - make 
+    - name: centos-7.6/dldt+gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.6/dldt+gst 
+        - make 
+    - name: centos-7.6/ffmpeg+gst+dev
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.6/ffmpeg+gst+dev 
+        - make 
+    - name: centos-7.6/ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.6/ffmpeg 
+        - make 
+    - name: centos-7.6/gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.6/gst 
+        - make 
+    - name: centos-7.6/nginx+rtmp
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.6/nginx+rtmp 
+        - make 
+    # ubuntu-16.04 job
+    - name: ubuntu-16.04/dldt+ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-16.04/dldt+ffmpeg 
+        - make 
+    - name: ubuntu-16.04/dldt+gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-16.04/dldt+gst 
+        - make 
+    - name: ubuntu-16.04/ffmpeg+gst+dev
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-16.04/ffmpeg+gst+dev 
+        - make 
+    - name: ubuntu-16.04/ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-16.04/ffmpeg 
+        - make 
+    - name: ubuntu-16.04/gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-16.04/gst 
+        - make 
+    - name: ubuntu-16.04/nginx+rtmp
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-16.04/nginx+rtmp 
+        - make 
+    # ubuntu-18.04 job
+    - name: ubuntu-18.04/dldt+ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-18.04/dldt+ffmpeg 
+        - make 
+    - name: ubuntu-18.04/dldt+gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-18.04/dldt+gst 
+        - make 
+    - name: ubuntu-18.04/ffmpeg+gst+dev
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-18.04/ffmpeg+gst+dev 
+        - make 
+    - name: ubuntu-18.04/ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-18.04/ffmpeg 
+        - make 
+    - name: ubuntu-18.04/gst
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-18.04/gst 
+        - make 
+    - name: ubuntu-18.04/nginx+rtmp
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/ubuntu-18.04/nginx+rtmp 
+        - make 
