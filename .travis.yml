@@ -11,7 +11,12 @@ matrix:
     - name: centos-7.5/ffmpeg+gst+dev
     - name: centos-7.6/ffmpeg+gst+dev
     - name: ubuntu-16.04/ffmpeg+gst+dev
+    - name: ubuntu-16.04/dldt+gst
     - name: ubuntu-18.04/ffmpeg+gst+dev
+    - name: ubuntu-18.04/dldt+gst
+    - name: ubuntu-18.04/ffmpeg
+    - name: ubuntu-18.04/gst
+    - name: ubuntu-18.04/nginx+rtmp
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
