@@ -1,9 +1,9 @@
 language: bash
 dist: xenial
 services: docker
-cache: 
-  directories:
-    - /var/lib/apt/lists
+#cache: 
+#  directories:
+#    - /var/lib/apt/lists
 
 matrix:
   allow_failures:
@@ -12,11 +12,17 @@ matrix:
     - name: centos-7.6/ffmpeg+gst+dev
     - name: ubuntu-16.04/ffmpeg+gst+dev
     - name: ubuntu-16.04/dldt+gst
+    - name: ubuntu-16.04/dldt+ffmpeg
+    - name: ubuntu-16.04/gst
+    - name: ubuntu-16.04/dldt+ffmpeg
     - name: ubuntu-18.04/ffmpeg+gst+dev
     - name: ubuntu-18.04/dldt+gst
     - name: ubuntu-18.04/ffmpeg
     - name: ubuntu-18.04/gst
     - name: ubuntu-18.04/nginx+rtmp
+    - name: centos-7.4/dldt+gst
+    - name: centos-7.5/gst
+    - name: centos-7.6/gst
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
