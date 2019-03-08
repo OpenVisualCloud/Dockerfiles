@@ -20,6 +20,7 @@ matrix:
     - name: ubuntu-18.04/ffmpeg
     - name: ubuntu-18.04/gst
     - name: ubuntu-18.04/nginx+rtmp
+    - name: ubuntu-18.04/dldt+ffmpeg
     - name: centos-7.4/dldt+gst
     - name: centos-7.5/gst
     - name: centos-7.6/gst
