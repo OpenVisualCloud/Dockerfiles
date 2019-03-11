@@ -8,22 +8,26 @@ services: docker
 matrix:
   allow_failures:
     - name: centos-7.4/ffmpeg+gst+dev
+    - name: centos-7.4/ffmpeg
+    - name: centos-7.4/gst
+    - name: centos-7.4/nginx+rtmp
+    - name: centos-7.5/dldt+ffmpeg
+    - name: centos-7.5/dldt+gst
     - name: centos-7.5/ffmpeg+gst+dev
+    - name: centos-7.5/nginx+rtmp
+    - name: centos-7.6/dldt+ffmpeg
+    - name: centos-7.6/dldt+gst
     - name: centos-7.6/ffmpeg+gst+dev
-    - name: ubuntu-16.04/ffmpeg+gst+dev
+    - name: centos-7.6/gst
+    - name: ubuntu-16.04/dldt+ffmpeg
     - name: ubuntu-16.04/dldt+gst
-    - name: ubuntu-16.04/dldt+ffmpeg
+    - name: ubuntu-16.04/ffmpeg+gst+dev
     - name: ubuntu-16.04/gst
-    - name: ubuntu-16.04/dldt+ffmpeg
-    - name: ubuntu-18.04/ffmpeg+gst+dev
+    - name: ubuntu-18.04/dldt+ffmpeg
     - name: ubuntu-18.04/dldt+gst
-    - name: ubuntu-18.04/ffmpeg
+    - name: ubuntu-18.04/ffmpeg+gst+dev
     - name: ubuntu-18.04/gst
     - name: ubuntu-18.04/nginx+rtmp
-    - name: ubuntu-18.04/dldt+ffmpeg
-    - name: centos-7.4/dldt+gst
-    - name: centos-7.5/gst
-    - name: centos-7.6/gst
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
