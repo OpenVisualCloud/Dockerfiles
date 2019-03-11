@@ -1,6 +1,6 @@
 # Open Visual Cloud Dockerfiles
 [![Travis Build Status](https://travis-ci.org/OpenVisualCloud/Dockerfiles.svg?branch=master)](https://travis-ci.org/OpenVisualCloud/Dockerfiles)
-[![Stable release](https://img.shields.io/badge/version-v0.2-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v0.2)
+[![Stable release](https://img.shields.io/badge/latest_release-v0.2-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v0.2)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/LICENSE)
 [![Contributions](https://img.shields.io/badge/contributions-welcome-blue.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
