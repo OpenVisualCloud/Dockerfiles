@@ -7,7 +7,7 @@ include(build-tools.m4)
 include(ispc.m4)
 include(embree.m4)
 include(ospray.m4)
-include(ospray-example_xfrog.m4)
+#include(ospray-example_xfrog.m4)
 
 FROM ubuntu:18.04
 LABEL Description="This is the base image for ospray Ubuntu 18.04"
