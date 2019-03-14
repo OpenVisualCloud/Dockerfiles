@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-centos76-ospray"
+IMAGE="xeon_centos76_ospray"
 DIR=$(dirname $(readlink -f "$0"))
 
 . "${DIR}/../../../script/shell.sh"

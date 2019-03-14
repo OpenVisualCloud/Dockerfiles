@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-ubuntu1804-ospray"
+IMAGE="xeon_ubuntu1804_ospray"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

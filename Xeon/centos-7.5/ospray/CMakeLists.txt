@@ -1,2 +1,3 @@
-set(image "xeon_ospray_centos75")
+set(image "xeon_centos75_ospray")
 include("${CMAKE_SOURCE_DIR}/script/image.cmake")
+include("${CMAKE_SOURCE_DIR}/script/ospray-tests.cmake")

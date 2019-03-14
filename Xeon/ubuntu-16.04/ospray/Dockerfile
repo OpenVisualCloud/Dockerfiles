@@ -68,19 +68,11 @@ RUN git clone ${OSPRAY_REPO}; \
     git checkout ${OSPRAY_VER}; \
     cmake .. ; \
     make -j 8
- 
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ospray/build
 
-#example for ospray xfrog-forest
+#include(ospray-example_xfrog.m4)
 
-ARG EXAMPLE_PATH=http://www.sdvis.org/ospray/download/demos/XFrogForest/xfrog-forest.tar.bz2
-ARG EXAMPLE_NAME=xfrog-forest
-RUN wget ${EXAMPLE_PATH}; \
-    mkdir example; \
-    tar -xaf ${EXAMPLE_NAME}* -C example; \
-    rm -f ${EXAMPLE_NAME}*
-
-
-FROM ubuntu:16.04
+FROM build
 LABEL Description="This is the base image for FFMPEG Ubuntu 16.04 LTS"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home

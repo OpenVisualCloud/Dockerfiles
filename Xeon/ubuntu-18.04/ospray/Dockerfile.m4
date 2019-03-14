@@ -9,7 +9,7 @@ include(embree.m4)
 include(ospray.m4)
 #include(ospray-example_xfrog.m4)
 
-FROM ubuntu:18.04
+FROM build
 LABEL Description="This is the base image for ospray Ubuntu 18.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
