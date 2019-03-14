@@ -13,6 +13,7 @@ Image:
 - [DLDT+GStreamer](doc/gst.md): image optimized for media analytics. Included what are in the GStreamer image. Inferencing engine and tracking plugins to be included. See [gst.md](doc/gst.md) for details.
 - [FFmpeg](doc/ffmpeg.md)+[GStreamer](doc/gst.md) (Dev): FFmpeg + GStreamer + C++ development files. Model optimizer to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.
 - [NGINX+RTMP](doc/nginx.md): image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.
+- [ospray](doc/ospray.md): image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. At this moment does not include OpenImageIO (To be done soon). See [ospray.md](doc/ospray.md) for details.
 
 Status:
 - C: Compiled. Not yet tested.
@@ -28,6 +29,7 @@ Status:
 | DLDT(IE)+GStreamer | V | V | V | V | V |
 | FFmpeg+GStreamer (Dev) | V | V | V | V | V |
 | NGINX+RTMP | V | V | V | V | V |
+| ospray | V | V | V | V | V |
 
 | Platform: VCA2 | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
 |-----|:---:|:---:|:---:|:---:|:---:|
