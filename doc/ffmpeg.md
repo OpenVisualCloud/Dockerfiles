@@ -23,6 +23,12 @@ The FFmpeg builds included the following patches for feature enhancement, better
 |[11625](https://patchwork.ffmpeg.org/patch/11625/raw)|Enhance 1:N transcoding performance.|
 |[11035](https://patchwork.ffmpeg.org/patch/11035/raw)|Fix libvpx to run on Intel(R) Xeon(R) processors.|
 |[H.265 FLV](https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch)|Support H.265 in FLV for RTMP streaming.|
+|[IE_FILTERS_01](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0001-Intel-inference-engine-detection-filter.patch)|Intel inference engine detection filter.|
+|[IE_FILTERS_02](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0002-New-filter-to-do-inference-classify.patch)|New filter to do inference classify.|
+|[IE_FILTERS_03](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0003-iemetadata-convertor-muxer.patch)|IE metadata convertor muxer.|
+|[IE_FILTERS_04](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0004-Kafka-protocol-producer.patch)|Kafka protocol producer.|
+|[IE_FILTERS_05](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0005-Support-object-detection-and-featured-face-identific.patch)|Support object detection and featured face identification.|
+|[IE_FILTERS_06](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0006-Send-metadata-in-a-packet-and-refine-the-json-format.patch)|Send metadata in a packet and refine the json format.|
 
 ### GPU Acceleration
 
@@ -55,3 +61,24 @@ Encoding/decoding with qsv (Intel Media SDK):
 ffmpeg -y -init_hw_device qsv=hw -filter_hw_device hw -f rawvideo -pix_fmt yuv420p -s:v 320x240 -i test.yuv -vf hwupload=extra_hw_frames=64,format=qsv -c:v h264_qsv -b:v 5M test.mp4
 ffmpeg -hwaccel qsv -c:v h264_qsv -i test.mp4 -f null /dev/null
 ```
+
+Face detection and emotion identification, save metadata to json format:
+
+```bash
+ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-adas-0001/FP32/face-detection-adas-0001.xml:name=face, \
+classify=model=./emotions_recognition/emotions-recognition-retail-0003.xml:label=./emotions_recognition/emotion-labels.txt:name=emotion \
+-an -f iemetadata emotion-meta.json
+```
+
+Object Detection with labels:
+
+```bash
+ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./mobilenet-ssd.xml:label=./object_labels.txt:name=objects -an -f null /dev/null
+```
+
+Face detection and reidentification:
+```bash
+ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-retail-0004.xml:name=face, \
+classify=model=./face-reidentification-retail-0095.xml:label=./labels.txt:name=face_id:feature_file=./registered_faces.bin -an -f null /dev/nul
+```
+
