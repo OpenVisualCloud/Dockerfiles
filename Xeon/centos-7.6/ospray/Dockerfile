@@ -48,12 +48,12 @@ RUN yum install -y -q tbb-devel mesa-libGL-devel
 
 ARG EMBREE_REPO=https://github.com/embree/embree.git
 ARG EMBREE_VER=df0b324
-RUN git clone ${EMBREE_REPO}; \
-    mkdir embree/build; \
-    cd embree/build; \
-    git checkout ${EMBREE_VER}; \
-    cmake .. -Wno-dev -DEMBREE_TUTORIALS=OFF; \
-    make -j 8; \
+RUN git clone ${EMBREE_REPO} && \
+    mkdir embree/build && \
+    cd embree/build && \
+    git checkout ${EMBREE_VER} && \
+    cmake .. -Wno-dev -DEMBREE_TUTORIALS=OFF && \
+    make -j 8 && \
     make install
 
 #build ospray
@@ -62,11 +62,11 @@ RUN yum install -y -q glfw-devel mesa-dri-drivers
 
 ARG OSPRAY_VER=c42a885
 ARG OSPRAY_REPO=https://github.com/ospray/ospray.git
-RUN git clone ${OSPRAY_REPO}; \
-    mkdir ospray/build; \
-    cd ospray/build; \
-    git checkout ${OSPRAY_VER}; \
-    cmake .. ; \
+RUN git clone ${OSPRAY_REPO} && \
+    mkdir ospray/build && \
+    cd ospray/build && \
+    git checkout ${OSPRAY_VER} && \
+    cmake .. && \
     make -j 8
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ospray/build
 

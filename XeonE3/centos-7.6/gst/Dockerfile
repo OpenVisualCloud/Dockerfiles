@@ -326,12 +326,12 @@ ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/
 
 RUN  yum install -y -q libXrandr-devel
 
-RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ; \
-     cd gstreamer-vaapi-${GST_VER}; \
-     ./autogen.sh; \
-     ./configure --prefix=/usr --libdir=/usr/lib64 --libexecdir=/usr/lib64 --enable-shared --disable-examples --disable-debug; \
-     make -j8; \
-     make install DESTDIR=/home/build; \
+RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
+     cd gstreamer-vaapi-${GST_VER} && \
+     ./autogen.sh && \
+     ./configure --prefix=/usr --libdir=/usr/lib64 --libexecdir=/usr/lib64 --enable-shared --disable-examples --disable-debug && \
+     make -j8 && \
+     make install DESTDIR=/home/build && \
      make install
 
 
