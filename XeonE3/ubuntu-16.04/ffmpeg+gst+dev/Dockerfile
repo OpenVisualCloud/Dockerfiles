@@ -351,12 +351,12 @@ ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/
 
 RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev
 
-RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ; \
-     cd gstreamer-vaapi-${GST_VER}; \
-     ./autogen.sh; \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples ; \
-     make -j8; \
-     make install DESTDIR=/home/build; \
+RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
+     cd gstreamer-vaapi-${GST_VER} && \
+     ./autogen.sh && \
+     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples  && \
+     make -j8 && \
+     make install DESTDIR=/home/build && \
      make install
 
 

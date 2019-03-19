@@ -12,10 +12,10 @@ RUN yum install -y -q glfw-devel mesa-dri-drivers
 
 ARG OSPRAY_VER=c42a885
 ARG OSPRAY_REPO=https://github.com/ospray/ospray.git
-RUN git clone ${OSPRAY_REPO}; \
-    mkdir ospray/build; \
-    cd ospray/build; \
-    git checkout ${OSPRAY_VER}; \
-    cmake .. ; \
+RUN git clone ${OSPRAY_REPO} && \
+    mkdir ospray/build && \
+    cd ospray/build && \
+    git checkout ${OSPRAY_VER} && \
+    cmake .. && \
     make -j 8
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ospray/build
