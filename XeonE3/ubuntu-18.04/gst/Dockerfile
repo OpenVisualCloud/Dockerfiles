@@ -3,7 +3,7 @@ FROM ubuntu:18.04 AS build
 WORKDIR /home
 
 # COMMON BUILD TOOLS
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf automake make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex
 
 # Install cmake
 ARG CMAKE_VER=3.13.1
@@ -13,6 +13,11 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
     ./bootstrap --prefix="/usr" && \
     make -j8 && \
     make install
+
+# Install automake, use version 1.14 on CentOS
+ARG AUTOMAKE_VER=1.14
+ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+    RUN apt-get install -y -q automake
 
 # Build NASM
 ARG NASM_VER=2.13.03
@@ -193,10 +198,12 @@ RUN wget -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
 
 
 # Build libva
-ARG LIBVA_VER=2.3.0
+ARG LIBVA_VER=2.4.0
 ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev
+RUN apt-get remove libva*
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev openbox
 
 RUN wget -O - ${LIBVA_REPO} | tar xz && \
     cd libva-${LIBVA_VER} && \
@@ -227,23 +234,37 @@ ARG GST_VER=1.14.4
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
 RUN  ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
-     DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev autopoint gtk-doc-tools
+     DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev gobject-introspection libgirepository1.0-dev libpango-1.0-0 libpangocairo-1.0-0 autopoint
 RUN  wget -O - ${GST_REPO} | tar xJ && \
      cd gstreamer-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples --disable-gst-debug --disable-debug --disable-benchmarks --disable-check && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples --disable-gst-debug \
+        --disable-debug \
+        --disable-benchmarks \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
-     make install
+     make install;
 
 # Build the gstremaer plugin base
 ARG GST_PLUGIN_BASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${GST_VER}.tar.xz
 
+RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv-dev libvisual-0.4-dev libtheora-dev libglib2.0-dev libasound2-dev libcdparanoia-dev libgl1-mesa-dev libpango1.0-dev
+
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples --disable-debug && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples --disable-debug \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -251,33 +272,53 @@ RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
 # Build the gstremaer plugin good set
 ARG GST_PLUGIN_GOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-${GST_VER}.tar.xz
 
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libsoup2.4-dev libjpeg-dev
+
 RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
      cd gst-plugins-good-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples --disable-debug && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples --disable-debug \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
+
 
 # Build the gstremaer plugin bad set
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
 
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libssl-dev
+
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples --disable-debug && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples --disable-debug \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
 # Build the gstremaer plugin ugly set
 ARG GST_PLUGIN_UGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-${GST_VER}.tar.xz
 
-RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ && \
-     cd gst-plugins-ugly-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples --disable-debug && \
-     make -j8 && \
+RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ; \
+     cd gst-plugins-ugly-${GST_VER}; \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples --disable-debug \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -288,22 +329,38 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-
 
 RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
     cd gst-libav-${GST_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared --enable-gpl && \
-    make -j8 && \
-    make install DESTDIR="/home/build"
-
+    ./autogen.sh \
+        --prefix="/usr" \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --enable-gpl \
+        --disable-gtk-doc && \
+    make -j $(nproc) && \
+    make install DESTDIR=/home/build && \
+    make install
 
 
 # Build gstremaer plugin vaapi
-ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi//gstreamer-vaapi-${GST_VER}.tar.xz
+ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-${GST_VER}.tar.xz
 
-RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev
+# https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/merge_requests/45
+ARG GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH=b219f6095f3014041896714dd88e7d90ee3d72dd
+ARG GST_PLUGIN_VAAPI_REPO_GIT=https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git
 
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev libegl1-mesa-dev autopoint bison flex libudev-dev
+
+#RUN  git clone https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git -b 1.14 --depth 10 && \
+#     cd gstreamer-vaapi && git reset --hard ${GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH} && \
 RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      cd gstreamer-vaapi-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples --disable-debug && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples \
+        --disable-gtk-doc --disable-debug && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -322,7 +379,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.1 libglib2.0 libdrm-intel1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libpng16-16 libxv1 ; \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.1 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 ; \
     rm -rf /var/lib/apt/lists/*;
 
 # Install

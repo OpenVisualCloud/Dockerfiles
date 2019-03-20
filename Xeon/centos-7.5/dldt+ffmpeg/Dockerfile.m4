@@ -22,7 +22,7 @@ include(librdkafka.m4)
 include(ffmpeg.m4)
 include(cleanup.m4)dnl
 
-FROM centos:7.5.1804 
+FROM centos:7.5.1804
 LABEL Description="This is the image for DLDT and FFMPEG on CentOS 7.5"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
