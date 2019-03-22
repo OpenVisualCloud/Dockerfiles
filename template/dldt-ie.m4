@@ -55,9 +55,10 @@ RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     mkdir -p build/opt/intel/dldt/inference-engine/external/omp/lib && \
     cp -r dldt/inference-engine/temp/omp/lib/* build/opt/intel/dldt/inference-engine/external/omp/lib/
 
-RUN for p in /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
-        mkdir -p "${libdir}/pkgconfig" && \
-        pc="${libdir}/pkgconfig/dldt.pc" && \
+RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
+        pkgconfiglibdir="$p/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)" && \
+        mkdir -p "${pkgconfiglibdir}/pkgconfig" && \
+        pc="${pkgconfiglibdir}/pkgconfig/dldt.pc" && \
         echo "prefix=/opt" > "$pc" && \
         echo "libdir=${libdir}" >> "$pc" && \
         echo "includedir=/opt/intel/dldt/inference-engine/include" >> "$pc" && \
@@ -73,7 +74,6 @@ define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine )dnl
 
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
-ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${libdir}/pkgconfig/
 
 #install Model Optimizer in the DLDT for Dev
 ifelse(index(DOCKER_IMAGE,-dev),-1,,
@@ -131,6 +131,5 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,
 ARG libdir=/opt/intel/dldt/inference-engine/lib/centos_7.4/intel64
 )dnl
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
-ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${libdir}/pkgconfig/
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 )dnl
