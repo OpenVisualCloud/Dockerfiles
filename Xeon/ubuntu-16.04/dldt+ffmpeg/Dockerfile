@@ -253,6 +253,7 @@ RUN for p in /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inferen
 
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${libdir}/pkgconfig/
 
 #install Model Optimizer in the DLDT for Dev
 
@@ -338,5 +339,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-
 # Install
 COPY --from=build /home/build /
 ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_16.04/intel64
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${libdir}/pkgconfig/
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 

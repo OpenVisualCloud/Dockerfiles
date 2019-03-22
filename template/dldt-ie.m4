@@ -73,6 +73,7 @@ define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine )dnl
 
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${libdir}/pkgconfig/
 
 #install Model Optimizer in the DLDT for Dev
 ifelse(index(DOCKER_IMAGE,-dev),-1,,
@@ -129,5 +130,7 @@ ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_18.04/intel64
 ifelse(index(DOCKER_IMAGE,centos),-1,,
 ARG libdir=/opt/intel/dldt/inference-engine/lib/centos_7.4/intel64
 )dnl
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${libdir}/pkgconfig/
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 )dnl

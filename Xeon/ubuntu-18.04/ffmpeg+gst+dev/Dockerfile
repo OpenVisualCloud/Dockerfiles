@@ -254,6 +254,7 @@ RUN for p in /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inferen
 
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${libdir}/pkgconfig/
 
 #install Model Optimizer in the DLDT for Dev
 ARG PYTHON_TRUSTED_HOST
@@ -525,6 +526,8 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
 # Install
 COPY --from=build /home/build /
 ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_18.04/intel64
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${libdir}/pkgconfig/
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/gstreamer-1.0
