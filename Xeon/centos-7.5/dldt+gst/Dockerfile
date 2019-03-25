@@ -459,7 +459,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN yum install -y epel-release; \
-    yum install -y -q numactl openssl glib2-2.56.1 pangolibpng12 libXv libvisual mesa-libGL pango glib2 openblas-serial \
+    yum install -y -q numactl openssl glib2-2.56.1 pangolibpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib openblas-serial \
 libsoup libjpeg-turbo python36 ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
