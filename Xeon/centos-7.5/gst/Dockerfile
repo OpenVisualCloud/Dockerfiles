@@ -14,6 +14,15 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
     make -j8 && \
     make install
 
+# Install automake, use version 1.14 on CentOS
+ARG AUTOMAKE_VER=1.14
+ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
+    cd automake-${AUTOMAKE_VER} && \
+    ./configure --prefix=/usr --libdir=/usr/lib64 --disable-doc && \ 
+    make -j8 && \
+    make install
+
 # Build NASM
 ARG NASM_VER=2.13.03
 ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.bz2
@@ -190,38 +199,41 @@ RUN git clone ${SVT_VP9_REPO} && \
     make install DESTDIR=/home/build && \
     make install )
 
-# Install automake
-ARG AUTOMAKE_VER=1.14
-ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
-
-RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
-    cd automake-${AUTOMAKE_VER} && \
-    ./configure --prefix=/usr --libdir=/usr/lib64 --disable-doc && \ 
-    make -j8 && \
-    make install
-
-
 # Build the gstremaer core
 ARG GST_VER=1.14.4
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
-RUN  yum install -y -q glib2-devel-2.56.1 gettext-devel gtk-doc
+RUN  yum install -y -q glib2-devel-2.56.1 gettext-devel gobject-introspection python-gobject-base
 RUN  wget -O - ${GST_REPO} | tar xJ && \
      cd gstreamer-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib64 --libexecdir=/usr/lib64 --enable-shared --disable-examples --disable-gst-debug --disable-debug --disable-benchmarks --disable-check && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib64 \
+        --libexecdir=/usr/lib64 \
+        --enable-shared \
+        --disable-examples --disable-gst-debug \
+        --disable-debug \
+        --disable-benchmarks \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
-     make install
+     make install;
 
 # Build the gstremaer plugin base
 ARG GST_PLUGIN_BASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${GST_VER}.tar.xz
 
+RUN  yum install -y -q libXv-devel libvisual-devel libtheora-devel glib2-devel alsa-lib-devel cdparanoia-devel mesa-libGL-devel pango-devel
+
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib64 --libexecdir=/usr/lib64 --enable-shared --disable-examples --disable-debug && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib64 \
+        --libexecdir=/usr/lib64 \
+        --enable-shared \
+        --disable-examples --disable-debug \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -229,33 +241,53 @@ RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
 # Build the gstremaer plugin good set
 ARG GST_PLUGIN_GOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-${GST_VER}.tar.xz
 
+RUN  yum install -y -q libsoup-devel libjpeg-devel
+
 RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
      cd gst-plugins-good-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib64 --libexecdir=/usr/lib64 --enable-shared --disable-examples --disable-debug && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib64 \
+        --libexecdir=/usr/lib64 \
+        --enable-shared \
+        --disable-examples --disable-debug \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
+
 
 # Build the gstremaer plugin bad set
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
 
+RUN  yum install -y -q openssl-devel
+
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib64 --libexecdir=/usr/lib64 --enable-shared --disable-examples --disable-debug && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib64 \
+        --libexecdir=/usr/lib64 \
+        --enable-shared \
+        --disable-examples --disable-debug \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
 # Build the gstremaer plugin ugly set
 ARG GST_PLUGIN_UGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-${GST_VER}.tar.xz
 
-RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ && \
-     cd gst-plugins-ugly-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib64 --libexecdir=/usr/lib64 --enable-shared --disable-examples --disable-debug && \
-     make -j8 && \
+RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ; \
+     cd gst-plugins-ugly-${GST_VER}; \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib64 \
+        --libexecdir=/usr/lib64 \
+        --enable-shared \
+        --disable-examples --disable-debug \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -266,10 +298,15 @@ RUN yum install -y -q zlib-devel openssl-devel
 
 RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
     cd gst-libav-${GST_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared --enable-gpl && \
-    make -j8 && \
-    make install DESTDIR="/home/build"
-
+    ./autogen.sh \
+        --prefix="/usr" \
+        --libdir=/usr/lib64 \
+        --enable-shared \
+        --enable-gpl \
+        --disable-gtk-doc && \
+    make -j $(nproc) && \
+    make install DESTDIR=/home/build && \
+    make install
 
 
 # Clean up after build
@@ -286,7 +323,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN yum install -y epel-release; \
-    yum install -y -q numactl openssl glib2-2.56.1 libpng12 libXv ; \
+    yum install -y -q numactl openssl glib2-2.56.1 pangolibpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib libsoup libjpeg-turbo ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
 

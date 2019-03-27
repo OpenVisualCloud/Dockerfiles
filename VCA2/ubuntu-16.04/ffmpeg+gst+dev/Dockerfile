@@ -3,7 +3,7 @@ FROM ubuntu:16.04 AS build
 WORKDIR /home
 
 # COMMON BUILD TOOLS
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf automake make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex
 
 # Install cmake
 ARG CMAKE_VER=3.13.1
@@ -13,6 +13,11 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
     ./bootstrap --prefix="/usr" && \
     make -j8 && \
     make install
+
+# Install automake, use version 1.14 on CentOS
+ARG AUTOMAKE_VER=1.14
+ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+    RUN apt-get install -y -q automake
 
 # Build NASM
 ARG NASM_VER=2.13.03
@@ -194,10 +199,12 @@ RUN wget -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
 
 
 # Build libva
-ARG LIBVA_VER=2.3.0
+ARG LIBVA_VER=2.4.0
 ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev
+RUN apt-get remove libva*
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev openbox
 
 RUN wget -O - ${LIBVA_REPO} | tar xz && \
     cd libva-${LIBVA_VER} && \
@@ -235,6 +242,12 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
     make install DESTDIR=/home/build && \
     make install;
 
+ARG PYTHON_VER=3.6.6
+ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
+
+RUN apt-get install -y python3 python3-pip python3-setuptools python-yaml
+
+
 # Build DLDT-Inference Engine
 ARG DLDT_VER=2018_R5
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
@@ -249,53 +262,118 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     wget -O - ${DLDT_C_API_REPO} | patch -p2 && \
     mkdir build && \
     cd build && \
-    cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr -DLIB_INSTALL_PATH=/usr/lib/x86_64-linux-gnu -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ON -DENABLE_SAMPLES_CORE=OFF  ..; \
-    make -j16 && \
+    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ON -DENABLE_SAMPLE_CORE=OFF  .. && \
+    make -j $(nproc) && \
     rm -rf ../bin/intel64/Release/lib/libgtest* && \
     rm -rf ../bin/intel64/Release/lib/libgmock* && \
     rm -rf ../bin/intel64/Release/lib/libmock* && \
-    rm -rf ../bin/intel64/Release/lib/libtest* && \
-    for p in /usr /home/build/usr; do \
-        mkdir -p $p/include/dldt; \
-        cp -r ../include/* $p/include/dldt; \
-        libdir="$p/lib/x86_64-linux-gnu"; \
-        cp -r ../bin/intel64/Release/lib/* "$libdir"; \
-        cp -r ../temp/omp/lib/* "$libdir"; \
-        mkdir -p "$libdir/pkgconfig"; \
-        pc="$libdir/pkgconfig/dldt.pc"; \
-        echo "prefix=/usr" > "$pc"; \
-        echo "libdir=/usr/lib/x86_64-linux-gnu" >> "$pc"; \
-        echo "includedir=/usr/include/dldt" >> "$pc"; \
-        echo "" >> "$pc"; \
-        echo "Name: DLDT" >> "$pc"; \
-        echo "Description: Intel Deep Learning Deployment Toolkit" >> "$pc"; \
-        echo "Version: 5.0" >> "$pc"; \
-        echo "" >> "$pc"; \
-        echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper" >> "$pc"; \
+    rm -rf ../bin/intel64/Release/lib/libtest*
+
+ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_16.04/intel64
+
+RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    mkdir -p ${libdir} && \
+    cp -r dldt/inference-engine/bin/intel64/Release/lib/* ${libdir} && \
+    mkdir -p /opt/intel/dldt/inference-engine/src && \
+    cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
+    mkdir -p /opt/intel/dldt/inference-engine/share && \
+    cp -r dldt/inference-engine/build/share/* /opt/intel/dldt/inference-engine/share/ && \
+    mkdir -p /opt/intel/dldt/inference-engine/external/omp/lib && \
+    cp -r dldt/inference-engine/temp/omp/lib/* /opt/intel/dldt/inference-engine/external/omp/lib/
+
+RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    mkdir -p build${libdir} && \
+    cp -r dldt/inference-engine/bin/intel64/Release/lib/* build${libdir} && \
+    mkdir -p build/opt/intel/dldt/inference-engine/src && \
+    cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
+    mkdir -p build/opt/intel/dldt/inference-engine/share && \
+    cp -r dldt/inference-engine/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
+    mkdir -p build/opt/intel/dldt/inference-engine/external/omp/lib && \
+    cp -r dldt/inference-engine/temp/omp/lib/* build/opt/intel/dldt/inference-engine/external/omp/lib/
+
+RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
+        pkgconfiglibdir="$p/lib/x86_64-linux-gnu" && \
+        mkdir -p "${pkgconfiglibdir}/pkgconfig" && \
+        pc="${pkgconfiglibdir}/pkgconfig/dldt.pc" && \
+        echo "prefix=/opt" > "$pc" && \
+        echo "libdir=${libdir}" >> "$pc" && \
+        echo "includedir=/opt/intel/dldt/inference-engine/include" >> "$pc" && \
+        echo "" >> "$pc" && \
+        echo "Name: DLDT" >> "$pc" && \
+        echo "Description: Intel Deep Learning Deployment Toolkit" >> "$pc" && \
+        echo "Version: 5.0" >> "$pc" && \
+        echo "" >> "$pc" && \
+        echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper" >> "$pc" && \
         echo "Cflags: -I\${includedir}" >> "$pc"; \
     done;
+
+ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+
+#install Model Optimizer in the DLDT for Dev
+ARG PYTHON_TRUSTED_HOST
+ARG PYTHON_TRUSTED_INDEX_URL
+#install MO dependencies
+#RUN pip3 install numpy scipy
+RUN git clone https://github.com/google/protobuf.git && \
+    cd protobuf && \
+    git submodule update --init --recursive && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install && \
+    make install DESTDIR=/home/build
+#RUN apt-get update && apt-get install -y sudo
+#installing dependency libs to mo_libs directory to avoid issues with updates to Python version
+RUN cd dldt/model-optimizer && \
+if [ "x$PYTHON_TRUSTED_HOST" = "x" ] ; \
+then pip3 install --target=/home/build/mo_libs -r requirements.txt && \
+pip3 install -r requirements.txt; \
+else pip3 install --target=/home/build/mo_libs -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST; \
+fi
+
+#Copy over Model Optimizer to same directory as Inference Engine
+RUN cp -r dldt/model-optimizer /opt/intel/dldt/model-optimizer
+RUN cp -r dldt/model-optimizer /home/build/opt/intel/dldt/model-optimizer
+
+
 
 # Build the gstremaer core
 ARG GST_VER=1.14.4
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
-RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev autopoint gtk-doc-tools
+RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev gobject-introspection libgirepository1.0-dev libpango-1.0-0 libpangocairo-1.0-0 autopoint
 RUN  wget -O - ${GST_REPO} | tar xJ && \
      cd gstreamer-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples  && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples  \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
-     make install
+     make install;
 
 # Build the gstremaer plugin base
 ARG GST_PLUGIN_BASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${GST_VER}.tar.xz
 
+RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv-dev libvisual-0.4-dev libtheora-dev libglib2.0-dev libasound2-dev libcdparanoia-dev libgl1-mesa-dev libpango1.0-dev
+
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples  && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples  \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -303,33 +381,53 @@ RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
 # Build the gstremaer plugin good set
 ARG GST_PLUGIN_GOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-${GST_VER}.tar.xz
 
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libsoup2.4-dev libjpeg-dev
+
 RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
      cd gst-plugins-good-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples  && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples  \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
+
 
 # Build the gstremaer plugin bad set
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
 
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libssl-dev
+
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples  && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples  \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
 # Build the gstremaer plugin ugly set
 ARG GST_PLUGIN_UGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-${GST_VER}.tar.xz
 
-RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ && \
-     cd gst-plugins-ugly-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples  && \
-     make -j8 && \
+RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ; \
+     cd gst-plugins-ugly-${GST_VER}; \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples  \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -340,22 +438,38 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-
 
 RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
     cd gst-libav-${GST_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared --enable-gpl && \
-    make -j8 && \
-    make install DESTDIR="/home/build"
-
+    ./autogen.sh \
+        --prefix="/usr" \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --enable-gpl \
+        --disable-gtk-doc && \
+    make -j $(nproc) && \
+    make install DESTDIR=/home/build && \
+    make install
 
 
 # Build gstremaer plugin vaapi
-ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi//gstreamer-vaapi-${GST_VER}.tar.xz
+ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-${GST_VER}.tar.xz
 
-RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev
+# https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/merge_requests/45
+ARG GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH=b219f6095f3014041896714dd88e7d90ee3d72dd
+ARG GST_PLUGIN_VAAPI_REPO_GIT=https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git
 
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev libegl1-mesa-dev autopoint bison flex libudev-dev
+
+#RUN  git clone https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git -b 1.14 --depth 10 && \
+#     cd gstreamer-vaapi && git reset --hard ${GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH} && \
 RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      cd gstreamer-vaapi-${GST_VER} && \
-     ./autogen.sh && \
-     ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples  && \
-     make -j8 && \
+     ./autogen.sh \
+        --prefix=/usr \
+        --libdir=/usr/lib/x86_64-linux-gnu \
+        --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-shared \
+        --disable-examples \
+        --disable-gtk-doc  && \
+     make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -415,7 +529,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass5 libssl1.0.0    libglib2.0 libdrm-intel1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libpng12-0 libxv1 ; \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python-yaml ; \
     rm -rf /var/lib/apt/lists/*;
 
 # Install
@@ -424,4 +538,8 @@ ENV LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri
 ENV LIBVA_DRIVER_NAME=iHD
 ENV GST_VAAPI_ALL_DRIVERS=1
 ENV DISPLAY=:0.0
+ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_16.04/intel64
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
 

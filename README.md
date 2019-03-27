@@ -44,6 +44,7 @@ Status:
 |-----|:---:|:---:|:---:|:---:|:---:|
 | FFmpeg | V | V | V | V | V |
 | GStreamer | T | T | T | T | T |
+| DLDT(IE)+GStreamer | T | T | T | T | T |
 | FFmpeg+GStreamer (Dev) | T | T | T | T | T |
 | NGINX+RTMP | V | V | V | V | V |
 

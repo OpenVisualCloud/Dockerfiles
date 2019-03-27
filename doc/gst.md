@@ -10,6 +10,7 @@ The GStreamer docker images are compiled with the following plugin set:
 - gst-plugin-ugly
 - gst-plugin-vaapi
 - gst-plugin-libav
+- gst-video-analytics
 
 ### GPU Acceleration
 
@@ -27,4 +28,21 @@ Encoding with vaapi:
 
 ```bash
 gst-launch-1.0 -v filesrc location=test.yuv ! videoparse format=i420 width=320 height=240 framerate=30 ! vaapih264enc ! mpegtsmux ! filesink location=test.ts
+```
+
+Use DLDT's Inference Engine to detect items in a scene using video analytics
+
+```bash
+gst-launch-1.0 -v filesrc location=test.ts ! decodebin ! video/x-raw ! videoconvert ! \
+  gvadetect model=<path to xml of model optimized through DLDT's model optimizer> ! queue ! \
+  gvawatermark ! videoconvert ! fakesink
+```
+
+Use DLDT's Inference Engine to classify items in a scene using video analytics
+
+```bash
+gst-launch-1.0 -v filesrc location=test.ts ! decodebin ! video/x-raw ! videoconvert ! \
+  gvadetect model=<full path to xml of model optimized through DLDT's model optimizer> ! queue ! \
+  gvaclassify model=<full path to xml of model optimized through DLDT's model optimizer> object-class=vehicle ! queue ! \
+  gvawatermark ! videoconvert ! fakesink
 ```
