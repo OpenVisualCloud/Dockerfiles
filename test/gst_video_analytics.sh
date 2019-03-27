@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 if grep --quiet 'NAME="CentOS Linux"' /etc/os-release; then
-  yum install -y centos-release-scl
+  yum install -y centos-release-scl wget
   yum install -y rh-python36
   source /opt/rh/rh-python36/enable
 else
