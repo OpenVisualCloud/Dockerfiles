@@ -259,7 +259,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 
 
 
-
 # Build librdkafka
 ARG LIBRDKAFKA_VER=0.11.6
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
@@ -333,7 +332,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends   libnuma1  libssl1.0.0    python3 ; \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends   libnuma1  libssl1.0.0    ; \
     rm -rf /var/lib/apt/lists/*;
 
 # Install

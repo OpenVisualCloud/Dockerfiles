@@ -242,6 +242,12 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
     make install DESTDIR=/home/build && \
     make install;
 
+ARG PYTHON_VER=3.6.6
+ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
+
+RUN apt-get install -y python3 python3-pip python3-setuptools python-yaml
+
+
 # Build DLDT-Inference Engine
 ARG DLDT_VER=2018_R5
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
@@ -310,7 +316,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 #install MO dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends python3-dev python3-pip python3-setuptools python3-wheel
 #RUN pip3 install numpy scipy
 RUN git clone https://github.com/google/protobuf.git && \
     cd protobuf && \
@@ -333,7 +338,6 @@ fi
 #Copy over Model Optimizer to same directory as Inference Engine
 RUN cp -r dldt/model-optimizer /opt/intel/dldt/model-optimizer
 RUN cp -r dldt/model-optimizer /home/build/opt/intel/dldt/model-optimizer
-
 
 
 
@@ -525,7 +529,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 ; \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python-yaml ; \
     rm -rf /var/lib/apt/lists/*;
 
 # Install

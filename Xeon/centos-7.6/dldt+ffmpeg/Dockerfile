@@ -269,7 +269,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 
 
 
-
 # Build librdkafka
 ARG LIBRDKAFKA_VER=0.11.6
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
@@ -344,7 +343,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN yum install -y epel-release; \
-    yum install -y -q     numactl   python36 ; \
+    yum install -y -q     numactl   ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
 

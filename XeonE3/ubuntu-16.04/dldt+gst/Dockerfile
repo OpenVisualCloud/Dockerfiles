@@ -357,7 +357,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 
 
 
-
 # Build the gstremaer core
 ARG GST_VER=1.14.4
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
@@ -573,7 +572,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.0.0 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 libgtk2.0 libdrm2 libxv1 \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.0.0 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 \
 ; \
     rm -rf /var/lib/apt/lists/*;
 

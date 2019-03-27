@@ -200,6 +200,19 @@ RUN git clone ${SVT_VP9_REPO} && \
     make install )
 
 #include(transform360.m4)
+ARG PYTHON_VER=3.6.6
+ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
+
+RUN yum install -y zlib-devel
+RUN wget -O - ${PYTHON_REPO} | tar xz && \
+    cd Python-${PYTHON_VER} && \
+    ./configure --prefix=/usr && \
+    make && \
+    make install && \
+    make install DESTDIR=/home/build
+RUN yum install -y -q python-yaml
+
+
 # Build DLDT-Inference Engine
 ARG DLDT_VER=2018_R5
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
@@ -269,10 +282,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 #install MO dependencies
-RUN yum install -y python36
-RUN yum install -y python36-devel
-RUN yum install -y python36-setuptools
-RUN easy_install-3.6 pip
 #RUN pip3 install numpy scipy
 RUN git clone https://github.com/google/protobuf.git && \
     cd protobuf && \
@@ -295,7 +304,6 @@ fi
 #Copy over Model Optimizer to same directory as Inference Engine
 RUN cp -r dldt/model-optimizer /opt/intel/dldt/model-optimizer
 RUN cp -r dldt/model-optimizer /home/build/opt/intel/dldt/model-optimizer
-
 
 
 
@@ -531,7 +539,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release; \
     yum install -y -q   libxcb SDL2 libass numactl   glib2-2.56.1 pangolibpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib openblas-serial \
-libsoup libjpeg-turbo python36 ; \
+libsoup libjpeg-turbo python-yaml ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
 

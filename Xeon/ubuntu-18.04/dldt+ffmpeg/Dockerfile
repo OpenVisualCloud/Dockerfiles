@@ -260,7 +260,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 
 
 
-
 # Build librdkafka
 ARG LIBRDKAFKA_VER=0.11.6
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
@@ -335,7 +334,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends    libnuma1  libssl1.1 libpciaccess0   python3 ; \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends    libnuma1  libssl1.1 libpciaccess0   ; \
     rm -rf /var/lib/apt/lists/*;
 
 # Install

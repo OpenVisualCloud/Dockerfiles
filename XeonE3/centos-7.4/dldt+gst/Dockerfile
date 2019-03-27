@@ -346,7 +346,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 
 
 
-
 # Build the gstremaer core
 ARG GST_VER=1.14.4
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
@@ -564,7 +563,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release; \
     yum install -y -q numactl openssl glib2-2.56.1 pangolibxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib libpciaccess libX11 openblas-serial \
-mesa-dri-drivers mesa-libGL libsoup libjpeg-turbo python36 ; \
+mesa-dri-drivers mesa-libGL libsoup libjpeg-turbo ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
 

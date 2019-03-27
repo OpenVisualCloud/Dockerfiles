@@ -80,14 +80,6 @@ ifelse(index(DOCKER_IMAGE,-dev),-1,,
 ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 #install MO dependencies
-ifelse(index(DOCKER_IMAGE,ubuntu),-1,
-RUN yum install -y python36
-RUN yum install -y python36-devel
-RUN yum install -y python36-setuptools
-RUN easy_install-3.6 pip
-,dnl
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends python3-dev python3-pip python3-setuptools python3-wheel
-)dnl
 #RUN pip3 install numpy scipy
 RUN git clone https://github.com/google/protobuf.git && \
     cd protobuf && \
@@ -111,8 +103,6 @@ fi
 RUN cp -r dldt/model-optimizer /opt/intel/dldt/model-optimizer
 RUN cp -r dldt/model-optimizer /home/build/opt/intel/dldt/model-optimizer
 )dnl
-
-define(`INSTALL_PKGS_MO',ifelse(index(DOCKER_IMAGE,ubuntu),-1,python36 , python3 ))dnl
 
 define(`INSTALL_MO',dnl
 ifelse(index(DOCKER_IMAGE,dev),-1,,
