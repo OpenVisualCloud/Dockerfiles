@@ -17,18 +17,21 @@ include(svt-hevc.m4)
 include(svt-av1.m4)
 include(svt-vp9.m4)
 #include(transform360.m4)
+include(python.m4)
 include(dldt-ie.m4)
-include(automake.m4)
 include(gst.m4)
+include(gst-orc.m4)
 include(gst-plugin-base.m4)
 include(gst-plugin-good.m4)
 include(gst-plugin-bad.m4)
 include(gst-plugin-ugly.m4)
 include(gst-plugin-libav.m4)
+include(opencv.m4)
+include(gstreamer-videoanalytics.m4)
 include(ffmpeg.m4)
 include(cleanup.m4)dnl
 
-FROM centos:7.6.1810 
+FROM centos:7.6.1810
 LABEL Description="This is the image for FFMPEG and GSTREAMER application development on CentOS 7.6"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home

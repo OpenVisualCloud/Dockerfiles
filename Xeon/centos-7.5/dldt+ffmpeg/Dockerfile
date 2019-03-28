@@ -14,6 +14,15 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
     make -j8 && \
     make install
 
+# Install automake, use version 1.14 on CentOS
+ARG AUTOMAKE_VER=1.14
+ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
+    cd automake-${AUTOMAKE_VER} && \
+    ./configure --prefix=/usr --libdir=/usr/lib64 --disable-doc && \ 
+    make -j8 && \
+    make install
+
 # Build NASM
 ARG NASM_VER=2.13.03
 ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.bz2
@@ -106,7 +115,7 @@ RUN git clone ${VPX_REPO} && \
 
 
 # Build AOM
-ARG AOM_VER=tags/v1.0.0
+ARG AOM_VER=b6f1767eedbaddeb1ff5aa409a710ef61078640e
 ARG AOM_REPO=https://aomedia.googlesource.com/aom
 
 RUN  git clone ${AOM_REPO} && \
@@ -145,7 +154,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Fetch SVT-HEVC
-ARG SVT_HEVC_VER=v1.3.0
+ARG SVT_HEVC_VER=252ff3d18bc1997a5af989ad4e67e025c93dbf68
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
 RUN yum install -y -q patch centos-release-scl && \
@@ -163,7 +172,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=a39acb2
+ARG SVT_AV1_VER=39aad81274a04053e2678ec7ec39cf6584bced66
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
@@ -173,7 +182,7 @@ RUN git clone ${SVT_AV1_REPO} && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
-    make install 
+    make install
 
 
 # Fetch SVT-VP9
@@ -206,31 +215,59 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     wget -O - ${DLDT_C_API_REPO} | patch -p2 && \
     mkdir build && \
     cd build && \
-    cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr -DLIB_INSTALL_PATH=/usr/lib64 -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES_CORE=OFF  ..; \
-    make -j16 && \
+    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLE_CORE=OFF  .. && \
+    make -j $(nproc) && \
     rm -rf ../bin/intel64/Release/lib/libgtest* && \
     rm -rf ../bin/intel64/Release/lib/libgmock* && \
     rm -rf ../bin/intel64/Release/lib/libmock* && \
-    rm -rf ../bin/intel64/Release/lib/libtest* && \
-    for p in /usr /home/build/usr; do \
-        mkdir -p $p/include/dldt; \
-        cp -r ../include/* $p/include/dldt; \
-        libdir="$p/lib64"; \
-        cp -r ../bin/intel64/Release/lib/* "$libdir"; \
-        cp -r ../temp/omp/lib/* "$libdir"; \
-        mkdir -p "$libdir/pkgconfig"; \
-        pc="$libdir/pkgconfig/dldt.pc"; \
-        echo "prefix=/usr" > "$pc"; \
-        echo "libdir=/usr/lib64" >> "$pc"; \
-        echo "includedir=/usr/include/dldt" >> "$pc"; \
-        echo "" >> "$pc"; \
-        echo "Name: DLDT" >> "$pc"; \
-        echo "Description: Intel Deep Learning Deployment Toolkit" >> "$pc"; \
-        echo "Version: 5.0" >> "$pc"; \
-        echo "" >> "$pc"; \
-        echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper" >> "$pc"; \
+    rm -rf ../bin/intel64/Release/lib/libtest*
+
+ARG libdir=/opt/intel/dldt/inference-engine/lib/centos_7.4/intel64
+
+RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    mkdir -p ${libdir} && \
+    cp -r dldt/inference-engine/bin/intel64/Release/lib/* ${libdir} && \
+    mkdir -p /opt/intel/dldt/inference-engine/src && \
+    cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
+    mkdir -p /opt/intel/dldt/inference-engine/share && \
+    cp -r dldt/inference-engine/build/share/* /opt/intel/dldt/inference-engine/share/ && \
+    mkdir -p /opt/intel/dldt/inference-engine/external/omp/lib && \
+    cp -r dldt/inference-engine/temp/omp/lib/* /opt/intel/dldt/inference-engine/external/omp/lib/
+
+RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    mkdir -p build${libdir} && \
+    cp -r dldt/inference-engine/bin/intel64/Release/lib/* build${libdir} && \
+    mkdir -p build/opt/intel/dldt/inference-engine/src && \
+    cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
+    mkdir -p build/opt/intel/dldt/inference-engine/share && \
+    cp -r dldt/inference-engine/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
+    mkdir -p build/opt/intel/dldt/inference-engine/external/omp/lib && \
+    cp -r dldt/inference-engine/temp/omp/lib/* build/opt/intel/dldt/inference-engine/external/omp/lib/
+
+RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
+        pkgconfiglibdir="$p/lib64" && \
+        mkdir -p "${pkgconfiglibdir}/pkgconfig" && \
+        pc="${pkgconfiglibdir}/pkgconfig/dldt.pc" && \
+        echo "prefix=/opt" > "$pc" && \
+        echo "libdir=${libdir}" >> "$pc" && \
+        echo "includedir=/opt/intel/dldt/inference-engine/include" >> "$pc" && \
+        echo "" >> "$pc" && \
+        echo "Name: DLDT" >> "$pc" && \
+        echo "Description: Intel Deep Learning Deployment Toolkit" >> "$pc" && \
+        echo "Version: 5.0" >> "$pc" && \
+        echo "" >> "$pc" && \
+        echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper" >> "$pc" && \
         echo "Cflags: -I\${includedir}" >> "$pc"; \
     done;
+
+ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+
+#install Model Optimizer in the DLDT for Dev
+
+
 
 # Build librdkafka
 ARG LIBRDKAFKA_VER=0.11.6
@@ -281,9 +318,13 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
 RUN cd /home/FFmpeg && \
     patch -p1 < ../SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch;
 
+# Patch FFmpeg source for SVT-AV1
+RUN cd /home/FFmpeg; \
+    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
+
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl  --disable-xlib --disable-sdl2 --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libinference_engine --enable-librdkafka  && \
+    ./configure --prefix="/usr" --libdir=/usr/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl  --disable-xlib --disable-sdl2 --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine --enable-librdkafka  && \
     make -j8 && \
     make install DESTDIR="/home/build"
 
@@ -295,7 +336,7 @@ RUN rm -rf /home/build/usr/include && \
     rm -rf /home/build/usr/share/man && \
     find /home/build -name "*.a" -exec rm -f {} \;
 
-FROM centos:7.5.1804 
+FROM centos:7.5.1804
 LABEL Description="This is the image for DLDT and FFMPEG on CentOS 7.5"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
@@ -308,4 +349,7 @@ RUN yum install -y epel-release; \
 
 # Install
 COPY --from=build /home/build /
+ARG libdir=/opt/intel/dldt/inference-engine/lib/centos_7.4/intel64
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 

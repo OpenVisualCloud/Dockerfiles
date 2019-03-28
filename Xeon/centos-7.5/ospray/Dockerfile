@@ -14,6 +14,15 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
     make -j8 && \
     make install
 
+# Install automake, use version 1.14 on CentOS
+ARG AUTOMAKE_VER=1.14
+ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
+    cd automake-${AUTOMAKE_VER} && \
+    ./configure --prefix=/usr --libdir=/usr/lib64 --disable-doc && \ 
+    make -j8 && \
+    make install
+
 # Build NASM
 ARG NASM_VER=2.13.03
 ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.bz2
@@ -48,12 +57,12 @@ RUN yum install -y -q tbb-devel mesa-libGL-devel
 
 ARG EMBREE_REPO=https://github.com/embree/embree.git
 ARG EMBREE_VER=df0b324
-RUN git clone ${EMBREE_REPO}; \
-    mkdir embree/build; \
-    cd embree/build; \
-    git checkout ${EMBREE_VER}; \
-    cmake .. -Wno-dev -DEMBREE_TUTORIALS=OFF; \
-    make -j 8; \
+RUN git clone ${EMBREE_REPO} && \
+    mkdir embree/build && \
+    cd embree/build && \
+    git checkout ${EMBREE_VER} && \
+    cmake .. -Wno-dev -DEMBREE_TUTORIALS=OFF && \
+    make -j 8 && \
     make install
 
 #build ospray
@@ -62,11 +71,11 @@ RUN yum install -y -q glfw-devel mesa-dri-drivers
 
 ARG OSPRAY_VER=c42a885
 ARG OSPRAY_REPO=https://github.com/ospray/ospray.git
-RUN git clone ${OSPRAY_REPO}; \
-    mkdir ospray/build; \
-    cd ospray/build; \
-    git checkout ${OSPRAY_VER}; \
-    cmake .. ; \
+RUN git clone ${OSPRAY_REPO} && \
+    mkdir ospray/build && \
+    cd ospray/build && \
+    git checkout ${OSPRAY_VER} && \
+    cmake .. && \
     make -j 8
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ospray/build
 

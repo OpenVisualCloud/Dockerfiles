@@ -1,5 +1,5 @@
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=a39acb2
+ARG SVT_AV1_VER=39aad81274a04053e2678ec7ec39cf6584bced66
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
@@ -9,5 +9,12 @@ RUN git clone ${SVT_AV1_REPO} && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
-    make install 
+    make install
 
+define(`FFMPEG_SOURCE_SVT_AV1',dnl
+# Patch FFmpeg source for SVT-AV1
+RUN cd /home/FFmpeg; \
+    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
+
+)dnl
+define(`FFMPEG_CONFIG_SVT_AV1',--enable-libsvtav1 )dnl
