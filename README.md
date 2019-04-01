@@ -67,6 +67,12 @@ If you are behind a firewall, setup proxy as follows:
 (4) sudo systemctl restart docker     
 ```
 
+#### Fix system time & date:
+Fix system time & date based on your current timezone to avoid probable build failures.
+```bash
+date -s "1 APR 2019 11:15:00"
+```
+
 ### Build docker image(s): 
 
 ```bash
