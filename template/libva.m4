@@ -18,4 +18,4 @@ RUN wget -O - ${LIBVA_REPO} | tar xz && \
     make install DESTDIR=/home/build && \
     make install;
 
-define(`INSTALL_PKGS_LIBVA',mesa-dri-drivers mesa-libGL )dnl
+define(`INSTALL_PKGS_LIBVA',ifelse(index(DOCKER_IMAGE,ubuntu),-1, mesa-dri-drivers mesa-libGL libdrm , libdrm2) )dnl
