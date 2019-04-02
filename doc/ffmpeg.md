@@ -29,6 +29,10 @@ The FFmpeg builds included the following patches for feature enhancement, better
 |[IE_FILTERS_04](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0004-Kafka-protocol-producer.patch)|Kafka protocol producer.|
 |[IE_FILTERS_05](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0005-Support-object-detection-and-featured-face-identific.patch)|Support object detection and featured face identification.|
 |[IE_FILTERS_06](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0006-Send-metadata-in-a-packet-and-refine-the-json-format.patch)|Send metadata in a packet and refine the json format.|
+|[IE_FILTERS_07](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0007-Refine-features-of-IE-filters.patch)|Refine features of IE filters.|
+|[IE_FILTERS_08](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch)|Fixed extra comma in iemetadata.|
+|[IE_FILTERS_09](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch)|Add source as option source url calculate nano times.|
+|[IE_FILTERS_10](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0010-fixed-buffer-overflow-issue-in-iemetadata.patch)|Fixed buffer overflow issue in iemetadata.|
 
 ### GPU Acceleration
 
@@ -67,7 +71,7 @@ Face detection and emotion identification, save metadata to json format:
 ```bash
 ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-adas-0001/FP32/face-detection-adas-0001.xml:name=face, \
 classify=model=./emotions_recognition/emotions-recognition-retail-0003.xml:label=./emotions_recognition/emotion-labels.txt:name=emotion \
--an -f iemetadata emotion-meta.json
+-an -f iemetadata -source_url $URL -custom_tag $TAG emotion-meta.json
 ```
 
 Object Detection with labels:
@@ -77,6 +81,7 @@ ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./mobilenet-ssd.xml:label=./object_l
 ```
 
 Face detection and reidentification:
+
 ```bash
 ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-retail-0004.xml:name=face, \
 classify=model=./face-reidentification-retail-0095.xml:label=./labels.txt:name=face_id:feature_file=./registered_faces.bin -an -f null /dev/nul
