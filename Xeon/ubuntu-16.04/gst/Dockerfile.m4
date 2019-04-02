@@ -22,6 +22,7 @@ include(gst-plugin-good.m4)
 include(gst-plugin-bad.m4)
 include(gst-plugin-ugly.m4)
 include(gst-plugin-libav.m4)
+include(gst-plugin-svt.m4)
 include(cleanup.m4)dnl
 
 FROM ubuntu:16.04
