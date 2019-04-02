@@ -11,6 +11,9 @@ RUN git clone ${SVT_AV1_REPO} && \
     make install DESTDIR=/home/build && \
     make install
 
+#Remove build residue from SVT-AV1 build -- temp fix for bug
+RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
+
 define(`FFMPEG_SOURCE_SVT_AV1',dnl
 # Patch FFmpeg source for SVT-AV1
 RUN cd /home/FFmpeg; \

@@ -184,6 +184,9 @@ RUN git clone ${SVT_AV1_REPO} && \
     make install DESTDIR=/home/build && \
     make install
 
+#Remove build residue from SVT-AV1 build -- temp fix for bug
+RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
+
 
 # Fetch SVT-VP9
 ARG SVT_VP9_VER=d18b4acf9139be2e83150e318ffd3dba1c432e74
