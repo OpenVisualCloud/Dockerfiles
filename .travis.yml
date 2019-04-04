@@ -1,10 +1,6 @@
 language: bash
 dist: xenial
 services: docker
-cache: 
-  bundler: true
-  directories:
-    - $HOME/docker
 
 matrix:
   allow_failures:
@@ -52,6 +48,11 @@ before_install:
   - sudo apt-get -y install docker-ce
   - docker version
   - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+
+cache: 
+  bundler: true
+  directories:
+    - $HOME/docker
 
 jobs:
   include:
