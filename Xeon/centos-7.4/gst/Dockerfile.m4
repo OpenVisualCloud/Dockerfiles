@@ -16,13 +16,13 @@ include(libx265.m4)
 include(svt-hevc.m4)
 include(svt-av1.m4)
 include(svt-vp9.m4)
-include(automake.m4)
 include(gst.m4)
 include(gst-plugin-base.m4)
 include(gst-plugin-good.m4)
 include(gst-plugin-bad.m4)
 include(gst-plugin-ugly.m4)
 include(gst-plugin-libav.m4)
+include(gst-plugin-svt.m4)
 include(cleanup.m4)dnl
 
 FROM centos:7.4.1708

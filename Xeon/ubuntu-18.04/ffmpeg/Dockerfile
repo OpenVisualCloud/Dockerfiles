@@ -3,7 +3,7 @@ FROM ubuntu:18.04 AS build
 WORKDIR /home
 
 # COMMON BUILD TOOLS
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf automake make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex
 
 # Install cmake
 ARG CMAKE_VER=3.13.1
@@ -13,6 +13,11 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
     ./bootstrap --prefix="/usr" && \
     make -j8 && \
     make install
+
+# Install automake, use version 1.14 on CentOS
+ARG AUTOMAKE_VER=1.14
+ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+    RUN apt-get install -y -q automake
 
 # Build NASM
 ARG NASM_VER=2.13.03
@@ -106,7 +111,7 @@ RUN git clone ${VPX_REPO} && \
 
 
 # Build AOM
-ARG AOM_VER=tags/v1.0.0
+ARG AOM_VER=b6f1767eedbaddeb1ff5aa409a710ef61078640e
 ARG AOM_REPO=https://aomedia.googlesource.com/aom
 
 RUN  git clone ${AOM_REPO} && \
@@ -145,7 +150,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Fetch SVT-HEVC
-ARG SVT_HEVC_VER=v1.3.0
+ARG SVT_HEVC_VER=20a47b0d904e9d99e089d93d7c33af92788cbfdb
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
 RUN git clone ${SVT_HEVC_REPO} && \
@@ -159,7 +164,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=a39acb2
+ARG SVT_AV1_VER=90b56a80795d4d0448673c4c7276ce6d5c8ac9d4
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
@@ -169,11 +174,14 @@ RUN git clone ${SVT_AV1_REPO} && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
-    make install 
+    make install
+
+#Remove build residue from SVT-AV1 build -- temp fix for bug
+RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=e92a57c
+ARG SVT_VP9_VER=d18b4acf9139be2e83150e318ffd3dba1c432e74
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 RUN git clone ${SVT_VP9_REPO} && \
@@ -192,21 +200,46 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
+ARG FFMPEG_MA_PATCH_REPO_01=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0001-Intel-inference-engine-detection-filter.patch
+ARG FFMPEG_MA_PATCH_REPO_02=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0002-New-filter-to-do-inference-classify.patch
+ARG FFMPEG_MA_PATCH_REPO_03=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0003-iemetadata-convertor-muxer.patch
+ARG FFMPEG_MA_PATCH_REPO_04=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0004-Kafka-protocol-producer.patch
+ARG FFMPEG_MA_PATCH_REPO_05=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0005-Support-object-detection-and-featured-face-identific.patch
+ARG FFMPEG_MA_PATCH_REPO_06=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0006-Send-metadata-in-a-packet-and-refine-the-json-format.patch
+ARG FFMPEG_MA_PATCH_REPO_07=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0007-Refine-features-of-IE-filters.patch
+ARG FFMPEG_MA_PATCH_REPO_08=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch
+ARG FFMPEG_MA_PATCH_REPO_09=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch
+ARG FFMPEG_MA_PATCH_REPO_10=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0010-fixed-buffer-overflow-issue-in-iemetadata.patch
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends zlib1g-dev libssl-dev
+
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg && \
     wget -O - ${FFMPEG_FLV_PATCH_REPO} | patch -p1 && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
-    wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1;
+    wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_01} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_02} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_03} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_04} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_05} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_06} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_07} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_08} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_09} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_10} | patch -p1;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
     patch -p1 < ../SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch;
 
+# Patch FFmpeg source for SVT-AV1
+RUN cd /home/FFmpeg; \
+    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
+
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl  --disable-xlib --disable-sdl2 --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc  && \
+    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl  --disable-xlib --disable-sdl2 --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1  && \
     make -j8 && \
     make install DESTDIR="/home/build"
 

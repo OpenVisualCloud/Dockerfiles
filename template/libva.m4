@@ -1,9 +1,11 @@
 # Build libva
-ARG LIBVA_VER=2.3.0
+ARG LIBVA_VER=2.4.0
 ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev
+RUN apt-get remove libva*
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev openbox
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q libX11-devel mesa-libGL-devel which libdrm-devel
@@ -16,4 +18,4 @@ RUN wget -O - ${LIBVA_REPO} | tar xz && \
     make install DESTDIR=/home/build && \
     make install;
 
-define(`INSTALL_PKGS_LIBVA',mesa-dri-drivers mesa-libGL )dnl
+define(`INSTALL_PKGS_LIBVA',ifelse(index(DOCKER_IMAGE,ubuntu),-1, mesa-dri-drivers mesa-libGL libdrm , libdrm2) )dnl

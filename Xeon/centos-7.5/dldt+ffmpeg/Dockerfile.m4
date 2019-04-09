@@ -18,10 +18,11 @@ include(svt-av1.m4)
 include(svt-vp9.m4)
 #include(transform360.m4)
 include(dldt-ie.m4)
+include(librdkafka.m4)
 include(ffmpeg.m4)
 include(cleanup.m4)dnl
 
-FROM centos:7.5.1804 
+FROM centos:7.5.1804
 LABEL Description="This is the image for DLDT and FFMPEG on CentOS 7.5"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
