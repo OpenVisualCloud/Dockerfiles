@@ -16,3 +16,14 @@ To run example please execute:
 ```bash
 /home/ospray/build/ospExampleViewer /home/example/xfrog-forest.xml
 ```
+
+NOTICE: In case of error:
+```
+Error 65544: X11: Failed to open display :0
+terminate called after throwing an instance of 'std::runtime_error'
+what():  Could not initialize glfw!
+```
+Please add this parameter for image
+```
+--volume="/home/<username>/.Xauthority:/root/.Xauthority:rw"
+```
