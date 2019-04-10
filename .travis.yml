@@ -15,407 +15,57 @@ before_install:
 jobs:
   include:
     # centos-7.4 job
-    - name: centos-7.4/dldt+ffmpeg
+    - name: centos-7.4
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/centos-7.4/dldt+ffmpeg 
-        - make >> log_centos_74_dldt_ffmpeg.log 2>&1
+        - cd Xeon/centos-7.4
+        - make >> log_centos_74.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_74_dldt_ffmpeg.log
-    - name: centos-7.4/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/dldt+gst 
-        - make >> log_centos_74_dldt_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_74_dldt_gst.log
-    - name: centos-7.4/ffmpeg+gst+dev
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/ffmpeg+gst+dev 
-        - make >> log_centos_74_ffmpeg_gst_dev.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_74_ffmpeg_gst_dev.log
-    - name: centos-7.4/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/ffmpeg 
-        - make >> log_centos_74_ffmpeg.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_74_ffmpeg.log
-    - name: centos-7.4/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/gst 
-        - make >> log_centos_74_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_74_gst.log
-    - name: centos-7.4/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/nginx+rtmp 
-        - make >> log_centos_74_nginx.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_74_nginx.log
-    - name: centos-7.4/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/ospray
-        - make >> log_centos_74_ospray.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_74_ospray.log
-    - name: centos-7.4/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/ospray+mpi+OpenImageIO
-        - make >> log_centos_74_ospray_mpi_oii.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_74_ospray_mpi_oii.log
+        - tail --lines=5000 log_centos_74.log
     # centos-7.5 job
-    - name: centos-7.5/dldt+ffmpeg
+    - name: centos-7.5
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/centos-7.5/dldt+ffmpeg 
-        - make >> log_centos_75_dldt_ffmpeg.log 2>&1
+        - cd Xeon/centos-7.5
+        - make >> log_centos_75.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_75_dldt_ffmpeg.log
-    - name: centos-7.5/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/dldt+gst 
-        - make >> log_centos_75_dldt_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_75_dldt_gst.log
-    - name: centos-7.5/ffmpeg+gst+dev
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/ffmpeg+gst+dev 
-        - make >> log_centos_75_ffmpeg_gst_dev.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_75_ffmpeg_gst_dev.log
-    - name: centos-7.5/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/ffmpeg 
-        - make >> log_centos_75_ffmpeg.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_75_ffmpeg.log
-    - name: centos-7.5/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/gst 
-        - make >> log_centos_75_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_75_gst.log
-    - name: centos-7.5/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/nginx+rtmp 
-        - make >> log_centos_75_nginx.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_75_nginx.log
-    - name: centos-7.5/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/ospray
-        - make >> log_centos_75_ospray.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_75_ospray.log
-    - name: centos-7.5/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/ospray+mpi+OpenImageIO
-        - make >> log_centos_75_ospray_mpi_oii.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_75_ospray_mpi_oii.log
+        - tail --lines=5000 log_centos_75.log
     # centos-7.6 job
-    - name: centos-7.6/dldt+ffmpeg
+    - name: centos-7.6
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/centos-7.6/dldt+ffmpeg 
-        - make >> log_centos_76_dldt_ffmpeg.log 2>&1
+        - cd Xeon/centos-7.6
+        - make >> log_centos_76.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_76_dldt_ffmpeg.log
-    - name: centos-7.6/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/dldt+gst 
-        - make >> log_centos_76_dldt_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_76_dldt_gst.log
-    - name: centos-7.6/ffmpeg+gst+dev
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/ffmpeg+gst+dev 
-        - make >> log_centos_76_ffmpeg_gst_dev.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_76_ffmpeg_gst_dev.log
-    - name: centos-7.6/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/ffmpeg 
-        - make >> log_centos_76_ffmpeg.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_76_ffmpeg.log
-    - name: centos-7.6/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/gst 
-        - make >> log_centos_76_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_76_gst.log
-    - name: centos-7.6/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/nginx+rtmp 
-        - make >> log_centos_76_nginx.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_76_nginx.log
-    - name: centos-7.6/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/ospray
-        - make >> log_centos_76_ospray.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_76_ospray.log
-    - name: centos-7.6/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/ospray+mpi+OpenImageIO
-        - make >> log_centos_76_ospray_mpi_oii.log
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_76_ospray_mpi_oii.log
+        - tail --lines=5000 log_centos_76.log
     # ubuntu-16.04 job
-    - name: ubuntu-16.04/dldt+ffmpeg
+    - name: ubuntu-16.04
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/ubuntu-16.04/dldt+ffmpeg 
-        - make >> log_ubuntu_1604_dldt_ffmpeg.log 2>&1
+        - cd Xeon/ubuntu-16.04
+        - make >> log_ubuntu_1604.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1604_dldt_ffmpeg.log
-    - name: ubuntu-16.04/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/dldt+gst 
-        - make >> log_ubuntu_1604_dldt_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1604_dldt_gst.log
-    - name: ubuntu-16.04/ffmpeg+gst+dev
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/ffmpeg+gst+dev 
-        - make >> log_ubuntu_1604_ffmpeg_gst_dev.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1604_ffmpeg_gst_dev.log
-    - name: ubuntu-16.04/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/ffmpeg 
-        - make >> log_ubuntu_1604_ffmpeg.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1604_ffmpeg.log
-    - name: ubuntu-16.04/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/gst 
-        - make >> log_ubuntu_1604_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1604_gst.log
-    - name: ubuntu-16.04/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/nginx+rtmp 
-        - make >> log_ubuntu_1604_nginx.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1604_nginx.log
-    - name: ubuntu-16.04/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/ospray
-        - make >> log_ubuntu_1604_ospray.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1604_ospray.log
-    - name: ubuntu-16.04/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/ospray+mpi+OpenImageIO
-        - make >> log_ubuntu_1604_ospray_mpi_oii.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1604_ospray_mpi_oii.log
+        - tail --lines=5000 log_ubuntu_1604.log
     # ubuntu-18.04 job
-    - name: ubuntu-18.04/dldt+ffmpeg
+    - name: ubuntu-18.04
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/ubuntu-18.04/dldt+ffmpeg 
-        - make >> log_ubuntu_1804_dldt_ffmpeg.log 2>&1
+        - cd Xeon/ubuntu-18.04
+        - make >> log_ubuntu_1804.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1804_dldt_ffmpeg.log
-    - name: ubuntu-18.04/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/dldt+gst 
-        - make >> log_ubuntu_1804_dldt_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1804_dldt_gst.log
-    - name: ubuntu-18.04/ffmpeg+gst+dev
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/ffmpeg+gst+dev 
-        - make >> log_ubuntu_1804_ffmpeg_gst_dev.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1804_ffmpeg_gst_dev.log
-    - name: ubuntu-18.04/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/ffmpeg 
-        - make >> log_ubuntu_1804_ffmpeg.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1804_ffmpeg.log
-    - name: ubuntu-18.04/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/gst 
-        - make >> log_ubuntu_1804_gst.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1804_gst.log
-    - name: ubuntu-18.04/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/nginx+rtmp 
-        - make >> log_ubuntu_1804_nginx.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1804_nginx.log
-    - name: ubuntu-18.04/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/ospray
-        - make >> log_ubuntu_1804_ospray.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1804_ospray.log
-    - name: ubuntu-18.04/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/ospray+mpi+OpenImageIO
-        - make >> log_ubuntu_1804_ospray_mpi_oii.log 2>&1
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_ubuntu_1804_ospray_mpi_oii.log
+        - tail --lines=5000 log_ubuntu_1804.log
