@@ -21,7 +21,7 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/centos-7.4
-        - make >> log_centos_74.log 2>&1
+        - travis_wait 180 make >> log_centos_74.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
         - tail --lines=5000 log_centos_74.log
@@ -32,7 +32,7 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/centos-7.5
-        - make >> log_centos_75.log 2>&1
+        - travis_wait 180 make >> log_centos_75.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
         - tail --lines=5000 log_centos_75.log
@@ -43,7 +43,7 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/centos-7.6
-        - make >> log_centos_76.log 2>&1
+        - travis_wait 180 make >> log_centos_76.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
         - tail --lines=5000 log_centos_76.log
@@ -54,7 +54,7 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-16.04
-        - make >> log_ubuntu_1604.log 2>&1
+        - travis_wait 180 make >> log_ubuntu_1604.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
         - tail --lines=5000 log_ubuntu_1604.log
@@ -65,7 +65,7 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-18.04
-        - make >> log_ubuntu_1804.log 2>&1
+        - travis_wait 180 make >> log_ubuntu_1804.log 2>&1
       after_failure:
       # Print last 5000 lines if error occured
         - tail --lines=5000 log_ubuntu_1804.log
