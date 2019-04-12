@@ -20,7 +20,7 @@ RUN  wget -O - ${GST_REPO} | tar xJ && \
         --libexecdir=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) \
         --enable-defn(`BUILD_LINKAGE') \
         --enable-introspection \
-        --disable-examples ifelse(index(DOCKER_IMAGE,-dev),-1,--disable-gst-debug \
+        --disable-examples ifelse(index(DOCKER_IMAGE,-dev),-1, \
         --disable-debug \
         --disable-benchmarks) \
         --disable-gtk-doc && \
