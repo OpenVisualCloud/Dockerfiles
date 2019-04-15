@@ -275,7 +275,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 ARG GST_VER=1.14.4
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
-RUN  yum install -y -q glib2-devel-2.56.1 gettext-devel gobject-introspection python-gobject-base
+RUN  yum install -y -q glib2-devel-2.56.1 gettext-devel gobject-introspection gobject-introspection-devel python-gobject-base
 RUN  wget -O - ${GST_REPO} | tar xJ && \
      cd gstreamer-${GST_VER} && \
      ./autogen.sh \
@@ -283,7 +283,8 @@ RUN  wget -O - ${GST_REPO} | tar xJ && \
         --libdir=/usr/lib64 \
         --libexecdir=/usr/lib64 \
         --enable-shared \
-        --disable-examples --disable-gst-debug \
+        --enable-introspection \
+        --disable-examples \
         --disable-debug \
         --disable-benchmarks \
         --disable-gtk-doc && \
@@ -317,6 +318,7 @@ RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
         --prefix=/usr \
         --libdir=/usr/lib64 \
         --libexecdir=/usr/lib64 \
+        --enable-introspection \
         --enable-shared \
         --disable-examples --disable-debug \
         --disable-gtk-doc && \

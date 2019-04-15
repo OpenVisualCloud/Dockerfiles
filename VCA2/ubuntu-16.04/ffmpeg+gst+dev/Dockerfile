@@ -356,6 +356,7 @@ RUN  wget -O - ${GST_REPO} | tar xJ && \
         --libdir=/usr/lib/x86_64-linux-gnu \
         --libexecdir=/usr/lib/x86_64-linux-gnu \
         --enable-shared \
+        --enable-introspection \
         --disable-examples  \
         --disable-gtk-doc && \
      make -j $(nproc) && \
@@ -373,6 +374,7 @@ RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
         --prefix=/usr \
         --libdir=/usr/lib/x86_64-linux-gnu \
         --libexecdir=/usr/lib/x86_64-linux-gnu \
+        --enable-introspection \
         --enable-shared \
         --disable-examples  \
         --disable-gtk-doc && \
