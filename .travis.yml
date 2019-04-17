@@ -19,7 +19,6 @@ jobs:
       script:
         - travis_wait 150 ./script/travis_build.sh
         - pwd
-        - ls
       after_failure:
       # Print last 5000 lines if error occured
         - tail --lines=5000 log_centos_74_ffmpeg_gst_dev.log
