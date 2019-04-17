@@ -667,7 +667,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN yum install -y epel-release; \
-    yum install -y -q   libxcb SDL2 libass numactl libvdpau  glib2-2.56.1 pangolibxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib libpciaccess libX11 openblas-serial \
+    yum install -y -q   libxcb SDL2 libass numactl libvdpau  glib2-2.56.1 pango gobject-introspection libxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib libpciaccess libX11 openblas-serial \
 mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo python-yaml ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;

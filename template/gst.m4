@@ -27,4 +27,6 @@ RUN  wget -O - ${GST_REPO} | tar xJ && \
      make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install;
-define(`INSTALL_PKGS_GST',ifelse(index(DOCKER_IMAGE,ubuntu),-1,glib2-2.56.1 pango, libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 ))dnl
+define(`INSTALL_PKGS_GST',dnl
+ifelse(index(DOCKER_IMAGE,ubuntu),-1,,libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection )dnl
+ifelse(index(DOCKER_IMAGE,centos),-1,,glib2-2.56.1 pango gobject-introspection ))dnl
