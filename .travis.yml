@@ -17,11 +17,9 @@ jobs:
     # centos-7.4 job
     - name: centos-7.4/ffmpeg+gst+dev
       script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/ffmpeg+gst+dev
-        - travis_wait make >> log_centos_74_ffmpeg_gst_dev.log 2>&1
+        - travis_wait ./script/travis_build.sh
+        - pwd
+        - ls
       after_failure:
       # Print last 5000 lines if error occured
         - tail --lines=5000 log_centos_74_ffmpeg_gst_dev.log
