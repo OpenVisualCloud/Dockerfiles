@@ -17,7 +17,7 @@ jobs:
     # centos-7.4 job
     - name: centos-7.4/ffmpeg+gst+dev
       script:
-        - travis_wait 50 ./script/travis_build.sh
+        - travis_wait 150 ./script/travis_build.sh
         - pwd
         - ls
       after_failure:
