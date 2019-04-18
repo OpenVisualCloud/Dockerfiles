@@ -15,13 +15,14 @@ before_install:
 jobs:
   include:
     # centos-7.4 job
-    - name: centos-7.4/ffmpeg+gst+dev
+    - name: centos-7.4/ffmpeg
       script:
-        - travis_wait 150 ./script/travis_build.sh
-        - pwd
-      after_failure:
-      # Print last 5000 lines if error occured
-        - tail --lines=5000 log_centos_74_ffmpeg_gst_dev.log
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd Xeon/centos-7.4/ffmpeg
+        - make
+        - ctest -V
     # centos-7.5 job
 #    - name: centos-7.5
 #      script:
