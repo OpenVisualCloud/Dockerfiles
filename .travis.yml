@@ -136,7 +136,7 @@ jobs:
         - mkdir build
         - cd build
         - cmake ..
-	- ../script/travis_build.sh Xeon/centos-7.5/ffmpeg+gst+dev
+        - ../script/travis_build.sh Xeon/centos-7.5/ffmpeg+gst+dev
         - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_centos75_ffmpeg_gst_dev.log
@@ -202,7 +202,7 @@ jobs:
         - mkdir build
         - cd build
         - cmake ..
-	- ../script/travis_build.sh Xeon/centos-7.6/ffmpeg+gst+dev
+        - ../script/travis_build.sh Xeon/centos-7.6/ffmpeg+gst+dev
         - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_centos76_ffmpeg_gst_dev.log
@@ -334,7 +334,7 @@ jobs:
         - mkdir build
         - cd build
         - cmake ..
-	- ../script/travis_build.sh Xeon/ubuntu-18.04/ffmpeg+gst+dev
+        - ../script/travis_build.sh Xeon/ubuntu-18.04/ffmpeg+gst+dev
         - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_ubuntu1804_ffmpeg_gst_dev.log
