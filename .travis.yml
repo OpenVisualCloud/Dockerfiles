@@ -17,6 +17,7 @@ jobs:
     # centos-7.4 job
     - name: centos-7.4/ffmpeg
       script:
+        - env
         - mkdir build
         - cd build
         - cmake ..
