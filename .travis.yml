@@ -5,40 +5,6 @@ services: docker
 #  directories:
 #    - /var/lib/apt/lists
 
-matrix:
-  allow_failures:
-    - name: centos-7.4/ffmpeg+gst+dev
-    - name: centos-7.4/ffmpeg
-    - name: centos-7.4/gst
-    - name: centos-7.4/nginx+rtmp
-    - name: centos-7.4/ospray
-    - name: centos-7.4/ospray+mpi+OpenImageIO
-    - name: centos-7.5/dldt+ffmpeg
-    - name: centos-7.5/dldt+gst
-    - name: centos-7.5/ffmpeg+gst+dev
-    - name: centos-7.5/nginx+rtmp
-    - name: centos-7.5/ospray
-    - name: centos-7.5/ospray+mpi+OpenImageIO
-    - name: centos-7.6/dldt+ffmpeg
-    - name: centos-7.6/dldt+gst
-    - name: centos-7.6/ffmpeg+gst+dev
-    - name: centos-7.6/gst
-    - name: centos-7.6/ospray
-    - name: centos-7.6/ospray+mpi+OpenImageIO
-    - name: ubuntu-16.04/dldt+ffmpeg
-    - name: ubuntu-16.04/dldt+gst
-    - name: ubuntu-16.04/ffmpeg+gst+dev
-    - name: ubuntu-16.04/gst
-    - name: ubuntu-16.04/ospray
-    - name: ubuntu-16.04/ospray+mpi+OpenImageIO
-    - name: ubuntu-18.04/dldt+ffmpeg
-    - name: ubuntu-18.04/dldt+gst
-    - name: ubuntu-18.04/ffmpeg+gst+dev
-    - name: ubuntu-18.04/gst
-    - name: ubuntu-18.04/nginx+rtmp
-    - name: ubuntu-18.04/ospray
-    - name: ubuntu-18.04/ospray+mpi+OpenImageIO
-
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -62,35 +28,36 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/centos-7.4/dldt+gst 
-        - make 
+        - make
     - name: centos-7.4/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/centos-7.4/ffmpeg+gst+dev 
-        - make 
+        - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.4/ffmpeg+gst+dev
+      after_failure:
+        - tail --lines=5000 log_Xeon_centos74_ffmpeg_gst_dev.log
     - name: centos-7.4/ffmpeg
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.4/ffmpeg 
-        - make 
+        - make
     - name: centos-7.4/gst
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.4/gst 
-        - make 
+        - make
     - name: centos-7.4/nginx+rtmp
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.4/nginx+rtmp 
-        - make 
+        - make
     - name: centos-7.4/ospray
       script:
         - mkdir build
@@ -112,42 +79,43 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/centos-7.5/dldt+ffmpeg 
-        - make 
+        - make
     - name: centos-7.5/dldt+gst
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.5/dldt+gst 
-        - make 
+        - make
     - name: centos-7.5/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/centos-7.5/ffmpeg+gst+dev 
-        - make 
+        - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.5/ffmpeg+gst+dev
+      after_failure:
+        - tail --lines=5000 log_Xeon_centos75_ffmpeg_gst_dev.log
     - name: centos-7.5/ffmpeg
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.5/ffmpeg 
-        - make 
+        - make
     - name: centos-7.5/gst
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.5/gst 
-        - make 
+        - make
     - name: centos-7.5/nginx+rtmp
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.5/nginx+rtmp 
-        - make 
+        - make
     - name: centos-7.5/ospray
       script:
         - mkdir build
@@ -169,42 +137,43 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/centos-7.6/dldt+ffmpeg 
-        - make 
+        - make
     - name: centos-7.6/dldt+gst
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.6/dldt+gst 
-        - make 
+        - make
     - name: centos-7.6/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/centos-7.6/ffmpeg+gst+dev 
-        - make 
+        - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.6/ffmpeg+gst+dev
+      after_failure:
+        - tail --lines=5000 log_Xeon_centos76_ffmpeg_gst_dev.log
     - name: centos-7.6/ffmpeg
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.6/ffmpeg 
-        - make 
+        - make
     - name: centos-7.6/gst
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.6/gst 
-        - make 
+        - make
     - name: centos-7.6/nginx+rtmp
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/centos-7.6/nginx+rtmp 
-        - make 
+        - make
     - name: centos-7.6/ospray
       script:
         - mkdir build
@@ -226,42 +195,43 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-16.04/dldt+ffmpeg 
-        - make 
+        - make
     - name: ubuntu-16.04/dldt+gst
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-16.04/dldt+gst 
-        - make 
+        - make
     - name: ubuntu-16.04/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/ubuntu-16.04/ffmpeg+gst+dev 
-        - make 
+        - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-16.04/ffmpeg+gst+dev
+      after_failure:
+        - tail --lines=5000 log_Xeon_ubuntu1604_ffmpeg_gst_dev.log
     - name: ubuntu-16.04/ffmpeg
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-16.04/ffmpeg 
-        - make 
+        - make
     - name: ubuntu-16.04/gst
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-16.04/gst 
-        - make 
+        - make
     - name: ubuntu-16.04/nginx+rtmp
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-16.04/nginx+rtmp 
-        - make 
+        - make
     - name: ubuntu-16.04/ospray
       script:
         - mkdir build
@@ -283,42 +253,43 @@ jobs:
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-18.04/dldt+ffmpeg 
-        - make 
+        - make
     - name: ubuntu-18.04/dldt+gst
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-18.04/dldt+gst 
-        - make 
+        - make
     - name: ubuntu-18.04/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
-        - cd Xeon/ubuntu-18.04/ffmpeg+gst+dev 
-        - make 
+        - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-18.04/ffmpeg+gst+dev
+      after_failure:
+        - tail --lines=5000 log_Xeon_ubuntu1804_ffmpeg_gst_dev.log
     - name: ubuntu-18.04/ffmpeg
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-18.04/ffmpeg 
-        - make 
+        - make
     - name: ubuntu-18.04/gst
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-18.04/gst 
-        - make 
+        - make
     - name: ubuntu-18.04/nginx+rtmp
       script:
         - mkdir build
         - cd build
         - cmake ..
         - cd Xeon/ubuntu-18.04/nginx+rtmp 
-        - make 
+        - make
     - name: ubuntu-18.04/ospray
       script:
         - mkdir build
