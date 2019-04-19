@@ -22,6 +22,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.4/dldt+ffmpeg 
         - make 
+        - ctest
     - name: centos-7.4/dldt+gst
       script:
         - mkdir build
@@ -29,12 +30,14 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.4/dldt+gst 
         - make
+        - ctest
     - name: centos-7.4/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
         - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.4/ffmpeg+gst+dev
+        - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_centos74_ffmpeg_gst_dev.log
     - name: centos-7.4/ffmpeg
@@ -44,6 +47,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.4/ffmpeg 
         - make
+        - ctest
     - name: centos-7.4/gst
       script:
         - mkdir build
@@ -51,6 +55,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.4/gst 
         - make
+        - ctest
     - name: centos-7.4/nginx+rtmp
       script:
         - mkdir build
@@ -58,6 +63,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.4/nginx+rtmp 
         - make
+        - ctest
     - name: centos-7.4/ospray
       script:
         - mkdir build
@@ -65,6 +71,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.4/ospray
         - make
+        - ctest
     - name: centos-7.4/ospray+mpi+OpenImageIO
       script:
         - mkdir build
@@ -72,6 +79,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.4/ospray+mpi+OpenImageIO
         - make
+        - ctest
     # centos-7.5 job
     - name: centos-7.5/dldt+ffmpeg
       script:
@@ -80,6 +88,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.5/dldt+ffmpeg 
         - make
+        - ctest
     - name: centos-7.5/dldt+gst
       script:
         - mkdir build
@@ -87,12 +96,14 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.5/dldt+gst 
         - make
+        - ctest
     - name: centos-7.5/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
         - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.5/ffmpeg+gst+dev
+        - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_centos75_ffmpeg_gst_dev.log
     - name: centos-7.5/ffmpeg
@@ -102,6 +113,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.5/ffmpeg 
         - make
+        - ctest
     - name: centos-7.5/gst
       script:
         - mkdir build
@@ -109,6 +121,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.5/gst 
         - make
+        - ctest
     - name: centos-7.5/nginx+rtmp
       script:
         - mkdir build
@@ -116,6 +129,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.5/nginx+rtmp 
         - make
+        - ctest
     - name: centos-7.5/ospray
       script:
         - mkdir build
@@ -123,6 +137,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.5/ospray
         - make
+        - ctest
     - name: centos-7.5/ospray+mpi+OpenImageIO
       script:
         - mkdir build
@@ -130,6 +145,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.5/ospray+mpi+OpenImageIO
         - make
+        - ctest
     # centos-7.6 job
     - name: centos-7.6/dldt+ffmpeg
       script:
@@ -138,6 +154,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.6/dldt+ffmpeg 
         - make
+        - ctest
     - name: centos-7.6/dldt+gst
       script:
         - mkdir build
@@ -145,12 +162,14 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.6/dldt+gst 
         - make
+        - ctest
     - name: centos-7.6/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
         - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.6/ffmpeg+gst+dev
+        - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_centos76_ffmpeg_gst_dev.log
     - name: centos-7.6/ffmpeg
@@ -160,6 +179,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.6/ffmpeg 
         - make
+        - ctest
     - name: centos-7.6/gst
       script:
         - mkdir build
@@ -167,6 +187,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.6/gst 
         - make
+        - ctest
     - name: centos-7.6/nginx+rtmp
       script:
         - mkdir build
@@ -174,6 +195,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.6/nginx+rtmp 
         - make
+        - ctest
     - name: centos-7.6/ospray
       script:
         - mkdir build
@@ -181,6 +203,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.6/ospray
         - make
+        - ctest
     - name: centos-7.6/ospray+mpi+OpenImageIO
       script:
         - mkdir build
@@ -188,6 +211,7 @@ jobs:
         - cmake ..
         - cd Xeon/centos-7.6/ospray+mpi+OpenImageIO
         - make
+        - ctest
     # ubuntu-16.04 job
     - name: ubuntu-16.04/dldt+ffmpeg
       script:
@@ -196,6 +220,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-16.04/dldt+ffmpeg 
         - make
+        - ctest
     - name: ubuntu-16.04/dldt+gst
       script:
         - mkdir build
@@ -203,12 +228,14 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-16.04/dldt+gst 
         - make
+        - ctest
     - name: ubuntu-16.04/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
         - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-16.04/ffmpeg+gst+dev
+        - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_ubuntu1604_ffmpeg_gst_dev.log
     - name: ubuntu-16.04/ffmpeg
@@ -218,6 +245,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-16.04/ffmpeg 
         - make
+        - ctest
     - name: ubuntu-16.04/gst
       script:
         - mkdir build
@@ -225,6 +253,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-16.04/gst 
         - make
+        - ctest
     - name: ubuntu-16.04/nginx+rtmp
       script:
         - mkdir build
@@ -232,6 +261,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-16.04/nginx+rtmp 
         - make
+        - ctest
     - name: ubuntu-16.04/ospray
       script:
         - mkdir build
@@ -239,6 +269,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-16.04/ospray
         - make
+        - ctest
     - name: ubuntu-16.04/ospray+mpi+OpenImageIO
       script:
         - mkdir build
@@ -246,6 +277,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-16.04/ospray+mpi+OpenImageIO
         - make
+        - ctest
     # ubuntu-18.04 job
     - name: ubuntu-18.04/dldt+ffmpeg
       script:
@@ -254,6 +286,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-18.04/dldt+ffmpeg 
         - make
+        - ctest
     - name: ubuntu-18.04/dldt+gst
       script:
         - mkdir build
@@ -261,12 +294,14 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-18.04/dldt+gst 
         - make
+        - ctest
     - name: ubuntu-18.04/ffmpeg+gst+dev
       script:
         - mkdir build
         - cd build
         - cmake ..
         - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-18.04/ffmpeg+gst+dev
+        - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_ubuntu1804_ffmpeg_gst_dev.log
     - name: ubuntu-18.04/ffmpeg
@@ -276,6 +311,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-18.04/ffmpeg 
         - make
+        - ctest
     - name: ubuntu-18.04/gst
       script:
         - mkdir build
@@ -283,6 +319,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-18.04/gst 
         - make
+        - ctest
     - name: ubuntu-18.04/nginx+rtmp
       script:
         - mkdir build
@@ -290,6 +327,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-18.04/nginx+rtmp 
         - make
+        - ctest
     - name: ubuntu-18.04/ospray
       script:
         - mkdir build
@@ -297,6 +335,7 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-18.04/ospray
         - make
+        - ctest
     - name: ubuntu-18.04/ospray+mpi+OpenImageIO
       script:
         - mkdir build
@@ -304,3 +343,4 @@ jobs:
         - cmake ..
         - cd Xeon/ubuntu-18.04/ospray+mpi+OpenImageIO
         - make
+        - ctest
