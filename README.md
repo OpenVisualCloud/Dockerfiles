@@ -36,16 +36,16 @@ Status:
 | Platform: VCA2 | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
 |-----|:---:|:---:|:---:|:---:|:---:|
 | FFmpeg | V | V | V | V | V |
-| GStreamer | T | T | T | T | T | 
-| FFmpeg+GStreamer (Dev) | T | T | T | T | T |
+| GStreamer | V | V | T | T | T | 
+| FFmpeg+GStreamer (Dev) | V | V | T | T | T |
 | NGINX+RTMP | V | V | V | V | V |
 
 | Platform: XeonE3 (GPU) | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
 |-----|:---:|:---:|:---:|:---:|:---:|
 | FFmpeg | V | V | V | V | V |
-| GStreamer | T | T | T | T | T |
-| DLDT(IE)+GStreamer | T | T | T | T | T |
-| FFmpeg+GStreamer (Dev) | T | T | T | T | T |
+| GStreamer | V | V | V | V | V |
+| DLDT(IE)+GStreamer | V | V | V | V | V |
+| FFmpeg+GStreamer (Dev) | V | V | V | V | V |
 | NGINX+RTMP | V | V | V | V | V |
 
 ### Update kernel and firmware:    
