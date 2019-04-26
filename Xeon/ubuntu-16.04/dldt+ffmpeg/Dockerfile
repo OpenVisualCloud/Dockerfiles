@@ -197,7 +197,10 @@ RUN git clone ${SVT_VP9_REPO} && \
 # Build DLDT-Inference Engine
 ARG DLDT_VER=2018_R5
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
+ARG DLDT_C_API_1=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
+ARG DLDT_C_API_2=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0002-Change-to-match-image-with-separate-planes.patch
+ARG DLDT_C_API_3=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0003-Refine-IE-C-API.patch
+
 
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
@@ -205,7 +208,9 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     git submodule init && \
     git submodule update --recursive && \
     cd inference-engine && \
-    wget -O - ${DLDT_C_API_REPO} | patch -p2 && \
+    wget -O - ${DLDT_C_API_1} | patch -p2 && \
+    wget -O - ${DLDT_C_API_2} | patch -p2 && \
+    wget -O - ${DLDT_C_API_3} | patch -p2 && \
     mkdir build && \
     cd build && \
     cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLE_CORE=OFF  .. && \
@@ -262,6 +267,19 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 
 
 
+# Build libcjson
+ARG LIBCJSON_VER=1.7.11
+ARG LIBCJSON_PKG_NAME=v${LIBCJSON_VER}
+ARG LIBCJSON_REPO=https://github.com/DaveGamble/cJSON/archive/${LIBCJSON_PKG_NAME}.tar.gz
+
+RUN wget -O - ${LIBCJSON_REPO} | tar xz && \
+    cd cJSON-${LIBCJSON_VER} && \
+    mkdir build && cd build && \
+    cmake .. -DENABLE_CJSON_UTILS=On -DENABLE_CJSON_TEST=Off -DCMAKE_INSTALL_PREFIX="/usr" -DLIB_INSTALL_DIR=/usr/lib/x86_64-linux-gnu && \
+    make -j8 && \
+    make install DESTDIR="/home/build" && \
+    make install;
+
 # Build librdkafka
 ARG LIBRDKAFKA_VER=0.11.6
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
@@ -290,6 +308,12 @@ ARG FFMPEG_MA_PATCH_REPO_07=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/
 ARG FFMPEG_MA_PATCH_REPO_08=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch
 ARG FFMPEG_MA_PATCH_REPO_09=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch
 ARG FFMPEG_MA_PATCH_REPO_10=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0010-fixed-buffer-overflow-issue-in-iemetadata.patch
+ARG FFMPEG_MA_PATCH_REPO_11=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0011-libavutil-add-RGBP-pixel-format.patch
+ARG FFMPEG_MA_PATCH_REPO_12=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0012-Add-more-devices-into-target.patch
+ARG FFMPEG_MA_PATCH_REPO_13=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0013-Enable-vaapi-scale-for-IE-inference-filter.patch
+ARG FFMPEG_MA_PATCH_REPO_14=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0014-iemetadata-it-will-provide-data-frame-by-frame-by-de.patch
+ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0015-Add-libcjson-for-model-pre-post-processing.patch
+ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libass-dev libfreetype6-dev zlib1g-dev libssl-dev
 
@@ -307,7 +331,13 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_07} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_08} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_09} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_10} | patch -p1;
+    wget -O - ${FFMPEG_MA_PATCH_REPO_10} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_11} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_12} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_13} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_14} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
