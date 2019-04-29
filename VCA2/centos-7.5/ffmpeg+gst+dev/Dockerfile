@@ -294,7 +294,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     rm -rf ../bin/intel64/Release/lib/libmock* && \
     rm -rf ../bin/intel64/Release/lib/libtest*
 
-ARG libdir=/opt/intel/dldt/inference-engine/lib/centos_7.4/intel64
+ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
@@ -304,8 +304,8 @@ RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
     mkdir -p /opt/intel/dldt/inference-engine/share && \
     cp -r dldt/inference-engine/build/share/* /opt/intel/dldt/inference-engine/share/ && \
-    mkdir -p /opt/intel/dldt/inference-engine/external/tbb/lib && \
-    cp -r dldt/inference-engine/temp/tbb/lib/* /opt/intel/dldt/inference-engine/external/tbb/lib/
+    mkdir -p /opt/intel/dldt/inference-engine/external/ && \
+    cp -r dldt/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
@@ -315,8 +315,8 @@ RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/share && \
     cp -r dldt/inference-engine/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
-    mkdir -p build/opt/intel/dldt/inference-engine/external/tbb/lib && \
-    cp -r dldt/inference-engine/temp/tbb/lib/* build/opt/intel/dldt/inference-engine/external/tbb/lib/
+    mkdir -p build/opt/intel/dldt/inference-engine/external/ && \
+    cp -r dldt/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
 
 RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
         pkgconfiglibdir="$p/lib64" && \
