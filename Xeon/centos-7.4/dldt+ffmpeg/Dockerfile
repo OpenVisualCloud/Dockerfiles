@@ -204,7 +204,7 @@ RUN git clone ${SVT_VP9_REPO} && \
 
 #include(transform360.m4)
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2018_R5
+ARG DLDT_VER=2019
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 ARG DLDT_C_API_1=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
 ARG DLDT_C_API_2=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0002-Change-to-match-image-with-separate-planes.patch
