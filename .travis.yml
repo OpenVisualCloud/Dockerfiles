@@ -11,60 +11,21 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y install docker-ce
   - docker version
+  - pip install --user awscli
+  - mkdir -p ~/$TRAVIS_BUILD_NUMBER
+  - aws s3 sync s3://travis-build-stages-shared-storage-test/$TRAVIS_BUILD_NUMBER ~/$TRAVIS_BUILD_NUMBER
 
 jobs:
   include:
     # centos-7.4 job
-    - name: centos-7.4/ffmpeg
+    - name: create file
       script:
-        - env
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/ffmpeg
-        - make
-        - ctest -V
-    # centos-7.5 job
-#    - name: centos-7.5
-#      script:
-#        - mkdir build
-#        - cd build
-#        - cmake ..
-#        - cd Xeon/centos-7.5
-#        - travis_wait 360 make >> log_centos_75.log 2>&1
-#      after_failure:
-      # Print last 5000 lines if error occured
- #       - tail --lines=5000 log_centos_75.log
-    # centos-7.6 job
-#    - name: centos-7.6
-#      script:
-#        - mkdir build
-#        - cd build
-#        - cmake ..
-#        - cd Xeon/centos-7.6
-#        - travis_wait 360 make >> log_centos_76.log 2>&1
-#      after_failure:
-      # Print last 5000 lines if error occured
-#        - tail --lines=5000 log_centos_76.log
-    # ubuntu-16.04 job
-#    - name: ubuntu-16.04
-#      script:
-#        - mkdir build
-#        - cd build
-#        - cmake ..
-#        - cd Xeon/ubuntu-16.04
-#        - travis_wait 360 make >> log_ubuntu_1604.log 2>&1
-#      after_failure:
-      # Print last 5000 lines if error occured
-#        - tail --lines=5000 log_ubuntu_1604.log
-    # ubuntu-18.04 job
-#    - name: ubuntu-18.04
-#      script:
-#        - mkdir build
-#        - cd build
-#        - cmake ..
-#        - cd Xeon/ubuntu-18.04
- #       - travis_wait 360 make >> log_ubuntu_1804.log 2>&1
- #     after_failure:
-      # Print last 5000 lines if error occured
- #       - tail --lines=5000 log_ubuntu_1804.log
+        - echo one | tee > ~/$TRAVIS_BUILD_NUMBER/one
+    - name: use shared files
+      script:
+        - cat ~/$TRAVIS_BUILD_NUMBER/*
+      after_success:
+        - aws s3 rm --recursive s3://travis-build-stages-shared-storage-test/$TRAVIS_BUILD_NUMBER # clean up after ourselves
+
+after_success:
+  - aws s3 sync ~/$TRAVIS_BUILD_NUMBER s3://travis-build-stages-shared-storage-test/$TRAVIS_BUILD_NUMBER
