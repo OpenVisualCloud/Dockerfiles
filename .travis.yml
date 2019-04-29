@@ -1,6 +1,9 @@
 language: bash
 dist: xenial
 services: docker
+env:
+  global:
+    - PATH=$HOME/.local/bin:$PATH
 #cache: 
 #  directories:
 #    - /var/lib/apt/lists
