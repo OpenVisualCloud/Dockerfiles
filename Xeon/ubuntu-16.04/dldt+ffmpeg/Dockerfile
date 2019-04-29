@@ -230,8 +230,8 @@ RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
     mkdir -p /opt/intel/dldt/inference-engine/share && \
     cp -r dldt/inference-engine/build/share/* /opt/intel/dldt/inference-engine/share/ && \
-    mkdir -p /opt/intel/dldt/inference-engine/external/omp/lib && \
-    cp -r dldt/inference-engine/temp/omp/lib/* /opt/intel/dldt/inference-engine/external/omp/lib/
+    mkdir -p /opt/intel/dldt/inference-engine/external/tbb/lib && \
+    cp -r dldt/inference-engine/temp/tbb/lib/* /opt/intel/dldt/inference-engine/external/tbb/lib/
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
@@ -241,8 +241,8 @@ RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/share && \
     cp -r dldt/inference-engine/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
-    mkdir -p build/opt/intel/dldt/inference-engine/external/omp/lib && \
-    cp -r dldt/inference-engine/temp/omp/lib/* build/opt/intel/dldt/inference-engine/external/omp/lib/
+    mkdir -p build/opt/intel/dldt/inference-engine/external/tbb/lib && \
+    cp -r dldt/inference-engine/temp/tbb/lib/* build/opt/intel/dldt/inference-engine/external/tbb/lib/
 
 RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
         pkgconfiglibdir="$p/lib/x86_64-linux-gnu" && \
@@ -261,7 +261,7 @@ RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/o
     done;
 
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 
 #install Model Optimizer in the DLDT for Dev
 
@@ -373,6 +373,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-
 # Install
 COPY --from=build /home/build /
 ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_16.04/intel64
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/omp/lib:${libdir}
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 
