@@ -194,12 +194,12 @@ RUN git clone ${SVT_VP9_REPO} && \
     make install 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2019
+ARG DLDT_VER=2019_R1
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 ARG DLDT_C_API_1=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
 ARG DLDT_C_API_2=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0002-Change-to-match-image-with-separate-planes.patch
 ARG DLDT_C_API_3=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0003-Refine-IE-C-API.patch
-
+ARG DLDT_C_API_4=https://gist.githubusercontent.com/SDxKeeper/cfdd8595a6555846bd08b020fe8d3823/raw/be74dd0afb4e5efa168fa89e56b62a1de18951dc/0001-Enable-visibility-of-C-API.patch
 
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
@@ -210,6 +210,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     wget -O - ${DLDT_C_API_1} | patch -p2 && \
     wget -O - ${DLDT_C_API_2} | patch -p2 && \
     wget -O - ${DLDT_C_API_3} | patch -p2 && \
+    wget -O - ${DLDT_C_API_4} | patch -p2 && \
     mkdir build && \
     cd build && \
     cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLE_CORE=OFF  .. && \

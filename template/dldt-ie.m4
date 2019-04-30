@@ -4,7 +4,7 @@ ARG DLDT_REPO=https://github.com/opencv/dldt.git
 ARG DLDT_C_API_1=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
 ARG DLDT_C_API_2=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0002-Change-to-match-image-with-separate-planes.patch
 ARG DLDT_C_API_3=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0003-Refine-IE-C-API.patch
-
+ARG DLDT_C_API_4=https://gist.githubusercontent.com/SDxKeeper/cfdd8595a6555846bd08b020fe8d3823/raw/be74dd0afb4e5efa168fa89e56b62a1de18951dc/0001-Enable-visibility-of-C-API.patch
 
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
@@ -18,6 +18,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     wget -O - ${DLDT_C_API_1} | patch -p2 && \
     wget -O - ${DLDT_C_API_2} | patch -p2 && \
     wget -O - ${DLDT_C_API_3} | patch -p2 && \
+    wget -O - ${DLDT_C_API_4} | patch -p2 && \
     mkdir build && \
     cd build && \
     cmake ifelse(index(BUILD_LINKAGE,static),-1,,-DBUILD_SHARED_LIBS=OFF) -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ifelse(index(DOCKER_IMAGE,xeon-),-1,ON,OFF) -DENABLE_SAMPLE_CORE=OFF  .. && \
@@ -123,7 +124,7 @@ ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
 ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_18.04/intel64
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-ARG libdir=/opt/intel/dldt/inference-engine/lib/centos_7.4/intel64
+ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 )dnl
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
