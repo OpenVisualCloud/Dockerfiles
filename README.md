@@ -1,6 +1,5 @@
 # ![logo][]  Dockerfiles
 [![Travis Build Status](https://travis-ci.com/OpenVisualCloud/Dockerfiles.svg?branch=master)](https://travis-ci.com/OpenVisualCloud/Dockerfiles)
-<<<<<<< HEAD
 [![Development Test Status](https://img.shields.io/badge/Test-Result-green.svg)](https://github.com/jhou5/Dockerfiles/blob/master/doc/test.md)
 [![Stable release](https://img.shields.io/badge/latest_release-v1.0-blue.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v1.0)
 [![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
@@ -52,57 +51,6 @@ This repository hosts docker build files for multiple platform/OS/image combinat
 To be added.
 
 ## Update kernel and firmware:    
-=======
-[![Stable release](https://img.shields.io/badge/latest_release-v1.0-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v1.0)
-[![License](https://img.shields.io/badge/license-BSD_3_Clause-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/LICENSE)
-[![Contributions](https://img.shields.io/badge/contributions-welcome-blue.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
-
-This repository hosts docker build files for multiple platform/OS/image combinations. Each image is tagged with development status.
-
-Image:
-- [FFmpeg](doc/ffmpeg.md): image optimized for media creation and delivery. Included codecs: aac, mp3, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. The GPU images are accelerated with vaapi and qsv. See [ffmpeg.md](doc/ffmpeg.md) for details.
-- [GStreamer](doc/gst.md): image optimized for media creation and delivery. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with vaapi. See [gst.md](doc/gst.md) for details.
-- [DLDT+FFmpeg](doc/ffmpeg.md): image optimized for media analytics. Included what are in the FFmpeg image. Inferencing engine and tracking plugins to be included. See [ffmpeg.md](doc/ffmpeg.md) for details.
-- [DLDT+GStreamer](doc/gst.md): image optimized for media analytics. Included what are in the GStreamer image. Inferencing engine and tracking plugins to be included. See [gst.md](doc/gst.md) for details.
-- [FFmpeg](doc/ffmpeg.md)+[GStreamer](doc/gst.md) (Dev): FFmpeg + GStreamer + C++ development files. Model optimizer to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.
-- [NGINX+RTMP](doc/nginx.md): image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.
-- [ospray](doc/ospray.md): image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.
-- [ospray+OpenImageIO+mpi](doc/ospray+OpenImageIO+mpi.md): image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray+OpenImageIO+mpi.md](ospray+OpenImageIO+mpi.md) for details.
-
-Status:
-- C: Compiled. Not yet tested.
-- T: Tested. Some tests failed.
-- V: Verified. All tests passed.
-- -: To be added in subsequent commits.
-
-| Platform: Xeon (CPU) | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
-|-----|:---:|:---:|:---:|:---:|:---:|
-| FFmpeg | V | V | V | V | V |
-| GStreamer | V | V | V | V | V |
-| DLDT(IE)+FFmpeg | V | V | V | V | V |
-| DLDT(IE)+GStreamer | V | V | V | V | V |
-| FFmpeg+GStreamer (Dev) | V | V | V | V | V |
-| NGINX+RTMP | V | V | V | V | V |
-| ospray | V | V | V | V | V |
-| ospray+OpenImageIO+mpi | V | V | V | V | V |
-
-| Platform: VCA2 | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
-|-----|:---:|:---:|:---:|:---:|:---:|
-| FFmpeg | V | V | V | V | V |
-| GStreamer | V | V | V | V | V | 
-| FFmpeg+GStreamer (Dev) | V | V | V | V | V |
-| NGINX+RTMP | V | V | V | V | V |
-
-| Platform: XeonE3 (GPU) | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
-|-----|:---:|:---:|:---:|:---:|:---:|
-| FFmpeg | V | V | V | V | V |
-| GStreamer | V | V | V | V | V |
-| DLDT(IE)+GStreamer | V | V | V | V | V |
-| FFmpeg+GStreamer (Dev) | V | V | V | V | V |
-| NGINX+RTMP | V | V | V | V | V |
-
-### Update kernel and firmware:    
->>>>>>> upstream/master
 
 Please see each platform folder README for the platform setup instructions.
    
