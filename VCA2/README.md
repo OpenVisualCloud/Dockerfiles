@@ -18,6 +18,12 @@ VAAPI expects rendering device to be set in order to work. Dockers readily spin 
 
 
 ```bash
+apt-get install xdm xinit
+startx
+```
+
+On second window
+```bash
 export DISPLAY=:0.0
 ```
 
