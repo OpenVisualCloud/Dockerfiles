@@ -12,15 +12,15 @@ This repository hosts docker build files for multiple platform/OS/image combinat
 
 #### Table of Contents
 - [Image with Software Stack](#Image-with-software-Stack)
-- [Image with Service(s)](#Image-with-Service(s))
+- [Image with Service](#Image-with-Service)
 - [Update kernel and firmware](#Update-kernel-and-firmware)
-- [Install docker.ce](#Install-docker.ce)
+- [Install docker engine](#Install-docker-engine)
 - [Setup docker proxy](#Setup-docker-proxy)
-- [Build docker image(s)](#Build-docker-image(s))
+- [Build docker image](#Build-docker-image)
 - [Run shell](#Run-shell)
 - [Customize](#Customize)
 - [Use alternative repo](#Use-alternative-repo)
-- [Use Dockerfile(s) in other project](#Use-Dockerfile(s)-in-other-project)
+- [Use Dockerfile in other project](#Use-Dockerfile-in-other-project)
 
 ## Image with software Stack
 
@@ -47,14 +47,14 @@ This repository hosts docker build files for multiple platform/OS/image combinat
 |[ospray](doc/ospray.md)|Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.|
 |[ospray+OpenImageIO+ mpi](doc/ospray+OpenImageIO+mpi.md)|Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray+OpenImageIO+mpi.md](ospray+OpenImageIO+mpi.md) for details.|
 
-## Image with service(s):
+## Image with service:
 To be added.
 
 ## Update kernel and firmware:    
 
 Please see each platform folder README for the platform setup instructions.
    
-## Install docker.ce:        
+## Install docker engine:        
 
 Follow the [instructions](https://docs.docker.com/install) to install docker.ce.
 
@@ -72,7 +72,7 @@ If you are behind a firewall, setup proxy as follows:
 #### Pre-requisites:
 Host system needs to correctly setup in order for certain repos to reachable. Refer [this](https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-18-04 "this") link.
 
-## Build docker image(s): 
+## Build docker image: 
 
 ```bash
 (1) mkdir build    
@@ -111,7 +111,7 @@ For a list of all REPOs and their versions, run the following command:
 grep -E '_(REPO|VER)=' template/*.m4         
 ```
 
-## Use Dockerfile(s) in other project:
+## Use Dockerfile in other project:
 
 It is recommended that you copy the Dockerfile(s) of your platform, OS and image directly into your other project. The following shell scripts show how to sync (if needed) and build the NGINX+RTMP Dockerfile (and its dependency FFmpeg):
 
