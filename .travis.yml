@@ -79,8 +79,8 @@ matrix:
     # centos-7.4 job
     - name: centos-7.4/ffmpeg+gst+dev
       script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.4/ffmpeg+gst+dev
+        - mkdir build && cd build && cmake ..
+        - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/centos-7.4/ffmpeg+gst+dev
         - cd Xeon/centos-7.4/ffmpeg+gst+dev
         - ctest
       after_failure:
@@ -88,8 +88,8 @@ matrix:
     # centos-7.5 job
     - name: centos-7.5/ffmpeg+gst+dev
       script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.5/ffmpeg+gst+dev
+        - mkdir build && cd build && cmake ..
+        - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/centos-7.5/ffmpeg+gst+dev
         - cd Xeon/centos-7.5/ffmpeg+gst+dev
         - ctest
       after_failure:
@@ -97,8 +97,8 @@ matrix:
     # centos-7.6 job
     - name: centos-7.6/ffmpeg+gst+dev
       script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.6/ffmpeg+gst+dev
+        - mkdir build && cd build && cmake ..
+        - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/centos-7.6/ffmpeg+gst+dev
         - cd Xeon/centos-7.6/ffmpeg+gst+dev
         - ctest
       after_failure:
@@ -106,8 +106,8 @@ matrix:
     # ubuntu-16.04 job
     - name: ubuntu-16.04/ffmpeg+gst+dev
       script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-16.04/ffmpeg+gst+dev
+        - mkdir build && cd build && cmake ..
+        - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/ubuntu-16.04/ffmpeg+gst+dev
         - cd Xeon/ubuntu-16.04/ffmpeg+gst+dev
         - ctest
       after_failure:
@@ -115,8 +115,8 @@ matrix:
     # ubuntu-18.04 job
     - name: ubuntu-18.04/ffmpeg+gst+dev
       script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-18.04/ffmpeg+gst+dev
+        - mkdir build && cd build && cmake ..
+        - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/ubuntu-18.04/ffmpeg+gst+dev
         - cd Xeon/ubuntu-18.04/ffmpeg+gst+dev
         - ctest
       after_failure:
