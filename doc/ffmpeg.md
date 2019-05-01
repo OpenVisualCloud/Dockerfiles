@@ -33,12 +33,6 @@ The FFmpeg builds included the following patches for feature enhancement, better
 |[IE_FILTERS_08](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch)|Fixed extra comma in iemetadata.|
 |[IE_FILTERS_09](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch)|Add source as option source url calculate nano times.|
 |[IE_FILTERS_10](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0010-fixed-buffer-overflow-issue-in-iemetadata.patch)|Fixed buffer overflow issue in iemetadata.|
-|[IE_FILTERS_11](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0011-libavutil-add-RGBP-pixel-format.patch)|Add RGBP pixel format|
-|[IE_FILTERS_12](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0012-Add-more-devices-into-target.patch)|Add more devices into target.|
-|[IE_FILTERS_13](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0013-Enable-vaapi-scale-for-IE-inference-filter.patch)|Enable vaapi scale for IE inference filters.|
-|[IE_FILTERS_14](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0014-iemetadata-it-will-provide-data-frame-by-frame-by-de.patch)|Iemetadata it will provide data frame by frame.|
-|[IE_FILTERS_15](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0015-Add-libcjson-for-model-pre-post-processing.patch)|Add libcjson for model pre/post processing.|
-|[IE_FILTERS_16](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch)|Change IE filters to use model proc.|
 
 ### GPU Acceleration
 
@@ -75,31 +69,21 @@ ffmpeg -hwaccel qsv -c:v h264_qsv -i test.mp4 -f null /dev/null
 Face detection and emotion identification, save metadata to json format:
 
 ```bash
-ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-adas-0001/FP32/face-detection-adas-0001.xml, \
-classify=model=./emotions_recognition/emotions-recognition-retail-0003.xml:model_proc=emotions-recognition-retail-0003.json \
+ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-adas-0001/FP32/face-detection-adas-0001.xml:name=face, \
+classify=model=./emotions_recognition/emotions-recognition-retail-0003.xml:label=./emotions_recognition/emotion-labels.txt:name=emotion \
 -an -f iemetadata -source_url $URL -custom_tag $TAG emotion-meta.json
 ```
 
-Object Detection:
+Object Detection with labels:
 
 ```bash
-ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./mobilenet-ssd.xml:model_proc=mobilenet-ssd.json -an -f null /dev/null
+ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./mobilenet-ssd.xml:label=./object_labels.txt:name=objects -an -f null /dev/null
 ```
 
 Face detection and reidentification:
 
 ```bash
-ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-retail-0004.xml, \
+ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-retail-0004.xml:name=face, \
 classify=model=./face-reidentification-retail-0095.xml:label=./labels.txt:name=face_id:feature_file=./registered_faces.bin -an -f null /dev/nul
 ```
 
-GPU decdoe + face detection
-
-```bash
-ffmpeg -flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_device /dev/dri/renderD128 \
-# uncomment to choose different devices: CPU=2 GPU=3 VPU=5 HDDL=6
-#-i $STREAM -vf "detect=model=$D_FACE_RT_MODEL:device=$CPU" -an -f null - \
-#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=$GPU" -an -f null -
-#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=$VPU" -an -f null -
-#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=$HDDL" -an -f null -
-```
