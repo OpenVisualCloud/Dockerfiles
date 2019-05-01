@@ -18,6 +18,7 @@ include(svt-av1.m4)
 include(svt-vp9.m4)
 #include(transform360.m4)
 include(dldt-ie.m4)
+include(libcjson.m4)
 include(librdkafka.m4)
 include(ffmpeg.m4)
 include(cleanup.m4)dnl

@@ -1,374 +1,123 @@
 language: bash
 dist: xenial
 services: docker
-#cache: 
-#  directories:
-#    - /var/lib/apt/lists
-
-matrix:
-  allow_failures: # All images with GST will have GST SVT VP9 test failing. NGINX RTMP tests are not stable
-    - name: centos-7.4/ffmpeg+gst+dev
-    - name: centos-7.4/dldt+gst
-    - name: centos-7.4/gst
-    - name: centos-7.4/nginx+rtmp
-    - name: centos-7.5/ffmpeg+gst+dev
-    - name: centos-7.5/dldt+gst
-    - name: centos-7.5/gst
-    - name: centos-7.5/nginx+rtmp
-    - name: centos-7.6/ffmpeg+gst+dev
-    - name: centos-7.6/dldt+gst
-    - name: centos-7.6/gst
-    - name: centos-7.6/nginx+rtmp
-    - name: ubuntu-16.04/ffmpeg+gst+dev
-    - name: ubuntu-16.04/dldt+gst
-    - name: ubuntu-16.04/gst
-    - name: ubuntu-16.04/nginx+rtmp
-    - name: ubuntu-18.04/ffmpeg+gst+dev
-    - name: ubuntu-18.04/dldt+gst
-    - name: ubuntu-18.04/gst
-    - name: ubuntu-18.04/nginx+rtmp
+addons:
+  apt:
+    packages:
+      - docker-ce
+    update: true
+env:
+  - CPU=Xeon buildOS=centos-7.4 imageName=dldt+ffmpeg
+  - CPU=Xeon buildOS=centos-7.4 imageName=dldt+gst
+  - CPU=Xeon buildOS=centos-7.4 imageName=ffmpeg
+  - CPU=Xeon buildOS=centos-7.4 imageName=gst
+  - CPU=Xeon buildOS=centos-7.4 imageName=nginx+rtmp
+  - CPU=Xeon buildOS=centos-7.4 imageName=ospray
+  - CPU=Xeon buildOS=centos-7.4 imageName=ospray+mpi+OpenImageIO
+  - CPU=Xeon buildOS=centos-7.5 imageName=dldt+ffmpeg
+  - CPU=Xeon buildOS=centos-7.5 imageName=dldt+gst
+  - CPU=Xeon buildOS=centos-7.5 imageName=ffmpeg
+  - CPU=Xeon buildOS=centos-7.5 imageName=gst
+  - CPU=Xeon buildOS=centos-7.5 imageName=nginx+rtmp
+  - CPU=Xeon buildOS=centos-7.5 imageName=ospray
+  - CPU=Xeon buildOS=centos-7.5 imageName=ospray+mpi+OpenImageIO
+  - CPU=Xeon buildOS=centos-7.6 imageName=dldt+ffmpeg
+  - CPU=Xeon buildOS=centos-7.6 imageName=dldt+gst
+  - CPU=Xeon buildOS=centos-7.6 imageName=ffmpeg
+  - CPU=Xeon buildOS=centos-7.6 imageName=gst
+  - CPU=Xeon buildOS=centos-7.6 imageName=nginx+rtmp
+  - CPU=Xeon buildOS=centos-7.6 imageName=ospray
+  - CPU=Xeon buildOS=centos-7.6 imageName=ospray+mpi+OpenImageIO
+  - CPU=Xeon buildOS=ubuntu-16.04 imageName=dldt+ffmpeg
+  - CPU=Xeon buildOS=ubuntu-16.04 imageName=dldt+gst
+  - CPU=Xeon buildOS=ubuntu-16.04 imageName=ffmpeg
+  - CPU=Xeon buildOS=ubuntu-16.04 imageName=gst
+  - CPU=Xeon buildOS=ubuntu-16.04 imageName=nginx+rtmp
+  - CPU=Xeon buildOS=ubuntu-16.04 imageName=ospray
+  - CPU=Xeon buildOS=ubuntu-16.04 imageName=ospray+mpi+OpenImageIO
+  - CPU=Xeon buildOS=ubuntu-18.04 imageName=dldt+ffmpeg
+  - CPU=Xeon buildOS=ubuntu-18.04 imageName=dldt+gst
+  - CPU=Xeon buildOS=ubuntu-18.04 imageName=ffmpeg
+  - CPU=Xeon buildOS=ubuntu-18.04 imageName=gst
+  - CPU=Xeon buildOS=ubuntu-18.04 imageName=nginx+rtmp
+  - CPU=Xeon buildOS=ubuntu-18.04 imageName=ospray
+  - CPU=Xeon buildOS=ubuntu-18.04 imageName=ospray+mpi+OpenImageIO
 
 before_install:
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y install docker-ce
   - docker version
+script:
+  - &basescript |
+    mkdir build && cd build && cmake ..
+    cd ${CPU}/${buildOS}/${imageName}
+  - make
+  - ctest
 
-jobs:
+matrix:
+  fast_finish: true
+  allow_failures: # All images with GST will have GST SVT VP9 test failing. NGINX RTMP tests are not stable
+    - name: centos-7.4/ffmpeg+gst+dev
+    - env: CPU=Xeon buildOS=centos-7.4 imageName=dldt+gst
+    - env: CPU=Xeon buildOS=centos-7.4 imageName=gst
+    - env: CPU=Xeon buildOS=centos-7.4 imageName=nginx+rtmp
+    - name: centos-7.5/ffmpeg+gst+dev
+    - env: CPU=Xeon buildOS=centos-7.5 imageName=dldt+gst
+    - env: CPU=Xeon buildOS=centos-7.5 imageName=gst
+    - env: CPU=Xeon buildOS=centos-7.5 imageName=nginx+rtmp
+    - name: centos-7.6/ffmpeg+gst+dev
+    - env: CPU=Xeon buildOS=centos-7.6 imageName=dldt+gst
+    - env: CPU=Xeon buildOS=centos-7.6 imageName=gst
+    - env: CPU=Xeon buildOS=centos-7.6 imageName=nginx+rtmp
+    - name: ubuntu-16.04/ffmpeg+gst+dev
+    - env: CPU=Xeon buildOS=ubuntu-16.04 imageName=dldt+gst
+    - env: CPU=Xeon buildOS=ubuntu-16.04 imageName=gst
+    - env: CPU=Xeon buildOS=ubuntu-16.04 imageName=nginx+rtmp
+    - name: ubuntu-18.04/ffmpeg+gst+dev
+    - env: CPU=Xeon buildOS=ubuntu-18.04 imageName=dldt+gst
+    - env: CPU=Xeon buildOS=ubuntu-18.04 imageName=gst
+    - env: CPU=Xeon buildOS=ubuntu-18.04 imageName=nginx+rtmp
   include:
     # centos-7.4 job
-    - name: centos-7.4/dldt+ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/dldt+ffmpeg 
-        - make 
-        - ctest
-    - name: centos-7.4/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/dldt+gst 
-        - make
-        - ctest
     - name: centos-7.4/ffmpeg+gst+dev
       script:
-        - mkdir build
-        - cd build
-        - cmake ..
+        - *basescript
         - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.4/ffmpeg+gst+dev
         - cd Xeon/centos-7.4/ffmpeg+gst+dev
         - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_centos74_ffmpeg_gst_dev.log
-    - name: centos-7.4/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/ffmpeg 
-        - make
-        - ctest
-    - name: centos-7.4/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/gst 
-        - make
-        - ctest
-    - name: centos-7.4/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/nginx+rtmp 
-        - make
-        - ctest
-    - name: centos-7.4/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/ospray
-        - make
-        - ctest
-    - name: centos-7.4/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.4/ospray+mpi+OpenImageIO
-        - make
-        - ctest
     # centos-7.5 job
-    - name: centos-7.5/dldt+ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/dldt+ffmpeg 
-        - make
-        - ctest
-    - name: centos-7.5/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/dldt+gst 
-        - make
-        - ctest
     - name: centos-7.5/ffmpeg+gst+dev
       script:
-        - mkdir build
-        - cd build
-        - cmake ..
+        - *basescript
         - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.5/ffmpeg+gst+dev
         - cd Xeon/centos-7.5/ffmpeg+gst+dev
         - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_centos75_ffmpeg_gst_dev.log
-    - name: centos-7.5/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/ffmpeg 
-        - make
-        - ctest
-    - name: centos-7.5/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/gst 
-        - make
-        - ctest
-    - name: centos-7.5/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/nginx+rtmp 
-        - make
-        - ctest
-    - name: centos-7.5/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/ospray
-        - make
-        - ctest
-    - name: centos-7.5/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.5/ospray+mpi+OpenImageIO
-        - make
-        - ctest
     # centos-7.6 job
-    - name: centos-7.6/dldt+ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/dldt+ffmpeg 
-        - make
-        - ctest
-    - name: centos-7.6/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/dldt+gst 
-        - make
-        - ctest
     - name: centos-7.6/ffmpeg+gst+dev
       script:
-        - mkdir build
-        - cd build
-        - cmake ..
+        - *basescript
         - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.6/ffmpeg+gst+dev
         - cd Xeon/centos-7.6/ffmpeg+gst+dev
         - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_centos76_ffmpeg_gst_dev.log
-    - name: centos-7.6/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/ffmpeg 
-        - make
-        - ctest
-    - name: centos-7.6/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/gst 
-        - make
-        - ctest
-    - name: centos-7.6/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/nginx+rtmp 
-        - make
-        - ctest
-    - name: centos-7.6/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/ospray
-        - make
-        - ctest
-    - name: centos-7.6/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/centos-7.6/ospray+mpi+OpenImageIO
-        - make
-        - ctest
     # ubuntu-16.04 job
-    - name: ubuntu-16.04/dldt+ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/dldt+ffmpeg 
-        - make
-        - ctest
-    - name: ubuntu-16.04/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/dldt+gst 
-        - make
-        - ctest
     - name: ubuntu-16.04/ffmpeg+gst+dev
       script:
-        - mkdir build
-        - cd build
-        - cmake ..
+        - *basescript
         - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-16.04/ffmpeg+gst+dev
         - cd Xeon/ubuntu-16.04/ffmpeg+gst+dev
         - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_ubuntu1604_ffmpeg_gst_dev.log
-    - name: ubuntu-16.04/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/ffmpeg 
-        - make
-        - ctest
-    - name: ubuntu-16.04/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/gst 
-        - make
-        - ctest
-    - name: ubuntu-16.04/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/nginx+rtmp 
-        - make
-        - ctest
-    - name: ubuntu-16.04/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/ospray
-        - make
-        - ctest
-    - name: ubuntu-16.04/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-16.04/ospray+mpi+OpenImageIO
-        - make
-        - ctest
     # ubuntu-18.04 job
-    - name: ubuntu-18.04/dldt+ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/dldt+ffmpeg 
-        - make
-        - ctest
-    - name: ubuntu-18.04/dldt+gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/dldt+gst 
-        - make
-        - ctest
     - name: ubuntu-18.04/ffmpeg+gst+dev
       script:
-        - mkdir build
-        - cd build
-        - cmake ..
+        - *basescript
         - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-18.04/ffmpeg+gst+dev
         - cd Xeon/ubuntu-18.04/ffmpeg+gst+dev
         - ctest
       after_failure:
         - tail --lines=5000 log_Xeon_ubuntu1804_ffmpeg_gst_dev.log
-    - name: ubuntu-18.04/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/ffmpeg 
-        - make
-        - ctest
-    - name: ubuntu-18.04/gst
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/gst 
-        - make
-        - ctest
-    - name: ubuntu-18.04/nginx+rtmp
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/nginx+rtmp 
-        - make
-        - ctest
-    - name: ubuntu-18.04/ospray
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/ospray
-        - make
-        - ctest
-    - name: ubuntu-18.04/ospray+mpi+OpenImageIO
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd Xeon/ubuntu-18.04/ospray+mpi+OpenImageIO
-        - make
-        - ctest
