@@ -8,59 +8,60 @@
 
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
 
-This repository hosts docker build files for multiple platform/OS/image combinations, including both media & graphics software stack (media processing and delivery, media analytics, immersive media, cloud gaming and cloud graphics.) and related services. Each image is tagged with [development and test status](doc/test.md)
+This repository hosts docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.
 
-#### Table of Contents
-- [Image with Software Stack](#Image-with-software-Stack)
-- [Image with Service](#Image-with-Service)
-- [Update kernel and firmware](#Update-kernel-and-firmware)
-- [Install docker engine](#Install-docker-engine)
-- [Setup docker proxy](#Setup-docker-proxy)
-- [Build docker image](#Build-docker-image)
-- [Run shell](#Run-shell)
-- [Customize](#Customize)
-- [Use alternative repo](#Use-alternative-repo)
-- [Use Dockerfile in other project](#Use-Dockerfile-in-other-project)
+## Software Stack Images
 
-## Image with software Stack
+The software stack images provide ready to use software stacks for application deployment. You can call the software executables or link with the software libraries.   
 
-- Media Processing and Delivery  
+#### Media Delivery   
 
-|       |       |
+|Image Name| Description |
 | ----- | ----- | 
 |[FFmpeg](doc/ffmpeg.md)|Image optimized for media creation and delivery. Included codecs: aac, mp3, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. The GPU images are accelerated with vaapi and qsv. See [ffmpeg.md](doc/ffmpeg.md) for details.|
 |[GStreamer](doc/gst.md)|Image optimized for media creation and delivery. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with vaapi. See [gst.md](doc/gst.md) for details.|
-|[FFmpeg](doc/ffmpeg.md)+[GStreamer](doc/gst.md) (Dev)|FFmpeg + GStreamer + C++ development files. Model optimizer to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
 |[NGINX+RTMP](doc/nginx.md)|Image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.|
 
-- Media Analytics
+#### Media Analytics   
 
-|       |       |
+|Image Name| Description |
 | ----- | ----- | 
 |[DLDT+FFmpeg](doc/ffmpeg.md)|Image optimized for media analytics. Included what are in the FFmpeg image. Inferencing engine and tracking plugins to be included. See [ffmpeg.md](doc/ffmpeg.md) for details.|
 |[DLDT+GStreamer](doc/gst.md)|Image optimized for media analytics. Included what are in the GStreamer image. Inferencing engine and tracking plugins to be included. See [gst.md](doc/gst.md) for details.|
 
-- Cloud Gaming
+#### Cloud Gaming and Graphics
 
-|       |       |
+|Image Name| Description |
 | ----- | ----- | 
 |[ospray](doc/ospray.md)|Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.|
 |[ospray+OpenImageIO+ mpi](doc/ospray+OpenImageIO+mpi.md)|Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray+OpenImageIO+mpi.md](ospray+OpenImageIO+mpi.md) for details.|
 
-## Image with service:
-To be added.
+## Development Images     
 
-## Update kernel and firmware:    
+The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the ptimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment.       
 
-Please see each platform folder README for the platform setup instructions.
-   
-## Install docker engine:        
+|Image Name| Description |
+| ----- | ----- | 
+|[FFmpeg](doc/ffmpeg.md)+[GStreamer](doc/gst.md)+dev|FFmpeg + GStreamer + C++ development files. Model optimizer to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
 
-Follow the [instructions](https://docs.docker.com/install) to install docker.ce.
+## Service Images:
 
-## Setup docker proxy:
+The service images provides ready to use services. See their image descriptions for exposed service interfaces.    
 
-If you are behind a firewall, setup proxy as follows:
+|Image Name| Description |
+| ----- | ----- | 
+| Coming Soon | Coming Soon |
+
+## Support Matrix
+
+See [development and test status](doc/test.md) for the support matrix and their testing statuses.    
+
+## Host Platform Setup:
+
+- Update kernels and firmwares: Please see each platform folder README for instructions.    
+- Follow the [instructions](https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-18-04) to setup host date and time.
+- Follow the [instructions](https://docs.docker.com/install) to install docker.ce.    
+- If you are behind a firewall, setup proxy as follows:    
 
 ```bash
 (1) sudo mkdir -p /etc/systemd/system/docker.service.d    
@@ -68,9 +69,6 @@ If you are behind a firewall, setup proxy as follows:
 (3) sudo systemctl daemon-reload     
 (4) sudo systemctl restart docker     
 ```
-
-#### Pre-requisites:
-Host system needs to correctly setup in order for certain repos to reachable. Refer [this](https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-18-04 "this") link.
 
 ## Build docker image: 
 
