@@ -36,7 +36,7 @@ The software stack images provide ready to use software stacks for application d
 | [ospray](doc/ospray.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.|
 | [ospray+mpi+OpenImageIO](doc/ospray+OpenImageIO+mpi.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray+OpenImageIO+mpi.md](ospray+OpenImageIO+mpi.md) for details.|
 
-#### Development Images     
+## Development Images:     
 
 The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the ptimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment.       
 
