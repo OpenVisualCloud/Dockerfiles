@@ -16,39 +16,39 @@ The software stack images provide ready to use software stacks for application d
 
 #### Media Delivery
 
-|Image Name| Description |
-| ----- | ----- | 
-|[ffmpeg](doc/ffmpeg.md)|Image optimized for media creation and delivery. Included codecs: aac, mp3, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. The GPU images are accelerated with vaapi and qsv. See [ffmpeg.md](doc/ffmpeg.md) for details.|
-|[gst](doc/gst.md)|Image optimized for media creation and delivery. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with vaapi. See [gst.md](doc/gst.md) for details.|
-|[nginx+rtmp](doc/nginx.md)|Image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.|
+| Image | Description |
+| :-----: | ----- | 
+| [ffmpeg](doc/ffmpeg.md) |Image optimized for media creation and delivery. Included codecs: aac, mp3, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. The GPU images are accelerated with vaapi and qsv. See [ffmpeg.md](doc/ffmpeg.md) for details.|
+| [gst](doc/gst.md) |Image optimized for media creation and delivery. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with vaapi. See [gst.md](doc/gst.md) for details.|
+| [nginx+rtmp](doc/nginx.md) |Image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.|
 
 #### Media Analytics   
 
-|Image Name| Description |
+| Image | Description |
 | ----- | ----- | 
-|[dldt+ffmpeg](doc/ffmpeg.md)|Image optimized for media analytics. Included what are in the FFmpeg image. Inferencing engine and tracking plugins to be included. See [ffmpeg.md](doc/ffmpeg.md) for details.|
-|[dldt+gst](doc/gst.md)|Image optimized for media analytics. Included what are in the GStreamer image. Inferencing engine and tracking plugins to be included. See [gst.md](doc/gst.md) for details.|
+| [dldt+ffmpeg](doc/ffmpeg.md) |Image optimized for media analytics. Included what are in the FFmpeg image. Inferencing engine and tracking plugins to be included. See [ffmpeg.md](doc/ffmpeg.md) for details.|
+| [dldt+gst](doc/gst.md) |Image optimized for media analytics. Included what are in the GStreamer image. Inferencing engine and tracking plugins to be included. See [gst.md](doc/gst.md) for details.|
 
 #### Cloud Gaming and Graphics
 
-|Image Name| Description |
+| Image | Description |
 | ----- | ----- | 
-|[ospray](doc/ospray.md)|Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.|
-|[ospray+mpi+OpenImageIO](doc/ospray+OpenImageIO+mpi.md)|Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray+OpenImageIO+mpi.md](ospray+OpenImageIO+mpi.md) for details.|
+| [ospray](doc/ospray.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.|
+| [ospray+mpi+OpenImageIO](doc/ospray+OpenImageIO+mpi.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray+OpenImageIO+mpi.md](ospray+OpenImageIO+mpi.md) for details.|
 
 #### Development Images     
 
 The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the ptimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment.       
 
-|Image Name| Description |
+| Image | Description |
 | ----- | ----- | 
-|[ffmpeg](doc/ffmpeg.md)+[gst](doc/gst.md)+dev|FFmpeg + GStreamer + C++ development files. Model optimizer to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
+| [ffmpeg](doc/ffmpeg.md)+[gst](doc/gst.md)+dev |FFmpeg + GStreamer + C++ development files. Model optimizer to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
 
 ## Service Images:
 
 The service images provides ready to use services. See their image descriptions for exposed service interfaces.    
 
-|Image Name| Description |
+| Image | Description |
 | ----- | ----- | 
 | Coming Soon | Coming Soon |
 
@@ -56,10 +56,10 @@ The service images provides ready to use services. See their image descriptions 
 
 The project supports the following platforms and OS'es:
 
-| Platform | Supported OS'es |
+| Supported Platforms | Supported OS'es |
 | --- | --- |
 | Xeon | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
-| XeonE3 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
+| Xeon E3 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
 | VCA2 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
 
 Please see [development and test statuses](doc/test.md) for the lastest development statuses.    
