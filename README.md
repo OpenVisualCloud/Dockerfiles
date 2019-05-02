@@ -10,11 +10,11 @@
 
 This repository hosts docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.
 
-## Software Stack Images
+## Software Stack Images:
 
 The software stack images provide ready to use software stacks for application deployment. You can call the software executables or link with the software libraries.   
 
-#### Media Delivery   
+#### Media Delivery
 
 |Image Name| Description |
 | ----- | ----- | 
@@ -52,7 +52,7 @@ The service images provides ready to use services. See their image descriptions 
 | ----- | ----- | 
 | Coming Soon | Coming Soon |
 
-## Support Matrix
+## Support Matrix:
 
 The project supports the following platforms and OS'es:
 
