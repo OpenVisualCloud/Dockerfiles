@@ -78,6 +78,7 @@ matrix:
   include:
     # centos-7.4 job
     - name: centos-7.4/ffmpeg+gst+dev
+      env: CPU=Xeon buildOS=centos-7.4 imageName=ffmpeg+gst+dev
       script:
         - mkdir build && cd build && cmake ..
         - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/centos-7.4/ffmpeg+gst+dev
@@ -87,6 +88,7 @@ matrix:
         - tail --lines=5000 log_Xeon_centos74_ffmpeg_gst_dev.log
     # centos-7.5 job
     - name: centos-7.5/ffmpeg+gst+dev
+      env: CPU=Xeon buildOS=centos-7.5 imageName=ffmpeg+gst+dev
       script:
         - mkdir build && cd build && cmake ..
         - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/centos-7.5/ffmpeg+gst+dev
@@ -96,6 +98,7 @@ matrix:
         - tail --lines=5000 log_Xeon_centos75_ffmpeg_gst_dev.log
     # centos-7.6 job
     - name: centos-7.6/ffmpeg+gst+dev
+      env: CPU=Xeon buildOS=centos-7.6 imageName=ffmpeg+gst+dev
       script:
         - mkdir build && cd build && cmake ..
         - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/centos-7.6/ffmpeg+gst+dev
@@ -105,6 +108,7 @@ matrix:
         - tail --lines=5000 log_Xeon_centos76_ffmpeg_gst_dev.log
     # ubuntu-16.04 job
     - name: ubuntu-16.04/ffmpeg+gst+dev
+      env: CPU=Xeon buildOS=ubuntu-16.04 imageName=ffmpeg+gst+dev
       script:
         - mkdir build && cd build && cmake ..
         - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/ubuntu-16.04/ffmpeg+gst+dev
@@ -114,6 +118,7 @@ matrix:
         - tail --lines=5000 log_Xeon_ubuntu1604_ffmpeg_gst_dev.log
     # ubuntu-18.04 job
     - name: ubuntu-18.04/ffmpeg+gst+dev
+      env: CPU=Xeon buildOS=ubuntu-18.04 imageName=ffmpeg+gst+dev
       script:
         - mkdir build && cd build && cmake ..
         - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh Xeon/ubuntu-18.04/ffmpeg+gst+dev
