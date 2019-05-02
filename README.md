@@ -25,14 +25,14 @@ The software stack images provide ready to use software stacks for application d
 #### Media Analytics   
 
 | Image | Description |
-| ----- | ----- | 
+| :-----: | :----- | 
 | [dldt+ffmpeg](doc/ffmpeg.md) |Image optimized for media analytics. Included what are in the FFmpeg image. Inferencing engine and tracking plugins to be included. See [ffmpeg.md](doc/ffmpeg.md) for details.|
 | [dldt+gst](doc/gst.md) |Image optimized for media analytics. Included what are in the GStreamer image. Inferencing engine and tracking plugins to be included. See [gst.md](doc/gst.md) for details.|
 
 #### Cloud Gaming and Graphics
 
 | Image | Description |
-| ----- | ----- | 
+| :-----: | :----- | 
 | [ospray](doc/ospray.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.|
 | [ospray+mpi+OpenImageIO](doc/ospray+OpenImageIO+mpi.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray+OpenImageIO+mpi.md](ospray+OpenImageIO+mpi.md) for details.|
 
@@ -41,23 +41,23 @@ The software stack images provide ready to use software stacks for application d
 The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the ptimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment.       
 
 | Image | Description |
-| ----- | ----- | 
-| [ffmpeg](doc/ffmpeg.md)+[gst](doc/gst.md)+dev |FFmpeg + GStreamer + C++ development files. Model optimizer to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
+| :-----: | :----- | 
+| [ffmpeg](doc/ffmpeg.md)+[gst](doc/gst.md)+dev | Image contains the FFmpeg and GStreamer C++ development files. The OpenViNO model optimizer is to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
 
 ## Service Images:
 
 The service images provides ready to use services. See their image descriptions for exposed service interfaces.    
 
 | Image | Description |
-| ----- | ----- | 
-| Coming Soon | Coming Soon |
+| :-----: | :----- | 
+| Coming soon | Coming soon |
 
 ## Support Matrix:
 
 The project supports the following platforms and OS'es:
 
 | Supported Platforms | Supported OS'es |
-| --- | --- |
+| :---: | :--- |
 | Xeon | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
 | Xeon E3 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
 | VCA2 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
