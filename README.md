@@ -36,9 +36,9 @@ The software stack images provide ready to use software stacks for application d
 | [ospray](doc/ospray.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.|
 | [ospray+mpi+OpenImageIO](doc/ospray+OpenImageIO+mpi.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray+OpenImageIO+mpi.md](ospray+OpenImageIO+mpi.md) for details.|
 
-#### Development Images     
+## Development Images:     
 
-The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the ptimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment.       
+The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment.       
 
 | Image | Description |
 | :-----: | :----- | 
@@ -62,7 +62,7 @@ The project supports the following platforms and OS'es:
 | Xeon E3 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
 | VCA2 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
 
-Please see [development and test statuses](doc/test.md) for the lastest development statuses.    
+Please see [development and test statuses](doc/test.md) for the latest development statuses.    
 
 ## Host Platform Setup:
 
