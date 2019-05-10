@@ -134,3 +134,7 @@ for dep in .2 .1; do
     sudo docker build --network=host --file="Dockerfile$dep" -t "$image:latest" . $(env | grep -E '_(proxy)=' | sed 's/^/--build-arg /')   
 done  
 ```
+
+### Development Images:
+The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment. See helloworld ([link](/doc/helloworld_gst.md)) for an example of how to use the development images.
+
