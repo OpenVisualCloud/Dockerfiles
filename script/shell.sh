@@ -13,3 +13,4 @@ if [ -z "$TRAVIS" ] && [ -z "$JENKINS_URL" ]; then DOCKER_IT="-it"; else DOCKER_
 
 sudo docker run $DEVICE_DIR --network=host -v "$DIR/../../../test:/mnt:ro" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^/-e /') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG /-e /') $DOCKER_IT "${IMAGE}" ${*-/bin/bash}
 
+
