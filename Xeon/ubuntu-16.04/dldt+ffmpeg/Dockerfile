@@ -221,7 +221,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     rm -rf ../bin/intel64/Release/lib/libmock* && \
     rm -rf ../bin/intel64/Release/lib/libtest*
 
-ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_16.04/intel64
+ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
@@ -373,7 +373,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-
 
 # Install
 COPY --from=build /home/build /
-ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_16.04/intel64
+ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 

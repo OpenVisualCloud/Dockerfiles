@@ -220,8 +220,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     rm -rf ../bin/intel64/Release/lib/libmock* && \
     rm -rf ../bin/intel64/Release/lib/libtest*
 
-ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_18.04/intel64
-    #RUN find dldt/inference-engine/cmake/share/ -type f | xargs sed -i 's/16.04/18.04/g'
+ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
@@ -491,7 +490,7 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
 
 # Install
 COPY --from=build /home/build /
-ARG libdir=/opt/intel/dldt/inference-engine/lib/ubuntu_18.04/intel64
+ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/gstreamer-1.0
