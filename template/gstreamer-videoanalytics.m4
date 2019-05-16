@@ -22,8 +22,11 @@ RUN wget -O - https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
 #Has a dependency on OpenCV, GStreamer
 ARG VA_GSTREAMER_PLUGINS_VER=0.3.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
+ARG VA_GSTREAMER_PLUGINS_PATCH_01=https://gist.githubusercontent.com/SDxKeeper/cfdd8595a6555846bd08b020fe8d3823/raw/8eaccd0573bd93918b81a3709c574a23f4af2219/0001-workaround-for-OpenVINO-R1.patch
+
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     cd gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER} && \
+    wget -O - ${VA_GSTREAMER_PLUGINS_PATCH_01} | patch -p1 && \
     mkdir build && \
     cd build && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
