@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 IMAGE="vca2-ubuntu1604-nginx-rtmp"
+PREFIX="openvisualcloud"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 
