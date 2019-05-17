@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-ubuntu1604_ospray-oiio-mpi"
+IMAGE="xeon-ubuntu1604--graphics-ospary-oiio-mpi"
 PREFIX="openvisualcloud"
 DIR=$(dirname $(readlink -f "$0"))
 
