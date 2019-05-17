@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-centos76-media-gst"
+IMAGE="xeon-centos76-media-media-gst"
 PREFIX="openvisualcloud"
 DIR=$(dirname $(readlink -f "$0"))
 

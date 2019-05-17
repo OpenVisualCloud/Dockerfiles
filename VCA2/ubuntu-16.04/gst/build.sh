@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="vca2-ubuntu1604-gst"
+IMAGE="vca2-ubuntu1604-media-gst"
 PREFIX="openvisualcloud"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))

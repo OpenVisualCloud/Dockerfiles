@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-centos74-nginx-rtmp"
+IMAGE="xeon-centos74-media-nginx"
 PREFIX="openvisualcloud"
 DIR=$(dirname $(readlink -f "$0"))
 

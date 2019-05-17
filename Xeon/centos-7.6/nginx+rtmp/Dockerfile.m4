@@ -9,7 +9,7 @@ include(nginx-rtmp.m4)
 include(nginx.m4)dnl
 
 FROM openvisualcloud/xeon-centos76-media-ffmpeg:latest
-LABEL Description="This is the base image for a media NGINX+RTMP service"
+LABEL Description="This is the base image for a NGINX+RTMP service"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 

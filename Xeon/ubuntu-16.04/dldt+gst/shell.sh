@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-ubuntu1604-dldt-gst"
+IMAGE="xeon-ubuntu1604-analytics-gst"
 PREFIX="openvisualcloud"
 DIR=$(dirname $(readlink -f "$0"))
 

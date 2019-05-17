@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeone3-ubuntu1604-nginx-rtmp"
+IMAGE="xeone3-ubuntu1604-media-nginx"
 PREFIX="openvisualcloud"
 DIR=$(dirname $(readlink -f "$0"))
 
