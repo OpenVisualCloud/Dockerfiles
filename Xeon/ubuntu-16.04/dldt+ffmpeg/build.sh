@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 IMAGE="xeon-ubuntu1604-dldt-ffmpeg"
+PREFIX="openvisualcloud"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

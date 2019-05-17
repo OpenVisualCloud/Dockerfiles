@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
-IMAGE="xeon-centos76-dldt-gst"
+IMAGE="xeon-centos76-analytics-gst"
+PREFIX="openvisualcloud"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 
