@@ -5,6 +5,8 @@ if test -z "${DIR}"; then
     exit -1
 fi
 
+PREFIX="${PREFIX:-openvisualcloud}"
+
 if [ -d "/dev/dri" ]; then
     DEVICE_DIR=--device=/dev/dri:/dev/dri
 fi

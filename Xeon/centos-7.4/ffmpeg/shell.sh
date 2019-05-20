@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-centos74-mediaffmpeg"
+IMAGE="xeon-centos74-media-ffmpeg"
 PREFIX="openvisualcloud"
 DIR=$(dirname $(readlink -f "$0"))
 

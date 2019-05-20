@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 IMAGE="xeone3-ubuntu1604-analytics-gst"
-PREFIX="openvisualcloud"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

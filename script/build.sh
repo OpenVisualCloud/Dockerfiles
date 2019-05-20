@@ -1,11 +1,11 @@
 #!/bin/bash -e
-
 if test -z "${DIR}"; then 
     echo "This script should not be called directly."
     exit -1
 fi 
 
 TEMPLATE="${DIR}/../../../template"
+PREFIX="${PREFIX:-openvisualcloud}"
 
 for m4file in "${DIR}"/*.m4; do
     if test -f "$m4file"; then
