@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-centos74-graphics-ospary-oiio-mpi"
+IMAGE="xeon-centos74-graphics-ospary-mpi"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 
