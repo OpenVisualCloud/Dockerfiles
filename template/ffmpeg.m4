@@ -4,7 +4,7 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
-ifelse(ifelse(index(DOCKER_IMAGE,dev),-1,'false','true'), ifelse(index(DOCKER_IMAGE,dldt),-1,'false','true'),,
+ifelse(ifelse(index(DOCKER_IMAGE,dev),-1,'false','true'), ifelse(index(DOCKER_IMAGE,analytics),-1,'false','true'),,
 ARG FFMPEG_MA_PATCH_REPO_01=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0001-Intel-inference-engine-detection-filter.patch
 ARG FFMPEG_MA_PATCH_REPO_02=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0002-New-filter-to-do-inference-classify.patch
 ARG FFMPEG_MA_PATCH_REPO_03=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0003-iemetadata-convertor-muxer.patch
@@ -35,7 +35,7 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg && \
     wget -O - ${FFMPEG_FLV_PATCH_REPO} | patch -p1 && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
-    wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 ifelse(ifelse(index(DOCKER_IMAGE,dev),-1,'false','true'), ifelse(index(DOCKER_IMAGE,dldt),-1,'false','true'),;, && \
+    wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 ifelse(ifelse(index(DOCKER_IMAGE,dev),-1,'false','true'), ifelse(index(DOCKER_IMAGE,analytics),-1,'false','true'),;, && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_01} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_02} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_03} | patch -p1 && \

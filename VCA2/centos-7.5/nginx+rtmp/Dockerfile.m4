@@ -8,7 +8,7 @@ include(build-tools.m4)
 include(nginx-rtmp.m4)
 include(nginx.m4)dnl
 
-FROM vca2-centos75-ffmpeg:latest
+FROM openvisualcloud/vca2-centos75-media-ffmpeg:latest
 LABEL Description="This is the base image for a NGINX+RTMP service"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home

@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="vca2-ubuntu1604-ffmpeg-gst-dev"
+IMAGE="vca2-ubuntu1604-dev"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

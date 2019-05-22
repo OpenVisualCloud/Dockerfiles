@@ -57,7 +57,7 @@ RUN mkdir -p /home/build/var/www/tmp/client_body && \
     touch /home/build/var/www/html/index.html;
 
 
-FROM xeone3-ubuntu1604-ffmpeg:latest
+FROM openvisualcloud/xeone3-ubuntu1604-media-ffmpeg:latest
 LABEL Description="This is the base image for a NGINX+RTMP service"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home

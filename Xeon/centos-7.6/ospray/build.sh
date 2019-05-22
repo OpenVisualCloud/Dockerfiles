@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon_centos76_ospray"
+IMAGE="xeon-centos76-graphics-ospray"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

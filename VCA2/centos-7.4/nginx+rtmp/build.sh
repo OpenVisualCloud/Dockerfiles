@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="vca2-centos74-nginx-rtmp"
+IMAGE="vca2-centos74-media-nginx"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

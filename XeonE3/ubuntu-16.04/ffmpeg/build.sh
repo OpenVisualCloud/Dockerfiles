@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeone3-ubuntu1604-ffmpeg"
+IMAGE="xeone3-ubuntu1604-media-ffmpeg"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 
