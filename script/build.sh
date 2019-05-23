@@ -22,3 +22,5 @@ if grep -q 'AS build' "${DIR}/Dockerfile"; then
 fi
 
 sudo docker build --network=host -t "${IMAGE}:${VERSION}" -t "${IMAGE}:latest" "$DIR" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^/--build-arg /')
+
+
