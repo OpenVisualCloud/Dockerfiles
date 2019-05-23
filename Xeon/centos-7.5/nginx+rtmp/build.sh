@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-centos75-nginx-rtmp"
+IMAGE="xeon-centos75-media-nginx"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

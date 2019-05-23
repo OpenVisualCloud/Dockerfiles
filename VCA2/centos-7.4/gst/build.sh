@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="vca2-centos74-gst"
+IMAGE="vca2-centos74-media-gst"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

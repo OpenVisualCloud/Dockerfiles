@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-centos76-dldt-ffmpeg"
+IMAGE="xeon-centos76-analytics-ffmpeg"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

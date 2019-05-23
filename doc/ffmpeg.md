@@ -93,6 +93,19 @@ ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-retail-0004.xml, \
 classify=model=./face-reidentification-retail-0095.xml:label=./labels.txt:name=face_id:feature_file=./registered_faces.bin -an -f null /dev/nul
 ```
 
+Car attribute recognition
+
+```bash
+ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=vehicle-detection-adas-0002.xml: model_proc=vehicle-detection-adas-0002.json, \
+classify=model=vehicle-attributes-recognition-barrier-0039.xml:model_proc=vehicle-attributes-recognition-barrier-0039.json" -an -f null /dev/null
+```
+
+Car-Bike-Person detection
+
+```bash
+ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=person-vehicle-bike-detection-crossroad-0078.xml:model_proc=person-vehicle-bike-detection-crossroad-0078.json" -an -f null /dev/null
+```
+
 GPU decdoe + face detection
 
 ```bash
@@ -103,3 +116,5 @@ ffmpeg -flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_dev
 #-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=$VPU" -an -f null -
 #-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=$HDDL" -an -f null -
 ```
+
+* The ffmpeg media analytics samples can also be found from [VCDP github repo](https://github.com/VCDP/FFmpeg-patch/tree/master/media-analytics/samples).

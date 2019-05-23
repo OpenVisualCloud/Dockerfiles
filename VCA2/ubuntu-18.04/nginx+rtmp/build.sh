@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="vca2-ubuntu1804-nginx-rtmp"
+IMAGE="vca2-ubuntu1804-media-nginx"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

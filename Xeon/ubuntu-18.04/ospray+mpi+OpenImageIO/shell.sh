@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon_ubuntu1804_ospray-oiio-mpi"
+IMAGE="xeon-ubuntu1804-graphics-ospary-mpi"
 DIR=$(dirname $(readlink -f "$0"))
 
 . "${DIR}/../../../script/shell.sh"

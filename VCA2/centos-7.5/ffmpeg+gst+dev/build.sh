@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="vca2-centos75-ffmpeg-gst-dev"
+IMAGE="vca2-centos75-dev"
 VERSION="1.0"
 DIR=$(dirname $(readlink -f "$0"))
 

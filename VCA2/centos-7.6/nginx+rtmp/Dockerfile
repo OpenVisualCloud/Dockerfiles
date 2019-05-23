@@ -61,7 +61,7 @@ RUN mkdir -p /home/build/var/www/tmp/client_body && \
     touch /home/build/var/www/html/index.html;
 
 
-FROM vca2-centos76-ffmpeg:latest
+FROM openvisualcloud/vca2-centos76-media-ffmpeg:latest
 LABEL Description="This is the base image for a NGINX+RTMP service"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
