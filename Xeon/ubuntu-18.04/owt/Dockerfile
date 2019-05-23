@@ -180,7 +180,9 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends python libgl
 # 1. Clone OWT server source code 
 # 2. Clone licode source code and patch
 # 3. Clone webrtc source code and patch
-RUN git clone ${OWTSERVER_REPO} && \
+RUN git config --global user.email "you@example.com" && \
+    git config --global user.name "Your Name" && \
+    git clone ${OWTSERVER_REPO} && \
 
     # Install node modules for owt
     npm install -g --loglevel error node-gyp grunt-cli underscore jsdoc && \
