@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="owt_ubuntu1804"
+IMAGE="xeon-ubuntu1804-service-owt"
 VERSION="4.2"
 DIR=$(dirname $(readlink -f "$0"))
 

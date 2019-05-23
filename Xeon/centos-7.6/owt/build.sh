@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="owt_centos76"
+IMAGE="xeon-centos76-service-owt"
 VERSION="4.2"
 DIR=$(dirname $(readlink -f "$0"))
 
