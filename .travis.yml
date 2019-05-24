@@ -28,6 +28,7 @@ env:
   - CPU=Xeon buildOS=centos-7.6 imageName=nginx+rtmp
   - CPU=Xeon buildOS=centos-7.6 imageName=ospray
   - CPU=Xeon buildOS=centos-7.6 imageName=ospray+mpi+OpenImageIO
+  - CPU=Xeon buildOS=centos-7.6 imageName=owt
   - CPU=Xeon buildOS=ubuntu-16.04 imageName=dldt+ffmpeg
   - CPU=Xeon buildOS=ubuntu-16.04 imageName=dldt+gst
   - CPU=Xeon buildOS=ubuntu-16.04 imageName=ffmpeg
@@ -42,6 +43,7 @@ env:
   - CPU=Xeon buildOS=ubuntu-18.04 imageName=nginx+rtmp
   - CPU=Xeon buildOS=ubuntu-18.04 imageName=ospray
   - CPU=Xeon buildOS=ubuntu-18.04 imageName=ospray+mpi+OpenImageIO
+  - CPU=Xeon buildOS=ubuntu-18.04 imageName=owt
 
 before_install:
   - docker version
