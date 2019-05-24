@@ -11,7 +11,7 @@ include(usrsctp.m4)
 include(libsrtp2.m4)
 include(nodetools.m4)
 include(libfdk-aac.m4)
-include(ffmpeg.owt.m4)
+include(ffmpeg.m4)
 include(owt.m4)dnl
 
 FROM centos:7.6.1810

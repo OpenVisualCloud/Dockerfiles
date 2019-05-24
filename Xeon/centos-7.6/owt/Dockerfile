@@ -138,26 +138,23 @@ RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac &&
     make install
 
 
-ARG FFMPEG_VER="4.1.1"
-ARG FFMPEG_DIR="ffmpeg-${FFMPEG_VER}"
-ARG FFMPEG_SRC="${FFMPEG_DIR}.tar.bz2"
-ARG FFMPEG_SRC_URL="http://ffmpeg.org/releases/${FFMPEG_SRC}"
-ARG FFMPEG_SRC_MD5SUM="4a64e3cb3915a3bf71b8b60795904800"
+# Fetch FFmpeg source
+ARG FFMPEG_VER=n4.1
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
+ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch
+ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
+ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 
-ARG FDKAAC_VER="0.1.6"
-ARG FDKAAC_SRC="fdk-aac-${FDKAAC_VER}.tar.gz"
-ARG FDKAAC_SRC_URL="http://sourceforge.net/projects/opencore-amr/files/fdk-aac/${FDKAAC_SRC}/download"
-ARG FDKAAC_SRC_MD5SUM="13c04c5f4f13f4c7414c95d7fcdea50f"
+RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
 
-RUN yum install -y -q freetype-devel
+RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
+    cd FFmpeg  ;
+# Compile FFmpeg
+RUN cd /home/FFmpeg && \
+    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac --enable-nonfree && \
+    make -j8 && \
+    make install && make install DESTDIR="/home/build"
 
-RUN wget -c ${FFMPEG_SRC_URL} && \
-    rm -fr ${FFMPEG_DIR} && \
-    tar xf ${FFMPEG_SRC} && \
-    cd ${FFMPEG_DIR} && \
-    PKG_CONFIG_PATH=/usr/lib/pkgconfig CFLAGS=-fPIC ./configure --prefix=/usr/ --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac --enable-nonfree && \
-    make -j4 -s V=0 && make install && \
-    make install DESTDIR="/home/build"
 
 # Build OWT specific modules
 
@@ -266,6 +263,12 @@ COPY --from=build /home/build/owt /home/owt
 RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
     yum install rabbitmq-server mongodb mongodb-server -y && \
     yum remove -y -q epel-release && \
+    echo "#!/bin/bash -e" >> /home/launch.sh && \
+    echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
+    echo "rabbitmq-server &" >> /home/launch.sh && \
+    echo "sleep 5" >> /home/launch.sh && \
+    echo "cd /home/owt && ./management_api/init.sh && ./bin/start-all.sh && sleep infinity" >> /home/launch.sh && \
+    chmod +x /home/launch.sh && \
     rm -rf /var/cache/yum/*;
 
 
