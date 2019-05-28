@@ -8,7 +8,7 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     echo "service mongodb start &" >> /home/launch.sh && \
     echo "service rabbitmq-server start &" >> /home/launch.sh && \
     echo "sleep 5" >> /home/launch.sh && \
-    echo "cd /home/owt && ./management_api/init.sh && ./bin/start-all.sh && sleep infinity" >> /home/launch.sh && \
+    echo "cd /home/owt && ./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     rm -rf /var/lib/apt/lists/*;
 
@@ -21,7 +21,7 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
     echo "rabbitmq-server &" >> /home/launch.sh && \
     echo "sleep 5" >> /home/launch.sh && \
-    echo "cd /home/owt && ./management_api/init.sh && ./bin/start-all.sh && sleep infinity" >> /home/launch.sh && \
+    echo "cd /home/owt && ./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     rm -rf /var/cache/yum/*;
 )dnl
