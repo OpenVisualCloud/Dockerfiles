@@ -10,8 +10,9 @@ include(libre.m4)
 include(usrsctp.m4)
 include(libsrtp2.m4)
 include(libfdk-aac.m4)
-include(ffmpeg.owt.m4)
+include(ffmpeg.m4)
 include(nodetools.m4)
+include(svt-hevc.1-3-0.m4)
 include(owt.m4)dnl
 
 FROM ubuntu:18.04 
