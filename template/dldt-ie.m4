@@ -18,10 +18,10 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     git submodule init && \
     git submodule update --recursive && \
     cd inference-engine && \
-#    wget -O - ${DLDT_C_API_1} | patch -p2 && \
-#    wget -O - ${DLDT_C_API_2} | patch -p2 && \
-#    wget -O - ${DLDT_C_API_3} | patch -p2 && \
-#    wget -O - ${DLDT_C_API_4} | patch -p2 && \
+    wget -O - ${DLDT_C_API_1} | patch -p2 && \
+    wget -O - ${DLDT_C_API_2} | patch -p2 && \
+    wget -O - ${DLDT_C_API_3} | patch -p2 && \
+    wget -O - ${DLDT_C_API_4} | patch -p2 && \
     mkdir build && \
     cd build && \
     cmake ifelse(index(BUILD_LINKAGE,static),-1,,-DBUILD_SHARED_LIBS=OFF) -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ifelse(index(DOCKER_IMAGE,xeon-),-1,ON,OFF) -DENABLE_SAMPLES=OFF .. && \
