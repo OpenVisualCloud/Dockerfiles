@@ -115,16 +115,6 @@ RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     make -s V=0  && \
     make install
 
-# Install node
-ARG NODE_VER=v8.15.0
-ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
-
-RUN yum install -y -q ca-certificates wget xz-utils
-
-RUN wget ${NODE_REPO} && \
-    tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/ -rf && rm -rf node-*
-
 # Build fdk-aac
 ARG FDK_AAC_VER=v0.1.6
 ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
@@ -155,6 +145,16 @@ RUN cd /home/FFmpeg && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
+
+# Install node
+ARG NODE_VER=v8.15.0
+ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
+
+RUN yum install -y -q ca-certificates wget xz-utils
+
+RUN wget ${NODE_REPO} && \
+    tar xf node-${NODE_VER}-linux-x64.tar.xz && \
+    cp node-*/* /usr/ -rf && rm -rf node-*
 
 # Build OWT specific modules
 
@@ -218,16 +218,6 @@ RUN git config --global user.email "you@example.com" && \
     ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/build.sh && \
 
-    # Install specified svt-hevc version for owt
-    cd ${SERVER_PATH}/third_party&& git clone ${SVT_REPO} && \
-    cd SVT-HEVC && git checkout v1.3.0 && \
-    cd Build/linux && chmod +x build.sh && \
-    ./build.sh debug && \
-    cd ../.. && cp -v ./Bin/Debug/libSvtHevcEnc.so.1 ./ && \
-    ln -s -v libSvtHevcEnc.so.1 libSvtHevcEnc.so && \
-    echo 'const char* stub() {return "this is a stub lib";}' > pseudo-svtHevcEnc.cpp && \
-    gcc pseudo-svtHevcEnc.cpp -fPIC -shared -o pseudo-svtHevcEnc.so && \
-
     # Get js client sdk for owt
     cd /home && git clone ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
@@ -235,8 +225,8 @@ RUN git config --global user.email "you@example.com" && \
 
     #Build and pack owt
     cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu -r -c && \
-    ./scripts/pack.js -t all --install-module --sample-path /home/owt-client-javascript/dist/samples/conference && \
-    cd ${SERVER_PATH} && ./dist/video_agent/install_openh264.sh && cp -r ${FDKAAC_LIB}/* ./dist/audio_agent/lib/ && \
+    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference && \
+    cd ${SERVER_PATH} && cp -r ${FDKAAC_LIB}/* ./dist/audio_agent/lib/ && \
     cp -r ${FDKAAC_LIB}/* ./dist/video_agent/lib/ && \
     cp -r ${FDKAAC_LIB}/* ./dist/streaming_agent/lib/ && \
     cp -r ${FDKAAC_LIB}/* ./dist/analytics_agent/lib/ && \
@@ -267,7 +257,7 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
     echo "rabbitmq-server &" >> /home/launch.sh && \
     echo "sleep 5" >> /home/launch.sh && \
-    echo "cd /home/owt && ./management_api/init.sh && ./bin/start-all.sh && sleep infinity" >> /home/launch.sh && \
+    echo "cd /home/owt && ./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     rm -rf /var/cache/yum/*;
 
