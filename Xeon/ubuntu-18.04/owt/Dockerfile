@@ -151,6 +151,20 @@ RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/ -rf && rm -rf node-*
 
+# Fetch SVT-HEVC
+ARG SVT_HEVC_VER=v1.3.0
+ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
+
+RUN git clone ${SVT_HEVC_REPO} && \
+    cd SVT-HEVC/Build/linux && \
+    git checkout ${SVT_HEVC_VER} && \
+    mkdir -p ../../Bin/Release && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install 
+
+
 # Build OWT specific modules
 
 ARG OWTSERVER_REPO=https://github.com/open-webrtc-toolkit/owt-server.git
@@ -213,16 +227,6 @@ RUN git config --global user.email "you@example.com" && \
     ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/build.sh && \
 
-    # Install specified svt-hevc version for owt
-    cd ${SERVER_PATH}/third_party&& git clone ${SVT_REPO} && \
-    cd SVT-HEVC && git checkout v1.3.0 && \
-    cd Build/linux && chmod +x build.sh && \
-    ./build.sh debug && \
-    cd ../.. && cp -v ./Bin/Debug/libSvtHevcEnc.so.1 ./ && \
-    ln -s -v libSvtHevcEnc.so.1 libSvtHevcEnc.so && \
-    echo 'const char* stub() {return "this is a stub lib";}' > pseudo-svtHevcEnc.cpp && \
-    gcc pseudo-svtHevcEnc.cpp -fPIC -shared -o pseudo-svtHevcEnc.so && \
-
     # Get js client sdk for owt
     cd /home && git clone ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
@@ -230,12 +234,7 @@ RUN git config --global user.email "you@example.com" && \
 
     #Build and pack owt
     cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu -r -c && \
-    ./scripts/pack.js -t all --install-module --sample-path /home/owt-client-javascript/dist/samples/conference && \
-    cd ${SERVER_PATH} && ./dist/video_agent/install_openh264.sh && cp -r ${FDKAAC_LIB}/* ./dist/audio_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/video_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/streaming_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/analytics_agent/lib/ && \
-    cp -rf /home/owt-server/dist /home/build/owt
+    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
 FROM ubuntu:18.04 
 LABEL Description="This is the image for owt development on Ubuntu 18.04"
@@ -253,18 +252,24 @@ RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/ -rf && rm -rf node-*
 
-COPY --from=build /home/build/owt /home/owt
+COPY --from=build /home/owt-server/dist /home/owt
+COPY --from=build /home/build /
+
 
 RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
     apt-get update && \
     apt-get install rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev -y && \
-    echo "#!/bin/bash -e" >> /home/launch.sh && \
+        echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "service mongodb start &" >> /home/launch.sh && \
     echo "service rabbitmq-server start &" >> /home/launch.sh && \
     echo "sleep 5" >> /home/launch.sh && \
-    echo "cd /home/owt && ./management_api/init.sh && ./bin/start-all.sh && sleep infinity" >> /home/launch.sh && \
+    echo "cd /home/owt" >> /home/launch.sh && \
+    
+    echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     rm -rf /var/lib/apt/lists/*;
+
+
 
 
 
