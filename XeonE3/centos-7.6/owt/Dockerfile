@@ -135,7 +135,7 @@ ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 
-RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
+RUN yum install -y -q libass-devel freetype-devel SDL2-devel libxcb-devel libvdpau-devel zlib-devel openssl-devel
 
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg  ;
@@ -155,6 +155,57 @@ RUN yum install -y -q ca-certificates wget xz-utils
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/ -rf && rm -rf node-*
+
+# Fetch gmmlib
+ARG GMMLIB_VER=intel-gmmlib-18.3.0
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/${GMMLIB_VER}.tar.gz
+
+RUN wget -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
+
+
+# Build libva
+ARG LIBVA_VER=2.4.0
+ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
+
+RUN yum install -y -q libX11-devel mesa-libGL-devel which libdrm-devel
+
+RUN wget -O - ${LIBVA_REPO} | tar xz && \
+    cd libva-${LIBVA_VER} && \
+    ./autogen.sh --prefix=/usr --libdir=/usr/lib64 && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
+
+
+# Build media driver
+ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.0
+ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVER_VER}.tar.gz
+
+RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-devel
+
+RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver && \
+    mkdir -p media-driver/build && \
+    cd media-driver/build && \
+    cmake -DBUILD_TYPE=release -DBUILD_ALONG_WITH_CMRTLIB=1 -DMEDIA_VERSION="2.0.0" -DBS_DIR_GMMLIB=/home/gmmlib/Source/GmmLib -DBS_DIR_COMMON=/home/gmmlib/Source/Common -DBS_DIR_INC=/home/gmmlib/Source/inc -DBS_DIR_MEDIA=/home/media-driver -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr .. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
+
+
+
+# Build Intel(R) Media SDK
+ARG MSDK_VER=MSS-KBL-2019-R1
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/${MSDK_VER}.tar.gz
+
+RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
+    mkdir -p MediaSDK/build && \
+    cd MediaSDK/build && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    rm -rf /home/build/usr/samples && \
+    rm -rf /home/build/usr/plugins && \
+    make install;
 
 # Build OWT specific modules
 
@@ -224,7 +275,7 @@ RUN git config --global user.email "you@example.com" && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
 
     #Build and pack owt
-    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu -r -c && \
+    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
 FROM centos:7.6.1810
@@ -250,16 +301,19 @@ COPY --from=build /home/build /
 RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
     yum install rabbitmq-server mongodb mongodb-server -y && \
     yum remove -y -q epel-release && \
+    yum install intel-gpu-tools mesa-libGL-devel libvdpau-dev -y && \
         echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
     echo "rabbitmq-server &" >> /home/launch.sh && \
     echo "sleep 5" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
+    echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
     
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     rm -rf /var/cache/yum/*;
 
+ENV LIBVA_DRIVER_NAME=iHD
 
 
 

@@ -72,10 +72,5 @@ RUN git config --global user.email "you@example.com" && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
 
     #Build and pack owt
-    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu -r -c && \
-    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference && \
-    cd ${SERVER_PATH} && cp -r ${FDKAAC_LIB}/* ./dist/audio_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/video_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/streaming_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/analytics_agent/lib/ && \
-    cp -rf /home/owt-server/dist /home/build/owt
+    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ifelse(index(DOCKER_IMAGE,xeon-),-1,./scripts/build.js -t mcu-all -r -c && \,./scripts/build.js -t mcu -r -c && \)
+    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
