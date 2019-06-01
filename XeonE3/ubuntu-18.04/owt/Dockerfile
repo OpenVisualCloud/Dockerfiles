@@ -1,9 +1,9 @@
 
-FROM centos:7.6.1810 AS build
+FROM ubuntu:18.04 AS build
 WORKDIR /home
 
 # COMMON BUILD TOOLS
-RUN yum install -y -q bzip2 make autoconf libtool git wget ca-certificates pkg-config gcc gcc-c++ bison flex patch epel-release yum-devel libcurl-devel zlib-devel;
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev
 
 # Install cmake
 ARG CMAKE_VER=3.13.1
@@ -17,11 +17,7 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
 # Install automake, use version 1.14 on CentOS
 ARG AUTOMAKE_VER=1.14
 ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
-RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
-    cd automake-${AUTOMAKE_VER} && \
-    ./configure --prefix=/usr --libdir=/usr/lib64 --disable-doc && \ 
-    make -j8 && \
-    make install
+    RUN apt-get install -y -q automake
 
 # Build NASM
 ARG NASM_VER=2.13.03
@@ -30,7 +26,7 @@ RUN  wget ${NASM_REPO} && \
      tar -xaf nasm* && \
      cd nasm-${NASM_VER} && \
      ./autogen.sh && \
-     ./configure --prefix="/usr" --libdir=/usr/lib64 && \
+     ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu && \
      make -j8 && \
      make install
 
@@ -40,7 +36,7 @@ ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.ta
 RUN  wget -O - ${YASM_REPO} | tar xz && \
      cd yasm-${YASM_VER} && \
      sed -i "s/) ytasm.*/)/" Makefile.in && \
-     ./configure --prefix="/usr" --libdir=/usr/lib64 && \
+     ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu && \
      make -j8 && \
      make install
 
@@ -52,7 +48,7 @@ ARG LIBNICE_PATCH_REPO_02=https://raw.githubusercontent.com/open-webrtc-toolkit/
 ARG LIBNICE_PATCH_REPO_03=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-removecandidate.patch
 ARG LIBNICE_PATCH_REPO_04=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-keepalive.patch
 
-RUN yum install -y -q glib2-devel
+RUN apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev
 
 RUN wget -O - ${NICE_REPO} | tar xz && \
     cd libnice-${NICE_VER} && \
@@ -92,7 +88,6 @@ ARG USRSCTP_FILE="${USRSCTP_VERSION}.tar.gz"
 ARG USRSCTP_EXTRACT="usrsctp-${USRSCTP_VERSION}"
 ARG USRSCTP_URL="https://github.com/sctplab/usrsctp/archive/${USRSCTP_FILE}"
 
-RUN yum install -y -q which
 
 RUN wget -O - ${USRSCTP_URL} | tar xz && \
     mv ${USRSCTP_EXTRACT} usrsctp && \
@@ -106,7 +101,7 @@ RUN wget -O - ${USRSCTP_URL} | tar xz && \
 ARG SRTP2_VER="2.1.0"
 ARG SRTP2_REPO=https://codeload.github.com/cisco/libsrtp/tar.gz/v${SRTP2_VER}
 
-RUN yum install -y -q curl
+RUN apt-get update && apt-get install -y -q --no-install-recommends curl
 
 RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     tar xzf libsrtp-${SRTP2_VER}.tar.gz && \
@@ -122,7 +117,7 @@ ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.
 RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
     cd fdk-aac && \
     autoreconf -fiv && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared && \
+    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -135,13 +130,13 @@ ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 
-RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libass-dev libfreetype6-dev libvdpau-dev libsdl2-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev zlib1g-dev libssl-dev
 
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg  ;
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac --enable-nonfree && \
+    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac --enable-nonfree && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
@@ -150,11 +145,78 @@ RUN cd /home/FFmpeg && \
 ARG NODE_VER=v8.15.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
-RUN yum install -y -q ca-certificates wget xz-utils
+RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/ -rf && rm -rf node-*
+
+# Fetch SVT-HEVC
+ARG SVT_HEVC_VER=v1.3.0
+ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
+
+RUN git clone ${SVT_HEVC_REPO} && \
+    cd SVT-HEVC/Build/linux && \
+    git checkout ${SVT_HEVC_VER} && \
+    mkdir -p ../../Bin/Release && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install 
+
+
+# Fetch gmmlib
+ARG GMMLIB_VER=intel-gmmlib-18.3.0
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/${GMMLIB_VER}.tar.gz
+
+RUN wget -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
+
+
+# Build libva
+ARG LIBVA_VER=2.4.0
+ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
+
+RUN apt-get remove libva*
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev openbox
+
+RUN wget -O - ${LIBVA_REPO} | tar xz && \
+    cd libva-${LIBVA_VER} && \
+    ./autogen.sh --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
+
+
+# Build media driver
+ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.0
+ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVER_VER}.tar.gz
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libpciaccess-dev libx11-dev xorg-dev libgl1-mesa-dev
+
+RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver && \
+    mkdir -p media-driver/build && \
+    cd media-driver/build && \
+    cmake -DBUILD_TYPE=release -DBUILD_ALONG_WITH_CMRTLIB=1 -DMEDIA_VERSION="2.0.0" -DBS_DIR_GMMLIB=/home/gmmlib/Source/GmmLib -DBS_DIR_COMMON=/home/gmmlib/Source/Common -DBS_DIR_INC=/home/gmmlib/Source/inc -DBS_DIR_MEDIA=/home/media-driver -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr .. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
+
+
+
+# Build Intel(R) Media SDK
+ARG MSDK_VER=MSS-KBL-2019-R1
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/${MSDK_VER}.tar.gz
+
+RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
+    mkdir -p MediaSDK/build && \
+    cd MediaSDK/build && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    rm -rf /home/build/usr/samples && \
+    rm -rf /home/build/usr/plugins && \
+    make install;
 
 # Build OWT specific modules
 
@@ -176,8 +238,8 @@ ARG SVT_REPO=https://github.com/intel/SVT-HEVC.git
 ARG SERVER_PATH=/home/owt-server
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 
-ARG FDKAAC_LIB=/home/build/usr/lib64
-RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
+ARG FDKAAC_LIB=/home/build/usr/lib/x86_64-linux-gnu
+RUN apt-get update && apt-get install -y -q --no-install-recommends python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev
 
 # 1. Clone OWT server source code 
 # 2. Clone licode source code and patch
@@ -224,11 +286,12 @@ RUN git config --global user.email "you@example.com" && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
 
     #Build and pack owt
-    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu -r -c && \
+    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
-FROM centos:7.6.1810
-LABEL Description="This is the image for owt development on CentOS 7.6"
+
+FROM ubuntu:18.04 
+LABEL Description="This is the image for owt development on Ubuntu 18.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
@@ -237,7 +300,7 @@ WORKDIR /home
 ARG NODE_VER=v8.15.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
-RUN yum install -y -q ca-certificates wget xz-utils
+RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
@@ -247,19 +310,23 @@ COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
 
-RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
-    yum install rabbitmq-server mongodb mongodb-server -y && \
-    yum remove -y -q epel-release && \
+RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
+    apt-get update && \
+    apt-get install rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev -y && \
+    apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
         echo "#!/bin/bash -e" >> /home/launch.sh && \
-    echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
-    echo "rabbitmq-server &" >> /home/launch.sh && \
+    echo "service mongodb start &" >> /home/launch.sh && \
+    echo "service rabbitmq-server start &" >> /home/launch.sh && \
     echo "sleep 5" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
+    echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
     
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
-    rm -rf /var/cache/yum/*;
+    rm -rf /var/lib/apt/lists/*;
 
+
+ENV LIBVA_DRIVER_NAME=iHD
 
 
 
