@@ -123,26 +123,23 @@ RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac &&
     make install
 
 
-ARG FFMPEG_VER="4.1.1"
-ARG FFMPEG_DIR="ffmpeg-${FFMPEG_VER}"
-ARG FFMPEG_SRC="${FFMPEG_DIR}.tar.bz2"
-ARG FFMPEG_SRC_URL="http://ffmpeg.org/releases/${FFMPEG_SRC}"
-ARG FFMPEG_SRC_MD5SUM="4a64e3cb3915a3bf71b8b60795904800"
+# Fetch FFmpeg source
+ARG FFMPEG_VER=n4.1
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
+ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch
+ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
+ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 
-ARG FDKAAC_VER="0.1.6"
-ARG FDKAAC_SRC="fdk-aac-${FDKAAC_VER}.tar.gz"
-ARG FDKAAC_SRC_URL="http://sourceforge.net/projects/opencore-amr/files/fdk-aac/${FDKAAC_SRC}/download"
-ARG FDKAAC_SRC_MD5SUM="13c04c5f4f13f4c7414c95d7fcdea50f"
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libass-dev libfreetype6-dev zlib1g-dev libssl-dev
 
-RUN apt-get update && apt-get install -y -q --no-install-recommends libfreetype6-dev
+RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
+    cd FFmpeg  ;
+# Compile FFmpeg
+RUN cd /home/FFmpeg && \
+    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac --enable-nonfree && \
+    make -j8 && \
+    make install && make install DESTDIR="/home/build"
 
-RUN wget -c ${FFMPEG_SRC_URL} && \
-    rm -fr ${FFMPEG_DIR} && \
-    tar xf ${FFMPEG_SRC} && \
-    cd ${FFMPEG_DIR} && \
-    PKG_CONFIG_PATH=/usr/lib/pkgconfig CFLAGS=-fPIC ./configure --prefix=/usr/ --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac --enable-nonfree && \
-    make -j4 -s V=0 && make install && \
-    make install DESTDIR="/home/build"
 
 # Install node
 ARG NODE_VER=v8.15.0
@@ -153,6 +150,20 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certifica
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/ -rf && rm -rf node-*
+
+# Fetch SVT-HEVC
+ARG SVT_HEVC_VER=v1.3.0
+ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
+
+RUN git clone ${SVT_HEVC_REPO} && \
+    cd SVT-HEVC/Build/linux && \
+    git checkout ${SVT_HEVC_VER} && \
+    mkdir -p ../../Bin/Release && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install 
+
 
 # Build OWT specific modules
 
@@ -216,16 +227,6 @@ RUN git config --global user.email "you@example.com" && \
     ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/build.sh && \
 
-    # Install specified svt-hevc version for owt
-    cd ${SERVER_PATH}/third_party&& git clone ${SVT_REPO} && \
-    cd SVT-HEVC && git checkout v1.3.0 && \
-    cd Build/linux && chmod +x build.sh && \
-    ./build.sh debug && \
-    cd ../.. && cp -v ./Bin/Debug/libSvtHevcEnc.so.1 ./ && \
-    ln -s -v libSvtHevcEnc.so.1 libSvtHevcEnc.so && \
-    echo 'const char* stub() {return "this is a stub lib";}' > pseudo-svtHevcEnc.cpp && \
-    gcc pseudo-svtHevcEnc.cpp -fPIC -shared -o pseudo-svtHevcEnc.so && \
-
     # Get js client sdk for owt
     cd /home && git clone ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
@@ -233,12 +234,7 @@ RUN git config --global user.email "you@example.com" && \
 
     #Build and pack owt
     cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu -r -c && \
-    ./scripts/pack.js -t all --install-module --sample-path /home/owt-client-javascript/dist/samples/conference && \
-    cd ${SERVER_PATH} && ./dist/video_agent/install_openh264.sh && cp -r ${FDKAAC_LIB}/* ./dist/audio_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/video_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/streaming_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/analytics_agent/lib/ && \
-    cp -rf /home/owt-server/dist /home/build/owt
+    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
 FROM ubuntu:18.04 
 LABEL Description="This is the image for owt development on Ubuntu 18.04"
@@ -256,11 +252,24 @@ RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/ -rf && rm -rf node-*
 
-COPY --from=build /home/build/owt /home/owt
+COPY --from=build /home/owt-server/dist /home/owt
+COPY --from=build /home/build /
+
 
 RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
     apt-get update && \
     apt-get install rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev -y && \
+        echo "#!/bin/bash -e" >> /home/launch.sh && \
+    echo "service mongodb start &" >> /home/launch.sh && \
+    echo "service rabbitmq-server start &" >> /home/launch.sh && \
+    echo "sleep 5" >> /home/launch.sh && \
+    echo "cd /home/owt" >> /home/launch.sh && \
+    
+    echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
+    chmod +x /home/launch.sh && \
     rm -rf /var/lib/apt/lists/*;
+
+
+
 
 

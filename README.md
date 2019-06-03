@@ -50,7 +50,7 @@ The service images provides ready to use services. See their image descriptions 
 
 | Image | Description |
 | :-----: | :----- | 
-| Coming soon | Coming soon |
+| OWT| image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
 
 ## Support Matrix:
 

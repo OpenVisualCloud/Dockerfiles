@@ -66,26 +66,11 @@ RUN git config --global user.email "you@example.com" && \
     ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/build.sh && \
 
-    # Install specified svt-hevc version for owt
-    cd ${SERVER_PATH}/third_party&& git clone ${SVT_REPO} && \
-    cd SVT-HEVC && git checkout v1.3.0 && \
-    cd Build/linux && chmod +x build.sh && \
-    ./build.sh debug && \
-    cd ../.. && cp -v ./Bin/Debug/libSvtHevcEnc.so.1 ./ && \
-    ln -s -v libSvtHevcEnc.so.1 libSvtHevcEnc.so && \
-    echo 'const char* stub() {return "this is a stub lib";}' > pseudo-svtHevcEnc.cpp && \
-    gcc pseudo-svtHevcEnc.cpp -fPIC -shared -o pseudo-svtHevcEnc.so && \
-
     # Get js client sdk for owt
     cd /home && git clone ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
 
     #Build and pack owt
-    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu -r -c && \
-    ./scripts/pack.js -t all --install-module --sample-path /home/owt-client-javascript/dist/samples/conference && \
-    cd ${SERVER_PATH} && ./dist/video_agent/install_openh264.sh && cp -r ${FDKAAC_LIB}/* ./dist/audio_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/video_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/streaming_agent/lib/ && \
-    cp -r ${FDKAAC_LIB}/* ./dist/analytics_agent/lib/ && \
-    cp -rf /home/owt-server/dist /home/build/owt
+    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ifelse(index(DOCKER_IMAGE,xeon-),-1,./scripts/build.js -t mcu-all -r -c && \,./scripts/build.js -t mcu -r -c && \)
+    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference

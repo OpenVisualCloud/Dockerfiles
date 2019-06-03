@@ -12,6 +12,10 @@ include(libsrtp2.m4)
 include(libfdk-aac.m4)
 include(ffmpeg.m4)
 include(nodetools.m4)
+include(gmmlib.m4)
+include(libva.m4)
+include(media-driver.m4)
+include(media-sdk.m4)
 include(owt.m4)dnl
 
 FROM centos:7.6.1810
