@@ -21,6 +21,8 @@ ARG FFMPEG_MA_PATCH_REPO_13=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/
 ARG FFMPEG_MA_PATCH_REPO_14=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0014-iemetadata-it-will-provide-data-frame-by-frame-by-de.patch
 ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0015-Add-libcjson-for-model-pre-post-processing.patch
 ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
+ARG FFMPEG_MA_PATCH_REPO_17=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch
+ARG FFMPEG_MA_PATCH_REPO_18=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch
 )dnl
 define(`FFMPEG_X11',ifelse(index(DOCKER_IMAGE,-dev),-1,ifelse(index(DOCKER_IMAGE,xeon-),-1,ON,OFF),ON))dnl
 
@@ -51,7 +53,9 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_13} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_14} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1;
+    wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_17} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1;
 )dnl
 
 defn(`FFMPEG_SOURCE_SVT_HEVC',`FFMPEG_SOURCE_SVT_AV1',`FFMPEG_SOURCE_TRANSFORM360')dnl
