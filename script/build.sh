@@ -4,7 +4,12 @@ if test -z "${DIR}"; then
     exit -1
 fi 
 
-TEMPLATE="${DIR}/../../../template"
+if echo ${IMAGE} | grep -q "dev"; then
+    TEMPLATE="${DIR}/../../../template/"
+else
+    TEMPLATE="${DIR}/../../../../template/"
+fi
+
 PREFIX="${PREFIX:-openvisualcloud}"
 
 for m4file in "${DIR}"/*.m4; do
