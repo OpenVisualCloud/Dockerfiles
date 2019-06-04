@@ -1,8 +1,8 @@
-if(NOT DEFINED image_dirs)
-    file(GLOB image_dirs "*")
+if(NOT DEFINED os_dirs)
+    file(GLOB os_dirs "*")
 endif()
 
-foreach(dir ${image_dirs})
+foreach(dir ${os_dirs})
     if(EXISTS ${dir}/CMakeLists.txt)
         add_subdirectory(${dir})
     endif()
