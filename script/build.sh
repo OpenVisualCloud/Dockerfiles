@@ -5,9 +5,9 @@ if test -z "${DIR}"; then
 fi 
 
 if echo ${IMAGE} | grep -q "dev"; then
-    echo TEMPLATE="${DIR}/../../../template"
+    TEMPLATE="${DIR}/../../../template/"
 else
-    echo TEMPLATE="${DIR}/../../../../template"
+    TEMPLATE="${DIR}/../../../../template/"
 fi
 
 PREFIX="${PREFIX:-openvisualcloud}"
