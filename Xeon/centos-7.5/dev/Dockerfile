@@ -172,7 +172,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=90b56a80795d4d0448673c4c7276ce6d5c8ac9d4
+ARG SVT_AV1_VER=v0.5.0
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
@@ -218,7 +218,7 @@ RUN yum install -y -q python-yaml
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2019_R1
+ARG DLDT_VER=2019_R1.1
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 ARG DLDT_C_API_1=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
 ARG DLDT_C_API_2=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0002-Change-to-match-image-with-separate-planes.patch
@@ -238,7 +238,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     wget -O - ${DLDT_C_API_4} | patch -p2 && \
     mkdir build && \
     cd build && \
-    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLE_CORE=OFF  .. && \
+    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES=OFF .. && \
     make -j $(nproc) && \
     rm -rf ../bin/intel64/Release/lib/libgtest* && \
     rm -rf ../bin/intel64/Release/lib/libgmock* && \
@@ -538,6 +538,8 @@ ARG FFMPEG_MA_PATCH_REPO_13=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/
 ARG FFMPEG_MA_PATCH_REPO_14=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0014-iemetadata-it-will-provide-data-frame-by-frame-by-de.patch
 ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0015-Add-libcjson-for-model-pre-post-processing.patch
 ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
+ARG FFMPEG_MA_PATCH_REPO_17=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch
+ARG FFMPEG_MA_PATCH_REPO_18=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch
 
 RUN yum install -y -q libass-devel freetype-devel SDL2-devel libxcb-devel texinfo zlib-devel openssl-devel
 
@@ -561,7 +563,9 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_13} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_14} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1;
+    wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_17} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
