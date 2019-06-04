@@ -3,4 +3,4 @@
 IMAGE="xeon-ubuntu1804-service-owt"
 DIR=$(dirname $(readlink -f "$0"))
 
-. "${DIR}/../../../script/shell.sh"
+. "${DIR}/../../../../script/shell.sh"
