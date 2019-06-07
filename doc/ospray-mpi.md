@@ -1,10 +1,10 @@
-### ospray+OpenImageIO+mpi:
+### ospray-mpi:
 NOTICE: To run example san-miguel you have to uncomment line:
 ```bash
 #include(ospray-example_san-miguel.m4)
 ```
 ```bash
-in file: "Xeon/your_os/ospray+mpi+OpenImageIO/Dockerfile.m4"
+in file: "Xeon/<_OS_>/graphics/ospray-mpi/Dockerfile.m4"
 ```
 There are two options to see result:
 1. Using single host calculation:
@@ -26,7 +26,7 @@ There are two options to see result:
 
   On hosts which will only perform calculation i.e worker, image require one parameter with executing sshd, for example:
   ```bash
-docker run --net=host -it xeon_ubuntu1604_ospray-mpi /usr/sbin/sshd -D
+docker run --net=host -it openvisualcloud/xeon-ubuntu1604-graphics-ospray-mpi /usr/sbin/sshd -D
   ```
   On host which will show results i.e master,
   Image have to be run in GUI interface with params:
@@ -46,7 +46,7 @@ mpirun -n /*your number of hosts*/ -ppn 1 \
   ```
   NOTICE-1: Multi-host connection is configured on port 2222, please make sure if it is avaliable on your hosts
 
-  NOTICE-2: Images are not interchangeable, which means workers and master have to be the same image for example "xeon_ubuntu1604_ospray-mpi"
+  NOTICE-2: Images are not interchangeable, which means workers and master have to be the same image for example "xeon-ubuntu1604-graphics-ospray-mpi"
 
   NOTICE-3: In case of error:
   ```

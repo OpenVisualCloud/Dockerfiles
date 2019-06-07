@@ -1,7 +1,7 @@
 This is a hello world example using the development and deployment images to build a gstreamer application.
 
 #### Prerequisites: ####
-Build the Xeon/ubuntu-18.04/dldt+gst and Xeon/ubuntu-18.04/ffmpeg+gst+dev images with the instructions on the main page
+Build the Xeon/ubuntu-18.04/analytics/gst and Xeon/ubuntu-18.04/dev images with the instructions on the main page
 
 
 #### To build the sample: ####
@@ -16,11 +16,11 @@ docker run --rm hellogstreamer
 
 #### Dockerfile ####
 ```
-FROM xeon-ubuntu1804-ffmpeg-gst-dev:1.0 AS build
+FROM xeon-ubuntu1804-dev:1.0 AS build
 COPY main.cpp /main.cpp
 RUN gcc -I/usr/include -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include/ -I/usr/include/gstreamer-1.0 -o hellogst /main.cpp -lglib-2.0 -lgstreamer-1.0
 
-FROM xeon-ubuntu1804-dldt-gst:1.0
+FROM xeon-ubuntu1804-analytics-gst:1.0
 COPY --from=build /home/hellogst /home/hellogst
 RUN dd if=/dev/urandom bs=115200 count=300 of=/home/test.yuv
 ENTRYPOINT ["/home/hellogst"]
