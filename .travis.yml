@@ -7,117 +7,73 @@ addons:
       - docker-ce
     update: true
 env:
-  - CPU=Xeon buildOS=centos-7.4 imageName=dldt+ffmpeg
-  - CPU=Xeon buildOS=centos-7.4 imageName=dldt+gst
-  - CPU=Xeon buildOS=centos-7.4 imageName=ffmpeg
-  - CPU=Xeon buildOS=centos-7.4 imageName=gst
-  - CPU=Xeon buildOS=centos-7.4 imageName=nginx+rtmp
-  - CPU=Xeon buildOS=centos-7.4 imageName=ospray
-  - CPU=Xeon buildOS=centos-7.4 imageName=ospray+mpi+OpenImageIO
-  - CPU=Xeon buildOS=centos-7.5 imageName=dldt+ffmpeg
-  - CPU=Xeon buildOS=centos-7.5 imageName=dldt+gst
-  - CPU=Xeon buildOS=centos-7.5 imageName=ffmpeg
-  - CPU=Xeon buildOS=centos-7.5 imageName=gst
-  - CPU=Xeon buildOS=centos-7.5 imageName=nginx+rtmp
-  - CPU=Xeon buildOS=centos-7.5 imageName=ospray
-  - CPU=Xeon buildOS=centos-7.5 imageName=ospray+mpi+OpenImageIO
-  - CPU=Xeon buildOS=centos-7.6 imageName=dldt+ffmpeg
-  - CPU=Xeon buildOS=centos-7.6 imageName=dldt+gst
-  - CPU=Xeon buildOS=centos-7.6 imageName=ffmpeg
-  - CPU=Xeon buildOS=centos-7.6 imageName=gst
-  - CPU=Xeon buildOS=centos-7.6 imageName=nginx+rtmp
-  - CPU=Xeon buildOS=centos-7.6 imageName=ospray
-  - CPU=Xeon buildOS=centos-7.6 imageName=ospray+mpi+OpenImageIO
-  - CPU=Xeon buildOS=ubuntu-16.04 imageName=dldt+ffmpeg
-  - CPU=Xeon buildOS=ubuntu-16.04 imageName=dldt+gst
-  - CPU=Xeon buildOS=ubuntu-16.04 imageName=ffmpeg
-  - CPU=Xeon buildOS=ubuntu-16.04 imageName=gst
-  - CPU=Xeon buildOS=ubuntu-16.04 imageName=nginx+rtmp
-  - CPU=Xeon buildOS=ubuntu-16.04 imageName=ospray
-  - CPU=Xeon buildOS=ubuntu-16.04 imageName=ospray+mpi+OpenImageIO
-  - CPU=Xeon buildOS=ubuntu-18.04 imageName=dldt+ffmpeg
-  - CPU=Xeon buildOS=ubuntu-18.04 imageName=dldt+gst
-  - CPU=Xeon buildOS=ubuntu-18.04 imageName=ffmpeg
-  - CPU=Xeon buildOS=ubuntu-18.04 imageName=gst
-  - CPU=Xeon buildOS=ubuntu-18.04 imageName=nginx+rtmp
-  - CPU=Xeon buildOS=ubuntu-18.04 imageName=ospray
-  - CPU=Xeon buildOS=ubuntu-18.04 imageName=ospray+mpi+OpenImageIO
+  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=ffmpeg
+  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=ffmpeg
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=gst
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx
+  - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=ospray
+  - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=ospray-mpi
+  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=ffmpeg
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=ffmpeg
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=gst
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=ospray
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=ospray-mpi
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=service imageName=owt
+  - CPU=Xeon buildOS=centos-7.4 usage=analytics imageName=ffmpeg
+  - CPU=Xeon buildOS=centos-7.4 usage=analytics imageName=gst
+  - CPU=Xeon buildOS=centos-7.4 usage=media imageName=ffmpeg
+  - CPU=Xeon buildOS=centos-7.4 usage=media imageName=gst
+  - CPU=Xeon buildOS=centos-7.4 usage=media imageName=nginx
+  - CPU=Xeon buildOS=centos-7.4 usage=graphics imageName=ospray
+  - CPU=Xeon buildOS=centos-7.4 usage=graphics imageName=ospray-mpi
+  - CPU=Xeon buildOS=centos-7.5 usage=analytics imageName=ffmpeg
+  - CPU=Xeon buildOS=centos-7.5 usage=analytics imageName=gst
+  - CPU=Xeon buildOS=centos-7.5 usage=media imageName=ffmpeg
+  - CPU=Xeon buildOS=centos-7.5 usage=media imageName=gst
+  - CPU=Xeon buildOS=centos-7.5 usage=media imageName=nginx
+  - CPU=Xeon buildOS=centos-7.5 usage=graphics imageName=ospray
+  - CPU=Xeon buildOS=centos-7.5 usage=graphics imageName=ospray-mpi
+  - CPU=Xeon buildOS=ubuntu-16.04 usage=analytics imageName=ffmpeg
+  - CPU=Xeon buildOS=ubuntu-16.04 usage=analytics imageName=gst
+  - CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=ffmpeg
+  - CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=gst
+  - CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=nginx
+  - CPU=Xeon buildOS=ubuntu-16.04 usage=graphics imageName=ospray
+  - CPU=Xeon buildOS=ubuntu-16.04 usage=graphics imageName=ospray-mpi
 
 before_install:
   - docker version
 script:
   - &basescript |
     mkdir build && cd build && cmake ..
-    cd ${CPU}/${buildOS}/${imageName}
+    cd ${CPU}/${buildOS}/${usage}/${imageName}
   - make
-  - ctest
+  - ctest -V
 
 matrix:
   fast_finish: true
   allow_failures: # All images with GST will have GST SVT VP9 test failing. NGINX RTMP tests are not stable
-    - name: centos-7.4/ffmpeg+gst+dev
-    - env: CPU=Xeon buildOS=centos-7.4 imageName=dldt+gst
-    - env: CPU=Xeon buildOS=centos-7.4 imageName=gst
-    - env: CPU=Xeon buildOS=centos-7.4 imageName=nginx+rtmp
-    - name: centos-7.5/ffmpeg+gst+dev
-    - env: CPU=Xeon buildOS=centos-7.5 imageName=dldt+gst
-    - env: CPU=Xeon buildOS=centos-7.5 imageName=gst
-    - env: CPU=Xeon buildOS=centos-7.5 imageName=nginx+rtmp
-    - name: centos-7.6/ffmpeg+gst+dev
-    - env: CPU=Xeon buildOS=centos-7.6 imageName=dldt+gst
-    - env: CPU=Xeon buildOS=centos-7.6 imageName=gst
-    - env: CPU=Xeon buildOS=centos-7.6 imageName=nginx+rtmp
-    - name: ubuntu-16.04/ffmpeg+gst+dev
-    - env: CPU=Xeon buildOS=ubuntu-16.04 imageName=dldt+gst
-    - env: CPU=Xeon buildOS=ubuntu-16.04 imageName=gst
-    - env: CPU=Xeon buildOS=ubuntu-16.04 imageName=nginx+rtmp
-    - name: ubuntu-18.04/ffmpeg+gst+dev
-    - env: CPU=Xeon buildOS=ubuntu-18.04 imageName=dldt+gst
-    - env: CPU=Xeon buildOS=ubuntu-18.04 imageName=gst
-    - env: CPU=Xeon buildOS=ubuntu-18.04 imageName=nginx+rtmp
-  include:
-    # centos-7.4 job
-    - name: centos-7.4/ffmpeg+gst+dev
-      script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.4/ffmpeg+gst+dev
-        - cd Xeon/centos-7.4/ffmpeg+gst+dev
-        - ctest
-      after_failure:
-        - tail --lines=5000 log_Xeon_centos74_ffmpeg_gst_dev.log
-    # centos-7.5 job
-    - name: centos-7.5/ffmpeg+gst+dev
-      script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.5/ffmpeg+gst+dev
-        - cd Xeon/centos-7.5/ffmpeg+gst+dev
-        - ctest
-      after_failure:
-        - tail --lines=5000 log_Xeon_centos75_ffmpeg_gst_dev.log
-    # centos-7.6 job
-    - name: centos-7.6/ffmpeg+gst+dev
-      script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/centos-7.6/ffmpeg+gst+dev
-        - cd Xeon/centos-7.6/ffmpeg+gst+dev
-        - ctest
-      after_failure:
-        - tail --lines=5000 log_Xeon_centos76_ffmpeg_gst_dev.log
-    # ubuntu-16.04 job
-    - name: ubuntu-16.04/ffmpeg+gst+dev
-      script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-16.04/ffmpeg+gst+dev
-        - cd Xeon/ubuntu-16.04/ffmpeg+gst+dev
-        - ctest
-      after_failure:
-        - tail --lines=5000 log_Xeon_ubuntu1604_ffmpeg_gst_dev.log
-    # ubuntu-18.04 job
-    - name: ubuntu-18.04/ffmpeg+gst+dev
-      script:
-        - *basescript
-        - travis_wait 150 ../script/travis_build.sh Xeon/ubuntu-18.04/ffmpeg+gst+dev
-        - cd Xeon/ubuntu-18.04/ffmpeg+gst+dev
-        - ctest
-      after_failure:
-        - tail --lines=5000 log_Xeon_ubuntu1804_ffmpeg_gst_dev.log
+    - name: centos-7.4/dev
+    - env: CPU=Xeon buildOS=centos-7.4 usage=analytics imageName=gst
+    - env: CPU=Xeon buildOS=centos-7.4 usage=media imageName=gst
+    - env: CPU=Xeon buildOS=centos-7.4 usage=media imageName=nginx
+    - name: centos-7.5/dev
+    - env: CPU=Xeon buildOS=centos-7.5 usage=analytics imageName=gst
+    - env: CPU=Xeon buildOS=centos-7.5 usage=media imageName=gst
+    - env: CPU=Xeon buildOS=centos-7.5 usage=media imageName=nginx
+    - name: centos-7.6/dev
+    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst
+    - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=gst
+    - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx
+    - name: ubuntu-16.04/dev
+    - env: CPU=Xeon buildOS=ubuntu-16.04 usage=analytics imageName=gst
+    - env: CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=gst
+    - env: CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=nginx
+    - name: ubuntu-18.04/dev
+    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst
+    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=gst
+    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx
