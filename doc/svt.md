@@ -1,4 +1,4 @@
-Scalable Video Technology (SVT) is a software-based video coding technology that is highly optimized for Intel Xeon Scalable processors and Intel Xeon D processors. SVT provides flexible high-performance software encoder core libraries for media and visual cloud developers.
+Scalable Video Technology (SVT) is a software-based video coding technology that is highly optimized for Intel<sup>®</sup> Xeon<sup>®</sup> Scalable processors and Intel<sup>®</sup> Xeon<sup>®</sup> D processors. SVT provides flexible high-performance software encoder core libraries for media and visual cloud developers.
 
 ### SVT modules
 
