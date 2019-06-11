@@ -21,6 +21,7 @@ The software stack images provide ready to use software stacks for application d
 | [ffmpeg](doc/ffmpeg.md) |Image optimized for media creation and delivery. Included codecs: aac, mp3, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. The GPU images are accelerated with vaapi and qsv. See [ffmpeg.md](doc/ffmpeg.md) for details.|
 | [gst](doc/gst.md) |Image optimized for media creation and delivery. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with vaapi. See [gst.md](doc/gst.md) for details.|
 | [nginx](doc/nginx.md) |Image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.|
+| [svt](doc/svt.md) |Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. See [svt.md](doc/svt.md) for details.|
 
 #### Media Analytics   
 
