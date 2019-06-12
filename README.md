@@ -42,7 +42,7 @@ The development images enable application compilation, debugging (with the debug
 
 | Image | Description |
 | :-----: | :----- | 
-| dev | Image contains the FFmpeg and GStreamer C++ development files. The OpenViNO model optimizer is to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
+| dev | Image containing the FFmpeg and GStreamer C++ development files. The OpenViNO model optimizer is to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
 
 ## Service Images:
 
@@ -50,7 +50,7 @@ The service images provides ready to use services. See their image descriptions 
 
 | Image | Description |
 | :-----: | :----- | 
-| [OWT](doc/owt.md)| image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
+| [owt](doc/owt.md)| Image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
 
 ## Support Matrix:
 
@@ -134,7 +134,3 @@ for dep in .2 .1; do
     sudo docker build --network=host --file="Dockerfile$dep" -t "$image:latest" . $(env | grep -E '_(proxy)=' | sed 's/^/--build-arg /')   
 done  
 ```
-
-### Development Images:
-The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment. See helloworld ([link](/doc/helloworld_gst.md)) for an example of how to use the development images.
-
