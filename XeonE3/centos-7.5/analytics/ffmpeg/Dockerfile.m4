@@ -24,7 +24,7 @@ include(media-driver.m4)
 include(media-sdk.m4)
 include(opencl.m4)
 include(dldt-ie.m4)
-include(libcjson.m4)
+include(libjsonc.m4)
 include(librdkafka.m4)
 include(ffmpeg.m4)
 include(cleanup.m4)dnl
