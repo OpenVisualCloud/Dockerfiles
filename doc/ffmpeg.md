@@ -39,6 +39,10 @@ The FFmpeg builds included the following patches for feature enhancement, better
 |[IE_FILTERS_14](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0014-iemetadata-it-will-provide-data-frame-by-frame-by-de.patch)|Iemetadata it will provide data frame by frame.|
 |[IE_FILTERS_15](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0015-Add-libcjson-for-model-pre-post-processing.patch)|Add libcjson for model pre/post processing.|
 |[IE_FILTERS_16](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch)|Change IE filters to use model proc.|
+|[IE_FILTERS_17](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch)|Profiling patch.|
+|[IE_FILTERS_18](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch)|Bug fixings.|
+|[IE_FILTERS_19](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0019-Face-reidentification-refine.patch)|Face reidentification refine.|
+|[IE_FILTERS_20](hhttps://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0020-More-changes-within-one-patch.patch)|Update more features.|
 
 ### GPU Acceleration
 
@@ -89,8 +93,12 @@ ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./mobilenet-ssd.xml:model_proc=mobil
 Face detection and reidentification:
 
 ```bash
-ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-retail-0004.xml, \
-classify=model=./face-reidentification-retail-0095.xml:label=./labels.txt:name=face_id:feature_file=./registered_faces.bin -an -f null /dev/nul
+ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=./face-detection-retail-0004.xml, \
+classify=model=./face-reidentification-retail-0095.xml:model_proc=./face-reidentification-retail-0095.json" -an -f null /dev/null
+
+ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=./face-detection-retail-0004.xml, \
+classify=model=./face-reidentification-retail-0095.xml:model_proc=./face-reidentification-retail-0095.json,identify=gallery=./gallery" \
+-f iemetadata -y /tmp/face-identify.json
 ```
 
 Car attribute recognition
