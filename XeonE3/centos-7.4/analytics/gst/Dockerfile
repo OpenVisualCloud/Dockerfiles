@@ -558,27 +558,27 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         cd paho.mqtt.c-${PAHO_VER} && \
         make && \
         make install && \
-        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/ && \
-        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/ && \
-        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/ && \
-        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/ && \
+        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/lib64/ && \
+        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib64/ && \
+        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/lib64/ && \
+        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/lib64/ && \
         cp build/output/paho_c_version /home/build/usr/bin/ && \
         cp build/output/samples/paho_c_pub /home/build/usr/bin/ && \
         cp build/output/samples/paho_c_sub /home/build/usr/bin/ && \
         cp build/output/samples/paho_cs_pub /home/build/usr/bin/ && \
         cp build/output/samples/paho_cs_sub /home/build/usr/bin/ && \
-        chmod 644 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1.0 && \
-        chmod 644 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1.0 && \
-        chmod 644 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1.0 && \
-        chmod 644 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1.0 && \
-        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1 && \
-        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1 && \
-        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1 && \
-        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1 && \
-        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so && \
-        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so && \
-        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so && \
-        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so && \
+        chmod 644 /home/build/usr/lib64/libpaho-mqtt3c.so.1.0 && \
+        chmod 644 /home/build/usr/lib64/libpaho-mqtt3cs.so.1.0 && \
+        chmod 644 /home/build/usr/lib64/libpaho-mqtt3a.so.1.0 && \
+        chmod 644 /home/build/usr/lib64/libpaho-mqtt3as.so.1.0 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3c.so.1.0 /home/build/usr/lib64/libpaho-mqtt3c.so.1 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib64/libpaho-mqtt3cs.so.1 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3a.so.1.0 /home/build/usr/lib64/libpaho-mqtt3a.so.1 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3as.so.1.0 /home/build/usr/lib64/libpaho-mqtt3as.so.1 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3c.so.1 /home/build/usr/lib64/libpaho-mqtt3c.so && \
+        ln /home/build/usr/lib64/libpaho-mqtt3cs.so.1 /home/build/usr/lib64/libpaho-mqtt3cs.so && \
+        ln /home/build/usr/lib64/libpaho-mqtt3a.so.1 /home/build/usr/lib64/libpaho-mqtt3a.so && \
+        ln /home/build/usr/lib64/libpaho-mqtt3as.so.1 /home/build/usr/lib64/libpaho-mqtt3as.so && \
         cp src/MQTTAsync.h /home/build/usr/include/ && \
         cp src/MQTTClient.h /home/build/usr/include/ && \
         cp src/MQTTClientPersistence.h /home/build/usr/include/ && \
@@ -595,7 +595,7 @@ ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.
 RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
         wget -O - ${RDKAFKA_REPO} | tar -xz && \
         cd librdkafka-${RDKAFKA_VER} && \
-        ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu/ && \
+        ./configure --prefix=/usr --libdir=/usr/lib64/ && \
         make && \
         make install && \
         make install DESTDIR=/home/build; \
