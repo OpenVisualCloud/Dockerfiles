@@ -156,6 +156,24 @@ RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/ -rf && rm -rf node-*
 
+# Fetch SVT-HEVC
+ARG SVT_HEVC_VER=v1.3.0
+ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
+
+RUN yum install -y -q patch centos-release-scl && \
+    yum install -y -q devtoolset-7
+
+RUN git clone ${SVT_HEVC_REPO} && \
+    cd SVT-HEVC/Build/linux && \
+    git checkout ${SVT_HEVC_VER} && \
+    mkdir -p ../../Bin/Release && \
+    ( source /opt/rh/devtoolset-7/enable && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install )
+
+
 # Build OWT specific modules
 
 ARG OWTSERVER_REPO=https://github.com/open-webrtc-toolkit/owt-server.git
