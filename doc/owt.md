@@ -56,9 +56,9 @@ Before running OWT service, mongodb and rabbitmq services need to be launched. W
 ```bash
 /home/launch.sh
 ```
-### OWT service configuration for cloud:
+### OWT service configuration for public cloud:
 
-The OWT service provides the following settings in configuration files to configure the network interfaces for public cloud access:
+The OWT service provides the following settings in configuration files to configure the network interfaces for public cloud (like AWS) access:
 
 |Configuration Item|Location|Usage|
 |------|------|------|
@@ -69,5 +69,5 @@ The OWT service provides the following settings in configuration files to config
 |portal.hostname, portal.ip_address | portal/portal.toml | The hostname and IP address of portal for public access; hostname first if it is not empty.|
 |portal.port | portal/portal.toml | The port of portal for public access through TCP|
 
-And you also need to configure your cloud security rule to allow public access to ports listed in above table.
+Note: You also need to configure your cloud security rule to allow public access to ports listed in above table.
 
