@@ -17,6 +17,7 @@ ARG SVT_VER=v1.3.0
 ARG SVT_REPO=https://github.com/intel/SVT-HEVC.git
 ARG SERVER_PATH=/home/owt-server
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
+ARG OWT_BRANCH=4.2.x
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 ARG FDKAAC_LIB=/home/build/usr/lib/x86_64-linux-gnu
@@ -32,7 +33,7 @@ RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
 # 3. Clone webrtc source code and patch
 RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name" && \
-    git clone ${OWTSERVER_REPO} && \
+    git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
 
     # Install node modules for owt
     npm install -g --loglevel error node-gyp grunt-cli underscore jsdoc && \
@@ -67,7 +68,7 @@ RUN git config --global user.email "you@example.com" && \
     ./src/tools-woogeen/build.sh && \
 
     # Get js client sdk for owt
-    cd /home && git clone ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
+    cd /home && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
 
