@@ -18,6 +18,8 @@ if (NOT DEFINED DOCKER_PREFIX)
     set(DOCKER_PREFIX "openvisualcloud")
 endif()
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/script/")
+
 enable_testing()
 
 file(GLOB dirs "*")
@@ -36,4 +38,3 @@ message(
     "-- Setting: BUILD_FDKAAC=${BUILD_FDKAAC}\n"
     "-- Setting: ONLY_DOCKERFILES=${ONLY_DOCKERFILES}\n"
     "-- Setting: DOCKER_PREFIX=${DOCKER_PREFIX}\n")
-
