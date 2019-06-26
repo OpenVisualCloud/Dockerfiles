@@ -374,7 +374,7 @@ ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-${LIBJSONC_VER
 RUN wget -O - ${LIBJSONC_REPO} | tar xz && \
     cd json-c-json-c-${LIBJSONC_VER} && \
     sh autogen.sh && \
-    ./configure && \
+    ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu && \
     make -j8 && \
     make install DESTDIR="/home/build" && \
     make install;
