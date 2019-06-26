@@ -1,5 +1,6 @@
 
 worker_processes auto;
+worker_rlimit_nofile 8192;
 daemon off;
 
 events {
@@ -54,6 +55,8 @@ http {
 
     server {
         listen 80;
+        #server_name  localhost;
+        client_max_body_size 1024M;
 
         # proxy cache settings
         proxy_cache one;
@@ -93,5 +96,40 @@ http {
             rtmp_stat all;
             rtmp_stat_stylesheet stat.xsl;
         }
+
+        location /upload {
+
+            # Pass altered request body to this location
+            upload_pass @backend;
+            upload_pass_args on;
+
+            # Store files to this directory
+            upload_store /var/nginx/html/upload;  
+
+            # Allow uploaded files to be read/write only by group
+            upload_store_access group:rw;
+
+            # Set specified fields in request body
+            upload_set_form_field $upload_field_name.name "$upload_file_name";
+            upload_set_form_field $upload_field_name.content_type "$upload_content_type";
+            upload_set_form_field $upload_field_name.path "$upload_tmp_path";
+
+            # Inform backend about hash and size of a file
+            upload_aggregate_form_field "$upload_field_name.md5" "$upload_file_md5";
+            upload_aggregate_form_field "$upload_field_name.size" "$upload_file_size";
+
+            #upload_pass_form_field "^submit$|^description$";
+            upload_pass_form_field "office";
+            upload_pass_form_field "sensor";
+            upload_pass_form_field "dirname";
+
+            upload_cleanup 400 404 499 500-505;
+        }
+
+        # Pass altered request body to a backend
+        location @backend {
+           proxy_pass   http://localhost:8080;
+        }
     }
 }
+
