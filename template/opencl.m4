@@ -56,12 +56,15 @@ RUN export CXX=/opt/rh/devtoolset-7/root/usr/bin/g++ && \
     make -j8 && \
     make install
 
-RUN mkdir build_compute_runtime && \
+RUN export CXX=/opt/rh/devtoolset-7/root/usr/bin/g++ && \
+    export CC=/opt/rh/devtoolset-7/root/usr/bin/gcc && \
+    mkdir build_compute_runtime && \
+    cd build_compute_runtime && \
     git clone https://github.com/intel/compute-runtime neo && \
     cd neo && \
     mkdir build && \
     cd build && \
-    cmake -DBUILD_TYPE=Release -DCMAKE_BUILD_TYPE=Release .. && \
+    PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/ cmake -DBUILD_TYPE=Release -DCMAKE_BUILD_TYPE=Release .. && \
     make -j8
 )dnl
 
