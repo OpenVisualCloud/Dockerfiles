@@ -9,6 +9,7 @@ RUN yum install -y -q libtiff-devel zlib-devel libpng-devel libjpeg-devel python
 
 ARG OpenEXR_VER=0ac2ea3
 ARG OpenEXR_REPO=https://github.com/openexr/openexr.git
+define(`INSTALL_OPENEXR',--enable-openexr )dnl
 RUN git clone ${OpenEXR_REPO}; \
     mkdir openexr/build; \
     cd openexr/build; \
@@ -19,6 +20,7 @@ RUN git clone ${OpenEXR_REPO}; \
 
 ARG OpenImageIO_VER=5daa9a1
 ARG OpenImageIO_REPO=https://github.com/OpenImageIO/oiio.git
+define(`INSTALL_OPENIMAGEIO',--enable-openimageio )dnl
 RUN git clone ${OpenImageIO_REPO}; \
     mkdir oiio/build; \
     cd oiio/build; \

@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certifica
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q ca-certificates wget xz-utils
 )dnl
-
+define(`INSTALL_NODE',--enable-node )
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/ -rf && rm -rf node-*

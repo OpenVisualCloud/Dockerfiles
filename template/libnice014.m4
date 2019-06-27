@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-d
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q glib2-devel
 )dnl
-
+define(`INSTALL_LIBNICE',--enable-libnice )
 RUN wget -O - ${NICE_REPO} | tar xz && \
     cd libnice-${NICE_VER} && \
     wget -O - ${LIBNICE_PATCH_REPO_01} | patch -p1 && \

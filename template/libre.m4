@@ -1,7 +1,7 @@
 # Build libre
 ARG LIBRE_VER="v0.4.16"
 ARG LIBRE_REPO=https://github.com/creytiv/re.git
-
+define(`INSTALL_LIBRE',--enable-libre )
 RUN git clone ${LIBRE_REPO} && \
     cd re && \
     git checkout ${LIBRE_VER} && \

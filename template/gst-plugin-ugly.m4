@@ -1,6 +1,7 @@
 # Build the gstremaer plugin ugly set
 ARG GST_PLUGIN_UGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-${GST_VER}.tar.xz
 
+define(`INSTALL_PKGS_GST_PLUGIN_UGLY',--enable-gstpluginugly )dnl
 RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ; \
      cd gst-plugins-ugly-${GST_VER}; \
      ./autogen.sh \

@@ -14,6 +14,7 @@ ENV PATH=$PATH:/usr/lib64/mpich/bin
 
 ARG OSPRAY_VER=c42a885
 ARG OSPRAY_REPO=https://github.com/ospray/ospray.git
+define(`INSTALL_OSPRAY_MPI',--enable-ospraympi )dnl
 RUN git clone ${OSPRAY_REPO}; \
     mkdir ospray/build; \
     cd ospray/build; \

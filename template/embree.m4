@@ -9,6 +9,7 @@ RUN yum install -y -q tbb-devel mesa-libGL-devel
 
 ARG EMBREE_REPO=https://github.com/embree/embree.git
 ARG EMBREE_VER=df0b324
+define(`INSTALL_EMBREE',--enable-embree )dnl
 RUN git clone ${EMBREE_REPO} && \
     mkdir embree/build && \
     cd embree/build && \

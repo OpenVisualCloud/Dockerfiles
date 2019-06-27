@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends curl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q curl
 )dnl
-
+define(`INSTALL_LIBSRTP2',--enable-libsrtp2 )
 RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     tar xzf libsrtp-${SRTP2_VER}.tar.gz && \
     cd libsrtp-${SRTP2_VER} && \

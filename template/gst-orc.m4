@@ -2,6 +2,7 @@
 ARG GST_ORC_VER=0.4.28
 ARG GST_ORC_REPO=https://gstreamer.freedesktop.org/src/orc/orc-${GST_ORC_VER}.tar.xz
 
+define(`INSTALL_PKGS_GST_ORC_REPO',--enable-gstorcrepo )dnl
 RUN  wget -O - ${GST_ORC_REPO} | tar xJ && \
      cd orc-${GST_ORC_VER} && \
      ./autogen.sh --prefix=/usr --libdir=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) \

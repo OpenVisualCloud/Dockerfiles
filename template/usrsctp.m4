@@ -8,7 +8,7 @@ ARG USRSCTP_URL="https://github.com/sctplab/usrsctp/archive/${USRSCTP_FILE}"
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q which
 )dnl
-
+define(`CONFIGURE_USRSCTP',--enable-usrsctp )
 RUN wget -O - ${USRSCTP_URL} | tar xz && \
     mv ${USRSCTP_EXTRACT} usrsctp && \
     cd usrsctp && \
