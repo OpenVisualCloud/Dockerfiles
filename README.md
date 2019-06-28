@@ -21,6 +21,7 @@ The software stack images provide ready to use software stacks for application d
 | [ffmpeg](doc/ffmpeg.md) |Image optimized for media creation and delivery. Included codecs: aac, mp3, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. The GPU images are accelerated with vaapi and qsv. See [ffmpeg.md](doc/ffmpeg.md) for details.|
 | [gst](doc/gst.md) |Image optimized for media creation and delivery. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with vaapi. See [gst.md](doc/gst.md) for details.|
 | [nginx](doc/nginx.md) |Image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.|
+| [svt](doc/svt.md) |Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. See [svt.md](doc/svt.md) for details.|
 
 #### Media Analytics   
 
@@ -42,7 +43,7 @@ The development images enable application compilation, debugging (with the debug
 
 | Image | Description |
 | :-----: | :----- | 
-| dev | Image contains the FFmpeg and GStreamer C++ development files. The OpenViNO model optimizer is to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
+| dev | Image containing the FFmpeg and GStreamer C++ development files. The OpenViNO model optimizer is to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
 
 ## Service Images:
 
@@ -50,7 +51,7 @@ The service images provides ready to use services. See their image descriptions 
 
 | Image | Description |
 | :-----: | :----- | 
-| [OWT](doc/owt.md)| image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
+| [owt](doc/owt.md)| Image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
 
 ## Support Matrix:
 
@@ -134,7 +135,3 @@ for dep in .2 .1; do
     sudo docker build --network=host --file="Dockerfile$dep" -t "$image:latest" . $(env | grep -E '_(proxy)=' | sed 's/^/--build-arg /')   
 done  
 ```
-
-### Development Images:
-The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment. See helloworld ([link](/doc/helloworld_gst.md)) for an example of how to use the development images.
-

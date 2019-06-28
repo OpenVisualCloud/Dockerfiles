@@ -278,15 +278,14 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 
 
 
-# Build libcjson
-ARG LIBCJSON_VER=1.7.11
-ARG LIBCJSON_PKG_NAME=v${LIBCJSON_VER}
-ARG LIBCJSON_REPO=https://github.com/DaveGamble/cJSON/archive/${LIBCJSON_PKG_NAME}.tar.gz
+# Build libjson-c
+ARG LIBJSONC_VER=0.13.1-20180305
+ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-${LIBJSONC_VER}.tar.gz
 
-RUN wget -O - ${LIBCJSON_REPO} | tar xz && \
-    cd cJSON-${LIBCJSON_VER} && \
-    mkdir build && cd build && \
-    cmake .. -DENABLE_CJSON_UTILS=On -DENABLE_CJSON_TEST=Off -DCMAKE_INSTALL_PREFIX="/usr" -DLIB_INSTALL_DIR=/usr/lib64 && \
+RUN wget -O - ${LIBJSONC_REPO} | tar xz && \
+    cd json-c-json-c-${LIBJSONC_VER} && \
+    sh autogen.sh && \
+    ./configure --prefix=/usr --libdir=/usr/lib64 && \
     make -j8 && \
     make install DESTDIR="/home/build" && \
     make install;
@@ -327,6 +326,8 @@ ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/
 ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
 ARG FFMPEG_MA_PATCH_REPO_17=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch
 ARG FFMPEG_MA_PATCH_REPO_18=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch
+ARG FFMPEG_MA_PATCH_REPO_19=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0019-Face-reidentification-refine.patch
+ARG FFMPEG_MA_PATCH_REPO_20=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0020-More-changes-within-one-patch.patch
 
 RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
 
@@ -352,7 +353,9 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_17} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1;
+    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_19} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_20} | patch -p1;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
@@ -364,7 +367,7 @@ RUN cd /home/FFmpeg; \
 
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype --disable-xlib --disable-sdl2 --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine --enable-librdkafka  && \
+    ./configure --prefix="/usr" --libdir=/usr/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype --disable-xlib --disable-sdl2 --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine --enable-librdkafka --enable-libjson_c  && \
     make -j8 && \
     make install DESTDIR="/home/build"
 

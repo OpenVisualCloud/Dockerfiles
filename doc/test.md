@@ -9,6 +9,7 @@
 | Media:FFmpeg | V | V | V | V | V |
 | Media:GStreamer | V | V | V | V | V |
 | Media:NGINX | V | V | V | V | V |
+| Media:SVT | V | V | V | V | V |
 | Analytics:FFmpeg | V | V | V | V | V |
 | Analytics:GStreamer | V | V | V | V | V |
 | Graphics:ospray | V | V | V | V | V |

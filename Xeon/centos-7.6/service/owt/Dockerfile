@@ -156,6 +156,24 @@ RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/ -rf && rm -rf node-*
 
+# Fetch SVT-HEVC
+ARG SVT_HEVC_VER=v1.3.0
+ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
+
+RUN yum install -y -q patch centos-release-scl && \
+    yum install -y -q devtoolset-7
+
+RUN git clone ${SVT_HEVC_REPO} && \
+    cd SVT-HEVC/Build/linux && \
+    git checkout ${SVT_HEVC_VER} && \
+    mkdir -p ../../Bin/Release && \
+    ( source /opt/rh/devtoolset-7/enable && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install )
+
+
 # Build OWT specific modules
 
 ARG OWTSERVER_REPO=https://github.com/open-webrtc-toolkit/owt-server.git
@@ -175,6 +193,7 @@ ARG SVT_VER=v1.3.0
 ARG SVT_REPO=https://github.com/intel/SVT-HEVC.git
 ARG SERVER_PATH=/home/owt-server
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
+ARG OWT_BRANCH=4.2.x
 
 ARG FDKAAC_LIB=/home/build/usr/lib64
 RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
@@ -184,7 +203,7 @@ RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
 # 3. Clone webrtc source code and patch
 RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name" && \
-    git clone ${OWTSERVER_REPO} && \
+    git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
 
     # Install node modules for owt
     npm install -g --loglevel error node-gyp grunt-cli underscore jsdoc && \
@@ -219,7 +238,7 @@ RUN git config --global user.email "you@example.com" && \
     ./src/tools-woogeen/build.sh && \
 
     # Get js client sdk for owt
-    cd /home && git clone ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
+    cd /home && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
 

@@ -301,10 +301,10 @@ RUN cp -r dldt/model-optimizer /home/build/opt/intel/dldt/model-optimizer
 
 
 # Build the gstremaer core
-ARG GST_VER=1.14.4
+ARG GST_VER=1.16.0
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
-RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev gobject-introspection libgirepository1.0-dev libpango-1.0-0 libpangocairo-1.0-0 autopoint
+RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev gobject-introspection libgirepository1.0-dev libpango-1.0-0 libpangocairo-1.0-0 autopoint libcurl3-gnutls
 RUN  wget -O - ${GST_REPO} | tar xJ && \
      cd gstreamer-${GST_VER} && \
      ./autogen.sh \
@@ -338,6 +338,9 @@ RUN  wget -O - ${GST_ORC_REPO} | tar xJ && \
 ARG GST_PLUGIN_BASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${GST_VER}.tar.xz
 
 RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv-dev libvisual-0.4-dev libtheora-dev libglib2.0-dev libasound2-dev libcdparanoia-dev libgl1-mesa-dev libpango1.0-dev
+
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev libegl1-mesa-dev autopoint bison flex libudev-dev
+
 
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
@@ -465,18 +468,64 @@ RUN apt-get install -y -q --no-install-recommends gtk-doc-tools
 
 
 
+ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
 ARG PAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
-RUN wget -O - https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz | tar -xz; \
-    cd paho.mqtt.c-${PAHO_VER}; \
-    make; \
-    make install;
+RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
+        wget -O - ${PAHO_REPO} | tar -xz && \
+        cd paho.mqtt.c-${PAHO_VER} && \
+        make && \
+        make install && \
+        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/ && \
+        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/ && \
+        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/ && \
+        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/ && \
+        cp build/output/paho_c_version /home/build/usr/bin/ && \
+        cp build/output/samples/paho_c_pub /home/build/usr/bin/ && \
+        cp build/output/samples/paho_c_sub /home/build/usr/bin/ && \
+        cp build/output/samples/paho_cs_pub /home/build/usr/bin/ && \
+        cp build/output/samples/paho_cs_sub /home/build/usr/bin/ && \
+        chmod 644 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1.0 && \
+        chmod 644 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1.0 && \
+        chmod 644 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1.0 && \
+        chmod 644 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1.0 && \
+        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1 && \
+        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1 && \
+        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1 && \
+        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1.0 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1 && \
+        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3c.so && \
+        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so && \
+        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3a.so && \
+        ln /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1 /home/build/usr/lib/x86_64-linux-gnu/libpaho-mqtt3as.so && \
+        cp src/MQTTAsync.h /home/build/usr/include/ && \
+        cp src/MQTTClient.h /home/build/usr/include/ && \
+        cp src/MQTTClientPersistence.h /home/build/usr/include/ && \
+        cp src/MQTTProperties.h /home/build/usr/include/ && \
+        cp src/MQTTReasonCodes.h /home/build/usr/include/ && \
+        cp src/MQTTSubscribeOpts.h /home/build/usr/include/; \
+    else \
+        echo "PAHO install disabled"; \
+    fi
+
+ARG RDKAFKA_INSTALL=true
+ARG RDKAFKA_VER=1.0.0
+ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.tar.gz
+RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
+        wget -O - ${RDKAFKA_REPO} | tar -xz && \
+        cd librdkafka-${RDKAFKA_VER} && \
+        ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu/ && \
+        make && \
+        make install && \
+        make install DESTDIR=/home/build; \
+    else \
+        echo "RDKAFKA install disabled"; \
+    fi
+
 
 #Install va gstreamer plugins
 #Has a dependency on OpenCV, GStreamer
-ARG VA_GSTREAMER_PLUGINS_VER=0.3.1
+ARG VA_GSTREAMER_PLUGINS_VER=0.4
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
-ARG VA_GSTREAMER_PLUGINS_PATCH_01=https://gist.githubusercontent.com/SDxKeeper/cfdd8595a6555846bd08b020fe8d3823/raw/8eaccd0573bd93918b81a3709c574a23f4af2219/0001-workaround-for-OpenVINO-R1.patch
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     cd gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER} && \
@@ -490,6 +539,8 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DDISABLE_SAMPLES=ON \
+    -DMQTT=ON \
+    -DKAFKA=ON \
     -DDISABLE_VAAPI=ON \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
@@ -524,6 +575,8 @@ ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/
 ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
 ARG FFMPEG_MA_PATCH_REPO_17=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch
 ARG FFMPEG_MA_PATCH_REPO_18=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch
+ARG FFMPEG_MA_PATCH_REPO_19=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0019-Face-reidentification-refine.patch
+ARG FFMPEG_MA_PATCH_REPO_20=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0020-More-changes-within-one-patch.patch
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libass-dev libfreetype6-dev libsdl2-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev texinfo zlib1g-dev libssl-dev
 
@@ -549,7 +602,9 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_17} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1;
+    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_19} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_20} | patch -p1;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
@@ -573,7 +628,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2  libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python-yaml libgtk2.0 libdrm2 libxv1 \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2  libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python-yaml libgtk2.0 libdrm2 libxv1 \
 ; \
     rm -rf /var/lib/apt/lists/*;
 

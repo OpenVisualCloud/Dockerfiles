@@ -23,6 +23,8 @@ ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/
 ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
 ARG FFMPEG_MA_PATCH_REPO_17=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch
 ARG FFMPEG_MA_PATCH_REPO_18=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch
+ARG FFMPEG_MA_PATCH_REPO_19=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0019-Face-reidentification-refine.patch
+ARG FFMPEG_MA_PATCH_REPO_20=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0020-More-changes-within-one-patch.patch
 )dnl
 define(`FFMPEG_X11',ifelse(index(DOCKER_IMAGE,-dev),-1,ifelse(index(DOCKER_IMAGE,xeon-),-1,ON,OFF),ON))dnl
 
@@ -55,13 +57,15 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_17} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1;
+    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_19} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_20} | patch -p1;
 )dnl
 
 defn(`FFMPEG_SOURCE_SVT_HEVC',`FFMPEG_SOURCE_SVT_AV1',`FFMPEG_SOURCE_TRANSFORM360')dnl
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/lib64,/usr/lib/x86_64-linux-gnu) ifelse(index(DOCKER_IMAGE,owt),-1,--extra-libs="-lpthread -lm" --enable-defn(`BUILD_LINKAGE') --enable-gpl --enable-libass --enable-libfreetype ifelse(FFMPEG_X11,OFF,--disable-xlib --disable-sdl2) --enable-openssl --enable-nonfree ifelse(index(DOCKER_IMAGE,xeon-),-1,--enable-libdrm --enable-libmfx,--disable-vaapi --disable-hwaccels) ifelse(index(DOCKER_IMAGE,-dev),-1,--disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages) defn(`FFMPEG_CONFIG_FDKAAC',`FFMPEG_CONFIG_MP3LAME',`FFMPEG_CONFIG_OPUS',`FFMPEG_CONFIG_VORBIS',`FFMPEG_CONFIG_VPX',`FFMPEG_CONFIG_X264',`FFMPEG_CONFIG_X265',`FFMPEG_CONFIG_AOM',`FFMPEG_CONFIG_SVT_HEVC',`FFMPEG_CONFIG_SVT_AV1',`FFMPEG_CONFIG_TRANSFORM360',`FFMPEG_CONFIG_DLDT_IE',`FFMPEG_CONFIG_LIBRDKAFKA'),--enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac --enable-nonfree) && \
+    ./configure --prefix="/usr" --libdir=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/lib64,/usr/lib/x86_64-linux-gnu) ifelse(index(DOCKER_IMAGE,owt),-1,--extra-libs="-lpthread -lm" --enable-defn(`BUILD_LINKAGE') --enable-gpl --enable-libass --enable-libfreetype ifelse(FFMPEG_X11,OFF,--disable-xlib --disable-sdl2) --enable-openssl --enable-nonfree ifelse(index(DOCKER_IMAGE,xeon-),-1,--enable-libdrm --enable-libmfx,--disable-vaapi --disable-hwaccels) ifelse(index(DOCKER_IMAGE,-dev),-1,--disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages) defn(`FFMPEG_CONFIG_FDKAAC',`FFMPEG_CONFIG_MP3LAME',`FFMPEG_CONFIG_OPUS',`FFMPEG_CONFIG_VORBIS',`FFMPEG_CONFIG_VPX',`FFMPEG_CONFIG_X264',`FFMPEG_CONFIG_X265',`FFMPEG_CONFIG_AOM',`FFMPEG_CONFIG_SVT_HEVC',`FFMPEG_CONFIG_SVT_AV1',`FFMPEG_CONFIG_TRANSFORM360',`FFMPEG_CONFIG_DLDT_IE',`FFMPEG_CONFIG_LIBRDKAFKA',`FFMPEG_CONFIG_LIBJSON_C'),--enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac --enable-nonfree) && \
     make -j8 && \
     ifelse(index(DOCKER_IMAGE,owt),-1,,make install && )make install DESTDIR="/home/build"
 

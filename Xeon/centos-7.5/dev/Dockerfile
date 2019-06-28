@@ -318,7 +318,7 @@ RUN cp -r dldt/model-optimizer /home/build/opt/intel/dldt/model-optimizer
 
 
 # Build the gstremaer core
-ARG GST_VER=1.14.4
+ARG GST_VER=1.16.0
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
 RUN  yum install -y -q glib2-devel-2.56.1 gettext-devel gobject-introspection gobject-introspection-devel python-gobject-base
@@ -355,6 +355,9 @@ RUN  wget -O - ${GST_ORC_REPO} | tar xJ && \
 ARG GST_PLUGIN_BASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${GST_VER}.tar.xz
 
 RUN  yum install -y -q libXv-devel libvisual-devel libtheora-devel glib2-devel alsa-lib-devel cdparanoia-devel mesa-libGL-devel pango-devel
+
+RUN  yum install -y -q libXrandr-devel
+
 
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
@@ -481,18 +484,64 @@ RUN yum install -y -q glib2-devel gtk-dock openblas
 
 
 
+ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
 ARG PAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
-RUN wget -O - https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz | tar -xz; \
-    cd paho.mqtt.c-${PAHO_VER}; \
-    make; \
-    make install;
+RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
+        wget -O - ${PAHO_REPO} | tar -xz && \
+        cd paho.mqtt.c-${PAHO_VER} && \
+        make && \
+        make install && \
+        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/lib64/ && \
+        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib64/ && \
+        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/lib64/ && \
+        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/lib64/ && \
+        cp build/output/paho_c_version /home/build/usr/bin/ && \
+        cp build/output/samples/paho_c_pub /home/build/usr/bin/ && \
+        cp build/output/samples/paho_c_sub /home/build/usr/bin/ && \
+        cp build/output/samples/paho_cs_pub /home/build/usr/bin/ && \
+        cp build/output/samples/paho_cs_sub /home/build/usr/bin/ && \
+        chmod 644 /home/build/usr/lib64/libpaho-mqtt3c.so.1.0 && \
+        chmod 644 /home/build/usr/lib64/libpaho-mqtt3cs.so.1.0 && \
+        chmod 644 /home/build/usr/lib64/libpaho-mqtt3a.so.1.0 && \
+        chmod 644 /home/build/usr/lib64/libpaho-mqtt3as.so.1.0 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3c.so.1.0 /home/build/usr/lib64/libpaho-mqtt3c.so.1 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib64/libpaho-mqtt3cs.so.1 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3a.so.1.0 /home/build/usr/lib64/libpaho-mqtt3a.so.1 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3as.so.1.0 /home/build/usr/lib64/libpaho-mqtt3as.so.1 && \
+        ln /home/build/usr/lib64/libpaho-mqtt3c.so.1 /home/build/usr/lib64/libpaho-mqtt3c.so && \
+        ln /home/build/usr/lib64/libpaho-mqtt3cs.so.1 /home/build/usr/lib64/libpaho-mqtt3cs.so && \
+        ln /home/build/usr/lib64/libpaho-mqtt3a.so.1 /home/build/usr/lib64/libpaho-mqtt3a.so && \
+        ln /home/build/usr/lib64/libpaho-mqtt3as.so.1 /home/build/usr/lib64/libpaho-mqtt3as.so && \
+        cp src/MQTTAsync.h /home/build/usr/include/ && \
+        cp src/MQTTClient.h /home/build/usr/include/ && \
+        cp src/MQTTClientPersistence.h /home/build/usr/include/ && \
+        cp src/MQTTProperties.h /home/build/usr/include/ && \
+        cp src/MQTTReasonCodes.h /home/build/usr/include/ && \
+        cp src/MQTTSubscribeOpts.h /home/build/usr/include/; \
+    else \
+        echo "PAHO install disabled"; \
+    fi
+
+ARG RDKAFKA_INSTALL=true
+ARG RDKAFKA_VER=1.0.0
+ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.tar.gz
+RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
+        wget -O - ${RDKAFKA_REPO} | tar -xz && \
+        cd librdkafka-${RDKAFKA_VER} && \
+        ./configure --prefix=/usr --libdir=/usr/lib64/ && \
+        make && \
+        make install && \
+        make install DESTDIR=/home/build; \
+    else \
+        echo "RDKAFKA install disabled"; \
+    fi
+
 
 #Install va gstreamer plugins
 #Has a dependency on OpenCV, GStreamer
-ARG VA_GSTREAMER_PLUGINS_VER=0.3.1
+ARG VA_GSTREAMER_PLUGINS_VER=0.4
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
-ARG VA_GSTREAMER_PLUGINS_PATCH_01=https://gist.githubusercontent.com/SDxKeeper/cfdd8595a6555846bd08b020fe8d3823/raw/8eaccd0573bd93918b81a3709c574a23f4af2219/0001-workaround-for-OpenVINO-R1.patch
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     cd gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER} && \
@@ -506,6 +555,8 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DDISABLE_SAMPLES=ON \
+    -DMQTT=ON \
+    -DKAFKA=ON \
     -DDISABLE_VAAPI=ON \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
@@ -540,6 +591,8 @@ ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/
 ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
 ARG FFMPEG_MA_PATCH_REPO_17=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch
 ARG FFMPEG_MA_PATCH_REPO_18=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch
+ARG FFMPEG_MA_PATCH_REPO_19=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0019-Face-reidentification-refine.patch
+ARG FFMPEG_MA_PATCH_REPO_20=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0020-More-changes-within-one-patch.patch
 
 RUN yum install -y -q libass-devel freetype-devel SDL2-devel libxcb-devel texinfo zlib-devel openssl-devel
 
@@ -565,7 +618,9 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1 && \
     wget -O - ${FFMPEG_MA_PATCH_REPO_17} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1;
+    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_19} | patch -p1 && \
+    wget -O - ${FFMPEG_MA_PATCH_REPO_20} | patch -p1;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \

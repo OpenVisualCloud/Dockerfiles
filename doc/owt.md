@@ -56,3 +56,18 @@ Before running OWT service, mongodb and rabbitmq services need to be launched. W
 ```bash
 /home/launch.sh
 ```
+### OWT service configuration for public cloud:
+
+The OWT service provides the following settings in configuration files to configure the network interfaces for public cloud (like AWS) access:
+
+|Configuration Item|Location|Usage|
+|------|------|------|
+|webrtc.network_interfaces | webrtc_agent/agent.toml | The network interfaces of webrtc-agent that clients in public network can connect to|
+|webrtc.minport | webrtc_agent/agent.toml | The webrtc port range lowerbound for clients to connect through UDP|
+|webrtc.maxport | webrtc_agent/agent.toml | The webrtc port range upperbound for clients to connect through UDP|
+|management-api.port | management_api/management_api.toml | The port of management-api should be accessible in public network through TCP|
+|portal.hostname, portal.ip_address | portal/portal.toml | The hostname and IP address of portal for public access; hostname first if it is not empty.|
+|portal.port | portal/portal.toml | The port of portal for public access through TCP|
+
+Note: You also need to configure your cloud security rule to allow public access to ports listed in above table.
+
