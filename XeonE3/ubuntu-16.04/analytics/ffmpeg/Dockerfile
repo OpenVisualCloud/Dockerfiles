@@ -289,7 +289,6 @@ RUN cd neo && \
     dpkg-deb -x intel-opencl_19.01.12103_amd64.deb /home/build/
 
 
-
 #clinfo needs to be installed after build directory is copied over
 
 # Build DLDT-Inference Engine
