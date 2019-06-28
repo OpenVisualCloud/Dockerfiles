@@ -268,14 +268,6 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
 #install OpenCL
 
 
-RUN yum install -y -q dnf dnf-plugins-core
-
-RUN yum install -y yum-plugin-copr
-RUN yum copr enable -y arturh/intel-opencl
-RUN yum install -y -q intel-opencl
-RUN yum install -y epel-release
-RUN yum install -y ocl-icd libgomp
-
 
 #clinfo needs to be installed after build directory is copied over
 
@@ -755,12 +747,6 @@ mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo python-yaml ; \
 COPY --from=build /home/build /
 ENV LIBVA_DRIVERS_PATH=/usr/lib64/dri
 ENV LIBVA_DRIVER_NAME=iHD
-RUN yum install -y -q dnf dnf-plugins-core yum-plugin-copr
-RUN yum copr enable -y arturh/intel-opencl
-RUN yum install -y -q intel-opencl
-RUN yum install -y epel-release
-RUN yum install -y ocl-icd libgomp
-RUN ln -s /usr/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so
 ENV GST_VAAPI_ALL_DRIVERS=1
 ENV DISPLAY=:0.0
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
