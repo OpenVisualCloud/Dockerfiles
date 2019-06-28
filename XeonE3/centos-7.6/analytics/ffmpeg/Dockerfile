@@ -282,14 +282,6 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
 #install OpenCL
 
 
-RUN yum install -y -q dnf dnf-plugins-core
-
-RUN yum install -y yum-plugin-copr
-RUN yum copr enable -y arturh/intel-opencl
-RUN yum install -y -q intel-opencl
-RUN yum install -y epel-release
-RUN yum install -y ocl-icd libgomp
-
 
 #clinfo needs to be installed after build directory is copied over
 
@@ -484,12 +476,6 @@ RUN yum install -y epel-release; \
 COPY --from=build /home/build /
 ENV LIBVA_DRIVERS_PATH=/usr/lib64/dri
 ENV LIBVA_DRIVER_NAME=iHD
-RUN yum install -y -q dnf dnf-plugins-core yum-plugin-copr
-RUN yum copr enable -y arturh/intel-opencl
-RUN yum install -y -q intel-opencl
-RUN yum install -y epel-release
-RUN yum install -y ocl-icd libgomp
-RUN ln -s /usr/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
