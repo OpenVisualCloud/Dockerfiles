@@ -259,11 +259,16 @@ COPY --from=build /home/build /
 
 RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
     apt-get update && \
-    apt-get install rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev -y && \
+    apt-get install rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \
         echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "service mongodb start &" >> /home/launch.sh && \
     echo "service rabbitmq-server start &" >> /home/launch.sh && \
-    echo "sleep 5" >> /home/launch.sh && \
+    echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
+    echo "do" >> /home/launch.sh && \
+    echo "  echo mongod not launch" >> /home/launch.sh && \
+    echo "  sleep 1" >> /home/launch.sh && \
+    echo "done" >> /home/launch.sh && \ 
+    echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
     
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \

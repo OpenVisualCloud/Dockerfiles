@@ -272,7 +272,11 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
         echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
     echo "rabbitmq-server &" >> /home/launch.sh && \
-    echo "sleep 5" >> /home/launch.sh && \
+    echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
+    echo "do" >> /home/launch.sh && \
+    echo "  sleep 1" >> /home/launch.sh && \
+    echo "done" >> /home/launch.sh && \
+    echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
     
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \

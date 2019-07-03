@@ -302,11 +302,15 @@ COPY --from=build /home/build /
 RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
     yum install rabbitmq-server mongodb mongodb-server -y && \
     yum remove -y -q epel-release && \
-    yum install intel-gpu-tools mesa-libGL-devel libvdpau-dev -y && \
+    yum install intel-gpu-tools mesa-libGL-devel libvdpau -y && \
         echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
     echo "rabbitmq-server &" >> /home/launch.sh && \
-    echo "sleep 5" >> /home/launch.sh && \
+    echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
+    echo "do" >> /home/launch.sh && \
+    echo "  sleep 1" >> /home/launch.sh && \
+    echo "done" >> /home/launch.sh && \
+    echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
     echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
     
