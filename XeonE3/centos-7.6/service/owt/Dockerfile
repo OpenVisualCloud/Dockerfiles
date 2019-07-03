@@ -306,7 +306,7 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
         echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
     echo "rabbitmq-server &" >> /home/launch.sh && \
-    echo "while ! curl http://127.0.0.1:27017/" >> /home/launch.sh && \
+    echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
     echo "do" >> /home/launch.sh && \
     echo "  sleep 1" >> /home/launch.sh && \
     echo "done" >> /home/launch.sh && \

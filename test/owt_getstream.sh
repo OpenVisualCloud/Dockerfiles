@@ -13,12 +13,13 @@ echo $response
 recording=$(curl -H "Content-Type: application/json" -X POST -d '{"media":{"audio":{"from":"${response}-common"},"video":{"from":"${response}-common"}}}' http://localhost:3001/rooms/${response}/recordings)
 echo $recording
 result=$(curl -sb -H http://localhost:3001/rooms/${response}/streams/${response}-common)
-
-
 echo $result
 if [[ $result == *"video"* ]]; then
   echo "Get mix stream succeeded!"
 else
+  cd /home/owt/logs
+  grep error . -ir
+  grep warn . -ir
   echo "Get stream failed!"
   exit 1
 fi
