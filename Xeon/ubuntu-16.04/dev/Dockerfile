@@ -529,7 +529,6 @@ ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/arch
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     cd gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER} && \
-    wget -O - ${VA_GSTREAMER_PLUGINS_PATCH_01} | patch -p1 && \
     mkdir build && \
     cd build && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
@@ -541,7 +540,7 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DDISABLE_SAMPLES=ON \
     -DMQTT=ON \
     -DKAFKA=ON \
-    -DDISABLE_VAAPI=ON \
+    -DDISABLE_VAAPI=ON  \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
 RUN mkdir -p build/usr/lib/x86_64-linux-gnu/gstreamer-1.0 && \
