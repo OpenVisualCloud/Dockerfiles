@@ -275,7 +275,8 @@ RUN yum install -y devtoolset-4-gcc-c++ ninja-build
 
 RUN cd gmmlib && mkdir build && cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release -DARCH=64 .. && \
-    make -j8
+    make -j8 && \
+    make install
 
 RUN mkdir build_igc && \
     cd build_igc && \
@@ -308,11 +309,15 @@ RUN export CXX=/opt/rh/devtoolset-7/root/usr/bin/g++ && \
     make -j8 && \
     make install
 
-RUN mkdir build_compute_runtime && \
+RUN export CXX=/opt/rh/devtoolset-7/root/usr/bin/g++ && \
+    export CC=/opt/rh/devtoolset-7/root/usr/bin/gcc && \
+    mkdir build_compute_runtime && \
+    cd build_compute_runtime && \
     git clone https://github.com/intel/compute-runtime neo && \
     cd neo && \
     mkdir build && \
     cd build && \
+    export PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/usr/local/lib64/pkgconfig/ && \
     cmake -DBUILD_TYPE=Release -DCMAKE_BUILD_TYPE=Release .. && \
     make -j8
 

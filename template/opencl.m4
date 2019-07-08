@@ -23,7 +23,8 @@ RUN yum install -y devtoolset-4-gcc-c++ ninja-build
 
 RUN cd gmmlib && mkdir build && cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release -DARCH=64 .. && \
-    make -j8
+    make -j8 && \
+    make install
 
 RUN mkdir build_igc && \
     cd build_igc && \
@@ -64,7 +65,8 @@ RUN export CXX=/opt/rh/devtoolset-7/root/usr/bin/g++ && \
     cd neo && \
     mkdir build && \
     cd build && \
-    PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig/ cmake -DBUILD_TYPE=Release -DCMAKE_BUILD_TYPE=Release .. && \
+    export PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/usr/local/lib64/pkgconfig/ && \
+    cmake -DBUILD_TYPE=Release -DCMAKE_BUILD_TYPE=Release .. && \
     make -j8
 )dnl
 
