@@ -79,7 +79,7 @@ Please see [development and test statuses](doc/test.md) for the latest developme
 (4) sudo systemctl restart docker     
 ```
 
-## Build docker image: 
+## Build Docker Image: 
 
 ```bash
 (1) mkdir build    
