@@ -126,7 +126,7 @@ update.sh:
 ```bash
 DOCKER_REPO=${DOCKER_REPO="https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles/master/Xeon/ubuntu-18.04/media"}    
 (echo "# xeon-ubuntu1804-media-ffmpeg" && curl ${DOCKER_REPO}/ffmpeg/Dockerfile) > Dockerfile.2    
-(echo "# xeon-ubuntu1804-media-nginx" && curl ${DOCKER_REPO}/nginx+rtmp/Dockerfile) > Dockerfile.1    
+(echo "# xeon-ubuntu1804-media-nginx" && curl ${DOCKER_REPO}/nginx/Dockerfile) > Dockerfile.1    
 ```
 build.sh:   
 ```bash
