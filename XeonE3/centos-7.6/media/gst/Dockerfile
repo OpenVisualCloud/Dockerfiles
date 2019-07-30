@@ -225,7 +225,7 @@ RUN wget -O - ${LIBVA_REPO} | tar xz && \
 
 
 # Build media driver
-ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.0
+ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.1
 ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVER_VER}.tar.gz
 
 RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-devel
