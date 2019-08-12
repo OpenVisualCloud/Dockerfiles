@@ -1,13 +1,13 @@
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
-    RUN apt-get install -y -q --no-install-recommends gtk-doc-tools
+    RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev
 )dnl
 
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-    RUN yum install -y -q glib2-devel gtk-dock openblas
+    RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel
 )dnl
 
 ifelse(index(DOCKER_IMAGE,centos74),-1,,
-    RUN yum install -y -q binutils
+    RUN yum install -y -q binutils uuid-devel
 )dnl
 
 
@@ -93,13 +93,13 @@ RUN mkdir -p /usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gn
 
 define(`INSTALL_PKGS_VA_GST_PLUGINS',
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-    libgtk2.0 libdrm2 libxv1 \
+    libgtk2.0 libdrm2 libxv1 uuid \
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
-    libgtk2.0 libdrm2 libxv1 libpugixml1v5 \
+    libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid \
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-    openblas-serial \
+    openblas-serial uuid \
 )dnl
 )dnl
 

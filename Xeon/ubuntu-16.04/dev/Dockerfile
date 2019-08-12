@@ -203,10 +203,6 @@ RUN apt-get install -y python3 python3-pip python3-setuptools python-yaml
 # Build DLDT-Inference Engine
 ARG DLDT_VER=2019_R2
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
-ARG DLDT_C_API_1=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
-ARG DLDT_C_API_2=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0002-Change-to-match-image-with-separate-planes.patch
-ARG DLDT_C_API_3=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0003-Refine-IE-C-API.patch
-ARG DLDT_C_API_4=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0004-Fix-code-style-and-symbols-visibility-for-2019R1.patch
 
 RUN apt-get -y install libusb-1.0.0-dev
 
@@ -215,10 +211,6 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     git submodule init && \
     git submodule update --recursive && \
     cd inference-engine && \
-    wget -O - ${DLDT_C_API_1} | patch -p2 && \
-    wget -O - ${DLDT_C_API_2} | patch -p2 && \
-    wget -O - ${DLDT_C_API_3} | patch -p2 && \
-    wget -O - ${DLDT_C_API_4} | patch -p2 && \
     mkdir build && \
     cd build && \
     cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES=OFF .. && \
@@ -463,7 +455,7 @@ RUN wget ${OPENCV_REPO} && \
     make install DESTDIR=/home/build && \
     make install
 
-RUN apt-get install -y -q --no-install-recommends gtk-doc-tools
+RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev
 
 
 
@@ -627,7 +619,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2  libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python-yaml libgtk2.0 libdrm2 libxv1 \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2  libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python-yaml libgtk2.0 libdrm2 libxv1 uuid \
 ; \
     rm -rf /var/lib/apt/lists/*;
 
