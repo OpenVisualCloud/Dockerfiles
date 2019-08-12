@@ -35,3 +35,4 @@ The default NGINX configuration exposes the following entry points:
 |1935|/stream|Publish/retrieve RTMP live streams.|
 |1935|/dash|Publish RTMP streams to generate DASH content.|
 |1935|/hls|Publish RTMP streams to generate HLS content.|
+
