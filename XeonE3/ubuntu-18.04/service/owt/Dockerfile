@@ -189,7 +189,7 @@ RUN wget -O - ${LIBVA_REPO} | tar xz && \
 
 
 # Build media driver
-ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.0
+ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.1
 ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVER_VER}.tar.gz
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libpciaccess-dev libx11-dev xorg-dev libgl1-mesa-dev
@@ -205,7 +205,7 @@ RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VE
 
 
 # Build Intel(R) Media SDK
-ARG MSDK_VER=MSS-KBL-2019-R1
+ARG MSDK_VER=MSS-KBL-2019-R1-HF1
 ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/${MSDK_VER}.tar.gz
 
 RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
@@ -313,12 +313,17 @@ COPY --from=build /home/build /
 
 RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
     apt-get update && \
-    apt-get install rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev -y && \
+    apt-get install rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \
     apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
         echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "service mongodb start &" >> /home/launch.sh && \
     echo "service rabbitmq-server start &" >> /home/launch.sh && \
-    echo "sleep 5" >> /home/launch.sh && \
+    echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
+    echo "do" >> /home/launch.sh && \
+    echo "  echo mongod not launch" >> /home/launch.sh && \
+    echo "  sleep 1" >> /home/launch.sh && \
+    echo "done" >> /home/launch.sh && \ 
+    echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
     echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
     

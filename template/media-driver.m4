@@ -1,5 +1,5 @@
 # Build media driver
-ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.0
+ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.1
 ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVER_VER}.tar.gz
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl

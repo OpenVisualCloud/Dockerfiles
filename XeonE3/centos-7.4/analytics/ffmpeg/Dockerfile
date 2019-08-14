@@ -172,7 +172,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.5.0
+ARG SVT_AV1_VER=v0.6.0
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
@@ -250,7 +250,7 @@ RUN wget -O - ${LIBVA_UTILS_REPO} | tar xz; \
 
 
 # Build media driver
-ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.0
+ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.1
 ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVER_VER}.tar.gz
 
 RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-devel
@@ -266,7 +266,7 @@ RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VE
 
 
 # Build Intel(R) Media SDK
-ARG MSDK_VER=MSS-KBL-2019-R1
+ARG MSDK_VER=MSS-KBL-2019-R1-HF1
 ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/${MSDK_VER}.tar.gz
 
 RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \

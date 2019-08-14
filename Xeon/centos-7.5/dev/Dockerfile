@@ -172,7 +172,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.5.0
+ARG SVT_AV1_VER=v0.6.0
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
@@ -540,12 +540,11 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 
 #Install va gstreamer plugins
 #Has a dependency on OpenCV, GStreamer
-ARG VA_GSTREAMER_PLUGINS_VER=0.4
+ARG VA_GSTREAMER_PLUGINS_VER=0.4.2
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     cd gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER} && \
-    wget -O - ${VA_GSTREAMER_PLUGINS_PATCH_01} | patch -p1 && \
     mkdir build && \
     cd build && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
@@ -557,7 +556,7 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DDISABLE_SAMPLES=ON \
     -DMQTT=ON \
     -DKAFKA=ON \
-    -DDISABLE_VAAPI=ON \
+    -DDISABLE_VAAPI=ON  \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
 RUN mkdir -p build/usr/lib64/gstreamer-1.0 && \

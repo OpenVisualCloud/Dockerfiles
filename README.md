@@ -1,7 +1,7 @@
 # ![logo][]  Dockerfiles
 [![Travis Build Status](https://travis-ci.com/OpenVisualCloud/Dockerfiles.svg?branch=master)](https://travis-ci.com/OpenVisualCloud/Dockerfiles)
 [![Development Test Status](https://img.shields.io/badge/Test-Result-green.svg)](https://github.com/jhou5/Dockerfiles/blob/master/doc/test.md)
-[![Stable release](https://img.shields.io/badge/latest_release-v1.0-blue.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v1.0)
+[![Stable release](https://img.shields.io/badge/latest_release-v1.2-blue.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v1.2)
 [![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-yellow.svg)](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/LICENSE)
 [![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
@@ -62,6 +62,7 @@ The project supports the following platforms and OS'es:
 | Xeon | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
 | Xeon E3 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
 | VCA2 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4, 7.5, and 7.6 |
+| VCAC-A | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS |
 
 Please see [development and test statuses](doc/test.md) for the latest development statuses.    
 
@@ -126,7 +127,7 @@ update.sh:
 ```bash
 DOCKER_REPO=${DOCKER_REPO="https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles/master/Xeon/ubuntu-18.04/media"}    
 (echo "# xeon-ubuntu1804-media-ffmpeg" && curl ${DOCKER_REPO}/ffmpeg/Dockerfile) > Dockerfile.2    
-(echo "# xeon-ubuntu1804-media-nginx" && curl ${DOCKER_REPO}/nginx+rtmp/Dockerfile) > Dockerfile.1    
+(echo "# xeon-ubuntu1804-media-nginx" && curl ${DOCKER_REPO}/nginx/Dockerfile) > Dockerfile.1    
 ```
 build.sh:   
 ```bash
