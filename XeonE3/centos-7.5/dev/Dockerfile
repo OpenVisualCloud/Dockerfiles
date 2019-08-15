@@ -346,6 +346,8 @@ RUN git clone https://github.com/intel/compute-runtime neo && \
     scl enable devtoolset-4 "make -j$(nproc) package" && \
     rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm 
 
+RUN yum install -y ocl-icd-devel
+
 #clinfo needs to be installed after build directory is copied over
 
 ARG PYTHON_VER=3.6.6
@@ -823,12 +825,10 @@ mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo python-yaml ; \
 COPY --from=build /home/build /
 ENV LIBVA_DRIVERS_PATH=/usr/lib64/dri
 ENV LIBVA_DRIVER_NAME=iHD
-#RUN yum install -y -q dnf dnf-plugins-core yum-plugin-copr
-#RUN yum copr enable -y arturh/intel-opencl
-#RUN yum install -y -q intel-opencl
-#RUN yum install -y epel-release
-#RUN yum install -y ocl-icd libgomp
-#RUN ln -s /usr/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so
+COPY --from=build /home/neo/build/intel-opencl-18.41-0.x86_64-igdrcl.rpm /home/
+RUN rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm && \
+    yum install -y epel-release && \
+    yum install -y ocl-icd-devel
 ENV GST_VAAPI_ALL_DRIVERS=1
 ENV DISPLAY=:0.0
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64

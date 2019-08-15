@@ -95,6 +95,8 @@ RUN git clone https://github.com/intel/compute-runtime neo && \
     scl enable devtoolset-4 "PKG_CONFIG_PATH=/usr/lib/pkgconfig/ cmake -DCMAKE_BUILD_TYPE=Release .." && \
     scl enable devtoolset-4 "make -j$(nproc) package" && \
     rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm 
+
+RUN yum install -y ocl-icd-devel
 )dnl
 
 #clinfo needs to be installed after build directory is copied over
@@ -103,11 +105,9 @@ ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
 RUN apt-get update && apt-get install -y clinfo
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-#RUN yum install -y -q dnf dnf-plugins-core yum-plugin-copr
-#RUN yum copr enable -y arturh/intel-opencl
-#RUN yum install -y -q intel-opencl
-#RUN yum install -y epel-release
-#RUN yum install -y ocl-icd libgomp
-#RUN ln -s /usr/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so
+COPY --from=build /home/neo/build/intel-opencl-18.41-0.x86_64-igdrcl.rpm /home/
+RUN rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm && \
+    yum install -y epel-release && \
+    yum install -y ocl-icd-devel
 )dnl
 )dnl
