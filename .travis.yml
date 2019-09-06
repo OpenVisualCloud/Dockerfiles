@@ -52,7 +52,6 @@ script:
     mkdir build && cd build && cmake ..
     cd ${CPU}/${buildOS}/${usage}/${imageName}
   - make
-  - df -h
   - travis_retry ctest -V
 
 matrix:
