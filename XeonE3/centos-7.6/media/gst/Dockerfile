@@ -303,7 +303,7 @@ RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
      make install
 
 
-# Build the gstremaer plugin bad set
+# Build the gstreamer plugin bad set
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
 
 RUN  yum install -y -q openssl-devel
@@ -316,7 +316,9 @@ RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
         --libexecdir=/usr/lib64 \
         --enable-shared \
         --disable-examples --disable-debug \
-        --disable-gtk-doc && \
+        --disable-gtk-doc \ 
+        --disable-shm \
+        --disable-mxf && \
      make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
