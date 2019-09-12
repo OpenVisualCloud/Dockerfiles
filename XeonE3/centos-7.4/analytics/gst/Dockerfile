@@ -512,7 +512,7 @@ RUN  yum install -y -q openssl-devel
 
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
-     curl ${GST_PLUGIN_BAD_PATCH} | patch -p1 && \
+     wget -O - --no-check-certificate --content-disposition ${GST_PLUGIN_BAD_PATCH} | patch -p1 && \
      ./autogen.sh \
         --prefix=/usr \
         --libdir=/usr/lib64 \
