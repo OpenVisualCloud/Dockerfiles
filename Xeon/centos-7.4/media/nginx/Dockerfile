@@ -58,6 +58,8 @@ RUN mkdir -p /home/build/var/www/tmp/client_body && \
     mkdir -p /home/build/var/www/tmp/uwsgi && \
     mkdir -p /home/build/var/www/tmp/scgi && \
     mkdir -p /home/build/var/www/cache && \
+    mkdir -p /home/build/var/www/dash && \
+    mkdir -p /home/build/var/www/hls && \
     mkdir -p /home/build/var/www/html && \
     touch /home/build/var/www/html/index.html;
 
@@ -74,6 +76,4 @@ RUN  \
 # Install
 COPY --from=build /home/build /
 CMD /usr/sbin/nginx
-VOLUME /etc/nginx /var/www/html /var/www/tmp/client_body /var/www/tmp/proxy /var/www/tmp/fastcgi /var/www/tmp/uwsgi /var/www/tmp/scgi /var/www/cache /var/www/dash /var/www/hls
-EXPOSE 80 1935
 

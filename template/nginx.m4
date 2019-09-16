@@ -22,12 +22,12 @@ RUN mkdir -p /home/build/var/www/tmp/client_body && \
     mkdir -p /home/build/var/www/tmp/uwsgi && \
     mkdir -p /home/build/var/www/tmp/scgi && \
     mkdir -p /home/build/var/www/cache && \
+    mkdir -p /home/build/var/www/dash && \
+    mkdir -p /home/build/var/www/hls && \
     mkdir -p /home/build/var/www/html && \
     touch /home/build/var/www/html/index.html;
 
 define(`INSTALL_PKGS_NGINX',ifelse(index(DOCKER_IMAGE,ubuntu),-1,openssl-libs pcre2 zlib libxslt libxml2 ,libxml2 libssl1.0.0 libpcre3 zlib1g libxslt1.1 ))dnl
 define(`INSTALL_NGINX',dnl
 CMD /usr/sbin/nginx
-VOLUME /etc/nginx /var/www/html /var/www/tmp/client_body /var/www/tmp/proxy /var/www/tmp/fastcgi /var/www/tmp/uwsgi /var/www/tmp/scgi /var/www/cache /var/www/dash /var/www/hls
-EXPOSE 80 1935
 )dnl
