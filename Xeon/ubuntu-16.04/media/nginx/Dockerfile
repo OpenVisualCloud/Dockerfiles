@@ -62,6 +62,7 @@ RUN mkdir -p /home/build/var/www/tmp/client_body && \
     mkdir -p /home/build/var/www/cache && \
     mkdir -p /home/build/var/www/dash && \
     mkdir -p /home/build/var/www/hls && \
+    mkdir -p /home/build/var/www/upload && \
     mkdir -p /home/build/var/www/html && \
     touch /home/build/var/www/html/index.html;
 
