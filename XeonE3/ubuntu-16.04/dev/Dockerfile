@@ -474,11 +474,13 @@ RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
 
 # Build the gstreamer plugin bad set
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
+ARG GST_PLUGIN_BAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/gstpluginbad.patch
 
 RUN  apt-get update && apt-get install -y -q --no-install-recommends libssl-dev
 
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
+     wget -O - --no-check-certificate --content-disposition ${GST_PLUGIN_BAD_PATCH} | patch -p1 && \
      ./autogen.sh \
         --prefix=/usr \
         --libdir=/usr/lib/x86_64-linux-gnu \
