@@ -6,6 +6,7 @@ define(`BUILD_TOOLS_NO_ASM')dnl
 
 include(build-tools.m4)
 include(nginx-http-flv.m4)
+include(nginx-upload.m4)
 include(nginx.m4)dnl
 
 FROM openvisualcloud/vca2-centos74-media-ffmpeg:latest
