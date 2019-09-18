@@ -20,7 +20,7 @@ The NGINX images are compiled with the following modules:
 |HTTP DAV|HTTP FLV|HTTP MP4|HTTP GUNZIP|
 |HTTP GZIP static|HTTP auth request|HTTP random index|HTTP secure link|
 |HTTP degradation|HTTP slice|HTTP stub status|stream ssl|
-|stream real IP|stream SSL preread|RTMP|-|
+|stream real IP|stream SSL preread|RTMP|Upload|
 
 ### NGINX Configuration
 
@@ -32,6 +32,7 @@ The default NGINX configuration exposes the following entry points:
 |80|/dash|Serve MPEG DASH content.|
 |80|/hls|Serve HLS content.|
 |80|/stat|Serve the RTMP module status page.|
+|80|/upload|Upload files.|
 |1935|/stream|Publish/retrieve RTMP live streams.|
 |1935|/dash|Publish RTMP streams to generate DASH content.|
 |1935|/hls|Publish RTMP streams to generate HLS content.|

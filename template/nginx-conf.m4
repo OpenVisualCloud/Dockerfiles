@@ -93,5 +93,18 @@ http {
             rtmp_stat all;
             rtmp_stat_stylesheet stat.xsl;
         }
+
+        location /upload {
+            client_max_body_size 1024M;
+            upload_pass @upload;
+            upload_pass_args on;
+            upload_store /var/www/upload;
+            upload_set_form_field $upload_field_name.path "$upload_tmp_path";
+            upload_cleanup 400 404 499 500-505;
+        }
+
+        location @upload {
+            return 200;
+        }
     }
 }
