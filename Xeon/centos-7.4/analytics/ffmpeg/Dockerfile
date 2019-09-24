@@ -355,9 +355,9 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN yum install -y epel-release; yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm;  \
+RUN yum install -y epel-release;  \
     yum install -y -q    libass numactl   ; \
-    yum remove -y -q epel-release rpmfusion-free-release; \
+    yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
 
 # Install
