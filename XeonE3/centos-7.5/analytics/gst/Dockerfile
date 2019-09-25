@@ -508,7 +508,7 @@ RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
 ARG GST_PLUGIN_BAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/gstpluginbad.patch
 
-RUN  yum install -y -q openssl-devel
+RUN  yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && yum install -y -q openssl-devel librtmp-devel && yum remove -y rpmfusion-free-release
 
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
@@ -719,10 +719,12 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN yum install -y epel-release; \
+RUN yum install -y epel-release;  \
+    yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
     yum install -y -q numactl openssl glib2-2.56.1 pango gobject-introspection libxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib libpciaccess libX11 openblas-serial \
-mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo ; \
+mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
+    yum remove -y -q rpmfusion-free-release; \
     rm -rf /var/cache/yum/*;
 
 # Install
