@@ -322,14 +322,26 @@ RUN mkdir -p /tmp2/c_api && \
 
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
-RUN rm -rf ${CV_BASE_DIR}/uninstall*
+RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
+    rm -rf ${CV_BASE_DIR}/python && \
+    rm -rf ${CV_BASE_DIR}/documentation && \
+    rm -rf ${CV_BASE_DIR}/install_dependencies && \
+    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
+    rm -rf ${CV_BASE_DIR}/openvx/samples && \
+    rm -rf ${CV_BASE_DIR}/opencv/samples 
 
-#Copy over directories to copy over to clean image
+
+#Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
     mkdir -p /home/build/opt/intel && \
     mkdir -p /home/build/usr/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
-    cp -r /opt/intel/* /home/build/opt/intel/ && \
+    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
     cp -r /usr/lib/* /home/build/usr/lib
 
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
