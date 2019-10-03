@@ -6,7 +6,7 @@ define(`BUILD_LINKAGE',shared)dnl
 include(build-tools.m4)
 include(libogg.m4)
 include(libvorbis.m4)
-include(libmp3lame.m4)
+ifelse(defn(`SECURITY_STRICT'),`No',`include(libmp3lame.m4)')
 include(libfdk-aac.m4)
 include(libopus.m4)
 include(libvpx.m4)
