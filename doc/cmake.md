@@ -4,7 +4,7 @@ Use the following definitions to customize the building process:
 
 ### Examples:   
 
-**Keep Default or existing config**
+**Keep default or existing config**
 ```
 cd build
 cmake ..
