@@ -1,15 +1,16 @@
 
 Use the following definitions to customize the building process:   
-- **SECURITY_STRICT**: Specify the secuirty strict build options: ```Yes``` or ```No```. Default is ```No```. Currently secuirity strict build disable LAME from the images.   
+- **SECURITY_STRICT**: Specify the security strict build options: ```Yes``` or ```No```. Default is ```No```. Currently security will disable building LAME from the images.   
 
 ### Examples:   
-**Disable security strict build**
+
+**Keep Default or existing config**
 ```
 cd build
 cmake ..
 ```
-or
 
+**Disable security strict build**
 ```
 cd build
 cmake -DSECURITY_STRICT=No ..
