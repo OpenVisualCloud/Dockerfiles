@@ -1,6 +1,8 @@
 
 Use the following definitions to customize the building process:   
-- **SECURITY_STRICT**: Specify the security strict build options: ```Yes``` or ```No```. Default is ```No```. Currently security will disable building LAME from the images.   
+- **BUILD_MP3LAME**: Docker images build options to libmp3lame. Current support value is `ON` to enable from the images or `OFF` to disable from the images. Default is `ON`.
+- **BUILD_FDKAAC**: Docker images build options to libfdk_aac. Current support value is `ON` to enable from the images or `OFF` to disable from the images. Default is `ON`.
+
 
 ### Examples:   
 
@@ -10,15 +12,20 @@ cd build
 cmake ..
 ```
 
-**Disable security strict build**
+**Customize build config**
 ```
 cd build
-cmake -DSECURITY_STRICT=No ..
+cmake -DBUILD_MP3LAME=ON ..
 ```
 
-**Enable security strict build**
 ```
 cd build
-cmake -DSECURITY_STRICT=Yes ..
+cmake -DBUILD_MP3LAME=OFF ..
 ```
+
+```
+cd build
+cmake -DBUILD_FDKAAC=ON -DBUILD_MP3LAME=OFF ..
+```
+
 
