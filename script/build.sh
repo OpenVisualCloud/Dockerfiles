@@ -4,7 +4,8 @@ if test -z "${DIR}"; then
     exit -1
 fi 
 
-SECURITY_STRICT="${1:-No}"
+BUILD_MP3LAME="${1:-ON}"
+BUILD_FDKAAC="${2:-ON}"
 
 if echo ${IMAGE} | grep -q "dev"; then
     TEMPLATE="${DIR}/../../../template/"
@@ -16,7 +17,7 @@ PREFIX="${PREFIX:-openvisualcloud}"
 
 for m4file in "${DIR}"/*.m4; do
     if test -f "$m4file"; then
-       m4 "-I${TEMPLATE}" -DDOCKER_IMAGE=${IMAGE} -DSECURITY_STRICT=${SECURITY_STRICT} "${m4file}" > "${m4file%\.m4}"
+       m4 "-I${TEMPLATE}" -DDOCKER_IMAGE=${IMAGE} -DBUILD_MP3LAME=${BUILD_MP3LAME} -DBUILD_FDKAAC=${BUILD_FDKAAC} "${m4file}" > "${m4file%\.m4}"
     fi
 done || echo
 
