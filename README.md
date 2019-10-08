@@ -85,7 +85,7 @@ Please see [development and test statuses](doc/test.md) for the latest developme
 ```bash
 (1) mkdir build    
 (2) cd build     
-(3) cmake .. # Follow the [instructions](doc/cmake.md) to customize building process    
+(3) cmake ..     
 (4) cd Xeon/ubuntu-16.04/media/ffmpeg # please build your specific <_platform_>/<_OS_>/<_usage_>/<_image_> only as a full build takes a long time.     
 (5) make # build on the target processor for best performance.    
 (6) ctest   
@@ -99,9 +99,10 @@ Xeon/ubuntu-16.04/media/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_usage_>/<_image_>
 
 ## Customize:
 
-You can modify any Dockerfile.m4 template for customization.     
+- You can modify any Dockerfile.m4 template for customization.     
 For example, uncomment #include(transform360.m4) in Xeon/ubuntu-16.04/media/ffmpeg/Dockerfile.m4 to add essential 360 video transformation in the FFmpeg build.    
 After modification, please rerun cmake and make.     
+- You can refer to the [instructions](doc/cmake.md) to customize building process. 
 
 ## Use alternative repo:
 
