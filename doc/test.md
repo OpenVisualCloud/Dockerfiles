@@ -41,4 +41,5 @@
 | Dev | V | T |  
 
 Known Issues:
-- gst_vaapi_jpegenc/gst_vaapi_h264enc failed on XeonE3/VCA2 CentOS environment. Issue #210
+- gst_vaapi_jpegenc/gst_vaapi_h264enc test failed on XeonE3/VCA2 CentOS environment. Issue #210
+- VCAC-A-ubuntu1804-analytics-ffmpeg images test failed #214
