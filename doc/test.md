@@ -38,7 +38,7 @@
 |-----|:---:|:---:|
 | Analytics:FFmpeg | V | T |  
 | Analytics:GStreamer | V | V | 
-| Dev | V | V | T | 
+| Dev | V | T |  
 
 Known Issues:
 - gst_vaapi_jpegenc/gst_vaapi_h264enc failed on XeonE3/VCA2 CentOS environment. Issue #210
