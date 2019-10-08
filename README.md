@@ -85,7 +85,7 @@ Please see [development and test statuses](doc/test.md) for the latest developme
 ```bash
 (1) mkdir build    
 (2) cd build     
-(3) cmake ..    
+(3) cmake ..     
 (4) cd Xeon/ubuntu-16.04/media/ffmpeg # please build your specific <_platform_>/<_OS_>/<_usage_>/<_image_> only as a full build takes a long time.     
 (5) make # build on the target processor for best performance.    
 (6) ctest   
