@@ -1,7 +1,7 @@
 # ![logo][]  Dockerfiles
 [![Travis Build Status](https://travis-ci.com/OpenVisualCloud/Dockerfiles.svg?branch=master)](https://travis-ci.com/OpenVisualCloud/Dockerfiles)
 [![Development Test Status](https://img.shields.io/badge/Test-Result-green.svg)](https://github.com/jhou5/Dockerfiles/blob/master/doc/test.md)
-[![Stable release](https://img.shields.io/badge/latest_release-v1.2-blue.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v1.2)
+[![Stable release](https://img.shields.io/badge/latest_release-v19.10-blue.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v19.10)
 [![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-yellow.svg)](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/LICENSE)
 [![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
