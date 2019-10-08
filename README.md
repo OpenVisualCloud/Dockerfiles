@@ -102,7 +102,7 @@ Xeon/ubuntu-16.04/media/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_usage_>/<_image_>
 - You can modify any Dockerfile.m4 template for customization.     
 For example, uncomment #include(transform360.m4) in Xeon/ubuntu-16.04/media/ffmpeg/Dockerfile.m4 to add essential 360 video transformation in the FFmpeg build.    
 After modification, please rerun cmake and make.     
-- - You can refer to the [instructions](doc/cmake.md) to customize building process. 
+- You can refer to the [instructions](doc/cmake.md) to customize building process. 
 
 ## Use alternative repo:
 
