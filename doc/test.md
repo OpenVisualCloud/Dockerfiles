@@ -36,9 +36,9 @@
 
 | Platform: VCAC-A | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | 
 |-----|:---:|:---:|
-| Analytics:FFmpeg | V | V | V | 
-| Analytics:GStreamer | V | V | V | 
-| Dev | V | V | V | 
+| Analytics:FFmpeg | V | T |  
+| Analytics:GStreamer | V | V | 
+| Dev | V | V | T | 
 
 Known Issues:
 - gst_vaapi_jpegenc/gst_vaapi_h264enc failed on XeonE3/VCA2 CentOS environment. Issue #210
