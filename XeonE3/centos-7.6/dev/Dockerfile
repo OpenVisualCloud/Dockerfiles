@@ -268,6 +268,85 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
 #install OpenCL
 
 
+RUN yum install -y devtoolset-6-gcc devtoolset-6-gcc-c++ opencl-headers
+ARG CLANG_VERSION=4.0.1
+
+RUN source /opt/rh/devtoolset-6/enable && \
+    wget http://releases.llvm.org/${CLANG_VERSION}/llvm-${CLANG_VERSION}.src.tar.xz && \
+    wget http://releases.llvm.org/${CLANG_VERSION}/cfe-${CLANG_VERSION}.src.tar.xz && \
+    wget http://releases.llvm.org/${CLANG_VERSION}/clang-tools-extra-${CLANG_VERSION}.src.tar.xz && \
+    wget http://releases.llvm.org/${CLANG_VERSION}/compiler-rt-${CLANG_VERSION}.src.tar.xz && \
+    xz -d llvm-${CLANG_VERSION}.src.tar.xz && \
+    tar xvf llvm-${CLANG_VERSION}.src.tar && \
+    xz -d cfe-${CLANG_VERSION}.src.tar.xz && \
+    tar xvf cfe-${CLANG_VERSION}.src.tar && \
+    xz -d clang-tools-extra-${CLANG_VERSION}.src.tar.xz && \
+    tar xvf clang-tools-extra-${CLANG_VERSION}.src.tar && \
+    xz -d compiler-rt-${CLANG_VERSION}.src.tar.xz && \
+    tar xvf compiler-rt-${CLANG_VERSION}.src.tar && \
+    cd llvm-${CLANG_VERSION}.src && \
+    mv ../cfe-${CLANG_VERSION}.src tools/clang && \
+    mv ../clang-tools-extra-${CLANG_VERSION}.src tools/clang/extra && \
+    mv ../compiler-rt-${CLANG_VERSION}.src projects/compiler-rt && \
+    mkdir build && \
+    cd build && \
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=On .. && \
+    make -j$(nproc)  && \
+    make install
+
+#install OpenCL
+RUN yum install -y centos-release-scl epel-release
+
+RUN yum -y -q install yum install libcxx
+RUN yum -y -q install yum install libcxx-devel devtoolset-4-gcc-c++ devtoolset-4-gcc
+
+RUN cd gmmlib && mkdir build && cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DARCH=64 .. && \
+    make -j$(nproc)
+
+RUN mkdir build_igc && \
+    cd build_igc && \
+    git clone https://github.com/intel/intel-graphics-compiler igc && \
+    cd igc && \
+    git checkout de3d1de && \
+    cd .. && \
+
+    git clone https://github.com/intel/llvm-patches llvm_patches && \
+    cd llvm_patches && \
+    git checkout 96d382b && \
+    cd .. && \
+
+    git clone -b release_40 https://github.com/llvm-mirror/llvm llvm_source && \
+    git clone -b release_40 https://github.com/llvm-mirror/clang clang_source && \
+
+    git clone -b master https://github.com/intel/opencl-clang common_clang && \
+    cd common_clang && \
+    git checkout 8248120 && \
+    cd .. && \
+
+    git clone https://github.com/KhronosGroup/OpenCL-Headers opencl_headers && \
+    cd opencl_headers && \
+    git checkout f039db6
+
+RUN cd build_igc && \
+    mkdir build && \
+    cd build && \
+    scl enable devtoolset-4 "cmake -DIGC_OPTION__OUTPUT_DIR=../igc-install/Release -DCMAKE_BUILD_TYPE=Release -DIGC_OPTION__ARCHITECTURE_TARGET=Linux64 ../igc/IGC" | tee cmake_output.log && \
+    yum install -y rpm rpm-libs rpm-build rpm-build-libs && \
+    scl enable devtoolset-4 "make -j$(nproc) package" | tee make_output.log && \
+    rpm -ivh intel-igc-core-0.1-0.x86_64.rpm intel-igc-media-0.1-0.x86_64.rpm intel-igc-opencl-devel-0.1-0.x86_64.rpm intel-igc-opencl-0.1-0.x86_64.rpm && \
+    ldconfig
+
+RUN git clone https://github.com/intel/compute-runtime neo && \
+    cd neo && \
+    git checkout 18.41.11649 && \
+    mkdir build && \
+    cd build && \
+    scl enable devtoolset-4 "PKG_CONFIG_PATH=/usr/lib/pkgconfig/ cmake -DCMAKE_BUILD_TYPE=Release .." && \
+    scl enable devtoolset-4 "make -j$(nproc) package" && \
+    rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm 
+
+RUN yum install -y ocl-icd-devel
 
 #clinfo needs to be installed after build directory is copied over
 
@@ -461,20 +540,26 @@ RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
      make install
 
 
-# Build the gstremaer plugin bad set
+# Build the gstreamer plugin bad set
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
+ARG GST_PATCHES_RELEASE_VER=v0.1
+ARG GST_PATCHES_RELEASE_URL=https://github.com/VCDP/gstreamer-patch/archive/${GST_PATCHES_RELEASE_VER}.tar.gz
+RUN wget -O - ${GST_PATCHES_RELEASE_URL} | tar xz
 
-RUN  yum install -y -q openssl-devel
+RUN  yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && yum install -y -q openssl-devel librtmp-devel && yum remove -y rpmfusion-free-release
 
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
+     find /home/gstreamer-patch-${GST_PATCHES_RELEASE_VER#*v}/ -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
      ./autogen.sh \
         --prefix=/usr \
         --libdir=/usr/lib64 \
         --libexecdir=/usr/lib64 \
         --enable-shared \
         --disable-examples  \
-        --disable-gtk-doc && \
+        --disable-gtk-doc \ 
+        --disable-shm \
+        --disable-mxf && \
      make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
@@ -662,57 +747,27 @@ RUN mkdir -p /usr/lib64/gstreamer-1.0 && \
 # Fetch FFmpeg source
 ARG FFMPEG_VER=n4.1
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
-ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
-ARG FFMPEG_MA_PATCH_REPO_01=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0001-Intel-inference-engine-detection-filter.patch
-ARG FFMPEG_MA_PATCH_REPO_02=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0002-New-filter-to-do-inference-classify.patch
-ARG FFMPEG_MA_PATCH_REPO_03=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0003-iemetadata-convertor-muxer.patch
-ARG FFMPEG_MA_PATCH_REPO_04=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0004-Kafka-protocol-producer.patch
-ARG FFMPEG_MA_PATCH_REPO_05=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0005-Support-object-detection-and-featured-face-identific.patch
-ARG FFMPEG_MA_PATCH_REPO_06=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0006-Send-metadata-in-a-packet-and-refine-the-json-format.patch
-ARG FFMPEG_MA_PATCH_REPO_07=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0007-Refine-features-of-IE-filters.patch
-ARG FFMPEG_MA_PATCH_REPO_08=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch
-ARG FFMPEG_MA_PATCH_REPO_09=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch
-ARG FFMPEG_MA_PATCH_REPO_10=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0010-fixed-buffer-overflow-issue-in-iemetadata.patch
-ARG FFMPEG_MA_PATCH_REPO_11=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0011-libavutil-add-RGBP-pixel-format.patch
-ARG FFMPEG_MA_PATCH_REPO_12=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0012-Add-more-devices-into-target.patch
-ARG FFMPEG_MA_PATCH_REPO_13=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0013-Enable-vaapi-scale-for-IE-inference-filter.patch
-ARG FFMPEG_MA_PATCH_REPO_14=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0014-iemetadata-it-will-provide-data-frame-by-frame-by-de.patch
-ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0015-Add-libcjson-for-model-pre-post-processing.patch
-ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
-ARG FFMPEG_MA_PATCH_REPO_17=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch
-ARG FFMPEG_MA_PATCH_REPO_18=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch
-ARG FFMPEG_MA_PATCH_REPO_19=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0019-Face-reidentification-refine.patch
-ARG FFMPEG_MA_PATCH_REPO_20=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0020-More-changes-within-one-patch.patch
+
+ARG FFMPEG_PATCHES_RELEASE_VER=0.1
+ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
+ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
+RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
+
+ARG FFMPEG_MA_RELEASE_VER=0.2
+ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
+ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
+RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
 
 RUN yum install -y -q libass-devel freetype-devel SDL2-devel libxcb-devel libvdpau-devel texinfo zlib-devel openssl-devel
 
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg && \
-    wget -O - ${FFMPEG_FLV_PATCH_REPO} | patch -p1 && \
+    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '0001*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
     wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_01} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_02} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_03} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_04} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_05} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_06} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_07} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_08} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_09} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_10} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_11} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_12} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_13} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_14} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_17} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_19} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_20} | patch -p1;
+    find ${FFMPEG_MA_PATH}/media-analytics -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
@@ -736,16 +791,22 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN yum install -y epel-release; \
+RUN yum install -y epel-release;  \
+    yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
     yum install -y -q   libxcb SDL2 libass numactl libvdpau  glib2-2.56.1 pango gobject-introspection libxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib libpciaccess libX11 openblas-serial \
-mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo python-yaml ; \
+mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo librtmp python-yaml ; \
     yum remove -y -q epel-release; \
+    yum remove -y -q rpmfusion-free-release; \
     rm -rf /var/cache/yum/*;
 
 # Install
 COPY --from=build /home/build /
 ENV LIBVA_DRIVERS_PATH=/usr/lib64/dri
 ENV LIBVA_DRIVER_NAME=iHD
+COPY --from=build /home/neo/build/intel-opencl-18.41-0.x86_64-igdrcl.rpm /home/
+RUN rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm && \
+    yum install -y epel-release && \
+    yum install -y ocl-icd-devel
 ENV GST_VAAPI_ALL_DRIVERS=1
 ENV DISPLAY=:0.0
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64

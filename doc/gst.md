@@ -55,3 +55,6 @@ gst-launch-1.0 -v filesrc location=test.ts ! decodebin ! video/x-raw ! videoconv
   gvaclassify model=<full path to xml of model optimized through DLDT's model optimizer> object-class=vehicle ! queue ! \
   gvawatermark ! videoconvert ! fakesink
 ```
+
+
+Note: The plugins shm and mxf from the bad set is disabled for use due to security coding considerations. Please file an issue if you need those plugin features in your project.

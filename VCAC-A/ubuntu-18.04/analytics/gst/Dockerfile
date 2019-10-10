@@ -322,14 +322,26 @@ RUN mkdir -p /tmp2/c_api && \
 
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
-RUN rm -rf ${CV_BASE_DIR}/uninstall*
+RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
+    rm -rf ${CV_BASE_DIR}/python && \
+    rm -rf ${CV_BASE_DIR}/documentation && \
+    rm -rf ${CV_BASE_DIR}/install_dependencies && \
+    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
+    rm -rf ${CV_BASE_DIR}/openvx/samples && \
+    rm -rf ${CV_BASE_DIR}/opencv/samples 
 
-#Copy over directories to copy over to clean image
+
+#Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
     mkdir -p /home/build/opt/intel && \
     mkdir -p /home/build/usr/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
-    cp -r /opt/intel/* /home/build/opt/intel/ && \
+    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
     cp -r /usr/lib/* /home/build/usr/lib
 
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
@@ -422,20 +434,26 @@ RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
      make install
 
 
-# Build the gstremaer plugin bad set
+# Build the gstreamer plugin bad set
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
+ARG GST_PATCHES_RELEASE_VER=v0.1
+ARG GST_PATCHES_RELEASE_URL=https://github.com/VCDP/gstreamer-patch/archive/${GST_PATCHES_RELEASE_VER}.tar.gz
+RUN wget -O - ${GST_PATCHES_RELEASE_URL} | tar xz
 
-RUN  apt-get update && apt-get install -y -q --no-install-recommends libssl-dev
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libssl-dev librtmp-dev
 
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
+     find /home/gstreamer-patch-${GST_PATCHES_RELEASE_VER#*v}/ -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
      ./autogen.sh \
         --prefix=/usr \
         --libdir=/usr/lib/x86_64-linux-gnu \
         --libexecdir=/usr/lib/x86_64-linux-gnu \
         --enable-shared \
         --disable-examples --disable-debug \
-        --disable-gtk-doc && \
+        --disable-gtk-doc \ 
+        --disable-shm \
+        --disable-mxf && \
      make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
@@ -650,7 +668,7 @@ ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/in
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
 ENV InferenceEngine_DIR="/opt/intel/openvino/deployment_tools/inference_engine/share"
 ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:/usr/local/lib:$IE_PLUGINS_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/lib

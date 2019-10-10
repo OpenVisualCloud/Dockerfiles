@@ -336,14 +336,26 @@ RUN mkdir -p /tmp2/c_api && \
 
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
-RUN rm -rf ${CV_BASE_DIR}/uninstall*
+RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
+    rm -rf ${CV_BASE_DIR}/python && \
+    rm -rf ${CV_BASE_DIR}/documentation && \
+    rm -rf ${CV_BASE_DIR}/install_dependencies && \
+    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
+    rm -rf ${CV_BASE_DIR}/openvx/samples && \
+    rm -rf ${CV_BASE_DIR}/opencv/samples 
 
-#Copy over directories to copy over to clean image
+
+#Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
     mkdir -p /home/build/opt/intel && \
     mkdir -p /home/build/usr/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
-    cp -r /opt/intel/* /home/build/opt/intel/ && \
+    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
     cp -r /usr/lib/* /home/build/usr/lib
 
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
@@ -384,57 +396,27 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 # Fetch FFmpeg source
 ARG FFMPEG_VER=n4.1
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
-ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
-ARG FFMPEG_MA_PATCH_REPO_01=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0001-Intel-inference-engine-detection-filter.patch
-ARG FFMPEG_MA_PATCH_REPO_02=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0002-New-filter-to-do-inference-classify.patch
-ARG FFMPEG_MA_PATCH_REPO_03=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0003-iemetadata-convertor-muxer.patch
-ARG FFMPEG_MA_PATCH_REPO_04=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0004-Kafka-protocol-producer.patch
-ARG FFMPEG_MA_PATCH_REPO_05=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0005-Support-object-detection-and-featured-face-identific.patch
-ARG FFMPEG_MA_PATCH_REPO_06=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0006-Send-metadata-in-a-packet-and-refine-the-json-format.patch
-ARG FFMPEG_MA_PATCH_REPO_07=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0007-Refine-features-of-IE-filters.patch
-ARG FFMPEG_MA_PATCH_REPO_08=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch
-ARG FFMPEG_MA_PATCH_REPO_09=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch
-ARG FFMPEG_MA_PATCH_REPO_10=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0010-fixed-buffer-overflow-issue-in-iemetadata.patch
-ARG FFMPEG_MA_PATCH_REPO_11=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0011-libavutil-add-RGBP-pixel-format.patch
-ARG FFMPEG_MA_PATCH_REPO_12=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0012-Add-more-devices-into-target.patch
-ARG FFMPEG_MA_PATCH_REPO_13=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0013-Enable-vaapi-scale-for-IE-inference-filter.patch
-ARG FFMPEG_MA_PATCH_REPO_14=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0014-iemetadata-it-will-provide-data-frame-by-frame-by-de.patch
-ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0015-Add-libcjson-for-model-pre-post-processing.patch
-ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
-ARG FFMPEG_MA_PATCH_REPO_17=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch
-ARG FFMPEG_MA_PATCH_REPO_18=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch
-ARG FFMPEG_MA_PATCH_REPO_19=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0019-Face-reidentification-refine.patch
-ARG FFMPEG_MA_PATCH_REPO_20=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0020-More-changes-within-one-patch.patch
+
+ARG FFMPEG_PATCHES_RELEASE_VER=0.1
+ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
+ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
+RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
+
+ARG FFMPEG_MA_RELEASE_VER=0.2
+ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
+ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
+RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libass-dev libfreetype6-dev libvdpau-dev libsdl2-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev zlib1g-dev libssl-dev
 
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg && \
-    wget -O - ${FFMPEG_FLV_PATCH_REPO} | patch -p1 && \
+    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '0001*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
     wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_01} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_02} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_03} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_04} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_05} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_06} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_07} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_08} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_09} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_10} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_11} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_12} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_13} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_14} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_17} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_19} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_20} | patch -p1;
+    find ${FFMPEG_MA_PATH}/media-analytics -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
@@ -477,5 +459,5 @@ ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/in
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
 ENV InferenceEngine_DIR="/opt/intel/openvino/deployment_tools/inference_engine/share"
 ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:/usr/local/lib:$IE_PLUGINS_PATH
 

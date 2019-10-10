@@ -413,20 +413,26 @@ RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
      make install
 
 
-# Build the gstremaer plugin bad set
+# Build the gstreamer plugin bad set
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
+ARG GST_PATCHES_RELEASE_VER=v0.1
+ARG GST_PATCHES_RELEASE_URL=https://github.com/VCDP/gstreamer-patch/archive/${GST_PATCHES_RELEASE_VER}.tar.gz
+RUN wget -O - ${GST_PATCHES_RELEASE_URL} | tar xz
 
-RUN  apt-get update && apt-get install -y -q --no-install-recommends libssl-dev
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libssl-dev librtmp-dev
 
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
+     find /home/gstreamer-patch-${GST_PATCHES_RELEASE_VER#*v}/ -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
      ./autogen.sh \
         --prefix=/usr \
         --libdir=/usr/lib/x86_64-linux-gnu \
         --libexecdir=/usr/lib/x86_64-linux-gnu \
         --enable-shared \
         --disable-examples  \
-        --disable-gtk-doc && \
+        --disable-gtk-doc \ 
+        --disable-shm \
+        --disable-mxf && \
      make -j $(nproc) && \
      make install DESTDIR=/home/build && \
      make install
@@ -513,57 +519,27 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
 # Fetch FFmpeg source
 ARG FFMPEG_VER=n4.1
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
-ARG FFMPEG_FLV_PATCH_REPO=https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
-ARG FFMPEG_MA_PATCH_REPO_01=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0001-Intel-inference-engine-detection-filter.patch
-ARG FFMPEG_MA_PATCH_REPO_02=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0002-New-filter-to-do-inference-classify.patch
-ARG FFMPEG_MA_PATCH_REPO_03=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0003-iemetadata-convertor-muxer.patch
-ARG FFMPEG_MA_PATCH_REPO_04=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0004-Kafka-protocol-producer.patch
-ARG FFMPEG_MA_PATCH_REPO_05=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0005-Support-object-detection-and-featured-face-identific.patch
-ARG FFMPEG_MA_PATCH_REPO_06=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0006-Send-metadata-in-a-packet-and-refine-the-json-format.patch
-ARG FFMPEG_MA_PATCH_REPO_07=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0007-Refine-features-of-IE-filters.patch
-ARG FFMPEG_MA_PATCH_REPO_08=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch
-ARG FFMPEG_MA_PATCH_REPO_09=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch
-ARG FFMPEG_MA_PATCH_REPO_10=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0010-fixed-buffer-overflow-issue-in-iemetadata.patch
-ARG FFMPEG_MA_PATCH_REPO_11=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0011-libavutil-add-RGBP-pixel-format.patch
-ARG FFMPEG_MA_PATCH_REPO_12=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0012-Add-more-devices-into-target.patch
-ARG FFMPEG_MA_PATCH_REPO_13=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0013-Enable-vaapi-scale-for-IE-inference-filter.patch
-ARG FFMPEG_MA_PATCH_REPO_14=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0014-iemetadata-it-will-provide-data-frame-by-frame-by-de.patch
-ARG FFMPEG_MA_PATCH_REPO_15=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0015-Add-libcjson-for-model-pre-post-processing.patch
-ARG FFMPEG_MA_PATCH_REPO_16=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch
-ARG FFMPEG_MA_PATCH_REPO_17=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch
-ARG FFMPEG_MA_PATCH_REPO_18=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch
-ARG FFMPEG_MA_PATCH_REPO_19=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0019-Face-reidentification-refine.patch
-ARG FFMPEG_MA_PATCH_REPO_20=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0020-More-changes-within-one-patch.patch
+
+ARG FFMPEG_PATCHES_RELEASE_VER=0.1
+ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
+ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
+RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
+
+ARG FFMPEG_MA_RELEASE_VER=0.2
+ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
+ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
+RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libass-dev libfreetype6-dev libvdpau-dev libsdl2-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev texinfo zlib1g-dev libssl-dev
 
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg && \
-    wget -O - ${FFMPEG_FLV_PATCH_REPO} | patch -p1 && \
+    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '0001*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
     wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_01} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_02} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_03} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_04} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_05} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_06} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_07} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_08} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_09} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_10} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_11} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_12} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_13} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_14} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_15} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_16} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_17} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_18} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_19} | patch -p1 && \
-    wget -O - ${FFMPEG_MA_PATCH_REPO_20} | patch -p1;
+    find ${FFMPEG_MA_PATH}/media-analytics -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
