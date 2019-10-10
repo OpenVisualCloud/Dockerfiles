@@ -30,17 +30,16 @@ Setup host with these instructions to be able to run vaapi based plugins success
 
  
 
- - Install X11 server utils on the host
+ - Install X11 server utils on the host<br>
 ```sudo apt-get install x11-xserver-utils```
 
- - Modify ```/etc/lightdm/lightdm.conf``` and restart the service
-   - ```cat /etc/lightdm/lightdm.conf```
-[SeatDefaults]
+ - Modify ```/etc/lightdm/lightdm.conf``` and restart the service<br>
+   - ```cat /etc/lightdm/lightdm.conf```<br>
+[SeatDefaults]<br>
 autologin-user=<SYSTEM_USER_NAME>
 
    - ```sudo systemctl restart ligthdm```
- - Allow any user to connect to XServer
+ - Allow any user to connect to XServer<br>
  ```xhost +```
 - Add ```-v /tmp/.X11-unix:/tmp/.X11-unix``` in docker run command when running the docker
-
 
