@@ -573,7 +573,7 @@ RUN wget ${OPENCV_REPO} && \
     make install DESTDIR=/home/build && \
     make install
 
-RUN apt-get install -y -q --no-install-recommends gtk-doc-tools
+RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev
 
 
 
@@ -634,7 +634,7 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 
 #Install va gstreamer plugins
 #Has a dependency on OpenCV, GStreamer
-ARG VA_GSTREAMER_PLUGINS_VER=0.4.2
+ARG VA_GSTREAMER_PLUGINS_VER=0.6.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
@@ -648,8 +648,8 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DDISABLE_SAMPLES=ON \
-    -DMQTT=ON \
-    -DKAFKA=ON \
+    -DENABLE_PAHO_INSTALLATION=1 \
+    -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DDISABLE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
@@ -707,7 +707,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python-yaml libgtk2.0 libdrm2 libxv1 \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python-yaml libgtk2.0 libdrm2 libxv1 uuid \
 libdrm2 libboost-all-dev libusb-1.0-0-dev ; \
     rm -rf /var/lib/apt/lists/*;
 

@@ -194,12 +194,8 @@ RUN git clone ${SVT_VP9_REPO} && \
     make install 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2019_R1.1
+ARG DLDT_VER=2019_R3
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
-ARG DLDT_C_API_1=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
-ARG DLDT_C_API_2=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0002-Change-to-match-image-with-separate-planes.patch
-ARG DLDT_C_API_3=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0003-Refine-IE-C-API.patch
-ARG DLDT_C_API_4=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0004-Fix-code-style-and-symbols-visibility-for-2019R1.patch
 
 RUN apt-get -y install libusb-1.0.0-dev
 
@@ -208,10 +204,6 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     git submodule init && \
     git submodule update --recursive && \
     cd inference-engine && \
-    wget -O - ${DLDT_C_API_1} | patch -p2 && \
-    wget -O - ${DLDT_C_API_2} | patch -p2 && \
-    wget -O - ${DLDT_C_API_3} | patch -p2 && \
-    wget -O - ${DLDT_C_API_4} | patch -p2 && \
     mkdir build && \
     cd build && \
     cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES=OFF .. && \
@@ -263,6 +255,21 @@ RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/o
 
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
+
+# DLDT IE C API
+ARG C_API_NAME=dldt-c_api_v1-0.1
+ARG C_API_TAR_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/${C_API_NAME}.tar.gz
+
+RUN wget -O - ${C_API_TAR_REPO} | tar xz && \
+    cd ${C_API_NAME} && \
+    mkdir -p build && cd build && \
+    cmake .. && \
+    make -j8 && \
+    make install && \
+    cp -rf /usr/local/include/dldt/* /opt/intel/dldt/inference-engine/include && \
+    c_api_libdir="/usr/local/lib" && \
+    cp -rf ${c_api_libdir}/* ${libdir} && \
+    cp -rf ${c_api_libdir}/* /home/build${libdir}
 
 #install Model Optimizer in the DLDT for Dev
 
@@ -439,7 +446,7 @@ RUN wget ${OPENCV_REPO} && \
     make install DESTDIR=/home/build && \
     make install
 
-RUN apt-get install -y -q --no-install-recommends gtk-doc-tools
+RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev
 
 
 
@@ -500,7 +507,7 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 
 #Install va gstreamer plugins
 #Has a dependency on OpenCV, GStreamer
-ARG VA_GSTREAMER_PLUGINS_VER=0.4.2
+ARG VA_GSTREAMER_PLUGINS_VER=0.6.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
@@ -514,8 +521,8 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DDISABLE_SAMPLES=ON \
-    -DMQTT=ON \
-    -DKAFKA=ON \
+    -DENABLE_PAHO_INSTALLATION=1 \
+    -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DDISABLE_VAAPI=ON  \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
@@ -539,7 +546,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.0.0 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.0.0 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 uuid \
 ; \
     rm -rf /var/lib/apt/lists/*;
 

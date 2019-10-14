@@ -268,12 +268,8 @@ RUN yum install -y -q python-yaml
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2019_R1.1
+ARG DLDT_VER=2019_R3
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
-ARG DLDT_C_API_1=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
-ARG DLDT_C_API_2=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0002-Change-to-match-image-with-separate-planes.patch
-ARG DLDT_C_API_3=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0003-Refine-IE-C-API.patch
-ARG DLDT_C_API_4=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0004-Fix-code-style-and-symbols-visibility-for-2019R1.patch
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
 
@@ -282,10 +278,6 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     git submodule init && \
     git submodule update --recursive && \
     cd inference-engine && \
-    wget -O - ${DLDT_C_API_1} | patch -p2 && \
-    wget -O - ${DLDT_C_API_2} | patch -p2 && \
-    wget -O - ${DLDT_C_API_3} | patch -p2 && \
-    wget -O - ${DLDT_C_API_4} | patch -p2 && \
     mkdir build && \
     cd build && \
     cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ON -DENABLE_SAMPLES=OFF .. && \
@@ -337,6 +329,21 @@ RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/o
 
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
+
+# DLDT IE C API
+ARG C_API_NAME=dldt-c_api_v1-0.1
+ARG C_API_TAR_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/${C_API_NAME}.tar.gz
+
+RUN wget -O - ${C_API_TAR_REPO} | tar xz && \
+    cd ${C_API_NAME} && \
+    mkdir -p build && cd build && \
+    cmake .. && \
+    make -j8 && \
+    make install && \
+    cp -rf /usr/local/include/dldt/* /opt/intel/dldt/inference-engine/include && \
+    c_api_libdir="/usr/local/lib64" && \
+    cp -rf ${c_api_libdir}/* ${libdir} && \
+    cp -rf ${c_api_libdir}/* /home/build${libdir}
 
 #install Model Optimizer in the DLDT for Dev
 ARG PYTHON_TRUSTED_HOST
