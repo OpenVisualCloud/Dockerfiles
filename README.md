@@ -91,6 +91,15 @@ Please see [development and test statuses](doc/test.md) for the latest developme
 (6) ctest   
 ```
 
+### Generate dockerfiles without building:
+
+```bash
+(1) mkdir build
+(2) cd build
+(3) cmake .. -DONLY_DOCKERFILES=YES 
+(4) make 
+```
+
 ## Run shell:
 
 ```bash
