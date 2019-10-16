@@ -25,11 +25,21 @@ Kernel version 4.18 or later is recommended for feature and performance. The fol
 (9) sudo shutdown -r now   
 
 ### For GStreamer dockers
-VAAPI expects rendering device to be set in order to work. Dockers readily spin up with this config. Specify the display device on host by doing following.
+VAAPI expects rendering device to be set in order to work. Dockers readily spin up with this config.
+Setup host with these instructions to be able to run vaapi based plugins successfully:
 
+ 
 
-```bash
-export DISPLAY=:0.0
-```
+ - Install X11 server utils on the host<br>
+```sudo apt-get install x11-xserver-utils```
 
-Note: If the host is not connected with a display, it may need to run "xhost +" on host to allow docker session connecting to host X server.
+ - Modify ```/etc/lightdm/lightdm.conf``` and restart the service<br>
+   - ```cat /etc/lightdm/lightdm.conf```<br>
+[SeatDefaults]<br>
+autologin-user=<SYSTEM_USER_NAME>
+
+   - ```sudo systemctl restart ligthdm```
+ - Allow any user to connect to XServer<br>
+ ```xhost +```
+- Add ```-v /tmp/.X11-unix:/tmp/.X11-unix``` in docker run command when running the docker
+
