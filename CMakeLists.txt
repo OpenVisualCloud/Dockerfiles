@@ -11,7 +11,7 @@ if (NOT DEFINED BUILD_FDKAAC)
 endif()
 
 if (NOT DEFINED ONLY_DOCKERFILES)
-    set(ONLY_DOCKERFILES "NO")
+    set(ONLY_DOCKERFILES "OFF")
 endif()
 
 enable_testing()

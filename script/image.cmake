@@ -1,4 +1,4 @@
-add_custom_target(build_${image} ALL "${CMAKE_CURRENT_SOURCE_DIR}/build.sh" ${BUILD_MP3LAME} ${BUILD_FDKAAC})
+add_custom_target(build_${image} ALL "${CMAKE_CURRENT_SOURCE_DIR}/build.sh" ${BUILD_MP3LAME} ${BUILD_FDKAAC} ${ONLY_DOCKERFILES})
 if(dep_image)
     add_dependencies(build_${image} build_${dep_image})
 endif()
