@@ -6,7 +6,7 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-RUN apt-get -y install libusb-1.0.0-dev
+RUN apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
 )dnl
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
@@ -16,7 +16,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     cd inference-engine && \
     mkdir build && \
     cd build && \
-    cmake ifelse(index(BUILD_LINKAGE,static),-1,,-DBUILD_SHARED_LIBS=OFF) -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ifelse(index(DOCKER_IMAGE,xeon-),-1,ON,OFF) -DENABLE_SAMPLES=OFF .. && \
+    cmake ifelse(index(BUILD_LINKAGE,static),-1,,-DBUILD_SHARED_LIBS=OFF) -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ifelse(index(DOCKER_IMAGE,xeon-),-1,ON,OFF) -DENABLE_SAMPLES=OFF -DENABLE_OPENCV=OFF .. && \
     make -j $(nproc) && \
     rm -rf ../bin/intel64/Release/lib/libgtest* && \
     rm -rf ../bin/intel64/Release/lib/libgmock* && \

@@ -267,6 +267,21 @@ RUN wget -O - ${PYTHON_REPO} | tar xz && \
 RUN yum install -y -q python-yaml
 
 
+
+ARG OPENCV_VER=4.1.0
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
+
+
+RUN wget ${OPENCV_REPO} && \
+    tar -zxvf ${OPENCV_VER}.tar.gz && \
+    cd opencv-${OPENCV_VER} && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -D BUILD_EXAMPLES=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_DOCS=OFF -D BUILD_TESTS=OFF .. && \
+    make -j $(nproc) && \
+    make install DESTDIR=/home/build && \
+    make install
+
 # Build DLDT-Inference Engine
 ARG DLDT_VER=2019_R3
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
@@ -280,7 +295,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     cd inference-engine && \
     mkdir build && \
     cd build && \
-    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ON -DENABLE_SAMPLES=OFF .. && \
+    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ON -DENABLE_SAMPLES=OFF -DENABLE_OPENCV=OFF .. && \
     make -j $(nproc) && \
     rm -rf ../bin/intel64/Release/lib/libgtest* && \
     rm -rf ../bin/intel64/Release/lib/libgmock* && \
