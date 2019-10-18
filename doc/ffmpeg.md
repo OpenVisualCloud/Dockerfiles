@@ -10,7 +10,7 @@ The FFmpeg docker images are compiled with the following audio and video codecs:
 |mp3lame|3.100|vpx|1.7.0|
 |opus|1.2.1|aom|1.0.0|
 |ogg|1.3.3|SVT-HEVC|1.3.0|
-|vorbis|1.3.6|SVT-AV1|custom|
+|vorbis|1.3.6|SVT-AV1|0.6.0|
 |x264|stable|SVT-VP9|custom|
 
 
@@ -22,27 +22,10 @@ The FFmpeg builds included the following patches for feature enhancement, better
 |-------|-------------|
 |[11625](https://patchwork.ffmpeg.org/patch/11625/raw)|Enhance 1:N transcoding performance.|
 |[11035](https://patchwork.ffmpeg.org/patch/11035/raw)|Fix libvpx to run on Intel(R) Xeon(R) processors.|
-|[H.265 FLV](https://raw.githubusercontent.com/VCDP/CDN/master/The-RTMP-protocol-extensions-for-H.265-HEVC.patch)|Support H.265 in FLV for RTMP streaming.|
-|[IE_FILTERS_01](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0001-Intel-inference-engine-detection-filter.patch)|Intel inference engine detection filter.|
-|[IE_FILTERS_02](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0002-New-filter-to-do-inference-classify.patch)|New filter to do inference classify.|
-|[IE_FILTERS_03](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0003-iemetadata-convertor-muxer.patch)|IE metadata convertor muxer.|
-|[IE_FILTERS_04](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0004-Kafka-protocol-producer.patch)|Kafka protocol producer.|
-|[IE_FILTERS_05](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0005-Support-object-detection-and-featured-face-identific.patch)|Support object detection and featured face identification.|
-|[IE_FILTERS_06](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0006-Send-metadata-in-a-packet-and-refine-the-json-format.patch)|Send metadata in a packet and refine the json format.|
-|[IE_FILTERS_07](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0007-Refine-features-of-IE-filters.patch)|Refine features of IE filters.|
-|[IE_FILTERS_08](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0008-fixed-extra-comma-in-iemetadata.patch)|Fixed extra comma in iemetadata.|
-|[IE_FILTERS_09](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0009-add-source-as-option-source-url-calculate-nano-times.patch)|Add source as option source url calculate nano times.|
-|[IE_FILTERS_10](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0010-fixed-buffer-overflow-issue-in-iemetadata.patch)|Fixed buffer overflow issue in iemetadata.|
-|[IE_FILTERS_11](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0011-libavutil-add-RGBP-pixel-format.patch)|Add RGBP pixel format|
-|[IE_FILTERS_12](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0012-Add-more-devices-into-target.patch)|Add more devices into target.|
-|[IE_FILTERS_13](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0013-Enable-vaapi-scale-for-IE-inference-filter.patch)|Enable vaapi scale for IE inference filters.|
-|[IE_FILTERS_14](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0014-iemetadata-it-will-provide-data-frame-by-frame-by-de.patch)|Iemetadata it will provide data frame by frame.|
-|[IE_FILTERS_15](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0015-Add-libcjson-for-model-pre-post-processing.patch)|Add libcjson for model pre/post processing.|
-|[IE_FILTERS_16](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0016-Change-IE-filters-to-use-model-proc.patch)|Change IE filters to use model proc.|
-|[IE_FILTERS_17](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0017-refine-total-fps-without-init-filter-and-add-decode-.patch)|Profiling patch.|
-|[IE_FILTERS_18](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0018-Bugs-fixing.patch)|Bug fixings.|
-|[IE_FILTERS_19](https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0019-Face-reidentification-refine.patch)|Face reidentification refine.|
-|[IE_FILTERS_20](hhttps://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/media-analytics/0020-More-changes-within-one-patch.patch)|Update more features.|
+|[H.265 FLV](https://github.com/VCDP/CDN/archive/v0.1.tar.gz)|Support H.265 in FLV for RTMP streaming.|
+|[IE_FILTERS](https://github.com/VCDP/FFmpeg-patch/archive/v0.2.tar.gz)|Enables FFmpeg analytics pipeline with the elementary inference features.|
+|[SVT-HEVC](https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-HEVC plugin|
+|[SVT-AV1](https://github.com/OpenVisualCloud/SVT-AV1/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-AV1 plugin|
 
 ### GPU Acceleration
 
@@ -125,4 +108,4 @@ ffmpeg -flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_dev
 #-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=$HDDL" -an -f null -
 ```
 
-* The ffmpeg media analytics samples can also be found from [VCDP github repo](https://github.com/VCDP/FFmpeg-patch/tree/master/media-analytics/samples).
+* The ffmpeg media analytics samples can also be found from [VCDP github repo](https://github.com/VCDP/FFmpeg-patch/tree/master/analytics/samples).

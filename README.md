@@ -1,14 +1,15 @@
 # ![logo][]  Dockerfiles
 [![Travis Build Status](https://travis-ci.com/OpenVisualCloud/Dockerfiles.svg?branch=master)](https://travis-ci.com/OpenVisualCloud/Dockerfiles)
 [![Development Test Status](https://img.shields.io/badge/Test-Result-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/test.md)
-[![Stable release](https://img.shields.io/badge/latest_release-v19.10-blue.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v19.10)
+[![Dockerhub](https://img.shields.io/badge/Images-Dockerhub-blue.svg)](https://hub.docker.com/u/openvisualcloud)
+[![Stable release](https://img.shields.io/badge/latest_release-v19.10-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v19.10)
 [![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-yellow.svg)](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/LICENSE)
 [![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
 
-This repository hosts docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.
+This repository hosts docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.The released docker images are published on [Docker Hub](https://hub.docker.com/u/openvisualcloud)
 
 ## Software Stack Images:
 
@@ -89,6 +90,23 @@ Please see [development and test statuses](doc/test.md) for the latest developme
 (4) cd Xeon/ubuntu-16.04/media/ffmpeg # please build your specific <_platform_>/<_OS_>/<_usage_>/<_image_> only as a full build takes a long time.     
 (5) make # build on the target processor for best performance.    
 (6) ctest   
+```
+
+### Generate dockerfiles without building:
+
+```bash
+(1) mkdir build
+(2) cd build
+(3) cmake .. -DONLY_DOCKERFILES=ON 
+(4) make 
+```
+## Dockerhub images
+
+The images published on Dockerhub with the name `openvisualcloud/<_platform_>-<_OS_>-<_usage_>-<_image_>`, go to [Docker Hub](https://hub.docker.com/u/openvisualcloud) or use the images through command line as below:
+
+```bash
+docker search openvisualcloud --limit=100 | grep analytics-ffmpeg #list media analytics ffmpeg images 
+docker pull openvisualcloud/xeon-ubuntu1604-analytics-ffmpeg #docker pull an specific image to local host
 ```
 
 ## Run shell:
