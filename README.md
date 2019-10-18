@@ -96,7 +96,7 @@ Please see [development and test statuses](doc/test.md) for the latest developme
 ```bash
 (1) mkdir build
 (2) cd build
-(3) cmake .. -DONLY_DOCKERFILES=YES 
+(3) cmake .. -DONLY_DOCKERFILES=ON 
 (4) make 
 ```
 
