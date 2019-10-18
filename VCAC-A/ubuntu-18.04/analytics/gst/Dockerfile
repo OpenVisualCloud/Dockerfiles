@@ -278,9 +278,9 @@ RUN cd neo && \
 #clinfo needs to be installed after build directory is copied over
 
 # OpenVINO verion
-# R1.1
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.1.144
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15512/l_openvino_toolkit_p_2019.1.144.tgz
+# R3
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
 
 
 #Install OpenVino dependencies
@@ -308,7 +308,8 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
-ARG C_API_VERSION=openvino_2019.1.133_9a10fc5
+
+ARG C_API_VERSION=openvino_2019.2.242_d0319cd
 ARG C_API_TAR_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/dldt-c-api-${C_API_VERSION}.tgz
 
 # OPENVINO C API
@@ -319,6 +320,7 @@ RUN mkdir -p /tmp2/c_api && \
     cp -rf usr/* /home/build/usr && \
     cd ../.. && \
     rm -rf /tmp2
+
 
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
