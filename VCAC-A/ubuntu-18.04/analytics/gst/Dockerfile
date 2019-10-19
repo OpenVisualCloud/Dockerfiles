@@ -278,9 +278,9 @@ RUN cd neo && \
 #clinfo needs to be installed after build directory is copied over
 
 # OpenVINO verion
-# R1.1
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.1.144
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15512/l_openvino_toolkit_p_2019.1.144.tgz
+# R3
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
 
 
 #Install OpenVino dependencies
@@ -308,7 +308,8 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
-ARG C_API_VERSION=openvino_2019.1.133_9a10fc5
+
+ARG C_API_VERSION=openvino_2019.2.242_d0319cd
 ARG C_API_TAR_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/dldt-c-api-${C_API_VERSION}.tgz
 
 # OPENVINO C API
@@ -319,6 +320,7 @@ RUN mkdir -p /tmp2/c_api && \
     cp -rf usr/* /home/build/usr && \
     cd ../.. && \
     rm -rf /tmp2
+
 
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
@@ -552,7 +554,7 @@ RUN wget ${OPENCV_REPO} && \
     make install DESTDIR=/home/build && \
     make install
 
-RUN apt-get install -y -q --no-install-recommends gtk-doc-tools
+RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev
 
 
 
@@ -613,7 +615,7 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 
 #Install va gstreamer plugins
 #Has a dependency on OpenCV, GStreamer
-ARG VA_GSTREAMER_PLUGINS_VER=0.4.2
+ARG VA_GSTREAMER_PLUGINS_VER=0.6.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
@@ -627,8 +629,8 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DDISABLE_SAMPLES=ON \
-    -DMQTT=ON \
-    -DKAFKA=ON \
+    -DENABLE_PAHO_INSTALLATION=1 \
+    -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DDISABLE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
@@ -653,7 +655,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.1 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 libpugixml1v5 \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.1 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid \
 libdrm2 libboost-all-dev libusb-1.0-0-dev ; \
     rm -rf /var/lib/apt/lists/*;
 

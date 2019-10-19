@@ -202,13 +202,23 @@ RUN git clone ${SVT_VP9_REPO} && \
     make install DESTDIR=/home/build && \
     make install )
 
+ARG OPENCV_VER=4.1.0
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
+
+
+RUN wget ${OPENCV_REPO} && \
+    tar -zxvf ${OPENCV_VER}.tar.gz && \
+    cd opencv-${OPENCV_VER} && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -D BUILD_EXAMPLES=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_DOCS=OFF -D BUILD_TESTS=OFF .. && \
+    make -j $(nproc) && \
+    make install DESTDIR=/home/build && \
+    make install
+
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2019_R1.1
+ARG DLDT_VER=2019_R3
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
-ARG DLDT_C_API_1=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0001-Add-inference-engine-C-API.patch
-ARG DLDT_C_API_2=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0002-Change-to-match-image-with-separate-planes.patch
-ARG DLDT_C_API_3=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0003-Refine-IE-C-API.patch
-ARG DLDT_C_API_4=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/0004-Fix-code-style-and-symbols-visibility-for-2019R1.patch
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
 
@@ -217,13 +227,9 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     git submodule init && \
     git submodule update --recursive && \
     cd inference-engine && \
-    wget -O - ${DLDT_C_API_1} | patch -p2 && \
-    wget -O - ${DLDT_C_API_2} | patch -p2 && \
-    wget -O - ${DLDT_C_API_3} | patch -p2 && \
-    wget -O - ${DLDT_C_API_4} | patch -p2 && \
     mkdir build && \
     cd build && \
-    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES=OFF .. && \
+    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES=OFF -DENABLE_OPENCV=OFF .. && \
     make -j $(nproc) && \
     rm -rf ../bin/intel64/Release/lib/libgtest* && \
     rm -rf ../bin/intel64/Release/lib/libgmock* && \
@@ -272,6 +278,21 @@ RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/o
 
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
+
+# DLDT IE C API
+ARG C_API_NAME=dldt-c_api_v1-0.1
+ARG C_API_TAR_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/${C_API_NAME}.tar.gz
+
+RUN wget -O - ${C_API_TAR_REPO} | tar xz && \
+    cd ${C_API_NAME} && \
+    mkdir -p build && cd build && \
+    cmake .. && \
+    make -j8 && \
+    make install && \
+    cp -rf /usr/local/include/dldt/* /opt/intel/dldt/inference-engine/include && \
+    c_api_libdir="/usr/local/lib64" && \
+    cp -rf ${c_api_libdir}/* ${libdir} && \
+    cp -rf ${c_api_libdir}/* /home/build${libdir}
 
 #install Model Optimizer in the DLDT for Dev
 
@@ -433,22 +454,8 @@ RUN cd SVT-AV1/gstreamer-plugin && \
     make install DESTDIR=/home/build && \
     make install
 
-ARG OPENCV_VER=4.1.0
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
-
-RUN wget ${OPENCV_REPO} && \
-    tar -zxvf ${OPENCV_VER}.tar.gz && \
-    cd opencv-${OPENCV_VER} && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -D BUILD_EXAMPLES=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_DOCS=OFF -D BUILD_TESTS=OFF .. && \
-    make -j $(nproc) && \
-    make install DESTDIR=/home/build && \
-    make install
-
-
-RUN yum install -y -q glib2-devel gtk-dock openblas
+RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel
 
 
 
@@ -508,7 +515,7 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 
 #Install va gstreamer plugins
 #Has a dependency on OpenCV, GStreamer
-ARG VA_GSTREAMER_PLUGINS_VER=0.4.2
+ARG VA_GSTREAMER_PLUGINS_VER=0.6.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
@@ -522,8 +529,8 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DDISABLE_SAMPLES=ON \
-    -DMQTT=ON \
-    -DKAFKA=ON \
+    -DENABLE_PAHO_INSTALLATION=1 \
+    -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DDISABLE_VAAPI=ON  \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
@@ -549,7 +556,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
-    yum install -y -q numactl openssl glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial \
+    yum install -y -q numactl openssl glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid \
 libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
