@@ -1,154 +1,59 @@
-This folder contains docker files to build software stack for Intel(R) VCAC-A cards.
 
+Intel VCAC-A is designed to accelerate analytics computation. This README describes the steps to setup Intel VCAC-A and deploy docker images to run on teh platform.   
 
 ## 1. Setup VCAC-A:
 
-VCAC-A Software Setup and Boot up. Please follow the [Software Installation Guide](https://cdrdv2.intel.com/v1/dl/getContent/611894) to build the package for Host and VCAC-A and boot up the VCAC-A. See details in Section 2 in the [Software Installation Guide](https://cdrdv2.intel.com/v1/dl/getContent/611894).
+Please follow the [Software Installation Guide, Section 2](https://cdrdv2.intel.com/v1/dl/getContent/611894) to build and configure the software packages for the host and the VCAC-A.        
 
-## Additional steps to following:
+The following additional steps are required to run docker images on VCAC-A:    
 
-## Step 1.1: Install Docker on Host and VCAC-A card
+### Step 1.1: Install Docker Engine on Host and VCAC-A
 
-See the detail in section 2.1.2 of [Software Installation Guide](https://cdrdv2.intel.com/v1/dl/getContent/611894)
+Follow the [instructions](https://docs.docker.com/v17.09/engine/installation) to install the latest docker engine on both the host and the VCAC-A. It is important to properly setup proxies if you are behind a corporation firewall.    
 
-## Step 1.2: Install OpenVINO on VCAC-A
+### Step 1.2: Install Intel OpenVINO on VCAC-A
 
-After the VCAC-A card is boot up, login to VCAC-A card through ssh, and install the OpenVINO software.
-Here is the [Link](https://software.intel.com/en-us/openvino-toolkit/choose-download) to download. The package name: l_openvino_toolkit_p_201x.x.xxx.tgz:
+Login to VCAC-A and install the Intel OpenVINO software by downloading from this [link](https://software.intel.com/en-us/openvino-toolkit/choose-download). The package name should read ```l_openvino_toolkit_p_201x.x.xxx.tgz```. 
 
-See detail steps in the [Guide](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux.html).
+The only required component is as follows:
+- Inference Engine
 
-Here are simple steps:
+After installation, start the HDDL daemon as follows. 
 
-	tar xvf l_openvino_toolkit_p_201x.x.xxx.tgz
-	cd l_openvino_toolkit_p_201x.x.xxx
-	./install.sh
-
-The required component:
-
-	Inference Engine
-	Model Optimizer
-
-#### Note: The same version of OpenVINO is installed in VCAC-A vcad image and docker image.
-
-## Step 1.3: Check the HDDL daemon on VCAC-A
-
-run the following cmd:
-
+```
         Source /opt/intel/openvino/bin/SetupEnv.sh
         /opt/intel/openvino/inference_engine/external/hddl/bin/hddldaemon
+```
 
+It is critical that the HDDL daemon is running always. When running docker containers, inference requests initiated within the containers are routed to the HDDL daemon for execution.    
 
-## 2. Upload and load docker image on VCAC-A
+## 2. Upload Docker Images onto VCAC-A
 
-## Step 2.1: Pull the base docker image for analytic
+See each sub-folder for a list of docker images designed for VCAC-A, for example, ```openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg```. Use the following command (or this [utility script](script/sample_upload_single_image.sh)) to transfer docker images from the host to VCAC-A:     
 
-Image name:
-+       openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg
-+       openvisualcloud/vcaca-ubuntu1604-analytics-gst
+```
+	docker save <image-name>  | ssh root@172.32.xxx.xxx "docker image rm -f <image-name> 2>/dev/null; docker load"
+```
 
+##  3. Run Docker Containers on VCAC-A
 
+The following ```docker run``` commandline options are **required** to run docker containers on VCAC-A:   
+- **```--user root --privileged```**: The root privilege is required to mount the media and analytics acceleration devices.    
+- **```-v /dev:/dev```**: Mount the media and analytics acceleration devices. Specifically, ```/dev/card???``` is for media decoding acceleration and ```/dev/ion``` is for analytics acceleration.       
+- **```-v /tmp:/tmp -v /var/tmp:/var/tmp```**: Mount the directory for analytics data transfering.    
+- **```-v ~/.Xauthority:/root/.Xauthority -v /tmp/.X11-unix/:/tmp/.X11-unix -e DISPLAY=$DISPLAY```**: The ```XHost``` authority is required for media decoding acceleration. 
 
-	docker pull image:tag
+Optionally, you can also mount:   
+- **```-v /etc/timezone:/etc/timezone```**: Synchronize the time zone between the container and the VCAC-A.  
+- **```-e http_proxy -e https_proxy -e no_proxy```**: Enable proxy settings within the container.   
 
+### See Also
 
-## Step 2.2: Load docker image on VCAC-A
+- The utility script [sample-run_vcac-a_docker.sh](script/sample_run_vcac-a_docker.sh) 
+- [FFmpeg Docker Images Documentation](../doc/ffmpeg.md)
+- [GStreamer Docker Images Documentation](../doc/gst.md)
 
-Sample Command to transfer and load the image to VCAC-A:
-
-Command for FFMPEG:
-
-	docker save vcaca_analytics_ffmpeg_ubuntu1604:latest | ssh root@xxx.xxx.xxx.xxx "docker image rm -f vcaca_analytics_ffmpeg_ubuntu1604:latest 2>/dev/null; docker load"
-
-Command for GST:
-
-	docker save vcaca_analytics_gst_ubuntu1604:latest | ssh root@xxx.xxx.xxx.xxx "docker image rm -f vcaca_analytics_gst_ubuntu1604:latest 2>/dev/null; docker load"
-
-See [sample script](./script/sample_upload_single_image.sh).		
-
-## Step 2.3: Verify image loaded via docker images command on VCAC-A:
-
-
-	docker images
-
-Run the above command and see the similar as the following:
-
-
-	REPOSITORY                                           TAG                 IMAGE ID            CREATED             SIZE
-	openvisualcloud/vcaca-ubuntu1804-analytics-gst       19.10               f25dbdc9e3fc        8 days ago          1.03GB
-	openvisualcloud/vcaca-ubuntu1804-analytics-gst       latest              f25dbdc9e3fc        8 days ago          1.03GB
-	openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg    19.10               11201fece958        8 days ago          199MB
-	openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg    latest              11201fece958        8 days ago          199MB
-
-
-
-##  3. Command options to run the docker on the VCAC-A
-
-This section helps understand the basic docker options when create the container for this image.
-
-When the docker image is loaded on the VCAC-A card, please creat the docker container with the following options accordingly.
-
-Enable the following options via "docker run" command.
-
-## Set the user to run the docker
-
-	 --user root
-
-## Enable --privileged
-
-	The --privileged allow to see the device on the Host in the docker. here is /dev/ion
-
-## Enable GUI if needed
-
-	-v ~/.Xauthority:/root/.Xauthority
-	-v /tmp/.X11-unix/:/tmp/.X11-unix
-	-e DISPLAY=$DISPLAY
-
-## Set the proxy
-
-	-e HTTP_PROXY=$HTTP_PROXY
-	-e HTTPS_PROXY=$HTTPS_PROXY
-	-e http_proxy=$http_proxy
-	-e https_proxy=$https_proxy
-
-## Mount the /tmp folder
-
-	-v /tmp:/tmp
-	-v /var/tmp:/var/tmp
-
-## Mount the /dev folder
-
-        -v /dev:/dev
-
-or mount the device directly 
-
-	--device=/dev/ion:/dev/ion
-
-## Mount the user folder
-
-The user's data, such as video clip, model etc. , can be be shared by this folder.
-
-here is Sample:
-
-	-v /mnt/share:/mnt/share
-
-## To sync the host time and local time in the docker container
-
-	-v /etc/localtime:/etc/localtime:ro
-
-## 4. Tutorial: Run docker in standalone mode.
-
-If you try to explore the docker, it is easy to run with the following script and try FFMPEG/GST in it.
-
-See [sample script](./script/sample_run_vcac-a_docker.sh) and try to run the docker in standalone mode.
-
-
-## Run FFMPEG and GST command in the standalone mode
-
-+	See [sample command for FFMPEG](../doc/ffmpeg.md)
-+	See [sample command for GST](../doc/gst.md)
-
-## 5. Tutorial:Deploy the docker in swarm mode
+## 4. Setup VCAC-A as a Docker-Swarm Worker
 
 This helps understand how to deploy the docker in your application. It supports to deploy on the multi nodes.
 
