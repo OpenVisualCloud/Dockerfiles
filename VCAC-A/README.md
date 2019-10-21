@@ -5,11 +5,11 @@ Intel VCAC-A is designed to accelerate analytics computation. This README descri
 
 Please follow the [Software Installation Guide, Section 2](https://cdrdv2.intel.com/v1/dl/getContent/611894) to build and configure the software packages for the host and the VCAC-A, with the following additional steps:    
 
-### Step 1.1: Install Docker Engine on Host and VCAC-A
+- **Install Docker Engine on Host and VCAC-A**
 
 Follow the [instructions](https://docs.docker.com/v17.09/engine/installation) to install the latest docker engine on both the host and the VCAC-A. It is important that you properly setup proxies if you are behind a corporation firewall.    
 
-### Step 1.2: Install Intel OpenVINO on VCAC-A
+- **Install Intel OpenVINO on VCAC-A**
 
 Login to VCAC-A and install the Intel OpenVINO software by downloading from this [link](https://software.intel.com/en-us/openvino-toolkit/choose-download). The package name should read ```l_openvino_toolkit_p_201x.x.xxx.tgz```. 
 
@@ -45,7 +45,7 @@ Optionally, you can also mount:
 - **```-v /etc/timezone:/etc/timezone```**: Synchronize the time zone between the container and the VCAC-A.  
 - **```-e http_proxy -e https_proxy -e no_proxy```**: Enable proxy settings within the container.   
 
-### See Also
+#### See Also
 
 - The utility script [sample-run_vcac-a_docker.sh](script/sample_run_vcac-a_docker.sh) 
 - [FFmpeg Docker Images Documentation](../doc/ffmpeg.md)
@@ -55,7 +55,7 @@ Optionally, you can also mount:
 
 You can setup VCAC-A as a docker swarm worker node. Then any subsequent deployment will be as simple as ```docker stack deploy```. It is recommended that you setup docker swarm on the host and VCAC-A as a worker node for application development.       
 
-### Setup VCAC-A Passwordless Access
+- **Setup VCAC-A Passwordless Access**
 
 Optionally, you can setup password-less access to VCAC-A. Then you can issue VCAC-A commands from the host via ```ssh```.    
 
@@ -64,7 +64,7 @@ cat /dev/zero | ssh-keygen -q -N ""
 ssh-copy-id root@172.32.xxx.xxx 2> /dev/null
 ```
 
-### Add the VCAC-A as the swarm node.
+- **Add the VCAC-A as the swarm node**
 
 Setup host docker swarm if not already,run the following commands (or the utility script [sample_swarm_setup_vcac-a.sh](./script/sample_swarm_setup_vcac-a.sh)):  
 
@@ -74,7 +74,7 @@ docker swarm init --advertise-addr=172.32.1.254 2> /dev/null
 ssh 172.32.xx.xx "docker swarm join --token xxxxx 172.32.1.254:2377"
 ```
 
-### Develop Docker Compose File
+- **Develop Docker Compose File**
 
 As Docker Compose File Format version 3 does not support device mount. We need to use the [docker-in-docker](https://hub.docker.com/_/docker) workaround (to be able to mount the media and acceleration devices.) The workaround let the docker compose file launches a docker container as root, mount the devices, and then the docker container subsequently launches the application container.   
 
