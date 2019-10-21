@@ -11,10 +11,7 @@ Follow the [instructions](https://docs.docker.com/v17.09/engine/installation) to
 
 - **Install Intel OpenVINO on VCAC-A**
 
-Login to VCAC-A and install the Intel OpenVINO software by downloading from this [link](https://software.intel.com/en-us/openvino-toolkit/choose-download). The package name should read ```l_openvino_toolkit_p_201x.x.xxx.tgz```. 
-
-The only required component is as follows:
-- Inference Engine
+Login to VCAC-A and install the Intel OpenVINO software by downloading from this [link](https://software.intel.com/en-us/openvino-toolkit/choose-download). The package name should read ```l_openvino_toolkit_p_201x.x.xxx.tgz```. During installation, the only required component is ```Inference Engine```. 
 
 After installation, start the HDDL daemon as follows. 
 
@@ -57,7 +54,7 @@ You can setup VCAC-A as a docker swarm worker node. Then any subsequent deployme
 
 - **Setup VCAC-A Passwordless Access**
 
-Optionally, you can setup password-less access to VCAC-A. Then you can issue VCAC-A commands from the host via ```ssh```.    
+Optionally, you can setup password-less access to VCAC-A. With password-less access, you can easily issue any VCAC-A commands from the host via ```ssh```, which makes development easier and the system securer.      
 
 ```
 cat /dev/zero | ssh-keygen -q -N ""
