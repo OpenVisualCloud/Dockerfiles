@@ -271,7 +271,7 @@ RUN wget ${OPENCV_REPO} && \
 ARG DLDT_VER=2019_R3
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 
-RUN apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
+RUN apt-get update && apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     cd dldt && \
