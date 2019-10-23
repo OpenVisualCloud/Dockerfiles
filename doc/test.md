@@ -20,26 +20,24 @@
 | Platform: XeonE3 (GPU) | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
 |-----|:---:|:---:|:---:|:---:|:---:|
 | Media:FFmpeg | V | V | V | V | V |
-| Media:GStreamer | V | V | T | T | T |
+| Media:GStreamer | V | V | V | V | V |
 | Media:NGINX | V | V | V | V | V |
 | Analytics:FFmpeg | V | V | V | V | V |
-| Analytics:GStreamer | V | V | T | T | T |
+| Analytics:GStreamer | V | V | V | V | V |
 | Service:OWT | - | V | - | - | V |
-| Dev | V | V | T | T | T |
+| Dev | V | V | V | V | V |
 
 | Platform: VCA2 | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
 |-----|:---:|:---:|:---:|:---:|:---:|
 | Media:FFmpeg | V | V | V | V | V |
-| Media:GStreamer | V | V | T | T | T |
+| Media:GStreamer | V | V | V | V | V |
 | Media:NGINX | V | V | V | V | V |
-| Dev | V | V | T | T | T |
+| Dev | V | V | V | V | V |
 
 | Platform: VCAC-A | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | 
 |-----|:---:|:---:|
-| Analytics:FFmpeg | V | T |  
+| Analytics:FFmpeg | V | V |  
 | Analytics:GStreamer | V | V | 
-| Dev | V | T |  
+| Dev | V | V |  
 
-Known Issues:
-- gst_vaapi_jpegenc/gst_vaapi_h264enc test failed on XeonE3/VCA2 CentOS environment. Issue #210
-- VCAC-A-ubuntu1804-analytics-ffmpeg images test failed. Issue #214
+
