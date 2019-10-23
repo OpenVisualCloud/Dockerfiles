@@ -220,7 +220,7 @@ RUN wget ${OPENCV_REPO} && \
 ARG DLDT_VER=2019_R3
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 
-RUN apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
+RUN apt-get update && apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     cd dldt && \
@@ -611,7 +611,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2  libnuma1 libass5 libssl1.0.0    libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python3-setuptools python3-yaml libgtk2.0 libdrm2 libxv1 uuid \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libsdl2-2.0-0 libasound2 libxcb-shm0 libxcb-shape0 libxcb-xfixes0  libnuma1 libass5 libssl1.0.0   libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python3-setuptools python3-yaml libgtk2.0 libdrm2 libxv1 uuid \
 ; \
     rm -rf /var/lib/apt/lists/*;
 

@@ -6,7 +6,7 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-RUN apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
+RUN apt-get update && apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
 )dnl
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
