@@ -38,7 +38,7 @@ Setup host with these instructions to be able to run vaapi based plugins success
 [SeatDefaults]<br>
 autologin-user=<SYSTEM_USER_NAME>
 
-   - ```sudo systemctl restart ligthdm```
+   - ```sudo systemctl restart lightdm```
  - Allow any user to connect to XServer<br>
  ```xhost +```
 - Add ```-v /tmp/.X11-unix:/tmp/.X11-unix``` in docker run command when running the docker
