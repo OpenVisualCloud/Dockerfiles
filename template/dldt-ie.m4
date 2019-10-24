@@ -77,10 +77,11 @@ RUN wget -O - ${C_API_TAR_REPO} | tar xz && \
     cmake .. && \
     make -j8 && \
     make install && \
-    cp -rf /usr/local/include/dldt/* /opt/intel/dldt/inference-engine/include && \
+    make install DESTDIR=tmp && \
+    cp -rf tmp/usr/local/include/dldt/* /opt/intel/dldt/inference-engine/include && \
     c_api_libdir="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)" && \
-    cp -rf ${c_api_libdir}/* ${libdir} && \
-    cp -rf ${c_api_libdir}/* /home/build${libdir}
+    cp -rf tmp/${c_api_libdir}/* ${libdir} && \
+    cp -rf tmp/${c_api_libdir}/* /home/build${libdir}
 
 #install Model Optimizer in the DLDT for Dev
 ifelse(index(DOCKER_IMAGE,-dev),-1,,
