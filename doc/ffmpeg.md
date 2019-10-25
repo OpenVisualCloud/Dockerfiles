@@ -23,7 +23,7 @@ The FFmpeg builds included the following patches for feature enhancement, better
 |[11625](https://patchwork.ffmpeg.org/patch/11625/raw)|Enhance 1:N transcoding performance.|
 |[11035](https://patchwork.ffmpeg.org/patch/11035/raw)|Fix libvpx to run on Intel(R) Xeon(R) processors.|
 |[H.265 FLV](https://github.com/VCDP/CDN/archive/v0.1.tar.gz)|Support H.265 in FLV for RTMP streaming.|
-|[IE_FILTERS](https://github.com/VCDP/FFmpeg-patch/archive/v0.2.tar.gz)|Enables FFmpeg analytics pipeline with the elementary inference features.|
+|[IE_FILTERS](https://github.com/VCDP/FFmpeg-patch/tree/ffmpeg4.1_va/patches )|Enables FFmpeg analytics pipeline with the elementary inference features.|
 |[SVT-HEVC](https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-HEVC plugin|
 |[SVT-AV1](https://github.com/OpenVisualCloud/SVT-AV1/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-AV1 plugin|
 
@@ -101,11 +101,11 @@ GPU decdoe + face detection
 
 ```bash
 ffmpeg -flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_device /dev/dri/renderD128 \
-# uncomment to choose different devices: CPU=2 GPU=3 VPU=5 HDDL=6
-#-i $STREAM -vf "detect=model=$D_FACE_RT_MODEL:device=$CPU" -an -f null - \
-#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=$GPU" -an -f null -
-#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=$VPU" -an -f null -
-#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=$HDDL" -an -f null -
+# uncomment to choose different devices:
+#-i $STREAM -vf "detect=model=$D_FACE_RT_MODEL:device=CPU" -an -f null - \
+#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=GPU" -an -f null -
+#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=VPU" -an -f null -
+#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=HDDL" -an -f null -
 ```
 
-* The ffmpeg media analytics samples can also be found from [VCDP github repo](https://github.com/VCDP/FFmpeg-patch/tree/master/analytics/samples).
+* The ffmpeg media analytics samples can also be found from [VCDP github repo](https://github.com/VCDP/FFmpeg-patch/tree/ffmpeg4.1_va/samples).

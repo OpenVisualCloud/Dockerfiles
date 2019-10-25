@@ -59,29 +59,26 @@ RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/o
         echo "Description: Intel Deep Learning Deployment Toolkit" >> "$pc" && \
         echo "Version: 5.0" >> "$pc" && \
         echo "" >> "$pc" && \
-        echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper" >> "$pc" && \
+        echo "Libs: -L\${libdir} -linference_engine" >> "$pc" && \
         echo "Cflags: -I\${includedir}" >> "$pc"; \
     done;
-define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine )dnl
 
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 
 # DLDT IE C API
-ARG C_API_NAME=dldt-c_api_v1-0.1
-ARG C_API_TAR_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/${C_API_NAME}.tar.gz
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/dldt-c_api_v2-1.0.tar.gz
 
-RUN wget -O - ${C_API_TAR_REPO} | tar xz && \
-    cd ${C_API_NAME} && \
+ARG c_api_libdir="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)"
+RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
+    cd dldt-c_api-1.0 && \
     mkdir -p build && cd build && \
-    cmake .. && \
+    cmake -DENABLE_AVX512F=OFF .. && \
     make -j8 && \
     make install && \
-    make install DESTDIR=tmp && \
-    cp -rf tmp/usr/local/include/dldt/* /opt/intel/dldt/inference-engine/include && \
-    c_api_libdir="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)" && \
-    cp -rf tmp/${c_api_libdir}/* ${libdir} && \
-    cp -rf tmp/${c_api_libdir}/* /home/build${libdir}
+    make install DESTDIR=/home/build
+ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
+define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_api )dnl
 
 #install Model Optimizer in the DLDT for Dev
 ifelse(index(DOCKER_IMAGE,-dev),-1,,
@@ -120,6 +117,7 @@ ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
 
 define(`INSTALL_IE',dnl
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
-ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
-)dnl
+ARG c_api_libdir="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)"
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}:${c_api_libdir}
+ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
+ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share)dnl
