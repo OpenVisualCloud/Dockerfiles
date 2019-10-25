@@ -62,39 +62,39 @@ ffmpeg -hwaccel qsv -c:v h264_qsv -i test.mp4 -f null /dev/null
 Face detection and emotion identification, save metadata to json format:
 
 ```bash
-ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-adas-0001/FP32/face-detection-adas-0001.xml, \
-classify=model=./emotions_recognition/emotions-recognition-retail-0003.xml:model_proc=emotions-recognition-retail-0003.json \
+ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-adas-0001/FP32/face-detection-adas-0001.xml:device=CPU, \
+classify=model=./emotions_recognition/emotions-recognition-retail-0003.xml:model_proc=emotions-recognition-retail-0003.json:device=CPU \
 -an -f iemetadata -source_url $URL -custom_tag $TAG emotion-meta.json
 ```
 
 Object Detection:
 
 ```bash
-ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./mobilenet-ssd.xml:model_proc=mobilenet-ssd.json -an -f null /dev/null
+ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./mobilenet-ssd.xml:model_proc=mobilenet-ssd.json:device=CPU -an -f null /dev/null
 ```
 
 Face detection and reidentification:
 
 ```bash
-ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=./face-detection-retail-0004.xml, \
-classify=model=./face-reidentification-retail-0095.xml:model_proc=./face-reidentification-retail-0095.json" -an -f null /dev/null
+ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=./face-detection-retail-0004.xml:device=CPU, \
+classify=model=./face-reidentification-retail-0095.xml:model_proc=./face-reidentification-retail-0095.json:device=CPU" -an -f null /dev/null
 
-ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=./face-detection-retail-0004.xml, \
-classify=model=./face-reidentification-retail-0095.xml:model_proc=./face-reidentification-retail-0095.json,identify=gallery=./gallery" \
+ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=./face-detection-retail-0004.xml:device=CPU, \
+classify=model=./face-reidentification-retail-0095.xml:model_proc=./face-reidentification-retail-0095.json:device=CPU,identify=gallery=./gallery" \
 -f iemetadata -y /tmp/face-identify.json
 ```
 
 Car attribute recognition
 
 ```bash
-ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=vehicle-detection-adas-0002.xml: model_proc=vehicle-detection-adas-0002.json, \
-classify=model=vehicle-attributes-recognition-barrier-0039.xml:model_proc=vehicle-attributes-recognition-barrier-0039.json" -an -f null /dev/null
+ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=vehicle-detection-adas-0002.xml:model_proc=vehicle-detection-adas-0002.json:device=CPU, \
+classify=model=vehicle-attributes-recognition-barrier-0039.xml:model_proc=vehicle-attributes-recognition-barrier-0039.json:device=CPU" -an -f null /dev/null
 ```
 
 Car-Bike-Person detection
 
 ```bash
-ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=person-vehicle-bike-detection-crossroad-0078.xml:model_proc=person-vehicle-bike-detection-crossroad-0078.json" -an -f null /dev/null
+ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=person-vehicle-bike-detection-crossroad-0078.xml:model_proc=person-vehicle-bike-detection-crossroad-0078.json:device=CPU" -an -f null /dev/null
 ```
 
 GPU decdoe + face detection
