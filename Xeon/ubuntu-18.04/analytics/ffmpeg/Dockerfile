@@ -282,10 +282,11 @@ RUN wget -O - ${C_API_TAR_REPO} | tar xz && \
     cmake .. && \
     make -j8 && \
     make install && \
-    cp -rf /usr/local/include/dldt/* /opt/intel/dldt/inference-engine/include && \
+    make install DESTDIR=tmp && \
+    cp -rf tmp/usr/local/include/dldt/* /opt/intel/dldt/inference-engine/include && \
     c_api_libdir="/usr/local/lib" && \
-    cp -rf ${c_api_libdir}/* ${libdir} && \
-    cp -rf ${c_api_libdir}/* /home/build${libdir}
+    cp -rf tmp/${c_api_libdir}/* ${libdir} && \
+    cp -rf tmp/${c_api_libdir}/* /home/build${libdir}
 
 #install Model Optimizer in the DLDT for Dev
 
@@ -360,6 +361,10 @@ RUN rm -rf /home/build/usr/include && \
     rm -rf /home/build/usr/share/doc && \
     rm -rf /home/build/usr/share/gtk-doc && \
     rm -rf /home/build/usr/share/man && \
+    rm -rf /home/build/usr/local/include && \
+    rm -rf /home/build/usr/local/share/doc && \
+    rm -rf /home/build/usr/local/share/gtk-doc && \
+    rm -rf /home/build/usr/local/share/man && \
     find /home/build -name "*.a" -exec rm -f {} \;
 
 FROM ubuntu:18.04
