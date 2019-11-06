@@ -18,8 +18,6 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
 )dnl
 
-define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine )dnl
-
 #Download and unpack OpenVino
 RUN mkdir /tmp2
 RUN wget ${OPENVINO_URL} -P /tmp2
@@ -41,20 +39,6 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
-
-
-ARG C_API_VERSION=openvino_2019.2.242_d0319cd
-ARG C_API_TAR_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/dldt-c-api-${C_API_VERSION}.tgz
-
-# OPENVINO C API
-RUN mkdir -p /tmp2/c_api && \
-    cd /tmp2/c_api && \
-    wget -O - ${C_API_TAR_REPO} | tar xz && \
-    cp -rf usr/* /usr && \
-    cp -rf usr/* /home/build/usr && \
-    cd ../.. && \
-    rm -rf /tmp2
-
 
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
@@ -87,6 +71,17 @@ ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 RUN rm -rf /var/lib/apt/lists/*;
+
+# OPENVINO C API
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/dldt-c_api_v2-1.0.tar.gz
+RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
+    cd dldt-c_api-1.0 && \
+    mkdir -p build && cd build && \
+    cmake -DENABLE_AVX512F=OFF .. && \
+    make -j8 && \
+    make install && \
+    make install DESTDIR=/home/build
+define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_api )dnl
 
 define(`INSTALL_OPENVINO',dnl
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
