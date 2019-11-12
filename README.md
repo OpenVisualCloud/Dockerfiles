@@ -2,8 +2,6 @@
 [![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
 [![Dockerhub](https://img.shields.io/badge/Images-Dockerhub-blue.svg)](https://hub.docker.com/u/openvisualcloud)
 [![Stable release](https://img.shields.io/badge/latest_release-v19.10.1-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v19.10.1)
-[![Travis Build Status](https://travis-ci.com/OpenVisualCloud/Dockerfiles.svg?branch=master)](https://travis-ci.com/OpenVisualCloud/Dockerfiles)
-[![Development Test Status](https://img.shields.io/badge/Test-Result-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/test.md)
 [![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
