@@ -50,7 +50,7 @@ The development images enable application compilation, debugging (with the debug
 
 | Image | Description |
 | :-----: | :----- | 
-| dev | Image containing the FFmpeg and GStreamer C++ development files. The OpenViNO model optimizer is to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
+| dev | Image containing the FFmpeg and GStreamer C++ development files. The Intel OpenVINO model optimizer is to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
 
 ## Service Images:
 
@@ -58,7 +58,7 @@ The service images provides ready to use services. See their image descriptions 
 
 | Image | Description |
 | :-----: | :----- | 
-| [owt](doc/owt.md)| Image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
+| [owt](doc/owt.md)| Image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit. Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
 
 ## Support Matrix:
 
@@ -106,8 +106,7 @@ cd Xeon/ubuntu-16.04/media/ffmpeg # please build your specific <_platform_>/<_OS
 make # build on the target platform for optimized performance.    
 ctest   
 ```
-
-See also: [Building Options](doc/cmake.md)
+See Also: [Build Options](doc/cmake.md)
 
 ## Run Shell:
 
