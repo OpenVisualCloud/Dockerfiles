@@ -5,7 +5,7 @@ Use the following options to customize the build process:
 - **BUILD_FDKAAC**: Set to ```ON``` (default) to build the ```libfdk_aac``` in the docker images, or ```OFF``` to disable including ```libfdk_aac``` in the docker images.  
 - **ONLY_DOCKERFILES**: Set to ```ON``` to update the Dockerfiles only without actually building them, or ```OFF``` (default) to update and build the Dockerfiles.   
 
-### Examples:   
+### Build Examples:   
 
 ```
 cd build
@@ -15,4 +15,20 @@ cmake -DBUILD_MP3LAME=ON ..
 ```
 cd build
 cmake -DBUILD_FDKAAC=ON -DBUILD_MP3LAME=OFF ..
+```
+
+### Use Alternative Repo:
+
+Certain source repo might be blocked in certain network. You can specify alternative repos before the build command as follows:
+
+```bash
+export AOM_REPO=...       
+export VPX_REPO=...     
+make
+```
+
+For a list of all REPOs and their versions, run the following command:
+
+```bash
+grep -E '_(REPO|VER)=' template/*.m4         
 ```
