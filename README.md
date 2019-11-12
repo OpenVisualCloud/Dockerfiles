@@ -119,7 +119,8 @@ Xeon/ubuntu-16.04/media/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_usage_>/<_image_>
 For example, uncomment ```#include(transform360.m4)``` in [Xeon/ubuntu-16.04/media/ffmpeg/Dockerfile.m4](Xeon/ubuntu-16.04/media/ffmpeg/Dockerfile.m4) to add essential 360 video transformation in the FFmpeg build.    
 
 After modification, please rerun cmake and make.     
-- You can refer to the [instructions](doc/cmake.md) to customize the building process. 
+
+See Also: [Build Options](doc/cmake.md)
 
 ### Use Alternative Repo:
 
