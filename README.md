@@ -86,7 +86,7 @@ sudo systemctl restart docker
 
 ### Evaluate Image:
 
-The docker images are published on [Dockerhub](https://hub.docker.com/u/openvisualcloud) with name pattern ```openvisualcloud/<_platform_>-<_OS_>-<_usage_>-<_image_>```. Find and use the images as follows:  
+The docker images are published on [Docker Hub](https://hub.docker.com/u/openvisualcloud) with name pattern ```openvisualcloud/<_platform_>-<_OS_>-<_usage_>-<_image_>```. Find and use the images as follows:  
 
 ```bash
 docker search openvisualcloud --limit=100 | grep analytics-ffmpeg #list media analytics ffmpeg images 
