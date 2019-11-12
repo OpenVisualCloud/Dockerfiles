@@ -1,18 +1,12 @@
 
-Use the following definitions to customize the building process:   
-- **BUILD_MP3LAME**: Docker images build options to libmp3lame. Current support value is `ON` to enable from the images or `OFF` to disable from the images. Default is `ON`.
-- **BUILD_FDKAAC**: Docker images build options to libfdk_aac. Current support value is `ON` to enable from the images or `OFF` to disable from the images. Default is `ON`.
+Use the following options to customize the build process:   
 
+- **BUILD_MP3LAME**: Set to ```ON``` (default) to build the ```libmp3lame``` in the docker images, or ```OFF``` to disable including ```libmp3lame``` in the docker images.    
+- **BUILD_FDKAAC**: Set to ```ON``` (default) to build the ```libfdk_aac``` in the docker images, or ```OFF``` to disable including ```libfdk_aac``` in the docker images.  
+- **ONLY_DOCKERFILES**: Set to ```ON``` to update the Dockerfiles only without actually building them, or ```OFF``` (default) to update and build the Dockerfiles.   
 
 ### Examples:   
 
-**Keep default or existing config**
-```
-cd build
-cmake ..
-```
-
-**Customize build config**
 ```
 cd build
 cmake -DBUILD_MP3LAME=ON ..
@@ -20,12 +14,5 @@ cmake -DBUILD_MP3LAME=ON ..
 
 ```
 cd build
-cmake -DBUILD_MP3LAME=OFF ..
-```
-
-```
-cd build
 cmake -DBUILD_FDKAAC=ON -DBUILD_MP3LAME=OFF ..
 ```
-
-
