@@ -86,7 +86,7 @@ sudo systemctl restart docker
 
 ### Evaluate Image:
 
-The docker images are published on [Dockerhub](https://hub.docker.com/u/openvisualcloud) with the image name pattern ```openvisualcloud/<_platform_>-<_OS_>-<_usage_>-<_image_>```, find and use the images as follows:  
+The docker images are published on [Dockerhub](https://hub.docker.com/u/openvisualcloud) with name pattern ```openvisualcloud/<_platform_>-<_OS_>-<_usage_>-<_image_>```. Find and use the images as follows:  
 
 ```bash
 docker search openvisualcloud --limit=100 | grep analytics-ffmpeg #list media analytics ffmpeg images 
@@ -99,8 +99,10 @@ docker pull openvisualcloud/xeon-ubuntu1604-analytics-ffmpeg
 mkdir build    
 cd build     
 cmake ..     
-cd Xeon/ubuntu-16.04/media/ffmpeg # please build your specific <_platform_>/<_OS_>/<_usage_>/<_image_> only, as a full build takes a long time.     
-make # build on the target platform for optimized performance.    
+# Please build your specific platform image. A full build takes a long time.
+cd Xeon/ubuntu-16.04/media/ffmpeg     
+# Build on the target platform for optimal performance.
+make    
 ctest   
 ```
 See Also: [Build Options](doc/cmake.md)
