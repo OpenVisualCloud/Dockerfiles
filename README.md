@@ -122,22 +122,6 @@ After modification, please rerun cmake and make.
 
 See Also: [Build Options](doc/cmake.md)
 
-### Use Alternative Repo:
-
-Certain source repo might be blocked in certain network. You can specify alternative repos before the build command as follows:
-
-```bash
-export AOM_REPO=...       
-export VPX_REPO=...     
-make
-```
-
-For a list of all REPOs and their versions, run the following command:
-
-```bash
-grep -E '_(REPO|VER)=' template/*.m4         
-```
-
 ### Use Dockerfile(s) in Your Project:
 
 It is recommended that you copy the Dockerfile(s) of your platform, OS and image directly into your project. The following shell scripts show how to sync (if needed) and build the NGINX Dockerfile (and its dependency FFmpeg):
