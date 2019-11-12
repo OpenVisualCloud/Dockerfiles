@@ -1,10 +1,7 @@
-# ![logo][]  Dockerfiles
-[![Travis Build Status](https://travis-ci.com/OpenVisualCloud/Dockerfiles.svg?branch=master)](https://travis-ci.com/OpenVisualCloud/Dockerfiles)
-[![Development Test Status](https://img.shields.io/badge/Test-Result-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/test.md)
+# ![logo][]  Software Stack Dockerfiles
+[![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
 [![Dockerhub](https://img.shields.io/badge/Images-Dockerhub-blue.svg)](https://hub.docker.com/u/openvisualcloud)
 [![Stable release](https://img.shields.io/badge/latest_release-v19.10.1-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v19.10.1)
-[![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
-[![License](https://img.shields.io/badge/license-BSD_3_Clause-yellow.svg)](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/LICENSE)
 [![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
@@ -17,11 +14,11 @@ Validated docker images are available on [**Docker Hub**](https://hub.docker.com
 
 ---
 
-## Software Stack Images:
+### Software Stack Images:
 
 The software stack images provide ready to use software stacks for application deployment. You can call the software executables or link with the software libraries.   
 
-#### Media Delivery
+- **Media Delivery**
 
 | Image | Description |
 | :-----: | ----- | 
@@ -30,21 +27,21 @@ The software stack images provide ready to use software stacks for application d
 | [nginx](doc/nginx.md) |Image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.|
 | [svt](doc/svt.md) |Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. See [svt.md](doc/svt.md) for details.|
 
-#### Media Analytics   
+- **Media Analytics**   
 
 | Image | Description |
 | :-----: | :----- | 
 | [ffmpeg](doc/ffmpeg.md) |Image optimized for media analytics. Included what are in the FFmpeg image, and the Intel<sup>&reg;</sup> OpenVINO<sup>&trade;</sup> inference engine. See [ffmpeg.md](doc/ffmpeg.md) for details.|
 | [gst](doc/gst.md) |Image optimized for media analytics. Included what are in the GStreamer image, and the Intel OpenVINO inference engine. See [gst.md](doc/gst.md) for details.|
 
-#### Cloud Gaming and Graphics
+- **Cloud Gaming and Graphics**
 
 | Image | Description |
 | :-----: | :----- | 
 | [ospray](doc/ospray.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.|
 | [ospray-mpi](doc/ospray-mpi.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray-mpi.md](doc/ospray-mpi.md) for details.|
 
-## Development Images:     
+### Development Images:     
 
 The development images enable application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images for deployment.       
 
@@ -52,7 +49,7 @@ The development images enable application compilation, debugging (with the debug
 | :-----: | :----- | 
 | dev | Image containing the FFmpeg and GStreamer C++ development files. The Intel OpenVINO model optimizer is to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
 
-## Service Images:
+### Service Images:
 
 The service images provides ready to use services. See their image descriptions for exposed service interfaces.    
 
@@ -60,7 +57,7 @@ The service images provides ready to use services. See their image descriptions 
 | :-----: | :----- | 
 | [owt](doc/owt.md)| Image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit. Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
 
-## Support Matrix:
+### Support Matrix:
 
 The project supports the following platforms and OS'es:
 
@@ -71,9 +68,9 @@ The project supports the following platforms and OS'es:
 | VCA2 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
 | VCAC-A | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS |
 
-Please see [development and test statuses](doc/test.md) for the latest development statuses.    
+Please see [Development and Test Report](doc/test.md) for the latest development statuses.    
 
-## Host Platform Setup:
+### Host Platform Setup:
 
 - Update kernels and firmwares: Please see each platform folder README for instructions.    
 - Follow the [instructions](https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-18-04) to setup host date and time.
@@ -87,60 +84,47 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker     
 ```
 
-## Evaluate Dockerhub Image
+### Evaluate Image:
 
-The docker images are published on [Dockerhub](https://hub.docker.com/u/openvisualcloud) with the image name pattern ```openvisualcloud/<_platform_>-<_OS_>-<_usage_>-<_image_>```, find and use the images as follows:  
+The docker images are published on [Docker Hub](https://hub.docker.com/u/openvisualcloud) with name pattern ```openvisualcloud/<_platform_>-<_OS_>-<_usage_>-<_image_>```. Find and use the images as follows:  
 
 ```bash
 docker search openvisualcloud --limit=100 | grep analytics-ffmpeg #list media analytics ffmpeg images 
 docker pull openvisualcloud/xeon-ubuntu1604-analytics-ffmpeg
 ```
 
-## Build Docker Image: 
+### Build Image: 
 
 ```bash
 mkdir build    
 cd build     
 cmake ..     
-cd Xeon/ubuntu-16.04/media/ffmpeg # please build your specific <_platform_>/<_OS_>/<_usage_>/<_image_> only, as a full build takes a long time.     
-make # build on the target platform for optimized performance.    
+# Please build your specific platform image. A full build takes a long time.
+cd Xeon/ubuntu-16.04/media/ffmpeg     
+# Build on the target platform for optimal performance.
+make    
 ctest   
 ```
 See Also: [Build Options](doc/cmake.md)
 
-## Run Shell:
+### Run Image Shell:
 
 ```bash
 Xeon/ubuntu-16.04/media/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_usage_>/<_image_>
 ```
 
-## Customize:
+### Customize Image:
 
 - You can modify any ```Dockerfile.m4``` template for customization.     
 For example, uncomment ```#include(transform360.m4)``` in [Xeon/ubuntu-16.04/media/ffmpeg/Dockerfile.m4](Xeon/ubuntu-16.04/media/ffmpeg/Dockerfile.m4) to add essential 360 video transformation in the FFmpeg build.    
 
 After modification, please rerun cmake and make.     
-- You can refer to the [instructions](doc/cmake.md) to customize the building process. 
 
-## Use Alternative Repo:
+See Also: [Build Options](doc/cmake.md)
 
-Certain source repo might be blocked in certain network. You can specify alternative repos before the build command as follows:
+### Use Dockerfile(s) in Your Project:
 
-```bash
-export AOM_REPO=...       
-export VPX_REPO=...     
-make
-```
-
-For a list of all REPOs and their versions, run the following command:
-
-```bash
-grep -E '_(REPO|VER)=' template/*.m4         
-```
-
-## Use Dockerfile in Other Project:
-
-It is recommended that you copy the Dockerfile(s) of your platform, OS and image directly into your other project. The following shell scripts show how to sync (if needed) and build the NGINX Dockerfile (and its dependency FFmpeg):
+It is recommended that you copy the Dockerfile(s) of your platform, OS and image directly into your project. The following shell scripts show how to sync (if needed) and build the NGINX Dockerfile (and its dependency FFmpeg):
 
 update.sh:   
 ```bash
