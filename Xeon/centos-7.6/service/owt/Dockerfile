@@ -146,7 +146,7 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg  ;
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac --enable-nonfree && \
+    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac  --enable-nonfree && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 

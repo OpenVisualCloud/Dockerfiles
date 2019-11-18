@@ -293,17 +293,17 @@ RUN cd neo && \
 ARG PYTHON_VER=3.6.6
 ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
 
-RUN apt-get install -y python3 python3-pip python3-setuptools python-yaml
+RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools python3-yaml
+
 
 
 # OpenVINO verion
-# R1.1
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.1.144
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15512/l_openvino_toolkit_p_2019.1.144.tgz
+# R3
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
 
 
 #Install OpenVino dependencies
-
 
 #Download and unpack OpenVino
 RUN mkdir /tmp2
@@ -326,18 +326,6 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
-
-ARG C_API_VERSION=openvino_2019.1.133_9a10fc5
-ARG C_API_TAR_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/dldt-c-api-${C_API_VERSION}.tgz
-
-# OPENVINO C API
-RUN mkdir -p /tmp2/c_api && \
-    cd /tmp2/c_api && \
-    wget -O - ${C_API_TAR_REPO} | tar xz && \
-    cp -rf usr/* /usr && \
-    cp -rf usr/* /home/build/usr && \
-    cd ../.. && \
-    rm -rf /tmp2
 
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
@@ -370,6 +358,16 @@ ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 RUN rm -rf /var/lib/apt/lists/*;
+
+# OPENVINO C API
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/dldt-c_api_v2-1.0.tar.gz
+RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
+    cd dldt-c_api-1.0 && \
+    mkdir -p build && cd build && \
+    cmake -DENABLE_AVX512F=OFF .. && \
+    make -j8 && \
+    make install && \
+    make install DESTDIR=/home/build
 
 
 
@@ -569,7 +567,7 @@ RUN wget ${OPENCV_REPO} && \
     make install DESTDIR=/home/build && \
     make install
 
-RUN apt-get install -y -q --no-install-recommends gtk-doc-tools
+RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev
 
 
 
@@ -630,7 +628,7 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 
 #Install va gstreamer plugins
 #Has a dependency on OpenCV, GStreamer
-ARG VA_GSTREAMER_PLUGINS_VER=0.4.2
+ARG VA_GSTREAMER_PLUGINS_VER=0.6.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
@@ -644,8 +642,8 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DDISABLE_SAMPLES=ON \
-    -DMQTT=ON \
-    -DKAFKA=ON \
+    -DENABLE_PAHO_INSTALLATION=1 \
+    -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DDISABLE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
@@ -667,7 +665,7 @@ ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PAT
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
-ARG FFMPEG_MA_RELEASE_VER=0.2
+ARG FFMPEG_MA_RELEASE_VER=0.3
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
 RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
@@ -679,7 +677,7 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '0001*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
     wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
-    find ${FFMPEG_MA_PATH}/media-analytics -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+    find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
@@ -691,7 +689,7 @@ RUN cd /home/FFmpeg; \
 
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine  && \
+    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api  && \
     make -j8 && \
     make install DESTDIR="/home/build"
 
@@ -704,7 +702,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass9 libssl1.1 libpciaccess0   libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python-yaml libgtk2.0 libdrm2 libxv1 libpugixml1v5 \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass9 libssl1.1 libpciaccess0   libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python3-setuptools python3-yaml libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid \
 libdrm2 libboost-all-dev libusb-1.0-0-dev ; \
     rm -rf /var/lib/apt/lists/*;
 

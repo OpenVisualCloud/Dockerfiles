@@ -6,6 +6,7 @@ fi
 
 BUILD_MP3LAME="${1:-ON}"
 BUILD_FDKAAC="${2:-ON}"
+ONLY_DOCKERFILES="${3:-OFF}"
 
 if echo ${IMAGE} | grep -q "dev"; then
     TEMPLATE="${DIR}/../../../template/"
@@ -25,8 +26,10 @@ if test "$1" = '-n'; then
     exit 0; 
 fi
 
-if grep -q 'AS build' "${DIR}/Dockerfile"; then
-    sudo docker build --target build -t "${PREFIX}/${IMAGE}:build" "$DIR" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^/--build-arg /')
-fi
+if test "${ONLY_DOCKERFILES}" = 'OFF'; then
+  if grep -q 'AS build' "${DIR}/Dockerfile"; then
+      sudo docker build --network=host --target build -t "${PREFIX}/${IMAGE}:build" "$DIR" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^/--build-arg /')
+  fi
 
-sudo docker build -t "${PREFIX}/${IMAGE}:${VERSION}" -t "${PREFIX}/${IMAGE}:latest" "$DIR" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^/--build-arg /')
+  sudo docker build --network=host -t "${PREFIX}/${IMAGE}:${VERSION}" -t "${PREFIX}/${IMAGE}:latest" "$DIR" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^/--build-arg /')
+fi

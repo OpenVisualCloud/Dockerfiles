@@ -12,7 +12,8 @@ RUN wget -O - ${PYTHON_REPO} | tar xz && \
     make install DESTDIR=/home/build
 RUN yum install -y -q python-yaml
 ,dnl
-RUN apt-get install -y python3 python3-pip python3-setuptools python-yaml
+RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools python3-yaml
 )dnl
 
-define(`INSTALL_PKGS_PYTHON', ifelse(index(DOCKER_IMAGE,ubuntu),-1, python-yaml , python3 python3-pip python-yaml ))dnl
+define(`INSTALL_PKGS_PYTHON', ifelse(index(DOCKER_IMAGE,ubuntu),-1, python-yaml , python3 python3-pip python3-setuptools python3-yaml ))dnl
+

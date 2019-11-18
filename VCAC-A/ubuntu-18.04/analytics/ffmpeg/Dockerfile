@@ -292,13 +292,12 @@ RUN cd neo && \
 #clinfo needs to be installed after build directory is copied over
 
 # OpenVINO verion
-# R1.1
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.1.144
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15512/l_openvino_toolkit_p_2019.1.144.tgz
+# R3
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
 
 
 #Install OpenVino dependencies
-
 
 #Download and unpack OpenVino
 RUN mkdir /tmp2
@@ -321,18 +320,6 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
-
-ARG C_API_VERSION=openvino_2019.1.133_9a10fc5
-ARG C_API_TAR_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/dldt-c-api-${C_API_VERSION}.tgz
-
-# OPENVINO C API
-RUN mkdir -p /tmp2/c_api && \
-    cd /tmp2/c_api && \
-    wget -O - ${C_API_TAR_REPO} | tar xz && \
-    cp -rf usr/* /usr && \
-    cp -rf usr/* /home/build/usr && \
-    cd ../.. && \
-    rm -rf /tmp2
 
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
@@ -365,6 +352,16 @@ ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 RUN rm -rf /var/lib/apt/lists/*;
+
+# OPENVINO C API
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/dldt-c_api_v2-1.0.tar.gz
+RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
+    cd dldt-c_api-1.0 && \
+    mkdir -p build && cd build && \
+    cmake -DENABLE_AVX512F=OFF .. && \
+    make -j8 && \
+    make install && \
+    make install DESTDIR=/home/build
 
 
 
@@ -404,7 +401,7 @@ ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PAT
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
-ARG FFMPEG_MA_RELEASE_VER=0.2
+ARG FFMPEG_MA_RELEASE_VER=0.3
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
 RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
@@ -416,7 +413,7 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '0001*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
     wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
-    find ${FFMPEG_MA_PATH}/media-analytics -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+    find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
 # Patch FFmpeg source for SVT-HEVC
 RUN cd /home/FFmpeg && \
@@ -428,7 +425,7 @@ RUN cd /home/FFmpeg; \
 
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine --enable-librdkafka --enable-libjson_c  && \
+    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
     make -j8 && \
     make install DESTDIR="/home/build"
 
@@ -438,6 +435,10 @@ RUN rm -rf /home/build/usr/include && \
     rm -rf /home/build/usr/share/doc && \
     rm -rf /home/build/usr/share/gtk-doc && \
     rm -rf /home/build/usr/share/man && \
+    rm -rf /home/build/usr/local/include && \
+    rm -rf /home/build/usr/local/share/doc && \
+    rm -rf /home/build/usr/local/share/gtk-doc && \
+    rm -rf /home/build/usr/local/share/man && \
     find /home/build -name "*.a" -exec rm -f {} \;
 
 FROM ubuntu:18.04
