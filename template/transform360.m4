@@ -20,7 +20,7 @@ RUN git clone ${TRANSFORM360_REPO} && \
 define(`FFMPEG_SOURCE_TRANSFORM360',dnl
 # Build transform360
 RUN cd /home/transform360/Transform360 && \
-    cmake -DBUILD_SHARED_LIBS=ifelse(BUILD_LINKAGE,shared,ON,OFF) -DCMAKE_INSTALL_PREFIX=/usr -DLIB_INSTALL_DIR=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/lib64,/usr/lib/x86_64-linux-gnu) . && \
+    cmake -DBUILD_SHARED_LIBS=ifelse(BUILD_LINKAGE,shared,ON,OFF) -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/local/lib64,/usr/local/lib/x86_64-linux-gnu) . && \
     make -j8 && \
     make install DESTDIR="/home/build" && \
     make install

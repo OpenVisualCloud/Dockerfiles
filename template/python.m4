@@ -6,7 +6,7 @@ RUN yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-dev
     readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
 RUN wget -O - ${PYTHON_REPO} | tar xz && \
     cd Python-${PYTHON_VER} && \
-    ./configure --prefix=/usr && \
+    ./configure --prefix=/usr/local && \
     make && \
     make install && \
     make install DESTDIR=/home/build

@@ -10,7 +10,7 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q glfw-devel mesa-dri-drivers mpich-devel openssh-server openssh-clients
 )dnl
 
-ENV PATH=$PATH:/usr/lib64/mpich/bin
+ENV PATH=$PATH:/usr/local/lib64/mpich/bin
 
 ARG OSPRAY_VER=c42a885
 ARG OSPRAY_REPO=https://github.com/ospray/ospray.git

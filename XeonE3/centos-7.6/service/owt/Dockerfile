@@ -10,7 +10,7 @@ ARG CMAKE_VER=3.13.1
 ARG CMAKE_REPO=https://cmake.org/files
 RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
     cd cmake-${CMAKE_VER} && \
-    ./bootstrap --prefix="/usr" --system-curl && \
+    ./bootstrap --prefix="/usr/local" --system-curl && \
     make -j8 && \
     make install
 
@@ -19,7 +19,7 @@ ARG AUTOMAKE_VER=1.14
 ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
 RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
     cd automake-${AUTOMAKE_VER} && \
-    ./configure --prefix=/usr --libdir=/usr/lib64 --disable-doc && \ 
+    ./configure --prefix=/usr --libdir=/usr/local/lib64 --disable-doc && \ 
     make -j8 && \
     make install
 
@@ -30,7 +30,7 @@ RUN  wget ${NASM_REPO} && \
      tar -xaf nasm* && \
      cd nasm-${NASM_VER} && \
      ./autogen.sh && \
-     ./configure --prefix="/usr" --libdir=/usr/lib64 && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
      make -j8 && \
      make install
 
@@ -40,7 +40,7 @@ ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.ta
 RUN  wget -O - ${YASM_REPO} | tar xz && \
      cd yasm-${YASM_VER} && \
      sed -i "s/) ytasm.*/)/" Makefile.in && \
-     ./configure --prefix="/usr" --libdir=/usr/lib64 && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
      make -j8 && \
      make install
 
@@ -60,7 +60,7 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
     wget -O - ${LIBNICE_PATCH_REPO_02} | patch -p1 && \
     wget -O - ${LIBNICE_PATCH_REPO_03} | patch -p1 && \
     wget -O - ${LIBNICE_PATCH_REPO_04} | patch -p1 && \
-    ./configure --prefix="/usr" && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
     make -s V= && \
     make install
 
@@ -70,7 +70,7 @@ ARG OPENSSL_REPO=http://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz
 
 RUN wget -O - ${OPENSSL_REPO} | tar xz && \
     cd openssl-${OPENSSL_VER} && \
-    ./config no-ssl3 --prefix="/usr" -fPIC && \
+    ./config no-ssl3 --prefix="/usr/local" -fPIC && \
     make depend && \
     make -s V=0  && \
     make install
@@ -98,7 +98,7 @@ RUN wget -O - ${USRSCTP_URL} | tar xz && \
     mv ${USRSCTP_EXTRACT} usrsctp && \
     cd usrsctp && \
     ./bootstrap && \
-    ./configure --prefix="/usr" && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
     make && \
     make install
 
@@ -111,20 +111,10 @@ RUN yum install -y -q curl
 RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     tar xzf libsrtp-${SRTP2_VER}.tar.gz && \
     cd libsrtp-${SRTP2_VER} && \
-    PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/lib64/pkgconfig CFLAGS="-fPIC" ./configure --enable-openssl --prefix="/usr" --with-openssl-dir="/usr" && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    export CFLAGS="-fPIC" && \
+    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/usr/local" && \
     make -s V=0  && \
-    make install
-
-# Build fdk-aac
-ARG FDK_AAC_VER=v0.1.6
-ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
-
-RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
-    cd fdk-aac && \
-    autoreconf -fiv && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
     make install
 
 
@@ -146,7 +136,8 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg  ;
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac  --enable-nonfree && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype  --enable-nonfree && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
@@ -159,7 +150,7 @@ RUN yum install -y -q ca-certificates wget xz-utils
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/ -rf && rm -rf node-*
+    cp node-*/* /usr/local -rf && rm -rf node-*
 
 # Fetch gmmlib
 ARG GMMLIB_VER=intel-gmmlib-18.3.0
@@ -176,7 +167,7 @@ RUN yum install -y -q libX11-devel mesa-libGL-devel which libdrm-devel
 
 RUN wget -O - ${LIBVA_REPO} | tar xz && \
     cd libva-${LIBVA_VER} && \
-    ./autogen.sh --prefix=/usr --libdir=/usr/lib64 && \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install;
@@ -191,7 +182,8 @@ RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-d
 RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver && \
     mkdir -p media-driver/build && \
     cd media-driver/build && \
-    cmake -DBUILD_TYPE=release -DBUILD_ALONG_WITH_CMRTLIB=1 -DMEDIA_VERSION="2.0.0" -DBS_DIR_GMMLIB=/home/gmmlib/Source/GmmLib -DBS_DIR_COMMON=/home/gmmlib/Source/Common -DBS_DIR_INC=/home/gmmlib/Source/inc -DBS_DIR_MEDIA=/home/media-driver -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr .. && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    cmake -DBUILD_TYPE=release -DBUILD_ALONG_WITH_CMRTLIB=1 -DMEDIA_VERSION="2.0.0" -DBS_DIR_GMMLIB=/home/gmmlib/Source/GmmLib -DBS_DIR_COMMON=/home/gmmlib/Source/Common -DBS_DIR_INC=/home/gmmlib/Source/inc -DBS_DIR_MEDIA=/home/media-driver -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -205,11 +197,14 @@ ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/${MSDK_VER}.ta
 RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
     mkdir -p MediaSDK/build && \
     cd MediaSDK/build && \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     rm -rf /home/build/usr/samples && \
     rm -rf /home/build/usr/plugins && \
+    rm -rf /home/build/usr/local/samples && \
+    rm -rf /home/build/usr/local/plugins && \
     make install;
 
 # Build OWT specific modules
@@ -233,7 +228,7 @@ ARG SERVER_PATH=/home/owt-server
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 ARG OWT_BRANCH=4.2.x
 
-ARG FDKAAC_LIB=/home/build/usr/lib64
+ARG FDKAAC_LIB=/home/build/usr/local/lib64
 RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
 
 # 1. Clone OWT server source code 
@@ -279,9 +274,8 @@ RUN git config --global user.email "you@example.com" && \
     cd /home && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
-
     #Build and pack owt
-    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
+    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
 FROM centos:7.6.1810
@@ -298,7 +292,7 @@ RUN yum install -y -q ca-certificates wget xz-utils
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/ -rf && rm -rf node-*
+    cp node-*/* /usr/local -rf && rm -rf node-*
 
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
@@ -321,6 +315,7 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     rm -rf /var/cache/yum/*;
 
 ENV LIBVA_DRIVER_NAME=iHD
