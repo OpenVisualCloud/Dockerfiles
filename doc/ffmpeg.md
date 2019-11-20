@@ -97,7 +97,7 @@ Car-Bike-Person detection
 ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=person-vehicle-bike-detection-crossroad-0078.xml:model_proc=person-vehicle-bike-detection-crossroad-0078.json:device=CPU" -an -f null /dev/null
 ```
 
-GPU decdoe + face detection
+GPU decode + face detection
 
 ```bash
 ffmpeg -flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_device /dev/dri/renderD128 \
