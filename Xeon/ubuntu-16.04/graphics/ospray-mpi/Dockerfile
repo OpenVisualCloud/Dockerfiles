@@ -89,7 +89,7 @@ RUN git clone ${OpenImageIO_REPO}; \
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libglfw-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev libmpich-dev mpich openssh-server openssh-client
 
-ENV PATH=$PATH:/usr/local/lib64/mpich/bin
+ENV PATH=$PATH:/usr/lib64/mpich/bin
 
 ARG OSPRAY_VER=c42a885
 ARG OSPRAY_REPO=https://github.com/ospray/ospray.git
