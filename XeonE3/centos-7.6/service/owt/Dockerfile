@@ -285,6 +285,7 @@ RUN git config --global user.email "you@example.com" && \
     # Get js client sdk for owt
     cd /home && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
+    export LD_LIBRARY_PATH=/usr/local/lib64 && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
     #Build and pack owt
     cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
@@ -309,7 +310,7 @@ RUN wget ${NODE_REPO} && \
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
-
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64
 RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
     yum install rabbitmq-server mongodb mongodb-server -y && \
     yum remove -y -q epel-release && \
