@@ -333,7 +333,7 @@ RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/s
 
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    ./deployment_manager.py --targets hddl vpu cpu                      && \
+    ./deployment_manager.py --targets hddl				&& \
     cd /root/ && ls -lh                                                 && \
     tar zxf openvino_deploy_package.tar.gz
 
