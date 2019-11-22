@@ -30,6 +30,6 @@ RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      make install
 
 define(`INSTALL_PKGS_GST_PLUGIN_BASE',dnl
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 )dnl
-ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 )dnl
+ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 )dnl
+ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora ))dnl

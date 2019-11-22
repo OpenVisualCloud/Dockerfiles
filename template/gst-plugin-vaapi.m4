@@ -26,7 +26,7 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      make install DESTDIR=/home/build && \
      make install
 
-define(`INSTALL_PKGS_GST_PLUGIN_VAAPI',ifelse(index(DOCKER_IMAGE,ubuntu),-1,libxcb mesa-libGL libXrandr ,libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libegl1-mesa libglib2.0-0 ))dnl
+define(`INSTALL_PKGS_GST_PLUGIN_VAAPI',ifelse(index(DOCKER_IMAGE,ubuntu),-1,libxcb mesa-libGL libXrandr ,libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libglib2.0-0 ))dnl
 define(`INSTALL_GST_PLUGIN_VAAPI',dnl
 ENV GST_VAAPI_ALL_DRIVERS=1
 ENV DISPLAY=:0.0
