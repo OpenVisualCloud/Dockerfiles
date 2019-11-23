@@ -149,50 +149,6 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install DESTDIR="/home/build" && \
      make install
 
-# Fetch SVT-HEVC
-ARG SVT_HEVC_VER=20a47b0d904e9d99e089d93d7c33af92788cbfdb
-ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
-
-RUN git clone ${SVT_HEVC_REPO} && \
-    cd SVT-HEVC/Build/linux && \
-    git checkout ${SVT_HEVC_VER} && \
-    mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install 
-
-
-# Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.6.0
-ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
-
-RUN git clone ${SVT_AV1_REPO} && \
-    cd SVT-AV1/Build/linux && \
-    git checkout ${SVT_AV1_VER} && \
-    mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install
-
-#Remove build residue from SVT-AV1 build -- temp fix for bug
-RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
-
-
-# Fetch SVT-VP9
-ARG SVT_VP9_VER=d18b4acf9139be2e83150e318ffd3dba1c432e74
-ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
-
-RUN git clone ${SVT_VP9_REPO} && \
-    cd SVT-VP9/Build/linux && \
-    git checkout ${SVT_VP9_VER} && \
-    mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install 
-
 #include(transform360.m4)
 # Fetch gmmlib
 ARG GMMLIB_VER=intel-gmmlib-18.3.0
@@ -507,26 +463,6 @@ RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
     make install
 
 
-# Build gstremaer plugin for svt
-
-RUN cd SVT-HEVC/gstreamer-plugin && \
-    cmake . && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install
-
-RUN cd SVT-VP9/gstreamer-plugin && \
-    cmake . && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install
-
-RUN cd SVT-AV1/gstreamer-plugin && \
-    cmake . && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install
-
 # Build gstremaer plugin vaapi
 ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-${GST_VER}.tar.xz
 
@@ -679,17 +615,9 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
     find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
-# Patch FFmpeg source for SVT-HEVC
-RUN cd /home/FFmpeg && \
-    patch -p1 < ../SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch;
-
-# Patch FFmpeg source for SVT-AV1
-RUN cd /home/FFmpeg; \
-    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
-
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api  && \
+    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libinference_engine_c_api  && \
     make -j8 && \
     make install DESTDIR="/home/build"
 
