@@ -248,7 +248,7 @@ RUN cd neo && \
 #clinfo needs to be installed after build directory is copied over
 
 # OpenVINO verion
-# R3
+# R3 and deployment manager script
 ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
 ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
 
@@ -258,7 +258,6 @@ RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-in
 libpng12-dev libcairo2-dev libpango1.0-dev \
 libglib2.0-dev libgtk2.0-dev libswscale-dev libavcodec-dev libavformat-dev build-essential \
 cmake libusb-1.0-0-dev
-#gstreamer1.0-plugins-base libgstreamer1.0-dev
 
 #Download and unpack OpenVino
 RUN mkdir /tmp2
@@ -282,28 +281,28 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
-#Remove components of OpenVino that won't be used
-ARG CV_BASE_DIR=/opt/intel/openvino
-RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
-    rm -rf ${CV_BASE_DIR}/python && \
-    rm -rf ${CV_BASE_DIR}/documentation && \
-    rm -rf ${CV_BASE_DIR}/install_dependencies && \
-    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
-    rm -rf ${CV_BASE_DIR}/openvx/samples && \
-    rm -rf ${CV_BASE_DIR}/opencv/samples 
+# Install python3.6 fpr deployment manager on ubuntu1604
+RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz	&& \
+    tar -xvf Python-3.6.3.tgz						&& \
+    cd Python-3.6.3							&& \
+    ./configure								&& \
+    make -j $(nproc)							&& \
+    make install
 
+#Deploy small package using deployment manager
+RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
+    python3.6 ./deployment_manager.py --targets hddl vpu cpu            && \
+    cd /root/ && ls -lh                                                 && \
+    tar zxf openvino_deploy_package.tar.gz
+
+#Deploy small package using deployment manager
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
     mkdir -p /home/build/opt/intel && \
     mkdir -p /home/build/usr/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
-    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
+    cp -rH /root/openvino /home/build/opt/intel/ && \
     cp -r /usr/lib/* /home/build/usr/lib
 
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
