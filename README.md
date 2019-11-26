@@ -72,9 +72,11 @@ Please see [Development and Test Report](doc/test.md) for the latest development
 
 ### Host Platform Setup:
 
-- Update kernels and firmwares: Please see each platform folder README for instructions.    
+- Update kernels and firmwares: Please see each platform folder README for details.    
+- Install `cmake` and `m4` if they are not available on your platform.  
+- Make sure your host datetime and timezone are configured properly, a prerequisite to install any Ubuntu security updates.     
 - Follow the [instructions](https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-18-04) to setup host date and time.
-- Follow the [instructions](https://docs.docker.com/install) to install docker.ce.    
+- Follow the [instructions](https://docs.docker.com/install) to install docker.ce or docker.ee.    
 - If you are behind a firewall, setup proxy as follows:    
 
 ```bash
