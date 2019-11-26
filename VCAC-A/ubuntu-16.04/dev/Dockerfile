@@ -298,9 +298,9 @@ RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools 
 
 
 # OpenVINO verion
-# R3.1
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.376
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16057/l_openvino_toolkit_p_2019.3.376.tgz
+# R3 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
 
 
 #Install OpenVino dependencies
@@ -331,11 +331,21 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
+# Install python3.6 fpr deployment manager on ubuntu1604
+RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz	&& \
+    tar -xvf Python-3.6.3.tgz						&& \
+    cd Python-3.6.3							&& \
+    ./configure								&& \
+    make -j $(nproc)							&& \
+    make install
+
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    ./deployment_manager.py --targets hddl				&& \
+    python3.6 ./deployment_manager.py --targets hddl vpu cpu            && \
     cd /root/ && ls -lh                                                 && \
     tar zxf openvino_deploy_package.tar.gz
+
+#Deploy small package using deployment manager
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
