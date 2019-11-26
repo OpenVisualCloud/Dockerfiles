@@ -3,28 +3,22 @@ Intel VCAC-A is designed to accelerate analytics computation. This README descri
 
 ## 1. Setup VCAC-A:
 
-Please follow the [Software Installation Guide, Section 2](https://cdrdv2.intel.com/v1/dl/getContent/611894) to build and configure the software packages for the host and the VCAC-A, with the following additional steps:    
+Please follow the [Software Installation Guide, Section 2.0-Section 2.2.4](https://cdrdv2.intel.com/v1/dl/getContent/611894) to build and configure the software packages for the host and the VCAC-A, with the following additional steps:    
 
 - **Install Docker Engine on Host and VCAC-A**
 
-Follow the [instructions](https://docs.docker.com/v17.09/engine/installation) to install the latest docker engine on both the host and the VCAC-A. It is important that you properly setup proxies if you are behind a corporation firewall.    
+Follow the [instructions](https://docs.docker.com/v17.09/engine/installation) to install the latest docker engine on both the host and the VCAC-A. It is important that you properly setup proxies if you are behind a corporation firewall.
 
-- **Install Intel OpenVINO on VCAC-A**
-
-Login to VCAC-A and install the Intel OpenVINO software by downloading from this [link](https://software.intel.com/en-us/openvino-toolkit/choose-download). The package name should read ```l_openvino_toolkit_p_201x.x.xxx.tgz```. During installation, the only required component is ```Inference Engine```. 
-
-After installation, start the HDDL daemon as follows. 
-
-```
-Source /opt/intel/openvino/bin/SetupEnv.sh
-/opt/intel/openvino/inference_engine/external/hddl/bin/hddldaemon
-```
+Here are the scripts to install Docker on the VCAC-A:
+-  **```Setup Passwordless access```** : [setup_access.sh](./script/setup_access.sh)
+-  **```Install docker-ce on VCAC-A```**: [setup_docker.sh](./script/setup_docker.sh). Alternatively, you can install docker-ee instead on the VCAC-A yourself.
+-  **```Install OpenVINO and start hddldaemon on VCAC-A```** : [setup_hddl.sh](./script/setup_hddl.sh)
 
 It is critical that the HDDL daemon is running always. Any inference requests initiated within the docker containers are routed to the HDDL daemon for execution.    
 
 ## 2. Upload Docker Images onto VCAC-A
 
-See each sub-folder for a list of docker images designed for VCAC-A, for example, ```openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg```. Use the following command (or the utility script [sample_upload_single_image.sh](script/sample_upload_single_image.sh)) to transfer the specified docker image from the host to VCAC-A:     
+See each sub-folder for a list of docker images designed for VCAC-A, for example, ```openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg```. Use the following command (or the utility script [upload_image1.sh](script/upload_image1.sh)) to transfer the specified docker image from the host to VCAC-A:     
 
 ```
 docker save <image-name>  | ssh root@172.32.xxx.xxx "docker image rm -f <image-name> 2>/dev/null; docker load"
@@ -44,7 +38,7 @@ Optionally, you can also mount:
 
 #### See Also
 
-- The utility script [sample-run_vcac-a_docker.sh](script/sample_run_vcac-a_docker.sh) 
+- The utility script [docker_run.sh](script/docker_run.sh) 
 - [FFmpeg Docker Images Documentation](../doc/ffmpeg.md)
 - [GStreamer Docker Images Documentation](../doc/gst.md)
 
@@ -52,18 +46,9 @@ Optionally, you can also mount:
 
 You can setup VCAC-A as a docker swarm worker node. Then any subsequent deployment will be as simple as ```docker stack deploy```. It is recommended that you setup docker swarm on the host and VCAC-A as a worker node for application development.       
 
-- **Setup VCAC-A Passwordless Access**
-
-Optionally, you can setup password-less access to VCAC-A. With password-less access, you can easily issue any VCAC-A commands from the host via ```ssh```, which makes development easier and the system securer.      
-
-```
-cat /dev/zero | ssh-keygen -q -N ""
-ssh-copy-id root@172.32.xxx.xxx 2> /dev/null
-```
-
 - **Add the VCAC-A as the swarm node**
 
-Setup host docker swarm if not already,run the following commands (or the utility script [sample_swarm_setup_vcac-a.sh](./script/sample_swarm_setup_vcac-a.sh)):  
+Setup host docker swarm if not already,run the following commands (or the utility script [setup_swarm.sh](./script/setup_swarm.sh)):  
 
 ```
 docker swarm leave --force 2> /dev/null
@@ -119,3 +104,16 @@ When running the docker-in-docker workaround, the application container does not
         	driver: overlay
         	attachable: true
 ```
+
+- **Upload the image to VCAC-A**
+
+here is the utility script to upload the image onto all the VCAC-A cards: [upload_images.sh](./script/upload_images.sh).
+
+```
+upload_images.sh xxxx.tar
+```
+
+## See Also
+
+- [AD Insertion Sample](https://github.com/OpenVisualCloud/Ad-Insertion-Sample)
+- [Smart City Sample](https://github.com/OpenVisualCloud/Smart-City-Sample)
