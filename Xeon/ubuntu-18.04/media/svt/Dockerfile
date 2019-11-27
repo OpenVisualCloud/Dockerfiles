@@ -101,9 +101,9 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends ; \
-    rm -rf /var/lib/apt/lists/*;
+RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install
 COPY --from=build /home/build /

@@ -75,8 +75,8 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxml2 libssl1.0.0 libpcre3 zlib1g libxslt1.1 ; \
-    rm -rf /var/lib/apt/lists/*;
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxml2 libssl1.0.0 libpcre3 zlib1g libxslt1.1 && \
+    rm -rf /var/lib/apt/lists/*
 # Install
 COPY --from=build /home/build /
 CMD /usr/sbin/nginx

@@ -101,8 +101,8 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends ; \
-    rm -rf /var/lib/apt/lists/*;
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install
 COPY --from=build /home/build /

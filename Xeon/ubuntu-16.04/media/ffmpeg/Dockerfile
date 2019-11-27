@@ -245,8 +245,8 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxcb-shm0 libxcb-shape0 libxcb-xfixes0  libnuma1 libass5 libssl1.0.0   ; \
-    rm -rf /var/lib/apt/lists/*;
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxcb-shm0 libxcb-shape0 libxcb-xfixes0  libnuma1 libass5 libssl1.0.0   && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install
 COPY --from=build /home/build /
