@@ -17,7 +17,7 @@ The GStreamer docker images are compiled with the following plugin set:
 
 ---
 
-The plugins `shm` and `mxf` from `gst-plugin-bad` is disabled for not meeting basic security coding guidelines. Please file an issue if you need these plugin features in your project.   
+The plugins `shm` and `mxf` from `gst-plugin-bad` is disabled as they do not meet security coding guidelines. Please file an issue if you need these plugin features in your project.   
 
 ---
 
