@@ -1,19 +1,17 @@
 
 GStreamer is a framework of audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding, and publishing media content. 
 
-### Audio/Video Codecs
+### Plugins:
 
 The GStreamer docker images are compiled with the following plugin set:
-- `gst-plugin-base`  
-- `gst-plugin-good`  
-- `gst-plugin-bad`  
-- `gst-plugin-ugly`  
-- `gst-plugin-vaapi`  
-- `gst-plugin-libav`  
-- `gst-video-analytics`  
-- `SVT-HEVC encoder plugin`  
-- `SVT-AV1 encoder plugin`  
-- `SVT-VP9 encoder plugin`  
+
+| Plugin | Version| Plugin | Version|
+|:---|:---:|:---|:---:|
+|`gst-plugin-bas`|1.16.0|`gst-plugin-good`|1.16.0|  
+|`gst-plugin-bad`|1.16.0|`gst-plugin-ugly`|1.16.0|  
+|`gst-plugin-vaapi`|1.16.0|`gst-plugin-libav`|1.16.0|  
+|`gst-video-analytics`|0.6.1|`SVT-HEVC encoder`|custom|  
+|`SVT-AV1 encoder`|v0.6.0|`SVT-VP9 encoder`|custom| 
 
 ---
 
@@ -21,11 +19,11 @@ The plugins `shm` and `mxf` from `gst-plugin-bad` is disabled as they do not mee
 
 ---
 
-### GPU Acceleration
+### GPU Acceleration:
 
 In GPU images, the GStreamer docker images are accelerated through `VAAPI`. Note that `gst-plugin-vaapi` requires special setup for X11 authentication. Please see each platform README for setup details.
 
-### GStreamer Examples:
+### Examples:
 
 - Transcode raw yuv420 content to mp4:  
 
