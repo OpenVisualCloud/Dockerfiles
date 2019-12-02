@@ -56,5 +56,13 @@ gst-launch-1.0 -v filesrc location=test.ts ! decodebin ! video/x-raw ! videoconv
   gvawatermark ! videoconvert ! fakesink
 ```
 
+---
 
-Note: The plugins shm and mxf from the bad set is disabled for use due to security coding considerations. Please file an issue if you need those plugin features in your project.
+The plugins `shm` and `mxf` from the gst-bad set is disabled due to security coding considerations. Please file an issue if you need those plugin features in your project.   
+
+---
+
+### See Also:
+
+- [GStreamer Video Analytics Plugin](https://github.com/opencv/gst-video-analytics)   
+

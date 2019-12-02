@@ -108,4 +108,6 @@ ffmpeg -flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_dev
 #-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=HDDL" -an -f null -
 ```
 
-* The ffmpeg media analytics samples can also be found from [VCDP github repo](https://github.com/VCDP/FFmpeg-patch/tree/ffmpeg4.1_va/samples).
+### See Also:
+
+- [FFmpeg Video Analytics Plugin](https://github.com/VCDP/FFmpeg-patch)   
