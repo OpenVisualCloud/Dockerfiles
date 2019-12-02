@@ -99,6 +99,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/op
 )dnl
 
 define(`INSTALL_PKGS_OPENVINO',dnl
-ifelse(index(DOCKER_IMAGE,ubuntu),-1,boost-devel,libboost-all-dev libusb-1.0-0-dev) dnl
+ifelse(index(DOCKER_IMAGE,ubuntu),-1,boost-devel,libboost-filesystem,libboost-system, libusb-1.0-0-dev) dnl
 )dnl
 
