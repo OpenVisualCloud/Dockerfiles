@@ -11,7 +11,7 @@ if (NOT DEFINED BUILD_FDKAAC)
 endif()
 
 if (NOT DEFINED ONLY_DOCKERFILES)
-    set(ONLY_DOCKERFILES "NO")
+    set(ONLY_DOCKERFILES "OFF")
 endif()
 
 enable_testing()
@@ -29,6 +29,6 @@ message(
     "The terms under which those components may be used and distributed can be found with the license document that is provided with those components.\n"
     "Please familiarize yourself with those terms to ensure your distribution of those components complies with the terms of those licenses.\n"
     "\n-- Setting: BUILD_MP3LAME=${BUILD_MP3LAME}\n"
-    "-- Setting: BUILD_FDKAAiC=${BUILD_FDKAAC}\n"
+    "-- Setting: BUILD_FDKAAC=${BUILD_FDKAAC}\n"
     "-- Setting: ONLY_DOCKERFILES=${ONLY_DOCKERFILES}\n")
 
