@@ -9,9 +9,9 @@ The FFmpeg docker images are compiled with the following audio and video codecs:
 |fdk-acc|0.1.6|x265|2.9|
 |mp3lame|3.100|vpx|1.7.0|
 |opus|1.2.1|aom|1.0.0|
-|ogg|1.3.3|SVT-HEVC|custom|
+|ogg|1.3.3|SVT-HEVC|20a47b|
 |vorbis|1.3.6|SVT-AV1|0.6.0|
-|x264|stable|SVT-VP9*|custom|
+|x264|stable|SVT-VP9*|d18b4a|
 
 \* SVT-VP9 encoder app only. SVT-VP9 not yet available as a FFmpeg plugin. 
 
