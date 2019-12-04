@@ -154,7 +154,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Fetch SVT-HEVC
-ARG SVT_HEVC_VER=20a47b0d904e9d99e089d93d7c33af92788cbfdb
+ARG SVT_HEVC_VER=v1.4.1
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
 RUN yum install -y -q patch centos-release-scl && \
@@ -172,17 +172,18 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.6.0
+ARG SVT_AV1_VER=v0.7.0
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
     cd SVT-AV1/Build/linux && \
     git checkout ${SVT_AV1_VER} && \
     mkdir -p ../../Bin/Release && \
+    ( source /opt/rh/devtoolset-7/enable && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
-    make install
+    make install )
 
 #Remove build residue from SVT-AV1 build -- temp fix for bug
 RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
@@ -620,11 +621,11 @@ RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
 
 # Build gstremaer plugin for svt
 
-RUN cd SVT-HEVC/gstreamer-plugin && \
-    cmake . && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install
+#RUN cd SVT-HEVC/gstreamer-plugin && \
+#    cmake . && \
+#    make -j8 && \
+#    make install DESTDIR=/home/build && \
+#    make install
 
 RUN cd SVT-VP9/gstreamer-plugin && \
     cmake . && \
