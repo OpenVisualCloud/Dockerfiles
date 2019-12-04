@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-ssh-keygen -q -N < /dev/zero
+ssh-keygen -q -N ""  < /dev/zero
 
 NODEUSER="root"
 NODEPREFIX="172.32"
