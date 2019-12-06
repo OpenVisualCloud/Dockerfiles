@@ -11,9 +11,9 @@ To use VCAC-A as a container platform, we only need to build the **BASIC** syste
 
 ---
 
--  **```Setup passwordless access```** : [setup_access.sh](./script/setup_access.sh)
--  **```Install docker-ce on VCAC-A```**: [setup_docker.sh](./script/setup_docker.sh). Alternatively, you can install docker-ee instead on the VCAC-A yourself.
--  **```Install hddldaemon on VCAC-A```** : [setup_hddl.sh](./script/setup_hddl.sh). Any inference requests initiated within the docker containers are routed to the HDDL daemon for execution.    
+-  **```Setup passwordless access```** : [setup_access.sh](./script/setup_access.sh) (run on host)
+-  **```Install docker-ce on VCAC-A```**: [setup_docker.sh](./script/setup_docker.sh). Alternatively, you can install docker-ee instead on the VCAC-A yourself. (run on host)
+-  **```Install hddldaemon on VCAC-A```** : [setup_hddl.sh](./script/setup_hddl.sh). Any inference requests initiated within the docker containers are routed to the HDDL daemon for execution. (run on host)
 
 ## Upload Docker Images onto VCAC-A:
 
