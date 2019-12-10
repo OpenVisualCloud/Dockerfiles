@@ -155,7 +155,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Fetch SVT-HEVC
-ARG SVT_HEVC_VER=v1.4.1
+ARG SVT_HEVC_VER=v1.4.2
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
 RUN yum install -y -q patch centos-release-scl && \
@@ -174,7 +174,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.7.0
+ARG SVT_AV1_VER=v0.7.5
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
