@@ -75,9 +75,9 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxml2 libssl1.0.0 libpcre3 zlib1g libxslt1.1 ; \
-    rm -rf /var/lib/apt/lists/*;
+RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxml2 libssl1.0.0 libpcre3 zlib1g libxslt1.1 && \
+    rm -rf /var/lib/apt/lists/*
 # Install
 COPY --from=build /home/build /
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu

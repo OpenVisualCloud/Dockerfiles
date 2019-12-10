@@ -150,51 +150,6 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install DESTDIR="/home/build" && \
      make install
 
-# Fetch SVT-HEVC
-ARG SVT_HEVC_VER=20a47b0d904e9d99e089d93d7c33af92788cbfdb
-ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
-
-RUN git clone ${SVT_HEVC_REPO} && \
-    cd SVT-HEVC/Build/linux && \
-    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
-    git checkout ${SVT_HEVC_VER} && \
-    mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install 
-
-
-# Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.6.0
-ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
-
-RUN git clone ${SVT_AV1_REPO} && \
-    cd SVT-AV1/Build/linux && \
-    git checkout ${SVT_AV1_VER} && \
-    mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install
-
-#Remove build residue from SVT-AV1 build -- temp fix for bug
-RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
-
-
-# Fetch SVT-VP9
-ARG SVT_VP9_VER=d18b4acf9139be2e83150e318ffd3dba1c432e74
-ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
-
-RUN git clone ${SVT_VP9_REPO} && \
-    cd SVT-VP9/Build/linux && \
-    git checkout ${SVT_VP9_VER} && \
-    mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install 
-
 # Fetch gmmlib
 ARG GMMLIB_VER=intel-gmmlib-18.3.0
 ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/${GMMLIB_VER}.tar.gz
@@ -299,7 +254,7 @@ RUN cd neo && \
 #clinfo needs to be installed after build directory is copied over
 
 # OpenVINO verion
-# R3
+# R3 and deployment manager script
 ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
 ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
 
@@ -328,28 +283,20 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
-#Remove components of OpenVino that won't be used
-ARG CV_BASE_DIR=/opt/intel/openvino
-RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
-    rm -rf ${CV_BASE_DIR}/python && \
-    rm -rf ${CV_BASE_DIR}/documentation && \
-    rm -rf ${CV_BASE_DIR}/install_dependencies && \
-    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
-    rm -rf ${CV_BASE_DIR}/openvx/samples && \
-    rm -rf ${CV_BASE_DIR}/opencv/samples 
+# Install python3.6 fpr deployment manager on ubuntu1604
 
+#Deploy small package using deployment manager
+RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
+    ./deployment_manager.py --targets hddl vpu cpu			&& \
+    cd /root/ && ls -lh                                                 && \
+    tar zxf openvino_deploy_package.tar.gz
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
     mkdir -p /home/build/opt/intel && \
     mkdir -p /home/build/usr/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
-    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
+    cp -rH /root/openvino /home/build/opt/intel/ && \
     cp -r /usr/lib/* /home/build/usr/lib
 
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
@@ -422,18 +369,14 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
     find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
-# Patch FFmpeg source for SVT-HEVC
-RUN cd /home/FFmpeg && \
-    patch -p1 < ../SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch;
-
-# Patch FFmpeg source for SVT-AV1
-RUN cd /home/FFmpeg; \
-    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
-
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
+<<<<<<< HEAD
+    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
+=======
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
+>>>>>>> ab3ff1a7959f5e012d47b4c0fdc4376681dd9b9b
     make -j8 && \
     make install DESTDIR="/home/build"
 
@@ -455,9 +398,9 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass9 libssl1.1 libpciaccess0   libdrm2 libboost-all-dev libusb-1.0-0-dev ; \
-    rm -rf /var/lib/apt/lists/*;
+RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2 libvdpau1 libnuma1 libass9 libssl1.1 libpciaccess0   libdrm2  libjson-c3 libboost-filesystem1.65.1 libboost-system1.65.1 libusb-1.0-0-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install
 COPY --from=build /home/build /

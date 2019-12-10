@@ -1,4 +1,4 @@
-This is a hello world example using the development and deployment images to build a gstreamer application.
+This is a hello world example using the development and deployment images to build a GStreamer application.
 
 #### To build the sample: ####
 ```

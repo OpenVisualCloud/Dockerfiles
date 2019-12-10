@@ -1,7 +1,7 @@
 # ![logo][]  Software Stack Dockerfiles
 [![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
 [![Dockerhub](https://img.shields.io/badge/Images-Dockerhub-blue.svg)](https://hub.docker.com/u/openvisualcloud)
-[![Stable release](https://img.shields.io/badge/latest_release-v19.10.1-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v19.10.1)
+[![Stable release](https://img.shields.io/badge/latest_release-v19.11-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v19.11)
 [![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
@@ -63,18 +63,20 @@ The project supports the following platforms and OS'es:
 
 | Supported Platforms | Supported OS'es |
 | :---: | :--- |
-| Xeon | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
-| Xeon E3 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
-| VCA2 | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
-| VCAC-A | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS |
+| [Xeon](Xeon) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
+| [Xeon E3](XeonE3) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
+| [VCA2](VCA2) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
+| [VCAC-A](VCAC-A) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS |
 
 Please see [Development and Test Report](doc/test.md) for the latest development statuses.    
 
 ### Host Platform Setup:
 
-- Update kernels and firmwares: Please see each platform folder README for instructions.    
+- Update kernels and firmwares: Please see each platform folder README for details.    
+- Install `cmake` and `m4` if they are not available on your platform.  
+- Make sure your host datetime and timezone are configured properly, a prerequisite to install any Ubuntu security updates.     
 - Follow the [instructions](https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-18-04) to setup host date and time.
-- Follow the [instructions](https://docs.docker.com/install) to install docker.ce.    
+- Follow the [instructions](https://docs.docker.com/install) to install docker.ce or docker.ee.    
 - If you are behind a firewall, setup proxy as follows:    
 
 ```bash
