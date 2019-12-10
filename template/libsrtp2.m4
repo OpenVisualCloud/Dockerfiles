@@ -12,6 +12,8 @@ RUN yum install -y -q curl
 RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     tar xzf libsrtp-${SRTP2_VER}.tar.gz && \
     cd libsrtp-${SRTP2_VER} && \
-    PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/lib64/pkgconfig CFLAGS="-fPIC" ./configure --enable-openssl --prefix="/usr" --with-openssl-dir="/usr" && \
+    export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
+    export CFLAGS="-fPIC" && \
+    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/usr/local" && \
     make -s V=0  && \
     make install

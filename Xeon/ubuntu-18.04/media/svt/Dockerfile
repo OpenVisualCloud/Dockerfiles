@@ -10,7 +10,7 @@ ARG CMAKE_VER=3.13.1
 ARG CMAKE_REPO=https://cmake.org/files
 RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
     cd cmake-${CMAKE_VER} && \
-    ./bootstrap --prefix="/usr" --system-curl && \
+    ./bootstrap --prefix="/usr/local" --system-curl && \
     make -j8 && \
     make install
 
@@ -26,7 +26,7 @@ RUN  wget ${NASM_REPO} && \
      tar -xaf nasm* && \
      cd nasm-${NASM_VER} && \
      ./autogen.sh && \
-     ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
      make -j8 && \
      make install
 
@@ -36,7 +36,7 @@ ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.ta
 RUN  wget -O - ${YASM_REPO} | tar xz && \
      cd yasm-${YASM_VER} && \
      sed -i "s/) ytasm.*/)/" Makefile.in && \
-     ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
      make -j8 && \
      make install
 
@@ -46,9 +46,10 @@ ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
 RUN git clone ${SVT_HEVC_REPO} && \
     cd SVT-HEVC/Build/linux && \
+    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     git checkout ${SVT_HEVC_VER} && \
     mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install 
@@ -62,7 +63,7 @@ RUN git clone ${SVT_AV1_REPO} && \
     cd SVT-AV1/Build/linux && \
     git checkout ${SVT_AV1_VER} && \
     mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install 
@@ -79,7 +80,7 @@ RUN git clone ${SVT_VP9_REPO} && \
     cd SVT-VP9/Build/linux && \
     git checkout ${SVT_VP9_VER} && \
     mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install 
@@ -107,4 +108,5 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
 
 # Install
 COPY --from=build /home/build /
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu
 

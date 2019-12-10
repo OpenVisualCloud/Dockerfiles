@@ -19,6 +19,6 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
     wget -O - ${LIBNICE_PATCH_REPO_02} | patch -p1 && \
     wget -O - ${LIBNICE_PATCH_REPO_03} | patch -p1 && \
     wget -O - ${LIBNICE_PATCH_REPO_04} | patch -p1 && \
-    ./configure --prefix="/usr" && \
+    ./configure --prefix="/usr/local" --libdir=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/local/lib64,/usr/local/lib/x86_64-linux-gnu) && \
     make -s V= && \
     make install

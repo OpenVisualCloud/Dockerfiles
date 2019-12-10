@@ -1,7 +1,7 @@
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
-
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
     apt-get update && \
@@ -24,6 +24,7 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     )
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
+    export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
     rm -rf /var/lib/apt/lists/*;
 
 )dnl
@@ -48,6 +49,7 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     )
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
+    export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
     rm -rf /var/cache/yum/*;
 )dnl
 
