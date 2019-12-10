@@ -1,5 +1,5 @@
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.7.0
+ARG SVT_AV1_VER=v0.7.5
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
