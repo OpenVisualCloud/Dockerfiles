@@ -150,7 +150,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Fetch SVT-HEVC
-ARG SVT_HEVC_VER=v1.4.1
+ARG SVT_HEVC_VER=v1.4.2
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
 RUN git clone ${SVT_HEVC_REPO} && \
@@ -164,7 +164,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.7.0
+ARG SVT_AV1_VER=v0.7.5
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
@@ -494,11 +494,11 @@ RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
 
 # Build gstremaer plugin for svt
 
-#RUN cd SVT-HEVC/gstreamer-plugin && \
-#    cmake . && \
-#    make -j8 && \
-#    make install DESTDIR=/home/build && \
-#    make install
+RUN cd SVT-HEVC/gstreamer-plugin && \
+    cmake . && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
 
 RUN cd SVT-VP9/gstreamer-plugin && \
     cmake . && \
