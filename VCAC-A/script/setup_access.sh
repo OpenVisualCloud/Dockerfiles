@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-ssh-keygen -q -N ""  < /dev/zero
+if test ! -f ~/.ssh/id_rsa; then
+   cat /dev/zero | ssh-keygen -q -N ""
+fi
 
 NODEUSER="root"
 NODEPREFIX="172.32"

@@ -7,7 +7,7 @@ install_docker_engine()
     no_proxy="$3"
     dnss="$4"
 
-    if [ ! check_docker=$(docker images) ] ;then
+    if [ ! -x "$(command -v docker)" ]; then
         echo "Installing docker......" 
         apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
