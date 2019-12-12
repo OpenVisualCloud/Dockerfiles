@@ -10,9 +10,10 @@ RUN yum install -y -q zlib-devel openssl-devel
 
 RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
     cd gst-libav-${GST_VER} && \
+    export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
     ./autogen.sh \
-        --prefix="/usr" \
-        --libdir=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/lib64,/usr/lib/x86_64-linux-gnu) \
+        --prefix="/usr/local" \
+        --libdir=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/local/lib64,/usr/local/lib/x86_64-linux-gnu) \
         --enable-defn(`BUILD_LINKAGE') \
         --enable-gpl \
         --disable-gtk-doc && \

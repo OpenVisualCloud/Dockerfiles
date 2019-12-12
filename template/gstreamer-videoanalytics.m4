@@ -19,33 +19,33 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         cd paho.mqtt.c-${PAHO_VER} && \
         make && \
         make install && \
-        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
-        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
-        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
-        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
-        cp build/output/paho_c_version /home/build/usr/bin/ && \
-        cp build/output/samples/paho_c_pub /home/build/usr/bin/ && \
-        cp build/output/samples/paho_c_sub /home/build/usr/bin/ && \
-        cp build/output/samples/paho_cs_pub /home/build/usr/bin/ && \
-        cp build/output/samples/paho_cs_sub /home/build/usr/bin/ && \
-        chmod 644 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so.1.0 && \
-        chmod 644 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so.1.0 && \
-        chmod 644 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so.1.0 && \
-        chmod 644 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so.1.0 && \
-        ln /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so.1.0 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so.1 && \
-        ln /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so.1.0 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so.1 && \
-        ln /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so.1.0 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so.1 && \
-        ln /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so.1.0 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so.1 && \
-        ln /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so.1 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so && \
-        ln /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so.1 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so && \
-        ln /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so.1 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so && \
-        ln /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so.1 /home/build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so && \
-        cp src/MQTTAsync.h /home/build/usr/include/ && \
-        cp src/MQTTClient.h /home/build/usr/include/ && \
-        cp src/MQTTClientPersistence.h /home/build/usr/include/ && \
-        cp src/MQTTProperties.h /home/build/usr/include/ && \
-        cp src/MQTTReasonCodes.h /home/build/usr/include/ && \
-        cp src/MQTTSubscribeOpts.h /home/build/usr/include/; \
+        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
+        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
+        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
+        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
+        cp build/output/paho_c_version /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_c_pub /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_c_sub /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_cs_pub /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_cs_sub /home/build/usr/local/bin/ && \
+        chmod 644 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so.1.0 && \
+        chmod 644 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so.1.0 && \
+        chmod 644 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so.1.0 && \
+        chmod 644 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so.1.0 && \
+        ln /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so.1.0 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so.1 && \
+        ln /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so.1.0 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so.1 && \
+        ln /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so.1.0 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so.1 && \
+        ln /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so.1.0 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so.1 && \
+        ln /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so.1 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3c.so && \
+        ln /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so.1 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3cs.so && \
+        ln /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so.1 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3a.so && \
+        ln /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so.1 /home/build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/libpaho-mqtt3as.so && \
+        cp src/MQTTAsync.h /home/build/usr/local/include/ && \
+        cp src/MQTTClient.h /home/build/usr/local/include/ && \
+        cp src/MQTTClientPersistence.h /home/build/usr/local/include/ && \
+        cp src/MQTTProperties.h /home/build/usr/local/include/ && \
+        cp src/MQTTReasonCodes.h /home/build/usr/local/include/ && \
+        cp src/MQTTSubscribeOpts.h /home/build/usr/local/include/; \
     else \
         echo "PAHO install disabled"; \
     fi
@@ -56,7 +56,7 @@ ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.
 RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
         wget -O - ${RDKAFKA_REPO} | tar -xz && \
         cd librdkafka-${RDKAFKA_VER} && \
-        ./configure --prefix=/usr --libdir=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
+        ./configure --prefix=/usr/local --libdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/ && \
         make && \
         make install && \
         make install DESTDIR=/home/build; \
@@ -72,6 +72,7 @@ ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/arch
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     cd gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER} && \
+    export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
     mkdir build && \
     cd build && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
@@ -84,12 +85,12 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DDISABLE_VAAPI=ON ifelse(index(DOCKER_IMAGE,vcaca),-1,,-DENABLE_AVX2=ON -DENABLE_SSE42=ON) \
-    -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
+    -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j4
-RUN mkdir -p build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0 && \
-    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* build/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
-RUN mkdir -p /usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0 && \
-    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* /usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
+RUN mkdir -p build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0 && \
+    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
+RUN mkdir -p /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0 && \
+    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
 
 define(`INSTALL_PKGS_VA_GST_PLUGINS',
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
@@ -104,8 +105,8 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,
 )dnl
 
 define(`INSTALL_VA_GST_PLUGINS',dnl
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
-ENV PKG_CONFIG_PATH=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig
-ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/lib
-ENV PATH=${PATH}:/usr/bin
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
+ENV PKG_CONFIG_PATH=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig
+ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
+ENV PATH=${PATH}:/usr/local/bin:/usr/bin
 )dnl

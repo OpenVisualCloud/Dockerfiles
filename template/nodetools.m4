@@ -11,4 +11,4 @@ RUN yum install -y -q ca-certificates wget xz-utils
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/ -rf && rm -rf node-*
+    cp node-*/* /usr/local -rf && rm -rf node-*

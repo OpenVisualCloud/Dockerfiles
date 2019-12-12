@@ -10,7 +10,7 @@ ARG CMAKE_VER=3.13.1
 ARG CMAKE_REPO=https://cmake.org/files
 RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
     cd cmake-${CMAKE_VER} && \
-    ./bootstrap --prefix="/usr" --system-curl && \
+    ./bootstrap --prefix="/usr/local" --system-curl && \
     make -j8 && \
     make install
 
@@ -19,7 +19,7 @@ ARG AUTOMAKE_VER=1.14
 ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
 RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
     cd automake-${AUTOMAKE_VER} && \
-    ./configure --prefix=/usr --libdir=/usr/lib64 --disable-doc && \ 
+    ./configure --prefix=/usr --libdir=/usr/local/lib64 --disable-doc && \ 
     make -j8 && \
     make install
 
@@ -30,7 +30,7 @@ RUN  wget ${NASM_REPO} && \
      tar -xaf nasm* && \
      cd nasm-${NASM_VER} && \
      ./autogen.sh && \
-     ./configure --prefix="/usr" --libdir=/usr/lib64 && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
      make -j8 && \
      make install
 
@@ -40,7 +40,7 @@ ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.ta
 RUN  wget -O - ${YASM_REPO} | tar xz && \
      cd yasm-${YASM_VER} && \
      sed -i "s/) ytasm.*/)/" Makefile.in && \
-     ./configure --prefix="/usr" --libdir=/usr/lib64 && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
      make -j8 && \
      make install
 
@@ -50,7 +50,7 @@ ARG OGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-${OGG_VER}.tar.xz
 
 RUN wget -O - ${OGG_REPO} | tar xJ && \
     cd libogg-${OGG_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -61,7 +61,8 @@ ARG VORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VE
 
 RUN wget -O - ${VORBIS_REPO} | tar xJ && \
     cd libvorbis-${VORBIS_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared && \
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64 && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -72,7 +73,7 @@ ARG MP3LAME_REPO=https://sourceforge.net/projects/lame/files/lame/${MP3LAME_VER}
 
 RUN wget -O - ${MP3LAME_REPO} | tar xz && \
     cd lame-${MP3LAME_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared --enable-nasm && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared --enable-nasm && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -84,7 +85,7 @@ ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.
 RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
     cd fdk-aac && \
     autoreconf -fiv && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -96,7 +97,7 @@ ARG OPUS_REPO=https://archive.mozilla.org/pub/opus/opus-${OPUS_VER}.tar.gz
 
 RUN wget -O - ${OPUS_REPO} | tar xz && \
     cd opus-${OPUS_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -108,7 +109,7 @@ ARG VPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN git clone ${VPX_REPO} && \
     cd libvpx && \
     git checkout ${VPX_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -122,7 +123,7 @@ RUN  git clone ${AOM_REPO} && \
      mkdir aom/aom_build && \
      cd aom/aom_build && \
      git checkout ${AOM_VER} && \
-     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX="/usr" -DLIB_INSTALL_DIR=/usr/lib64 .. && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX="/usr/local" -DCMAKE_INSTALL_LIBDIR=lib64 .. && \
      make -j8 && \
      make install DESTDIR="/home/build" && \
      make install
@@ -134,7 +135,7 @@ ARG X264_REPO=https://github.com/mirror/x264
 RUN  git clone ${X264_REPO} && \
      cd x264 && \
      git checkout ${X264_VER} && \
-     ./configure --prefix="/usr" --libdir=/usr/lib64 --enable-shared && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
      make -j8 && \
      make install DESTDIR="/home/build" && \
      make install
@@ -148,7 +149,7 @@ RUN  yum install -y -q numactl-devel libpciaccess-devel
 
 RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      cd x265/build/linux && \
-     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr -DLIB_INSTALL_DIR=/usr/lib64 ../../source && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib64 ../../source && \
      make -j8 && \
      make install DESTDIR="/home/build" && \
      make install
@@ -162,10 +163,11 @@ RUN yum install -y -q patch centos-release-scl && \
 
 RUN git clone ${SVT_HEVC_REPO} && \
     cd SVT-HEVC/Build/linux && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     git checkout ${SVT_HEVC_VER} && \
     mkdir -p ../../Bin/Release && \
     ( source /opt/rh/devtoolset-7/enable && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install )
@@ -180,7 +182,7 @@ RUN git clone ${SVT_AV1_REPO} && \
     git checkout ${SVT_AV1_VER} && \
     mkdir -p ../../Bin/Release && \
     ( source /opt/rh/devtoolset-7/enable && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install )
@@ -198,7 +200,7 @@ RUN git clone ${SVT_VP9_REPO} && \
     git checkout ${SVT_VP9_VER} && \
     mkdir -p ../../Bin/Release && \
   ( source /opt/rh/devtoolset-7/enable && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install )
@@ -297,7 +299,7 @@ ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
 
 
 
-# Build the gstremaer core
+# Build the gstreamer core
 ARG GST_VER=1.16.0
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
@@ -305,9 +307,9 @@ RUN  yum install -y -q glib2-devel-2.56.1 gettext-devel gobject-introspection go
 RUN  wget -O - ${GST_REPO} | tar xJ && \
      cd gstreamer-${GST_VER} && \
      ./autogen.sh \
-        --prefix=/usr \
-        --libdir=/usr/lib64 \
-        --libexecdir=/usr/lib64 \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
         --enable-shared \
         --enable-introspection \
         --disable-examples \
@@ -324,8 +326,8 @@ ARG GST_ORC_REPO=https://gstreamer.freedesktop.org/src/orc/orc-${GST_ORC_VER}.ta
 
 RUN  wget -O - ${GST_ORC_REPO} | tar xJ && \
      cd orc-${GST_ORC_VER} && \
-     ./autogen.sh --prefix=/usr --libdir=/usr/lib64 \
-                --libexecdir=/usr/lib64 \
+     ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 \
+                --libexecdir=/usr/local/lib64 \
                 --enable-shared \
                 --disable-examples --disable-debug \
                 --disable-gtk-doc && \
@@ -343,10 +345,11 @@ RUN  yum install -y -q libXrandr-devel
 
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
+     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
      ./autogen.sh \
-        --prefix=/usr \
-        --libdir=/usr/lib64 \
-        --libexecdir=/usr/lib64 \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
         --enable-introspection \
         --enable-shared \
         --disable-examples --disable-debug \
@@ -363,10 +366,11 @@ RUN  yum install -y -q libsoup-devel libjpeg-devel
 
 RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
      cd gst-plugins-good-${GST_VER} && \
+     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
      ./autogen.sh \
-        --prefix=/usr \
-        --libdir=/usr/lib64 \
-        --libexecdir=/usr/lib64 \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
         --enable-shared \
         --disable-examples --disable-debug \
         --disable-gtk-doc && \
@@ -385,11 +389,12 @@ RUN  yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rp
 
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
+     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
      find /home/gstreamer-patch-${GST_PATCHES_RELEASE_VER#*v}/ -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
      ./autogen.sh \
-        --prefix=/usr \
-        --libdir=/usr/lib64 \
-        --libexecdir=/usr/lib64 \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
         --enable-shared \
         --disable-examples --disable-debug \
         --disable-gtk-doc \ 
@@ -404,10 +409,11 @@ ARG GST_PLUGIN_UGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/
 
 RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ; \
      cd gst-plugins-ugly-${GST_VER}; \
+     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig"; \
      ./autogen.sh \
-        --prefix=/usr \
-        --libdir=/usr/lib64 \
-        --libexecdir=/usr/lib64 \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
         --enable-shared \
         --disable-examples --disable-debug \
         --disable-gtk-doc && \
@@ -422,9 +428,10 @@ RUN yum install -y -q zlib-devel openssl-devel
 
 RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
     cd gst-libav-${GST_VER} && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     ./autogen.sh \
-        --prefix="/usr" \
-        --libdir=/usr/lib64 \
+        --prefix="/usr/local" \
+        --libdir=/usr/local/lib64 \
         --enable-shared \
         --enable-gpl \
         --disable-gtk-doc && \
@@ -436,18 +443,21 @@ RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
 # Build gstremaer plugin for svt
 
 RUN cd SVT-HEVC/gstreamer-plugin && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     cmake . && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
 
 RUN cd SVT-VP9/gstreamer-plugin && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     cmake . && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
 
 RUN cd SVT-AV1/gstreamer-plugin && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     cmake . && \
     make -j8 && \
     make install DESTDIR=/home/build && \
@@ -467,33 +477,33 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         cd paho.mqtt.c-${PAHO_VER} && \
         make && \
         make install && \
-        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/lib64/ && \
-        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib64/ && \
-        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/lib64/ && \
-        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/lib64/ && \
-        cp build/output/paho_c_version /home/build/usr/bin/ && \
-        cp build/output/samples/paho_c_pub /home/build/usr/bin/ && \
-        cp build/output/samples/paho_c_sub /home/build/usr/bin/ && \
-        cp build/output/samples/paho_cs_pub /home/build/usr/bin/ && \
-        cp build/output/samples/paho_cs_sub /home/build/usr/bin/ && \
-        chmod 644 /home/build/usr/lib64/libpaho-mqtt3c.so.1.0 && \
-        chmod 644 /home/build/usr/lib64/libpaho-mqtt3cs.so.1.0 && \
-        chmod 644 /home/build/usr/lib64/libpaho-mqtt3a.so.1.0 && \
-        chmod 644 /home/build/usr/lib64/libpaho-mqtt3as.so.1.0 && \
-        ln /home/build/usr/lib64/libpaho-mqtt3c.so.1.0 /home/build/usr/lib64/libpaho-mqtt3c.so.1 && \
-        ln /home/build/usr/lib64/libpaho-mqtt3cs.so.1.0 /home/build/usr/lib64/libpaho-mqtt3cs.so.1 && \
-        ln /home/build/usr/lib64/libpaho-mqtt3a.so.1.0 /home/build/usr/lib64/libpaho-mqtt3a.so.1 && \
-        ln /home/build/usr/lib64/libpaho-mqtt3as.so.1.0 /home/build/usr/lib64/libpaho-mqtt3as.so.1 && \
-        ln /home/build/usr/lib64/libpaho-mqtt3c.so.1 /home/build/usr/lib64/libpaho-mqtt3c.so && \
-        ln /home/build/usr/lib64/libpaho-mqtt3cs.so.1 /home/build/usr/lib64/libpaho-mqtt3cs.so && \
-        ln /home/build/usr/lib64/libpaho-mqtt3a.so.1 /home/build/usr/lib64/libpaho-mqtt3a.so && \
-        ln /home/build/usr/lib64/libpaho-mqtt3as.so.1 /home/build/usr/lib64/libpaho-mqtt3as.so && \
-        cp src/MQTTAsync.h /home/build/usr/include/ && \
-        cp src/MQTTClient.h /home/build/usr/include/ && \
-        cp src/MQTTClientPersistence.h /home/build/usr/include/ && \
-        cp src/MQTTProperties.h /home/build/usr/include/ && \
-        cp src/MQTTReasonCodes.h /home/build/usr/include/ && \
-        cp src/MQTTSubscribeOpts.h /home/build/usr/include/; \
+        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/local/lib64/ && \
+        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/local/lib64/ && \
+        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/local/lib64/ && \
+        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/local/lib64/ && \
+        cp build/output/paho_c_version /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_c_pub /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_c_sub /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_cs_pub /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_cs_sub /home/build/usr/local/bin/ && \
+        chmod 644 /home/build/usr/local/lib64/libpaho-mqtt3c.so.1.0 && \
+        chmod 644 /home/build/usr/local/lib64/libpaho-mqtt3cs.so.1.0 && \
+        chmod 644 /home/build/usr/local/lib64/libpaho-mqtt3a.so.1.0 && \
+        chmod 644 /home/build/usr/local/lib64/libpaho-mqtt3as.so.1.0 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3c.so.1.0 /home/build/usr/local/lib64/libpaho-mqtt3c.so.1 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3cs.so.1.0 /home/build/usr/local/lib64/libpaho-mqtt3cs.so.1 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3a.so.1.0 /home/build/usr/local/lib64/libpaho-mqtt3a.so.1 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3as.so.1.0 /home/build/usr/local/lib64/libpaho-mqtt3as.so.1 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3c.so.1 /home/build/usr/local/lib64/libpaho-mqtt3c.so && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3cs.so.1 /home/build/usr/local/lib64/libpaho-mqtt3cs.so && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3a.so.1 /home/build/usr/local/lib64/libpaho-mqtt3a.so && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3as.so.1 /home/build/usr/local/lib64/libpaho-mqtt3as.so && \
+        cp src/MQTTAsync.h /home/build/usr/local/include/ && \
+        cp src/MQTTClient.h /home/build/usr/local/include/ && \
+        cp src/MQTTClientPersistence.h /home/build/usr/local/include/ && \
+        cp src/MQTTProperties.h /home/build/usr/local/include/ && \
+        cp src/MQTTReasonCodes.h /home/build/usr/local/include/ && \
+        cp src/MQTTSubscribeOpts.h /home/build/usr/local/include/; \
     else \
         echo "PAHO install disabled"; \
     fi
@@ -504,7 +514,7 @@ ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.
 RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
         wget -O - ${RDKAFKA_REPO} | tar -xz && \
         cd librdkafka-${RDKAFKA_VER} && \
-        ./configure --prefix=/usr --libdir=/usr/lib64/ && \
+        ./configure --prefix=/usr/local --libdir=/usr/local/lib64/ && \
         make && \
         make install && \
         make install DESTDIR=/home/build; \
@@ -520,6 +530,7 @@ ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/arch
 
 RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     cd gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER} && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     mkdir build && \
     cd build && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
@@ -532,12 +543,12 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DDISABLE_VAAPI=ON  \
-    -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
+    -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j4
-RUN mkdir -p build/usr/lib64/gstreamer-1.0 && \
-    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* build/usr/lib64/gstreamer-1.0
-RUN mkdir -p /usr/lib64/gstreamer-1.0 && \
-    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* /usr/lib64/gstreamer-1.0
+RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
+    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
+RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
+    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0
 
 
 
@@ -568,12 +579,13 @@ libsoup libjpeg-turbo librtmp ; \
 
 # Install
 COPY --from=build /home/build /
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib64
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ARG c_api_libdir="/usr/local/lib64"
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}:${c_api_libdir}
 ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
-ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/shareENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/gstreamer-1.0
-ENV PKG_CONFIG_PATH=/usr/lib64/pkgconfig
-ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/lib
-ENV PATH=${PATH}:/usr/bin
+ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/shareENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0
+ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
+ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
+ENV PATH=${PATH}:/usr/local/bin:/usr/bin
 

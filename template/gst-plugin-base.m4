@@ -17,10 +17,11 @@ RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-d
 
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
+     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
      ./autogen.sh \
-        --prefix=/usr \
-        --libdir=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) \
-        --libexecdir=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) \
+        --prefix=/usr/local \
+        --libdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) \
+        --libexecdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) \
         --enable-introspection \
         --enable-defn(`BUILD_LINKAGE') \
         --disable-examples ifelse(index(DOCKER_IMAGE,-dev),-1,--disable-debug) \

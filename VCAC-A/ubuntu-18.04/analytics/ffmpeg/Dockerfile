@@ -10,7 +10,7 @@ ARG CMAKE_VER=3.13.1
 ARG CMAKE_REPO=https://cmake.org/files
 RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
     cd cmake-${CMAKE_VER} && \
-    ./bootstrap --prefix="/usr" --system-curl && \
+    ./bootstrap --prefix="/usr/local" --system-curl && \
     make -j8 && \
     make install
 
@@ -26,7 +26,7 @@ RUN  wget ${NASM_REPO} && \
      tar -xaf nasm* && \
      cd nasm-${NASM_VER} && \
      ./autogen.sh && \
-     ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
      make -j8 && \
      make install
 
@@ -36,7 +36,7 @@ ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.ta
 RUN  wget -O - ${YASM_REPO} | tar xz && \
      cd yasm-${YASM_VER} && \
      sed -i "s/) ytasm.*/)/" Makefile.in && \
-     ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
      make -j8 && \
      make install
 
@@ -46,7 +46,7 @@ ARG OGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-${OGG_VER}.tar.xz
 
 RUN wget -O - ${OGG_REPO} | tar xJ && \
     cd libogg-${OGG_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -57,7 +57,8 @@ ARG VORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VE
 
 RUN wget -O - ${VORBIS_REPO} | tar xJ && \
     cd libvorbis-${VORBIS_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared && \
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -68,7 +69,7 @@ ARG MP3LAME_REPO=https://sourceforge.net/projects/lame/files/lame/${MP3LAME_VER}
 
 RUN wget -O - ${MP3LAME_REPO} | tar xz && \
     cd lame-${MP3LAME_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared --enable-nasm && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared --enable-nasm && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -80,7 +81,7 @@ ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.
 RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
     cd fdk-aac && \
     autoreconf -fiv && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -92,7 +93,7 @@ ARG OPUS_REPO=https://archive.mozilla.org/pub/opus/opus-${OPUS_VER}.tar.gz
 
 RUN wget -O - ${OPUS_REPO} | tar xz && \
     cd opus-${OPUS_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -104,7 +105,7 @@ ARG VPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN git clone ${VPX_REPO} && \
     cd libvpx && \
     git checkout ${VPX_VER} && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -118,7 +119,7 @@ RUN  git clone ${AOM_REPO} && \
      mkdir aom/aom_build && \
      cd aom/aom_build && \
      git checkout ${AOM_VER} && \
-     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX="/usr" -DLIB_INSTALL_DIR=/usr/lib/x86_64-linux-gnu .. && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX="/usr/local" -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu .. && \
      make -j8 && \
      make install DESTDIR="/home/build" && \
      make install
@@ -130,7 +131,7 @@ ARG X264_REPO=https://github.com/mirror/x264
 RUN  git clone ${X264_REPO} && \
      cd x264 && \
      git checkout ${X264_VER} && \
-     ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --enable-shared && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared && \
      make -j8 && \
      make install DESTDIR="/home/build" && \
      make install
@@ -144,7 +145,7 @@ RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no
 
 RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      cd x265/build/linux && \
-     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr -DLIB_INSTALL_DIR=/usr/lib/x86_64-linux-gnu ../../source && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib/x86_64-linux-gnu ../../source && \
      make -j8 && \
      make install DESTDIR="/home/build" && \
      make install
@@ -164,7 +165,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends libpciaccess
 
 RUN wget -O - ${LIBDRM_REPO} | tar xz && \
     cd libdrm-${LIBDRM_VER} && \
-    ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install ;
@@ -180,7 +181,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-
 
 RUN wget -O - ${LIBVA_REPO} | tar xz && \
     cd libva-${LIBVA_VER} && \
-    ./autogen.sh --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu && \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install;
@@ -192,7 +193,8 @@ ARG LIBVA_UTILS_REPO=https://github.com/intel/libva-utils/archive/${LIBVA_UTILS_
 
 RUN wget -O - ${LIBVA_UTILS_REPO} | tar xz; \
     cd libva-utils-${LIBVA_UTILS_VER}; \
-    ./autogen.sh --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu; \
+    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig"; \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu; \
     make -j8; \
     make install DESTDIR=/home/build; \
     make install;
@@ -207,7 +209,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-
 RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver && \
     mkdir -p media-driver/build && \
     cd media-driver/build && \
-    cmake -DBUILD_TYPE=release -DBUILD_ALONG_WITH_CMRTLIB=1 -DMEDIA_VERSION="2.0.0" -DBS_DIR_GMMLIB=/home/gmmlib/Source/GmmLib -DBS_DIR_COMMON=/home/gmmlib/Source/Common -DBS_DIR_INC=/home/gmmlib/Source/inc -DBS_DIR_MEDIA=/home/media-driver -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr .. && \
+    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
+    cmake -DBUILD_TYPE=release -DBUILD_ALONG_WITH_CMRTLIB=1 -DMEDIA_VERSION="2.0.0" -DBS_DIR_GMMLIB=/home/gmmlib/Source/GmmLib -DBS_DIR_COMMON=/home/gmmlib/Source/Common -DBS_DIR_INC=/home/gmmlib/Source/inc -DBS_DIR_MEDIA=/home/media-driver -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
@@ -221,11 +224,14 @@ ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/${MSDK_VER}.ta
 RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
     mkdir -p MediaSDK/build && \
     cd MediaSDK/build && \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
+    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     rm -rf /home/build/usr/samples && \
     rm -rf /home/build/usr/plugins && \
+    rm -rf /home/build/usr/local/samples && \
+    rm -rf /home/build/usr/local/plugins && \
     make install;
 
 #install OpenCL
@@ -321,7 +327,7 @@ ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-${LIBJSONC_VER
 RUN wget -O - ${LIBJSONC_REPO} | tar xz && \
     cd json-c-json-c-${LIBJSONC_VER} && \
     sh autogen.sh && \
-    ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
     make -j8 && \
     make install DESTDIR="/home/build" && \
     make install;
@@ -333,7 +339,7 @@ ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.
 
 RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
     cd librdkafka-${LIBRDKAFKA_VER} && \
-    ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install;
@@ -365,7 +371,8 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
 
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    ./configure --prefix="/usr" --libdir=/usr/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
+    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
     make -j8 && \
     make install DESTDIR="/home/build"
 
@@ -393,7 +400,8 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
 
 # Install
 COPY --from=build /home/build /
-ENV LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu
+ENV LIBVA_DRIVERS_PATH=/usr/local/lib/x86_64-linux-gnu/dri
 ENV LIBVA_DRIVER_NAME=iHD
 RUN apt-get update && apt-get install -y clinfo
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64

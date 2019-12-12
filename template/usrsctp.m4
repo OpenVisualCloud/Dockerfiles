@@ -13,6 +13,6 @@ RUN wget -O - ${USRSCTP_URL} | tar xz && \
     mv ${USRSCTP_EXTRACT} usrsctp && \
     cd usrsctp && \
     ./bootstrap && \
-    ./configure --prefix="/usr" && \
+    ./configure --prefix="/usr/local" --libdir=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/local/lib64,/usr/local/lib/x86_64-linux-gnu) && \
     make && \
     make install

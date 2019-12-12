@@ -20,11 +20,11 @@ ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.gi
 ARG OWT_BRANCH=4.2.x
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-ARG FDKAAC_LIB=/home/build/usr/lib/x86_64-linux-gnu
+ARG FDKAAC_LIB=/home/build/usr/local/lib/x86_64-linux-gnu
 RUN apt-get update && apt-get install -y -q --no-install-recommends python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
-ARG FDKAAC_LIB=/home/build/usr/lib64
+ARG FDKAAC_LIB=/home/build/usr/local/lib64
 RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
 )dnl
 
@@ -70,8 +70,8 @@ RUN git config --global user.email "you@example.com" && \
     # Get js client sdk for owt
     cd /home && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
+    export LD_LIBRARY_PATH=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
-
     #Build and pack owt
-    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && ifelse(index(DOCKER_IMAGE,xeon-),-1,./scripts/build.js -t mcu-all -r -c && \,./scripts/build.js -t mcu -r -c && \)
+    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig && ifelse(index(DOCKER_IMAGE,xeon-),-1,./scripts/build.js -t mcu-all -r -c && \,./scripts/build.js -t mcu -r -c && \)
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
