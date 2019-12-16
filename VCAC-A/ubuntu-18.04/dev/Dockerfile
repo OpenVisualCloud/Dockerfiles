@@ -287,26 +287,33 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
-# Install python3.6 fpr deployment manager on ubuntu1604
-
-#Deploy small package using deployment manager
-RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    ./deployment_manager.py --targets hddl vpu cpu			&& \
-    cd /root/ && ls -lh                                                 && \
-    tar zxf openvino_deploy_package.tar.gz
+#Remove components of OpenVino that won't be used
+ARG CV_BASE_DIR=/opt/intel/openvino
+RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
+    rm -rf ${CV_BASE_DIR}/python && \
+    rm -rf ${CV_BASE_DIR}/documentation && \
+    rm -rf ${CV_BASE_DIR}/install_dependiencies && \
+    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
+    rm -rf ${CV_BASE_DIR}/openvx/samples && \
+    rm -rf ${CV_BASE_DIR}/opencv/samples
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
     mkdir -p /home/build/opt/intel && \
     mkdir -p /home/build/usr/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
-    cp -rH /root/openvino /home/build/opt/intel/ && \
+    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
     cp -r /usr/lib/* /home/build/usr/lib
 
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
-ENV InferenceEngine_DIR="/opt/intel/openvino/deployment_tools/inference_engine/share"
-ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
+ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
+#ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 RUN rm -rf /var/lib/apt/lists/*;
@@ -583,7 +590,7 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DDISABLE_SAMPLES=ON \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
-    -DDISABLE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
+    -DHAVE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j4
 RUN mkdir -p build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
@@ -648,8 +655,8 @@ ENV GST_VAAPI_ALL_DRIVERS=1
 ENV DISPLAY=:0.0
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
-ENV InferenceEngine_DIR="/opt/intel/openvino/deployment_tools/inference_engine/share"
-ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
+ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
+#ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:/usr/local/lib:$IE_PLUGINS_PATH
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig
