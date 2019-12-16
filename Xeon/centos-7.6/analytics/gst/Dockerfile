@@ -530,7 +530,7 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DDISABLE_SAMPLES=ON \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
-    -DDISABLE_VAAPI=ON  \
+    -DHAVE_VAAPI=OFF  \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
 RUN mkdir -p build/usr/lib64/gstreamer-1.0 && \
