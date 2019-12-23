@@ -7,6 +7,9 @@ if grep --quiet 'NAME="CentOS Linux"' /etc/os-release; then
 else
   apt-get update
   apt-get install -y wget make python3 python3-pip
+  if grep --quiet 'Ubuntu 18' /etc/os-release; then
+    apt-get install -y libjson-c3
+  fi
 fi
 
 pip3 install pyyaml requests
