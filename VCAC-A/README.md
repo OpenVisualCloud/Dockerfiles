@@ -17,7 +17,7 @@ To use the VCAC-A as a container platform, we only need to build the **BASIC** s
 
 #### See Also:
 
-- [VCAC-A Software](https://github.com/OpenVisualCloud/VCAC-SW/tree/VCAC-A)   
+- [VCAC-A System Software](https://github.com/OpenVisualCloud/VCAC-SW/tree/VCAC-A)   
 
 ## Upload Images onto the VCAC-A:
 
