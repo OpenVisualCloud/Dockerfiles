@@ -99,8 +99,8 @@ cron_cfg()
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=""
-@reboot (source /opt/intel/openvino/bin/setupvars.sh && /opt/intel/openvino/deployment_tools/inference_engine/external/hddl/bin/hddldaemon)  >> /var/log/hddl-daemon.log
-@hourly (source /opt/intel/openvino/bin/setupvars.sh && /opt/intel/openvino/deployment_tools/inference_engine/external/hddl/bin/hddldaemon)  >> /var/log/hddl-daemon.log
+@reboot (source /opt/intel/openvino/bin/setupvars.sh;modprobe i2c-i801;modprobe i2c-dev;/opt/intel/openvino/deployment_tools/inference_engine/external/hddl/bin/hddldaemon)  >> /var/log/hddl-daemon.log
+@hourly (source /opt/intel/openvino/bin/setupvars.sh;modprobe i2c-i801;modprobe i2c-dev;/opt/intel/openvino/deployment_tools/inference_engine/external/hddl/bin/hddldaemon)  >> /var/log/hddl-daemon.log
 EOF
 }
 
