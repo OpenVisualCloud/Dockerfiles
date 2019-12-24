@@ -55,7 +55,7 @@ Optionally, you can also mount:
 
 You can setup the VCAC-A as a docker swarm worker node. Any subsequent deployment will be as simple as `docker stack deploy`. It is recommended that you setup docker swarm on the host and the VCAC-A as a worker node for application development.       
 
-Run the [setup_swarm.sh](./script/setup_swarm.sh) script on the host to setup docker swarm if not already. The host is initialized as a swarm master.   
+Run the [setup_swarm.sh](./script/setup_swarm.sh) script on the host to setup docker swarm. The script initializes the host as a swarm master and labels the VCAC-A with `vcac_zone`.   
 
 ## Develop Deployment Script:
 
