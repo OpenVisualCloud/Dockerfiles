@@ -17,7 +17,7 @@ To use the VCAC-A as a container platform, we only need to build the **BASIC** s
 
 #### See Also:
 
-- [VCAC-A System Software](https://github.com/OpenVisualCloud/VCAC-SW/tree/VCAC-A)   
+- The [VCAC-A](https://github.com/OpenVisualCloud/VCAC-SW/tree/VCAC-A) System Software   
 
 ## Upload Images onto the VCAC-A:
 
@@ -31,6 +31,12 @@ docker save <image-name>  | ssh root@172.32.xxx.xxx "docker image rm -f <image-n
 ## Run Containers on the VCAC-A:
 
 The following `docker run` command line options are **required** to run docker containers on the VCAC-A:   
+
+```
+# Running openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg
+docker run --rm --user root -v /tmp:/tmp -v /var/tmp:/var/tmp --device=/dev/ion:/dev/ion --privileged openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg /bin/bash
+```
+
 - **`--user root --privileged`**: Root privilege is required to mount the media and analytics acceleration devices.    
 - **`-v /dev:/dev`**: Mount the media and analytics acceleration devices, specifically, `/dev/card???` for media acceleration and `/dev/ion` for analytics acceleration.       
 - **`-v /tmp:/tmp -v /var/tmp:/var/tmp`**: Mount the directory for analytics data transfering.    
@@ -39,10 +45,6 @@ The following `docker run` command line options are **required** to run docker c
 Optionally, you can also mount:   
 - **`-v /etc/localtime:/etc/localtime`**: Synchronize the time zone between the container and the VCAC-A.  
 - **`-e http_proxy -e https_proxy -e no_proxy`**: Enable the proxy settings within the container.   
-
-```
-docker run --rm --user root -v /tmp:/tmp -v /var/tmp:/var/tmp --device=/dev/ion:/dev/ion --privileged openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg /bin/bash
-```
 
 #### See Also:
 
