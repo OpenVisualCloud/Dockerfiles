@@ -22,12 +22,19 @@ To use the VCAC-A as a container platform, we only need to build the **BASIC** s
 
 ## Upload Images onto the VCAC-A:
 
-See each sub-folder for a list of docker images targeted for the VCAC-A, for example, `openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg`. Use the following command to transfer the image from the host to the VCAC-A:     
+See each sub-folder for a list of docker images targeted for the VCAC-A. For example, under the [`ubuntu-18.04/analytics/ffmpeg`](ubuntu-18.04/analytics/ffmpeg) folder, you can find the [Dockerfile](ubuntu-18.04/analytics/ffmpeg/Dockerfile) that can be used to build the image [`openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg), the FFmpeg-based analytics software stack. Similarly, under the [`ubuntu-18.04/analytics/gst`](ubuntu-18.04/analytics/gst) folder, you can find the [Dockerfile](ubuntu-18.04/analytics/gst/Dockerfile) that can be used to build the image [`openvisualcloud/vcaca-ubuntu1804-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-gst).   
+
+The images are avalable on `dockerhub`. Use the following command to pull the desired image and then transfer to the VCAC-A:     
 
 ```
 docker pull openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg
 docker save <image-name>  | ssh root@172.32.xxx.xxx "docker image rm -f <image-name> 2>/dev/null; docker load"
 ```
+
+#### See Also:
+
+- [FFmpeg Docker Images Documentation](../doc/ffmpeg.md)
+- [GStreamer Docker Images Documentation](../doc/gst.md)
 
 ## Run Containers on the VCAC-A:
 
@@ -46,11 +53,6 @@ docker run --rm --user root -v /tmp:/tmp -v /var/tmp:/var/tmp --device=/dev/ion:
 Optionally, you can also mount:   
 - **`-v /etc/localtime:/etc/localtime`**: Synchronize the time zone between the container and the VCAC-A.  
 - **`-e http_proxy -e https_proxy -e no_proxy`**: Enable the proxy settings within the container.   
-
-#### See Also:
-
-- [FFmpeg Docker Images Documentation](../doc/ffmpeg.md)
-- [GStreamer Docker Images Documentation](../doc/gst.md)
 
 ## Setup the VCAC-A as Swarm Node:
 
