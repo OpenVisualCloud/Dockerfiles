@@ -10,6 +10,7 @@ Please follow the [Software Installation Guide, Section 2.0-Section 2.2.4](https
 To use the VCAC-A as a container platform, we only need to build the **BASIC** system image.    
 
 ---
+(All following scripts need to run on the host serving the VCAC-A node)
 
 - **`Setup passwordless access`** : [setup_access.sh](./script/setup_access.sh)
 - **`Install docker-ce on VCAC-A`**: [setup_docker.sh](./script/setup_docker.sh). Alternatively, you can install docker-ee instead on the VCAC-A yourself.

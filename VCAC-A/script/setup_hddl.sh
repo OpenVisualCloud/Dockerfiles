@@ -39,13 +39,13 @@ transfer_hddl_package()
 
 install_hddl_package()
 {
+        apt-get install -y sudo libboost-filesystem1.58-dev nasm libboost-thread1.58-dev libboost-program-options1.58-dev libboost-all-dev libjson0-dev libusb-1.0-0-dev cmake libelf-dev
 	ov_ver=`cat ov_ver.log`
 	mkdir -p /opt/intel/
 	tar zxf ${package_name}.tar.gz -C /opt/intel/
 	mv /opt/intel/openvino /opt/intel/$ov_ver
         ln -s /opt/intel/$ov_ver /opt/intel/openvino
         export LC_ALL=C
-        apt-get install -y cmake libelf-dev
 	cd /opt/intel/$ov_ver/deployment_tools/inference_engine/external/hddl/drivers/drv_ion 
         make && make install
         if [ $? != 0 ] ;then
