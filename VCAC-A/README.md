@@ -7,10 +7,10 @@ Please follow the [Software Installation Guide, Section 2.0-Section 2.2.4](https
 
 ---
 
-To use the VCAC-A as a container platform, we only need to build the **BASIC** system image.    
+To use the VCAC-A as a container platform, we only need to build the **BASIC** system image.       
+The following scripts run on the host serving the VCAC-A node.   
 
 ---
-(All following scripts need to run on the host serving the VCAC-A node)
 
 - **`Setup passwordless access`** : [setup_access.sh](./script/setup_access.sh)
 - **`Install docker-ce on VCAC-A`**: [setup_docker.sh](./script/setup_docker.sh). Alternatively, you can install docker-ee instead on the VCAC-A yourself.
@@ -22,17 +22,26 @@ To use the VCAC-A as a container platform, we only need to build the **BASIC** s
 
 ## Upload Images onto the VCAC-A:
 
-See each sub-folder for a list of docker images targeted for the VCAC-A. For example, under the [`ubuntu-18.04/analytics/ffmpeg`](ubuntu-18.04/analytics/ffmpeg) folder, you can find the [Dockerfile](ubuntu-18.04/analytics/ffmpeg/Dockerfile) that can be used to build the image [`openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg), the FFmpeg-based analytics software stack. Similarly, under the [`ubuntu-18.04/analytics/gst`](ubuntu-18.04/analytics/gst) folder, you can find the [Dockerfile](ubuntu-18.04/analytics/gst/Dockerfile) that can be used to build the image [`openvisualcloud/vcaca-ubuntu1804-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-gst).   
+See each sub-folder for a list of media analytics software stacks targeted for the VCAC-A:    
 
-The images are avalable on `dockerhub`. Use the following command to pull the desired image and then transfer to the VCAC-A:     
+-----------------------------------------
+| Framework | Dockerfile | Docker Image |
+|:---------:|:-----------|:-------------|
+|   FFMpeg  | [ubuntu-18.04/analytics/ffmpeg/Dockerfile](ubuntu-18.04/analytics/ffmpeg/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg) |
+| GStreamer | [ubuntu-18.04/analytics/gst/Dockerfile](ubuntu-18.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-gst) |
+|   FFMpeg  | [ubuntu-16.04/analytics/ffmpeg/Dockerfile](ubuntu-16.04/analytics/ffmpeg/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-analytics-ffmpeg) |
+| GStreamer | [ubuntu-16.04/analytics/gst/Dockerfile](ubuntu-16.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-analytics-gst) |
+
+Use the following command to pull the desired image and then transfer to the VCAC-A:     
 
 ```
 docker pull openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg
-docker save <image-name>  | ssh root@172.32.xxx.xxx "docker image rm -f <image-name> 2>/dev/null; docker load"
+docker save openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg | ssh root@172.32.xxx.xxx "docker load"
 ```
 
 #### See Also:
 
+- [Dockerfiles and Images](../README.md)   
 - [FFmpeg Docker Images Documentation](../doc/ffmpeg.md)
 - [GStreamer Docker Images Documentation](../doc/gst.md)
 
