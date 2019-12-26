@@ -24,7 +24,6 @@ The following scripts run on the host serving the VCAC-A node.
 
 See each sub-folder for a list of media analytics software stacks targeted for the VCAC-A:    
 
------------------------------------------
 | Framework | Dockerfile | Docker Image |
 |:---------:|:-----------|:-------------|
 |   FFMpeg  | [ubuntu-18.04/analytics/ffmpeg/Dockerfile](ubuntu-18.04/analytics/ffmpeg/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg) |
