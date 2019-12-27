@@ -28,10 +28,7 @@ case "$0" in
         no_proxy=${no_proxy:-${NO_PROXY}}
 
         NODEUSER="root"
-        NODEPREFIX="172.32"
-
-        sudo vcactl blockio list 2> /dev/null
-        for nodeip in $(sudo vcactl network ip |grep $NODEPREFIX 2>/dev/null); do
+        for nodeip in $(sudo vcactl network ip 2> /dev/null | grep -E '^[0-9.]+$'); do
             ssh-copy-id $NODEUSER@${nodeip} 2> /dev/null || echo
             scp /etc/resolv.conf $NODEUSER@$nodeip:/etc/resolv.conf
             scp "$0" $NODEUSER@$nodeip:/root/install-access.sh

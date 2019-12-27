@@ -60,9 +60,7 @@ case "$0" in
         ;;
     *setup*)
         NODEUSER="root"
-        NODEPREFIX="172.32"
-        sudo vcactl blockio list 2> /dev/null
-        for nodeip in $(sudo vcactl network ip |grep $NODEPREFIX 2>/dev/null); do
+        for nodeip in $(sudo vcactl network ip 2>/dev/null | grep -E '^[0-9.]+$'); do
             echo "setup on $nodeip"
             scp "$0" $NODEUSER@$nodeip:/root/install-docker.sh
             ssh $NODEUSER@$nodeip /root/install-docker.sh

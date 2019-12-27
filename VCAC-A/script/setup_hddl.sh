@@ -100,9 +100,7 @@ case "$0" in
         build_hddl_package
 
         NODEUSER="root"
-        NODEPREFIX="172.32"
-        sudo vcactl blockio list 2> /dev/null
-        for nodeip in $(sudo vcactl network ip |grep $NODEPREFIX 2>/dev/null); do
+        for nodeip in $(sudo vcactl network ip 2>/dev/null | grep -E '^[0-9.]+$'); do
             echo "setup on $nodeip" $0
             scp "$0" $NODEUSER@$nodeip:/root/install-hddl.sh
             scp "$DIR/ov_ver.log" $NODEUSER@$nodeip:/root
