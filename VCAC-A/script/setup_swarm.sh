@@ -23,7 +23,7 @@ for nodeip in $(sudo vcactl network ip |grep $NODEPREFIX 2>/dev/null); do
 	ssh $NODEUSER@${nodeip} "docker swarm leave --force 2> /dev/null;$JOINCMD"
 done
 
-# setup node labels for office1
+# setup node labels
 for id in $(docker node ls -q 2> /dev/null); do
     nodeip="$(docker node inspect -f {{.Status.Addr}} $id)"
     if test -z "$(hostname -I | grep --fixed-strings $nodeip)"; then
