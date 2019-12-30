@@ -283,22 +283,9 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
-#Deploy small package using deployment manager
-RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    ./deployment_manager.py --targets hddl vpu cpu			&& \
-    cd /root/ && ls -lh                                                 && \
-    tar zxf openvino_deploy_package.tar.gz
-
-#Copy over directories to clean image
-RUN mkdir -p /home/build/usr/local/lib && \
-    mkdir -p /home/build/opt/intel && \
-    mkdir -p /home/build/usr/lib && \
-    cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
-    cp -rH /root/openvino /home/build/opt/intel/ && \
-    cp -r /usr/lib/* /home/build/usr/lib
-
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
+ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
 #ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
@@ -313,6 +300,23 @@ RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
     make -j8 && \
     make install && \
     make install DESTDIR=/home/build
+
+#Deploy small package using deployment manager
+RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
+    ./deployment_manager.py --targets hddl vpu cpu                      && \
+    cd /root/ && ls -lh                                                 && \
+    tar zxf openvino_deploy_package.tar.gz
+
+#Copy over directories to clean image
+RUN mkdir -p /home/build/usr/local/lib && \
+    mkdir -p /home/build/opt/intel && \
+    mkdir -p /home/build/usr/lib && \
+    cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
+    cp -rH /root/openvino /home/build/opt/intel/ && \
+    cp -r /usr/lib/* /home/build/usr/lib
+
+#Give all user exec permission
+RUN chmod -R 775 /opt/intel/ ;
 
 
 
