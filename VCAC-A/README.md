@@ -50,13 +50,11 @@ The following `docker run` command line options are **required** to run docker c
 
 ```
 # Running openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg
-docker run --rm --user root -v /tmp:/tmp -v /var/tmp:/var/tmp --device=/dev/ion:/dev/ion --privileged openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg /bin/bash
+docker run --rm --user root --privileged -v /var/tmp/hddl_service.sock:/var/tmp/hddl_service.sock -v /var/tmp/hddl_service_ready.mutex:/var/tmp/hddl_service_ready.mutex -v /var/tmp/hddl_service_alive.mutex:/var/tmp/hddl_service_alive.mutex openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg /bin/bash
 ```
 
-- **`--user root --privileged`**: Root privilege is required to mount the media and analytics acceleration devices.    
-- **`-v /dev:/dev`**: Mount the media and analytics acceleration devices, specifically, `/dev/card???` for media acceleration and `/dev/ion` for analytics acceleration.       
-- **`-v /tmp:/tmp -v /var/tmp:/var/tmp`**: Mount the directory for analytics data transfering.    
-- **`-v ~/.Xauthority:/root/.Xauthority -v /tmp/.X11-unix/:/tmp/.X11-unix -e DISPLAY=$DISPLAY`**: The `XHost` authority is required for media decoding acceleration. 
+- **`--user root --privileged`**: The root privilege is required to mount the media and analytics acceleration devices.    
+- **`/var/tmp/hddl_service.sock, /var/tmp/hddl_service_ready.mutex` and `/var/tmp/hddl_service_alive.mutex`**: Mount the required auxiliary files for analytics acceleration.           
 
 Optionally, you can also mount:   
 - **`-v /etc/localtime:/etc/localtime`**: Synchronize the time zone between the container and the VCAC-A.  
@@ -68,7 +66,7 @@ You can setup the VCAC-A as a docker swarm worker node. Any subsequent deploymen
 
 Run the [setup_swarm.sh](./script/setup_swarm.sh) script on the host to setup docker swarm. The script initializes the host as a swarm master and labels the VCAC-A with `vcac_zone=yes`.   
 
-## Develop Deployment Script:
+#### Develop Docker-Compose Script:
 
 Docker Compose File Format version 3 does not support device mount. We need to use the [docker-in-docker](https://hub.docker.com/_/docker) workaround (to be able to mount the media and analytics devices.) The workaround launches a previleged docker container that subsequently runs the application container.   
 
