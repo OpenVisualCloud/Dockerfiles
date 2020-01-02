@@ -68,7 +68,7 @@ Run the [setup_swarm.sh](./script/setup_swarm.sh) script on the host to setup do
 
 #### Develop Docker-Compose Script:
 
-Docker Compose File Format version 3 does not support device mount. We need to use the [docker-in-docker](https://hub.docker.com/_/docker) workaround (to be able to mount the media and analytics devices.) The workaround launches a previleged docker container that subsequently runs the application container.   
+Docker Compose File Format version 3 does not support device mount. We need to use the [docker-in-docker](https://hub.docker.com/_/docker) workaround (to be able to mount the media and analytics devices.) The workaround launches a previleged docker container that subsequently runs the application container. The [`vcac-container-launcher:latest`](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/analytics/common/VCAC-A/Dockerfile.1.launcher) Dockerfile builds to an enhanced dock-in-docker image that additionally passes on environment variables, mounts network and volumes, and gracefully shutdown.   
 
 The following docker compose file from the [Smart-City-Sample](https://github.com/OpenVisualCloud/Smart-City-Sample) project illustrates the concept:  
 
@@ -100,7 +100,7 @@ The following docker compose file from the [Smart-City-Sample](https://github.co
 
 where   
 
-- The `VCAC_IMAGE` variable specifies the application image, the [`vcac-container-launcher:latest`](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/analytics/common/VCAC-A/Dockerfile.1.launcher) is a modified image with enhancement to pass on environment variables, mount network and volumes, and gracefully shutdown.   
+- The `VCAC_IMAGE` variable specifies the application image.  
 - The `VCAC_` prefixed variables are to be passed onto the application container.   
 - The `/var/run/docker.sock` volume mount is **required** to enable docker-in-docker.   
 - When running the docker-in-docker workaround, the application container does not directly run within the default docker network. The application must setup its own network and make it attachable, as follows:   
