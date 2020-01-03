@@ -31,6 +31,8 @@ case "$0" in
         for nodeip in $(sudo vcactl network ip 2> /dev/null | grep -E '^[0-9.]+$'); do
             ssh-copy-id $NODEUSER@${nodeip} 2> /dev/null || echo
             scp /etc/resolv.conf $NODEUSER@$nodeip:/etc/resolv.conf
+            ssh $NODEUSER@$nodeip "timedatectl set-timezone $(timedatectl | awk '/Time zone:/{print$3}')"
+            ssh $NODEUSER@$nodeip "date -s \"$(date)\""
             scp "$0" $NODEUSER@$nodeip:/root/install-access.sh
             ssh $NODEUSER@$nodeip /root/install-access.sh "$http_proxy" "$https_proxy" "$no_proxy"
         done
