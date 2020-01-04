@@ -17,12 +17,11 @@ hostfile="$HOME/.vcac-hosts"
 if [ ! -f $hostfile ]; then hostfile="/etc/vcac-hosts"; fi
 if [ -f $hostfile ]; then
     node_ip=$(echo $node | awk '{split($1,ip,"/");print ip[2]}')
-    while IFS=' ' read -r -a line < $hostfile; do
-        if [ "$node" = "${line[0]}" ]; then
-            ssh -t ${line[1]} "ssh -t root@$node_ip \"docker exec -it $container $@\""
-            exit 0
-        fi
-    done
+    host=$(awk -v node=$node '$1==node{print$2}' $hostfile)
+    if [ -n "$host" ]; then
+        ssh -t $host "ssh -t root@$node_ip \"docker exec -it $container $@\""
+        exit 0
+    fi
 fi
 echo "Unknown node $node"
 exit -1
