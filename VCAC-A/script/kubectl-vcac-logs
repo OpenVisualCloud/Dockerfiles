@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+case "$1" in
+    -h|--help)
+        echo "Usage: [-f] <pod-id>"
+        exit 0;;
+    -f)
+        follow="-f "
+        shift;;
+esac
+
+pod="$1"
+container_id=$(kubectl describe pod $pod |awk '/Container ID:/{split($3,id,"/");print id[3]}')
+node_ip=$(kubectl describe pod $pod |awk '/Node:/{split($2,ip,"/");print ip[2]}')
+ssh $(cat ~/.vcac/host) "ssh root@$node_ip \"docker logs $follow$container_id\""
