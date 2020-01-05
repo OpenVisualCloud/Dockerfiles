@@ -117,8 +117,8 @@ where
 #### See Also:
 
 - [Container Launcher Dockerfile](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/analytics/common/VCAC-A/Dockerfile.1.launcher)   
-- [AD Insertion Sample](https://github.com/OpenVisualCloud/Ad-Insertion-Sample)
-- [Smart City Sample](https://github.com/OpenVisualCloud/Smart-City-Sample)
+- [AD Insertion Sample VCAC-A Setup](https://github.com/OpenVisualCloud/Ad-Insertion-Sample/blob/master/doc/vcac-a.md)
+- [Smart City Sample VCAC-A Setup](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/doc/vcac-a.md)
 
 ## Setup the VCAC-A as Kubernetes Node:
 
@@ -136,7 +136,7 @@ The VCAC-A node does not have a dedicated IP address accessible from the network
 
 The `kubectl logs` and `kubectl exec` commands do not work on the VCAC-A nodes as the nodes are not directly accessible from the Kubernetes master. Instead, use `kubectl vcac logs` and `kubectl vcac exec`. Setup as follows:   
 - Copy the [kubectl-vcac-exec](script/kubectl-vcac-exec) and [kubectl-vcac-logs](script/kubectl-vcac-logs) scripts to any of the execution `PATH`, for example, under `~/bin`, on your Kubernetes master. Change permission to make them executable.   
-- Create a host file on the Kubernetes master under either `~/.vcac-hosts` or `/etc/vcac-hosts`, which describes the access information of the VCAC-A nodes. The host file looks like the following:   
+- Create a host file on the Kubernetes master under either `~/.vcac-hosts` or `/etc/vcac-hosts`, which describes the access information. The host file looks like the following:   
 
 ```
 vcanode0/172.32.1.1 vcac-node-host
@@ -202,3 +202,7 @@ where you must:
 - Set the `securityContext` to be `priviledged`. This will mount the devices for media and analytics acceleration.   
 - Select the VCAC-A node by label `vcac-zone=yes`.   
 
+#### See Also:
+
+- [AD Insertion Sample VCAC-A Setup](https://github.com/OpenVisualCloud/Ad-Insertion-Sample/blob/master/doc/vcac-a.md)
+- [Smart City Sample VCAC-A Setup](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/doc/vcac-a.md)
