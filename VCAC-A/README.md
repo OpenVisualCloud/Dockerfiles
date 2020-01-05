@@ -124,30 +124,40 @@ where
 
 You can setup the VCAC-A as a Kubernetes worker node. Any subsequent deployment will be as simple as `kubectl apply`. It is recommended that you setup the VCAC-A as a Kubernetes worker node for application development.
 
-The VCAC-A node does not have a dedicated IP address accessible from the network. Instead, the VCAC-A node accesses the network via NAT on the host machine. This does not meet the Kubernetes networking requirements, which assume that all workers are accessible via a unique IP address. [WeaveNet](https://github.com/weaveworks/weave) comes to rescue, which supports partially connected mesh network devices. With some workarounds, it's possible to use the VCAC-A as any regular Kubernetes nodes.   
+The VCAC-A node does not have a dedicated IP address accessible from the network. Instead, the VCAC-A node accesses the network via NAT on the host machine. This does not meet the Kubernetes networking requirements, which assume that all workers are accessible via a unique IP address. [WeaveNet](https://github.com/weaveworks/weave) comes to rescue, which supports partially connected mesh network devices. With some `kubectl` workarounds, it's possible to use the VCAC-A as any regular Kubernetes nodes.   
 
 #### Setup Kubernetes:
 
 - Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster. You must install [WeaveNet](https://kubernetes.io/docs/concepts/cluster-administration/networking/) as the cluster networking solution.     
-- Logon to the VCAC-A host and then the VCAC-A node. Join both the host and the VCAC-A node as worker nodes. Optionally, label the VCAC-A worker as `vcac-zone=yes`.    
-- Copy the [kubectl-vcac-set-host](script/kubectl-vcac-set-host), [kubectl-vcac-exec](script/kubectl-vcac-exec) and [kubectl-vcac-logs](script/kubectl-vcac-logs) scripts to any of the execution PATH, for example, under `~/bin`, on your Kubernetes master. These scripts assume that there is password-less access from your Kubernetes master to the VCAC-A host, and from the VCAC-A host to the VCAC-A node. Setup password-less access as follows if you haven't done so:   
+- Logon to the VCAC-A host and then the VCAC-A node. Join both the host and the VCAC-A node as worker nodes. 
+- Optionally, label the VCAC-A worker as `vcac-zone=yes`: `kubectl label node vcanode0 "vcac-zone=yes"`    
 
----
+#### Kubectl Workarounds:
+
+The `kubectl logs` and `kubectl exec` commands do not work on the VCAC-A nodes as the nodes are not directly accessible from the Kubernetes master. Instead, use `kubectl vcac logs` and `kubectl vcac exec`. Setup as follows:   
+- Copy the [kubectl-vcac-exec](script/kubectl-vcac-exec) and [kubectl-vcac-logs](script/kubectl-vcac-logs) scripts to any of the execution `PATH`, for example, under `~/bin`, on your Kubernetes master. Change permission to make them executable.   
+- Create a host file on the Kubernetes master under either `~/.vcac-hosts` or `/etc/vcac-hosts`, which describes the access information of the VCAC-A nodes. The host file looks like the following:   
+
+```
+vcanode0/172.32.1.1 vcac-node-host
+vcanode1/172.32.1.2 vcac-node-host
+```
+
+where each line describes a VCAC-A node. `vcanode0/172.32.1.1` is the pair of the VCAC-A node name and internal IP address. The pair must be unique. The second field describes the VCAC-A host hostname or `username@hostname`, if the username differs.      
+
+- Setup password-less access from your Kubernetes master to the VCAC-A host(s), and from the VCAC-A host(s) to the VCAC-A node(s), if you haven't done so, as follows:   
+
 ```sh
 ssh-keygen
 ssh-copy-id <username>@<hostname>
 ```
----
 
-#### Kubectl Workarounds:
-
-The `kubectl logs` and `kubectl exec` commands do not work on the VCAC-A nodes as the nodes are not directly accessible from the Kubernetes master. Instead, use `kubectl vcac logs` and `kubectl vcac exec`.  
+Now you can use `kubectl vcac logs` or `kubectl vcac exec` to retrieve logs and execute remote commands:  
 
 ```sh
 kubectl vcac logs -f <pod-id>
+kubectl vcac exec <pod-id> /bin/bash
 ```
-
-Before running `kubectl vcac logs` or `kubectl vcac exec`, you need to set the VCAC-A hostname: `kubectl vcac set host <username>@<hostname>`. If there is more than 1 VCAC-A host, you need to set the current hostname for any subquent `kubectl vcac logs` or `kubectl vcac exec` commands.  
 
 #### Develop Deployment Script:
 
