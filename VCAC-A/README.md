@@ -68,7 +68,7 @@ Run the [setup_swarm.sh](./script/setup_swarm.sh) script on the host to setup do
 
 #### Develop Docker-Compose Script:
 
-Docker Compose File Format version 3 does not support device mount. We need to use the [docker-in-docker](https://hub.docker.com/_/docker) workaround (to be able to mount the media and analytics devices.) The workaround launches a previleged docker container that subsequently runs the application container. The [`vcac-container-launcher:latest`](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/analytics/common/VCAC-A/Dockerfile.1.launcher) Dockerfile builds to an enhanced dock-in-docker image that additionally passes on environment variables, mounts network and volumes, and gracefully shutdown.   
+Docker Compose File Format version 3 does not support device mount. We need to use the [docker-in-docker](https://hub.docker.com/_/docker) workaround (to be able to mount the media and analytics devices.) The workaround launches a privileged docker container that subsequently runs the application container. The [`vcac-container-launcher:latest`](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/analytics/common/VCAC-A/Dockerfile.1.launcher) Dockerfile builds to an enhanced dock-in-docker image that additionally passes on environment variables, mounts network and volumes, and gracefully shutdown.   
 
 The following docker compose file from the [Smart-City-Sample](https://github.com/OpenVisualCloud/Smart-City-Sample) project illustrates the concept:  
 
