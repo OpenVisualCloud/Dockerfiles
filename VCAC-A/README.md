@@ -28,10 +28,10 @@ See each sub-folder for a list of media analytics software stacks targeted for t
 |:---------:|:-----------|:-------------|
 |   FFMpeg  | [ubuntu-18.04/analytics/ffmpeg/Dockerfile](ubuntu-18.04/analytics/ffmpeg/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg) |
 | GStreamer | [ubuntu-18.04/analytics/gst/Dockerfile](ubuntu-18.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-gst) |
-|  build | [ubuntu-18.04/analytics/gst/Dockerfile](ubuntu-18.04/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-dev`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-dev) |
+|  build | [ubuntu-18.04/dev/Dockerfile](ubuntu-18.04/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-dev`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-dev) |
 |   FFMpeg  | [ubuntu-16.04/analytics/ffmpeg/Dockerfile](ubuntu-16.04/analytics/ffmpeg/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-analytics-ffmpeg) |
 | GStreamer | [ubuntu-16.04/analytics/gst/Dockerfile](ubuntu-16.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-analytics-gst) |
-|  build | [ubuntu-16.04/analytics/gst/Dockerfile](ubuntu-16.04/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-dev`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-dev) |
+|  build | [ubuntu-16.04/dev/Dockerfile](ubuntu-16.04/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-dev`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-dev) |
 
 Use the following command to pull the desired image and then transfer to the VCAC-A:     
 
@@ -70,7 +70,7 @@ Run the [setup_swarm.sh](./script/setup_swarm.sh) script on the host to setup do
 
 #### Develop Docker-Compose Script:
 
-Docker Compose File Format version 3 does not support device mount. We need to use the [docker-in-docker](https://hub.docker.com/_/docker) workaround (to be able to mount the media and analytics devices.) The workaround launches a previleged docker container that subsequently runs the application container. The [`vcac-container-launcher:latest`](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/analytics/common/VCAC-A/Dockerfile.1.launcher) Dockerfile builds to an enhanced dock-in-docker image that additionally passes on environment variables, mounts network and volumes, and gracefully shutdown.   
+Docker Compose File Format version 3 does not support device mount. We need to use the [docker-in-docker](https://hub.docker.com/_/docker) workaround (to be able to mount the media and analytics devices.) The workaround launches a privileged docker container that subsequently runs the application container. The [`vcac-container-launcher:latest`](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/analytics/common/VCAC-A/Dockerfile.1.launcher) Dockerfile builds to an enhanced dock-in-docker image that additionally passes on environment variables, mounts network and volumes, and gracefully shutdown.   
 
 The following docker compose file from the [Smart-City-Sample](https://github.com/OpenVisualCloud/Smart-City-Sample) project illustrates the concept:  
 
