@@ -16,7 +16,7 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     echo "do" >> /home/launch.sh && \
     echo "  echo mongod not launch" >> /home/launch.sh && \
     echo "  sleep 1" >> /home/launch.sh && \
-    echo "done" >> /home/launch.sh && \ 
+    echo "done" >> /home/launch.sh && \
     echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
     ifelse(index(DOCKER_IMAGE,xeon-),-1,
@@ -29,7 +29,7 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
 
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
-RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
+RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \
     yum install rabbitmq-server mongodb mongodb-server -y && \
     yum remove -y -q epel-release && \
     ifelse(index(DOCKER_IMAGE,xeon-),-1,
