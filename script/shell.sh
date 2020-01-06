@@ -13,11 +13,7 @@ fi
 
 if [ -z "$TRAVIS" ] && [ -z "$JENKINS_URL" ]; then DOCKER_IT="-it"; else DOCKER_IT=""; fi
 
-if echo ${IMAGE} | grep -q "dev"; then
-    TEST="${DIR}/../../../test/"
-else
-    TEST="${DIR}/../../../../test/"
-fi
+TEST="${DIR}/../../../../test/"
 
 sudo docker run $DEVICE_DIR --rm -v "${TEST}:/mnt:ro" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^/-e /') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG /-e /') $DOCKER_IT "${PREFIX}/${IMAGE}" ${*-/bin/bash}
 

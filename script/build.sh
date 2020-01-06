@@ -8,11 +8,7 @@ BUILD_MP3LAME="${1:-ON}"
 BUILD_FDKAAC="${2:-ON}"
 ONLY_DOCKERFILES="${3:-OFF}"
 
-if echo ${IMAGE} | grep -q "dev"; then
-    TEMPLATE="${DIR}/../../../template/"
-else
-    TEMPLATE="${DIR}/../../../../template/"
-fi
+TEMPLATE="${DIR}/../../../../template/"
 
 PREFIX="${PREFIX:-openvisualcloud}"
 
