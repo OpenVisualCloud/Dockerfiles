@@ -1,0 +1,27 @@
+#!/bin/bash -e
+
+case "$1" in
+    -h|--help)
+        echo "Usage: <pod-id> [args]"
+        exit 0;;
+esac
+
+pod="$1"
+shift
+
+description="$(kubectl describe pod $pod)"
+container=$(echo "$description" |awk '/Container ID:/{split($3,id,"/");print id[3]}')
+node=$(echo "$description" |awk '/Node:/{print$2}')
+
+hostfile="$HOME/.vcac-hosts"
+if [ ! -f $hostfile ]; then hostfile="/etc/vcac-hosts"; fi
+if [ -f $hostfile ]; then
+    node_ip=$(echo $node | awk '{split($1,ip,"/");print ip[2]}')
+    host=$(awk -v node=$node '$1==node{print$2}' $hostfile)
+    if [ -n "$host" ]; then
+        ssh -t $host "ssh -t root@$node_ip \"docker exec -it $container $@\""
+        exit 0
+    fi
+fi
+echo "Unknown node $node"
+exit -1

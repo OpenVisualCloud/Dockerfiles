@@ -287,12 +287,28 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
+ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
+ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
+ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
+#ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
+
+# OPENVINO C API
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.1_va/thirdparty/dldt-c-api/source/dldt-c_api_v2-1.0.1.tar.gz
+RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
+    cd dldt-c_api-1.0.1 && \
+    mkdir -p build && cd build && \
+    cmake -DENABLE_AVX512F=OFF .. && \
+    make -j8 && \
+    make install && \
+    make install DESTDIR=/home/build
+
 # Install python3.6 fpr deployment manager on ubuntu1604
-RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz	&& \
-    tar -xvf Python-3.6.3.tgz						&& \
-    cd Python-3.6.3							&& \
-    ./configure								&& \
-    make -j $(nproc)							&& \
+RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz       && \
+    tar -xvf Python-3.6.3.tgz                                           && \
+    cd Python-3.6.3                                                     && \
+    ./configure                                                         && \
+    make -j $(nproc)                                                    && \
     make install
 
 #Deploy small package using deployment manager
@@ -300,8 +316,6 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     python3.6 ./deployment_manager.py --targets hddl vpu cpu            && \
     cd /root/ && ls -lh                                                 && \
     tar zxf openvino_deploy_package.tar.gz
-
-#Deploy small package using deployment manager
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
@@ -311,23 +325,8 @@ RUN mkdir -p /home/build/usr/local/lib && \
     cp -rH /root/openvino /home/build/opt/intel/ && \
     cp -r /usr/lib/* /home/build/usr/lib
 
-ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
-ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
-ENV InferenceEngine_DIR="/opt/intel/openvino/deployment_tools/inference_engine/share"
-ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
-
-RUN rm -rf /var/lib/apt/lists/*;
-
-# OPENVINO C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/dldt-c_api_v2-1.0.tar.gz
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-1.0 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
+#Give all user exec permission
+RUN chmod -R 775 /opt/intel/ ;
 
 
 
@@ -417,7 +416,6 @@ ENV LIBVA_DRIVER_NAME=iHD
 RUN apt-get update && apt-get install -y clinfo
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
-ENV InferenceEngine_DIR="/opt/intel/openvino/deployment_tools/inference_engine/share"
-ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
+#ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:/usr/local/lib:$IE_PLUGINS_PATH
 
