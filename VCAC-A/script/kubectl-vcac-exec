@@ -2,8 +2,10 @@
 
 case "$1" in
     -h|--help)
-        echo "Usage: <pod-id> [args]"
+        echo "Usage: -it <pod-id> [args]"
         exit 0;;
+    -it)
+        shift;;
 esac
 
 pod="$1"
