@@ -128,7 +128,7 @@ The VCAC-A node does not have a dedicated IP address accessible from the network
 
 #### Setup Kubernetes:
 
-- Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster. You must install [WeaveNet](https://kubernetes.io/docs/concepts/cluster-administration/networking/) as the cluster networking solution.     
+- Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster. You must install [WeaveNet](https://www.weave.works/docs/net/latest/kubernetes/kube-addon) as the cluster networking solution.     
 - Logon to the VCAC-A host and then the VCAC-A node. Join both the host and the VCAC-A node as worker nodes. 
 - Optionally, label the VCAC-A worker as `vcac-zone=yes`: `kubectl label node vcanode0 "vcac-zone=yes"`    
 
@@ -156,7 +156,7 @@ Now you can use `kubectl vcac logs` or `kubectl vcac exec` to retrieve logs and 
 
 ```sh
 kubectl vcac logs -f <pod-id>
-kubectl vcac exec <pod-id> /bin/bash
+kubectl vcac exec -it <pod-id> /bin/bash
 ```
 
 #### Develop Deployment Script:
