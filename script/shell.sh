@@ -19,6 +19,6 @@ else
     TEST="${DIR}/../../../../test/"
 fi
 
-sudo docker run $DEVICE_DIR --rm -v "${TEST}:/mnt:ro" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^\(.*\)=.*/-e \1/') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG \(.*\)=.*/-e \1/') $DOCKER_IT "${PREFIX}/${IMAGE}" ${*-/bin/bash}
+sudo docker run $DEVICE_DIR --rm -v "${TEST}:/mnt:ro" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^\([^=]*\)=.*/-e \1/') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG \([^=]*\)=.*/-e \1/') $DOCKER_IT "${PREFIX}/${IMAGE}" ${*-/bin/bash}
 
 
