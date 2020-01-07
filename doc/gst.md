@@ -10,8 +10,8 @@ The GStreamer docker images are compiled with the following plugin set:
 |`gst-plugin-bas`|1.16.0|`gst-plugin-good`|1.16.0|  
 |`gst-plugin-bad`|1.16.0|`gst-plugin-ugly`|1.16.0|  
 |`gst-plugin-vaapi`|1.16.0|`gst-plugin-libav`|1.16.0|  
-|`gst-video-analytics`|0.6.1|`SVT-HEVC encoder`|v1.4.2|  
-|`SVT-AV1 encoder`|v0.7.5|`SVT-VP9 encoder`|d18b4a| 
+|`gst-video-analytics`|0.6.1|`SVT-HEVC encoder`|v1.4.3|  
+|`SVT-AV1 encoder`|v0.8.0|`SVT-VP9 encoder`|d18b4a| 
 
 ---
 
