@@ -44,6 +44,28 @@ RUN  wget -O - ${YASM_REPO} | tar xz && \
      make -j8 && \
      make install
 
+# Build libnice
+ARG NICE_VER="0.1.4"
+ARG NICE_REPO=http://nice.freedesktop.org/releases/libnice-${NICE_VER}.tar.gz
+ARG LIBNICE_PATCH_REPO_01=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-agentlock.patch
+ARG LIBNICE_PATCH_REPO_02=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-agentlock-plus.patch
+ARG LIBNICE_PATCH_REPO_03=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-removecandidate.patch
+ARG LIBNICE_PATCH_REPO_04=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-keepalive.patch
+ARG LIBNICE_PATCH_REPO_05=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-startcheck.patch
+
+RUN yum install -y -q glib2-devel
+
+RUN wget -O - ${NICE_REPO} | tar xz && \
+    cd libnice-${NICE_VER} && \
+    wget -O - ${LIBNICE_PATCH_REPO_01} | patch -p1 && \
+    wget -O - ${LIBNICE_PATCH_REPO_02} | patch -p1 && \
+    wget -O - ${LIBNICE_PATCH_REPO_03} | patch -p1 && \
+    wget -O - ${LIBNICE_PATCH_REPO_04} | patch -p1 && \
+    wget -O - ${LIBNICE_PATCH_REPO_05} | patch -p1 && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
+    make -s V= && \
+    make install
+
 # Build open ssl
 ARG OPENSSL_VER="1.0.2t"
 ARG OPENSSL_REPO=http://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz
@@ -176,8 +198,6 @@ ARG OPENH264_BINARY=https://github.com/cisco/openh264/releases/download/v${OPENH
 ARG LICODE_COMMIT="8b4692c88f1fc24dedad66b4f40b1f3d804b50ca"
 ARG LICODE_REPO=https://github.com/lynckia/licode.git
 ARG LICODE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/tree/master/scripts/patches/licode/
-ARG NICE_VER="0.1.4"
-ARG NICE_REPO=http://nice.freedesktop.org/releases/libnice-${NICE_VER}.tar.gz
 ARG SCVP_VER="0.1"
 ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample.git
 ARG WEBRTC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-webrtc.git
@@ -216,19 +236,6 @@ RUN git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
     npm config set https-proxy=${http_proxy} && \
     npm install -g --loglevel error node-gyp grunt-cli underscore jsdoc && \
     cd ${SERVER_PATH} && npm install nan && \
-
-    # Install libnice for owt
-    cd ${SERVER_PATH}/third_party && \
-    wget -O - ${NICE_REPO} | tar xz && \
-    cd libnice-${NICE_VER} && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-agentlock.patch && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-agentlock-plus.patch && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-removecandidate.patch && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-keepalive.patch && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-startcheck.patch && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
-    make -s V= && \
-    make install && \
 
     # Get openh264 for owt
     cd ${SERVER_PATH}/third_party && \
