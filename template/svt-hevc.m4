@@ -1,5 +1,5 @@
 # Fetch SVT-HEVC
-ARG SVT_HEVC_VER=v1.4.2
+ARG SVT_HEVC_VER=v1.4.3
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,

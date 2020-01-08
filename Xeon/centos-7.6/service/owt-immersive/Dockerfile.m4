@@ -11,7 +11,7 @@ include(libsrtp2.m4)
 ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')
 include(ffmpeg.m4)
 include(nodetools.m4)
-include(svt-hevc.1-4-3.m4)
+include(svt-hevc.m4)
 include(owt-immersive.m4)dnl
 
 FROM centos:7.6.1810
