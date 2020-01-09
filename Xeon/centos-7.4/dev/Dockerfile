@@ -299,11 +299,11 @@ ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 
 # DLDT IE C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/dldt-c_api_v2-1.0.tar.gz
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.0.tar.gz
 
 ARG c_api_libdir="/usr/local/lib64"
 RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-1.0 && \
+    cd dldt-c_api-2.0.0 && \
     mkdir -p build && cd build && \
     cmake -DENABLE_AVX512F=OFF .. && \
     make -j8 && \
@@ -592,7 +592,7 @@ RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
 
 
 # Fetch FFmpeg source
-ARG FFMPEG_VER=n4.1
+ARG FFMPEG_VER=n4.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
@@ -602,7 +602,7 @@ ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PAT
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
-ARG FFMPEG_MA_RELEASE_VER=0.3
+ARG FFMPEG_MA_RELEASE_VER=0.4-rc.1
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
 RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
@@ -612,8 +612,6 @@ RUN yum install -y -q libass-devel freetype-devel SDL2-devel libxcb-devel texinf
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg && \
     find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '0001*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1 && \
-    wget -O - ${FFMPEG_THREAD_PATCH_REPO} | patch -p1 && \
     find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
 # Patch FFmpeg source for SVT-HEVC
