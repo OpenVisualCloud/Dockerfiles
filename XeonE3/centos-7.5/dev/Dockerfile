@@ -682,6 +682,7 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
 RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel
 
 
+RUN yum install -y -q binutils uuid-devel python3 python36-gobject-devel python3-devel
 
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
@@ -738,13 +739,15 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 
 
 #Install va gstreamer plugins
-#Has a dependency on OpenCV, GStreamer
-ARG VA_GSTREAMER_PLUGINS_VER=0.6.1
-ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
 
-RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
-    cd gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER} && \
-    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+ARG VA_GSTREAMER_PLUGINS_VER=e2813c8af5 
+# preview branch with python api yolov3 support
+ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
+
+RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
+    cd gst-video-analytics && \
+    git checkout ${VA_GSTREAMER_PLUGINS_VER} && \
+    git submodule init && git submodule update && \
     mkdir build && \
     cd build && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
@@ -760,9 +763,27 @@ RUN wget -O - ${VA_GSTREAMER_PLUGINS_REPO} | tar xz && \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j4
 RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
-    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
+    cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
 RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
-    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0
+    cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0
+RUN mkdir -p build/usr/local/lib64/gstreamer-1.0/python && \
+    cp -r gst-video-analytics/python/gvapython.py build/usr/local/lib64/gstreamer-1.0/python
+RUN mkdir -p /usr/local/lib64/gstreamer-1.0/python && \
+    cp -r gst-video-analytics/python/gvapython.py /usr/local/lib64/gstreamer-1.0/python
+
+
+# Build gstreamer python
+ARG GST_VER=1.16.0
+ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
+RUN ls -l
+RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
+    cd gst-python-${GST_VER} && \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 --with-pygi-overrides-dir=/usr/lib64/python3.6/site-packages/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/lib64/" PYTHON=/usr/bin/python3 && \
+    make -j $(nproc) && \
+    make install && \
+    make install DESTDIR=/home/build
+
+
 
 
 
@@ -816,7 +837,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
-    yum install -y -q   libxcb SDL2 libass numactl libvdpau  glib2-2.56.1 pango gobject-introspection libxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora libpciaccess libX11 openblas-serial uuid \
+    yum install -y -q   libxcb SDL2 libass numactl libvdpau  glib2-2.56.1 pango gobject-introspection libxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora libpciaccess libX11 openblas-serial uuid python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base \
 mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo librtmp python-yaml ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
@@ -843,4 +864,5 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=${PATH}:/usr/local/bin:/usr/bin
+
 
