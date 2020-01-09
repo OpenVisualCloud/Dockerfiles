@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 IMAGE="xeone3-ubuntu1804-service-owt"
-VERSION="19.11"
+VERSION="20.1"
 DIR=$(dirname $(readlink -f "$0"))
 
 . "${DIR}/../../../../script/build.sh"
