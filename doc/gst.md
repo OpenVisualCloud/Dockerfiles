@@ -1,5 +1,5 @@
 
-GStreamer is a framework of audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding, and publishing media content. 
+GStreamer is a framework of audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding, and publishing media content.
 
 ### Plugins:
 
@@ -7,15 +7,16 @@ The GStreamer docker images are compiled with the following plugin set:
 
 | Plugin | Version| Plugin | Version|
 |:---|:---:|:---|:---:|
-|`gst-plugin-bas`|1.16.0|`gst-plugin-good`|1.16.0|  
-|`gst-plugin-bad`|1.16.0|`gst-plugin-ugly`|1.16.0|  
-|`gst-plugin-vaapi`|1.16.0|`gst-plugin-libav`|1.16.0|  
-|`gst-video-analytics`|0.6.1|`SVT-HEVC encoder`|v1.4.3|  
-|`SVT-AV1 encoder`|v0.8.0|`SVT-VP9 encoder`|d18b4a| 
+|`gst-plugin-bas`|1.16.0|`gst-plugin-good`|1.16.0|
+|`gst-plugin-bad`|1.16.0|`gst-plugin-ugly`|1.16.0|
+|`gst-plugin-vaapi`|1.16.0|`gst-plugin-libav`|1.16.0|
+|`gst-video-analytics`|e2813c|`SVT-HEVC encoder`|v1.4.3|
+|`gst-python`|1.16.0|`SVT-VP9 encoder`|d18b4a|
+|||`SVT-AV1 encoder`|v0.8.0
 
 ---
 
-The plugins `shm` and `mxf` from `gst-plugin-bad` is disabled as they do not meet security coding guidelines. Please file an issue if you need these plugin features in your project.   
+The plugins `shm` and `mxf` from `gst-plugin-bad` is disabled as they do not meet security coding guidelines. Please file an issue if you need these plugin features in your project.
 
 ---
 
