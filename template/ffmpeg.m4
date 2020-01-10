@@ -9,7 +9,7 @@ ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
 ifelse(ifelse(index(DOCKER_IMAGE,dev),-1,'false','true'), ifelse(index(DOCKER_IMAGE,analytics),-1,'false','true'),,
-ARG FFMPEG_MA_RELEASE_VER=0.4-rc.1
+ARG FFMPEG_MA_RELEASE_VER=0.4
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
 RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
