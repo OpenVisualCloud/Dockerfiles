@@ -9,7 +9,7 @@ include(libre.m4)
 include(usrsctp.m4)
 include(libsrtp2.m4)
 ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')
-include(ffmpeg.m4)
+include(ffmpeg-n4.1.m4)
 include(nodetools.m4)
 include(svt-hevc.m4)
 include(owt-immersive.m4)dnl

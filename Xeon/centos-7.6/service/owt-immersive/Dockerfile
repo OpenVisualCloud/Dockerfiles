@@ -111,9 +111,10 @@ RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac &&
 
 
 # Fetch FFmpeg source
-ARG FFMPEG_VER=n4.2
+ARG FFMPEG_VER=n4.1
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
+ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 
 ARG FFMPEG_PATCHES_RELEASE_VER=0.1
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
@@ -124,8 +125,7 @@ RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
 
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
-    cd FFmpeg  && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
+    cd FFmpeg  ;
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -178,8 +178,8 @@ ARG LICODE_REPO=https://github.com/lynckia/licode.git
 ARG LICODE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/tree/master/scripts/patches/licode/
 ARG NICE_VER="0.1.4"
 ARG NICE_REPO=http://nice.freedesktop.org/releases/libnice-${NICE_VER}.tar.gz
-ARG SCVP_VER="v1.0.0"
-ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample.git
+ARG SCVP_VER="1.0.0"
+ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v${SCVP_VER}.tar.gz
 ARG WEBRTC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-webrtc.git
 ARG SERVER_PATH=/home/owt-server
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
@@ -194,9 +194,8 @@ RUN yum install -y -q patch centos-release-scl devtoolset-7
 
 # Install 360scvp
 RUN cd /home && \
-    git clone ${SCVP_REPO} && \
+    wget -O - ${SCVP_REPO} | tar xz && mv Immersive-Video-Sample-${SCVP_VER} Immersive-Video-Sample && \
     cd Immersive-Video-Sample/src/360SCVP && \
-    git checkout ${SCVP_VER} && \
     mkdir build && \
     cd build && \
     source /opt/rh/devtoolset-7/enable && \

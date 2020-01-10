@@ -13,8 +13,8 @@ ARG LICODE_REPO=https://github.com/lynckia/licode.git
 ARG LICODE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/tree/master/scripts/patches/licode/
 ARG NICE_VER="0.1.4"
 ARG NICE_REPO=http://nice.freedesktop.org/releases/libnice-${NICE_VER}.tar.gz
-ARG SCVP_VER="v1.0.0"
-ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample.git
+ARG SCVP_VER="1.0.0"
+ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v${SCVP_VER}.tar.gz
 ARG WEBRTC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-webrtc.git
 ARG SERVER_PATH=/home/owt-server
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
@@ -35,9 +35,8 @@ RUN yum install -y -q patch centos-release-scl devtoolset-7
 
 # Install 360scvp
 RUN cd /home && \
-    git clone ${SCVP_REPO} && \
+    wget -O - ${SCVP_REPO} | tar xz && mv Immersive-Video-Sample-${SCVP_VER} Immersive-Video-Sample && \
     cd Immersive-Video-Sample/src/360SCVP && \
-    git checkout ${SCVP_VER} && \
     mkdir build && \
     cd build && \
 ifelse(index(DOCKER_IMAGE,centos),-1,,`dnl
