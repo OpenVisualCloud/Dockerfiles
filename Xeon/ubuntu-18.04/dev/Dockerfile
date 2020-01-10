@@ -663,7 +663,7 @@ ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
-ENV PATH=/usr/bin:${PATH}:/usr/local/bin:/usr/bin
+ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 
 

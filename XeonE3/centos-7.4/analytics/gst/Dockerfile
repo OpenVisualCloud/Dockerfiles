@@ -802,7 +802,7 @@ ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
-ENV PATH=/usr/bin:${PATH}:/usr/local/bin:/usr/bin
+ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 
 RUN python3 -m pip install numpy
