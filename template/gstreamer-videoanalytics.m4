@@ -3,15 +3,11 @@ ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
 )dnl
 
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-    RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel
+    RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel python3 python36-gobject-devel python3-devel
 )dnl
 
 ifelse(index(DOCKER_IMAGE,centos74),-1,,
-    RUN yum install -y -q binutils uuid-devel python3 python36-gobject-devel python3-devel
-)dnl
-
-ifelse(index(DOCKER_IMAGE,centos75),-1,,
-    RUN yum install -y -q binutils uuid-devel python3 python36-gobject-devel python3-devel
+    RUN yum install -y -q binutils uuid-devel
 )dnl
 
 ARG PAHO_INSTALL=true
@@ -100,8 +96,8 @@ RUN mkdir -p build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_
     cp -r gst-video-analytics/python/gvapython.py build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python
 RUN mkdir -p /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python && \
     cp -r gst-video-analytics/python/gvapython.py /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python
+
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
-# Ubuntu1804
 RUN mkdir -p build/usr/lib/python3.6/gstgva && \
     cp -r gst-video-analytics/python/gstgva/* build/usr/lib/python3.6/gstgva
 RUN mkdir -p /usr/lib/python3.6/gstgva && \
@@ -109,11 +105,17 @@ RUN mkdir -p /usr/lib/python3.6/gstgva && \
 )dnl
 
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-# Ubuntu1604
 RUN mkdir -p build/usr/lib/python3.5/gstgva && \
     cp -r gst-video-analytics/python/gstgva/* build/usr/lib/python3.5/gstgva
 RUN mkdir -p /usr/lib/python3.5/gstgva && \
     cp -r gst-video-analytics/python/gstgva/* /usr/lib/python3.5/gstgva
+)dnl
+
+ifelse(index(DOCKER_IMAGE,centos),-1,,
+RUN mkdir -p build/usr/lib64/python3.6/gstgva && \
+    cp -r gst-video-analytics/python/gstgva/* build/usr/lib64/python3.6/gstgva
+RUN mkdir -p /usr/lib64/python3.6/gstgva && \
+    cp -r gst-video-analytics/python/gstgva/* /usr/lib64/python3.6/gstgva
 )dnl
 
 # Build gstreamer python
@@ -127,6 +129,9 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
     make install && \
     make install DESTDIR=/home/build
 
+ifelse(index(DOCKER_IMAGE,centos),-1,,
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+)dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 )dnl
@@ -148,9 +153,15 @@ define(`INSTALL_VA_GST_PLUGINS',dnl
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
-ENV PATH=${PATH}:/usr/local/bin:/usr/bin
+ENV PATH=/usr/bin:${PATH}:/usr/local/bin
+ifelse(index(DOCKER_IMAGE,centos),-1,,
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+)dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 )dnl
 
+ifelse(index(DOCKER_IMAGE,centos),-1,,
+RUN python3 -m pip install numpy
+)dnl
 )dnl

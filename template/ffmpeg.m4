@@ -2,7 +2,6 @@
 ARG FFMPEG_VER=n4.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
-ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 
 ARG FFMPEG_PATCHES_RELEASE_VER=0.1
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
@@ -26,7 +25,8 @@ RUN yum install -y -q libass-devel freetype-devel ifelse(FFMPEG_X11,ON,SDL2-deve
 
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg ifelse(index(DOCKER_IMAGE,owt),-1,&& \
-    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '0001*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i) ifelse(ifelse(index(DOCKER_IMAGE,dev),-1,'false','true'), ifelse(index(DOCKER_IMAGE,analytics),-1,'false','true'),;, && \
+    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '0001*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i) ifelse(ifelse(index(DOCKER_IMAGE,dev),-1,'false','true'), ifelse(index(DOCKER_IMAGE,analytics),-1,'false','true'), && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, && \
     find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 )dnl
 

@@ -347,7 +347,6 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 ARG FFMPEG_VER=n4.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
-ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 
 ARG FFMPEG_PATCHES_RELEASE_VER=0.1
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz

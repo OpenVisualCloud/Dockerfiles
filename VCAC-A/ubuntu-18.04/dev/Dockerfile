@@ -517,7 +517,6 @@ RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-
 
 
 
-
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
 ARG PAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
@@ -604,11 +603,12 @@ RUN mkdir -p build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0/python && \
     cp -r gst-video-analytics/python/gvapython.py build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0/python
 RUN mkdir -p /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0/python && \
     cp -r gst-video-analytics/python/gvapython.py /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0/python
-# Ubuntu1804
+
 RUN mkdir -p build/usr/lib/python3.6/gstgva && \
     cp -r gst-video-analytics/python/gstgva/* build/usr/lib/python3.6/gstgva
 RUN mkdir -p /usr/lib/python3.6/gstgva && \
     cp -r gst-video-analytics/python/gstgva/* /usr/lib/python3.6/gstgva
+
 
 
 # Build gstreamer python
@@ -631,7 +631,6 @@ ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/gireposit
 ARG FFMPEG_VER=n4.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
-ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 
 ARG FFMPEG_PATCHES_RELEASE_VER=0.1
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
@@ -686,7 +685,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/op
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
-ENV PATH=${PATH}:/usr/local/bin:/usr/bin
+ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 
 

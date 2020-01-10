@@ -503,10 +503,8 @@ RUN cd SVT-AV1/gstreamer-plugin && \
     make install
 
 
-RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel
+RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel python3 python36-gobject-devel python3-devel
 
-
-RUN yum install -y -q binutils uuid-devel python3 python36-gobject-devel python3-devel
 
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
@@ -596,6 +594,12 @@ RUN mkdir -p /usr/local/lib64/gstreamer-1.0/python && \
     cp -r gst-video-analytics/python/gvapython.py /usr/local/lib64/gstreamer-1.0/python
 
 
+
+RUN mkdir -p build/usr/lib64/python3.6/gstgva && \
+    cp -r gst-video-analytics/python/gstgva/* build/usr/lib64/python3.6/gstgva
+RUN mkdir -p /usr/lib64/python3.6/gstgva && \
+    cp -r gst-video-analytics/python/gstgva/* /usr/lib64/python3.6/gstgva
+
 # Build gstreamer python
 ARG GST_VER=1.16.0
 ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
@@ -607,6 +611,7 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
     make install && \
     make install DESTDIR=/home/build
 
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 
 
 
@@ -615,7 +620,6 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
 ARG FFMPEG_VER=n4.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
-ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 
 ARG FFMPEG_PATCHES_RELEASE_VER=0.1
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
@@ -677,6 +681,8 @@ ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
-ENV PATH=${PATH}:/usr/local/bin:/usr/bin
+ENV PATH=/usr/bin:${PATH}:/usr/local/bin
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 
+RUN python3 -m pip install numpy
 
