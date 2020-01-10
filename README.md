@@ -56,6 +56,7 @@ The service images provides ready to use services. See their image descriptions 
 | Image | Description |
 | :-----: | :----- | 
 | [owt](doc/owt.md)| Image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit. Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
+| [owt-immersive](doc/owt-immersive.md)| Image optimized for ultra-high resolution immersive video low latency streaming based on the WebRTC technology and Open WebRTC Toolkit. Included SVT-HEVC tile based 4K and 8K transcoding and field of view (FoV) adaptive streaming. see [owt-immersive.md](doc/owt-immersive.md) for details. |
 
 ### Support Matrix:
 

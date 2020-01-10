@@ -274,11 +274,11 @@ ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 
 # DLDT IE C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/master/thirdparty/dldt-c-api/source/dldt-c_api_v2-1.0.tar.gz
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.0.tar.gz
 
 ARG c_api_libdir="/usr/local/lib"
 RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-1.0 && \
+    cd dldt-c_api-2.0.0 && \
     mkdir -p build && cd build && \
     cmake -DENABLE_AVX512F=OFF .. && \
     make -j8 && \

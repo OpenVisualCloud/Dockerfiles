@@ -46,9 +46,9 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/sh
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 # OPENVINO C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.1_va/thirdparty/dldt-c-api/source/dldt-c_api_v2-1.0.1.tar.gz
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.0.tar.gz
 RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-1.0.1 && \
+    cd dldt-c_api-2.0.0 && \
     mkdir -p build && cd build && \
     cmake -DENABLE_AVX512F=OFF .. && \
     make -j8 && \
@@ -117,6 +117,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/op
 
 define(`INSTALL_PKGS_OPENVINO',dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,libjson-c2 libboost-thread1.58.0 libboost-filesystem1.58.0 libboost-system1.58.0 libusb-1.0-0-dev) dnl
-ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,libjson-c3 libboost-filesystem1.65.1 libboost-system1.65.1 libusb-1.0-0-dev) dnl
+ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,libjson-c3 libboost-filesystem1.65.1 libboost-system1.65.1 libusb-1.0-0-dev libboost-program-options1.65.1) dnl
 )dnl
 
