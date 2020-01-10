@@ -1,7 +1,7 @@
 # ![logo][]  Software Stack Dockerfiles
 [![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
 [![Dockerhub](https://img.shields.io/badge/Images-Dockerhub-blue.svg)](https://hub.docker.com/u/openvisualcloud)
-[![Stable release](https://img.shields.io/badge/latest_release-v19.11-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v19.11)
+[![Stable release](https://img.shields.io/badge/latest_release-v20.1-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v20.1)
 [![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
