@@ -33,7 +33,7 @@ See each sub-folder for a list of media analytics software stacks targeted for t
 | GStreamer | [ubuntu-16.04/analytics/gst/Dockerfile](ubuntu-16.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-analytics-gst) |
 |  build | [ubuntu-16.04/dev/Dockerfile](ubuntu-16.04/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-dev`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-dev) |
 
-Use the following command to pull the desired image and then transfer to the VCAC-A:     
+Use the following command to transfer any desired image to the VCAC-A:     
 
 ```
 docker pull openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg
@@ -64,7 +64,7 @@ Optionally, you can also mount:
 
 ## Setup the VCAC-A as Swarm Node:
 
-You can setup the VCAC-A as a docker swarm worker node. Any subsequent deployment will be as simple as `docker stack deploy`. It is recommended that you setup docker swarm on the host and the VCAC-A as a worker node for application development.       
+You can setup the VCAC-A as a docker swarm worker node. Any subsequent deployment will be as simple as `docker stack deploy`. It is recommended that you setup docker swarm on the host and the VCAC-A as a worker node for local application development.       
 
 Run the [setup_swarm.sh](./script/setup_swarm.sh) script on the host to setup docker swarm. The script initializes the host as a swarm master and labels the VCAC-A with `vcac_zone=yes`.   
 
