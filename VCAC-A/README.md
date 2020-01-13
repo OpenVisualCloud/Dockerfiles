@@ -52,11 +52,11 @@ The following `docker run` command line options are **required** to run docker c
 
 ```
 # Running openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg
-docker run --rm --user root --privileged -v /var/tmp/hddl_service.sock:/var/tmp/hddl_service.sock -v /var/tmp/hddl_service_ready.mutex:/var/tmp/hddl_service_ready.mutex -v /var/tmp/hddl_service_alive.mutex:/var/tmp/hddl_service_alive.mutex openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg /bin/bash
+docker run --rm --user root --privileged -v /var/tmp:/var/tmp openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg /bin/bash
 ```
 
 - **`--user root --privileged`**: The root privilege is required to mount the media and analytics acceleration devices.    
-- **`/var/tmp/hddl_service.sock, /var/tmp/hddl_service_ready.mutex` and `/var/tmp/hddl_service_alive.mutex`**: Mount the required auxiliary files for analytics acceleration.           
+- **`/var/tmp`**: Mount the required directory for analytics acceleration.           
 
 Optionally, you can also mount:   
 - **`-v /etc/localtime:/etc/localtime`**: Synchronize the time zone between the container and the VCAC-A.  
@@ -170,27 +170,15 @@ The VCAC-A deployment script looks like the following (from the [Smart City](htt
           image: smtc_analytics_object_detection_vcac-a_gst:latest
           imagePullPolicy: IfNotPresent
           volumeMounts:
-            - mountPath: /var/tmp/hddl_service.sock
-              name: var-tmp-hddl-service-sock
-            - mountPath: /var/tmp/hddl_service_ready.mutex
-              name: var-tmp-hddl-service-ready-mutex
-            - mountPath: /var/tmp/hddl_service_alive.mutex
-              name: var-tmp-hddl-service-alive-mutex
+            - mountPath: /var/tmp
+              name: var-tmp
           securityContext:
             privileged: true
       volumes:
-          - name: var-tmp-hddl-service-sock
+          - name: var-tmp
             hostPath:
-              path: /var/tmp/hddl_service.sock
-              type: Socket
-          - name: var-tmp-hddl-service-ready-mutex
-            hostPath:
-              path: /var/tmp/hddl_service_ready.mutex
-              type: File
-          - name: var-tmp-hddl-service-alive-mutex
-            hostPath:
-              path: /var/tmp/hddl_service_alive.mutex
-              type: File
+              path: /var/tmp
+              type: Directory
       nodeSelector:
           vcac-zone: "yes"
 ...
@@ -198,7 +186,7 @@ The VCAC-A deployment script looks like the following (from the [Smart City](htt
 
 where you must:
 
-- Mount the auxiliary files: `/var/tmp/hddl_service.sock`, `/var/tmp/hddl_service_ready.mutex`, and `/var/tmp/hddl_service_alive.mutex`.   
+- Mount the `/var/tmp` directory.   
 - Set the `securityContext` to be `priviledged`. This will mount the devices for media and analytics acceleration.   
 - Select the VCAC-A node by label `vcac-zone=yes`.   
 
