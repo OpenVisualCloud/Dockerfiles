@@ -25,10 +25,10 @@ RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
 
 
 # Build nginx-http-flv
-ARG NGINX_HTTP_FLV_VER=04dc8369b260c8c851f12fc30ea2f9df03f73c4e
+ARG NGINX_HTTP_FLV_VER=v1.2.7
 ARG NGINX_HTTP_FLV_REPO=https://github.com/winshining/nginx-http-flv-module.git
 
-ARG NGINX_HTTP_FLV_PATCHES_RELEASE_VER=0.1
+ARG NGINX_HTTP_FLV_PATCHES_RELEASE_VER=0.2
 ARG NGINX_HTTP_FLV_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${NGINX_HTTP_FLV_PATCHES_RELEASE_VER}.tar.gz
 ARG NGINX_HTTP_FLV_PATCHES_PATH=/home/CDN-${NGINX_HTTP_FLV_PATCHES_RELEASE_VER}
 RUN wget -O - ${NGINX_HTTP_FLV_PATCHES_RELEASE_URL} | tar xz
@@ -46,8 +46,8 @@ ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/${
 
 RUN wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
-# Build nginx & nginx-rtmp
-ARG NGINX_VER=1.14.2
+# Build nginx & nginx-http-flv
+ARG NGINX_VER=1.15.12
 ARG NGINX_REPO=https://nginx.org/download/nginx-${NGINX_VER}.tar.gz
 
 RUN yum install -y -q openssl-devel pcre2-devel zlib-devel libxslt-devel
