@@ -51,6 +51,7 @@ ARG LIBNICE_PATCH_REPO_01=https://raw.githubusercontent.com/open-webrtc-toolkit/
 ARG LIBNICE_PATCH_REPO_02=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-agentlock-plus.patch
 ARG LIBNICE_PATCH_REPO_03=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-removecandidate.patch
 ARG LIBNICE_PATCH_REPO_04=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-keepalive.patch
+ARG LIBNICE_PATCH_REPO_05=https://raw.githubusercontent.com/open-webrtc-toolkit/owt-server/master/scripts/patches/libnice014-startcheck.patch
 
 RUN yum install -y -q glib2-devel
 
@@ -60,12 +61,13 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
     wget -O - ${LIBNICE_PATCH_REPO_02} | patch -p1 && \
     wget -O - ${LIBNICE_PATCH_REPO_03} | patch -p1 && \
     wget -O - ${LIBNICE_PATCH_REPO_04} | patch -p1 && \
+    wget -O - ${LIBNICE_PATCH_REPO_05} | patch -p1 && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
     make -s V= && \
     make install
 
 # Build open ssl
-ARG OPENSSL_VER="1.0.2r"
+ARG OPENSSL_VER="1.0.2t"
 ARG OPENSSL_REPO=http://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz
 
 RUN wget -O - ${OPENSSL_REPO} | tar xz && \

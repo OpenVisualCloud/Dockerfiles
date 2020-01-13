@@ -86,7 +86,7 @@ setup_crontab()
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=""
-@reboot (source /opt/intel/openvino/bin/setupvars.sh;modprobe myd_ion;modprobe i2c-i801;modprobe i2c-dev;while true; do /opt/intel/openvino/deployment_tools/inference_engine/external/hddl/bin/hddldaemon; sleep 30s; done) > /var/log/hddl-daemon.log 2>&1
+* * * * * pid=/var/run/run_hddl_daemon.pid;if [-f \$pid] && kill -0 \$(cat \$pid) 2>/dev/null;then exit 0;fi;echo \$\$ >\$pid;. /opt/intel/openvino/bin/setupvars.sh;modprobe myd_ion;modprobe i2c-i801;modprobe i2c-dev;/opt/intel/openvino/deployment_tools/inference_engine/external/hddl/bin/hddldaemon >/var/log/hddl-daemon.log 2>&1
 EOF
 }
 

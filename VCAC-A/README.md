@@ -33,7 +33,7 @@ See each sub-folder for a list of media analytics software stacks targeted for t
 | GStreamer | [ubuntu-16.04/analytics/gst/Dockerfile](ubuntu-16.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-analytics-gst) |
 |  build | [ubuntu-16.04/dev/Dockerfile](ubuntu-16.04/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-dev`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-dev) |
 
-Use the following command to pull the desired image and then transfer to the VCAC-A:     
+Use the following command to transfer any desired image to the VCAC-A:     
 
 ```
 docker pull openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg
@@ -52,11 +52,11 @@ The following `docker run` command line options are **required** to run docker c
 
 ```
 # Running openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg
-docker run --rm --user root --privileged -v /var/tmp/hddl_service.sock:/var/tmp/hddl_service.sock -v /var/tmp/hddl_service_ready.mutex:/var/tmp/hddl_service_ready.mutex -v /var/tmp/hddl_service_alive.mutex:/var/tmp/hddl_service_alive.mutex openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg /bin/bash
+docker run --rm --user root --privileged -v /var/tmp:/var/tmp openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg /bin/bash
 ```
 
 - **`--user root --privileged`**: The root privilege is required to mount the media and analytics acceleration devices.    
-- **`/var/tmp/hddl_service.sock, /var/tmp/hddl_service_ready.mutex` and `/var/tmp/hddl_service_alive.mutex`**: Mount the required auxiliary files for analytics acceleration.           
+- **`/var/tmp`**: Mount the required directory for analytics acceleration.           
 
 Optionally, you can also mount:   
 - **`-v /etc/localtime:/etc/localtime`**: Synchronize the time zone between the container and the VCAC-A.  
@@ -64,7 +64,7 @@ Optionally, you can also mount:
 
 ## Setup the VCAC-A as Swarm Node:
 
-You can setup the VCAC-A as a docker swarm worker node. Any subsequent deployment will be as simple as `docker stack deploy`. It is recommended that you setup docker swarm on the host and the VCAC-A as a worker node for application development.       
+You can setup the VCAC-A as a docker swarm worker node. Any subsequent deployment will be as simple as `docker stack deploy`. It is recommended that you setup docker swarm on the host and the VCAC-A as a worker node for local application development.       
 
 Run the [setup_swarm.sh](./script/setup_swarm.sh) script on the host to setup docker swarm. The script initializes the host as a swarm master and labels the VCAC-A with `vcac_zone=yes`.   
 
@@ -128,7 +128,7 @@ The VCAC-A node does not have a dedicated IP address accessible from the network
 
 #### Setup Kubernetes:
 
-- Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster. You must install [WeaveNet](https://kubernetes.io/docs/concepts/cluster-administration/networking/) as the cluster networking solution.     
+- Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster. You must install [WeaveNet](https://www.weave.works/docs/net/latest/kubernetes/kube-addon) as the cluster networking solution.     
 - Logon to the VCAC-A host and then the VCAC-A node. Join both the host and the VCAC-A node as worker nodes. 
 - Optionally, label the VCAC-A worker as `vcac-zone=yes`: `kubectl label node vcanode0 "vcac-zone=yes"`    
 
@@ -156,7 +156,7 @@ Now you can use `kubectl vcac logs` or `kubectl vcac exec` to retrieve logs and 
 
 ```sh
 kubectl vcac logs -f <pod-id>
-kubectl vcac exec <pod-id> /bin/bash
+kubectl vcac exec -it <pod-id> /bin/bash
 ```
 
 #### Develop Deployment Script:
@@ -170,27 +170,15 @@ The VCAC-A deployment script looks like the following (from the [Smart City](htt
           image: smtc_analytics_object_detection_vcac-a_gst:latest
           imagePullPolicy: IfNotPresent
           volumeMounts:
-            - mountPath: /var/tmp/hddl_service.sock
-              name: var-tmp-hddl-service-sock
-            - mountPath: /var/tmp/hddl_service_ready.mutex
-              name: var-tmp-hddl-service-ready-mutex
-            - mountPath: /var/tmp/hddl_service_alive.mutex
-              name: var-tmp-hddl-service-alive-mutex
+            - mountPath: /var/tmp
+              name: var-tmp
           securityContext:
             privileged: true
       volumes:
-          - name: var-tmp-hddl-service-sock
+          - name: var-tmp
             hostPath:
-              path: /var/tmp/hddl_service.sock
-              type: Socket
-          - name: var-tmp-hddl-service-ready-mutex
-            hostPath:
-              path: /var/tmp/hddl_service_ready.mutex
-              type: File
-          - name: var-tmp-hddl-service-alive-mutex
-            hostPath:
-              path: /var/tmp/hddl_service_alive.mutex
-              type: File
+              path: /var/tmp
+              type: Directory
       nodeSelector:
           vcac-zone: "yes"
 ...
@@ -198,7 +186,7 @@ The VCAC-A deployment script looks like the following (from the [Smart City](htt
 
 where you must:
 
-- Mount the auxiliary files: `/var/tmp/hddl_service.sock`, `/var/tmp/hddl_service_ready.mutex`, and `/var/tmp/hddl_service_alive.mutex`.   
+- Mount the `/var/tmp` directory.   
 - Set the `securityContext` to be `priviledged`. This will mount the devices for media and analytics acceleration.   
 - Select the VCAC-A node by label `vcac-zone=yes`.   
 

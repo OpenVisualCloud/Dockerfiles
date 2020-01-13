@@ -9,8 +9,8 @@ The FFmpeg docker images are compiled with the following audio and video codecs:
 |fdk-acc|0.1.6|x265|2.9|
 |mp3lame|3.100|vpx|1.7.0|
 |opus|1.2.1|aom|1.0.0|
-|ogg|1.3.3|SVT-HEVC|v1.4.2|
-|vorbis|1.3.6|SVT-AV1|0.7.5|
+|ogg|1.3.3|SVT-HEVC|v1.4.3|
+|vorbis|1.3.6|SVT-AV1|0.8.0|
 |x264|stable|SVT-VP9*|d18b4a|
 
 \* SVT-VP9 encoder app only. SVT-VP9 not yet available as a FFmpeg plugin. 
@@ -22,9 +22,8 @@ The FFmpeg builds included the following patches for feature enhancement, better
 | Patch | Description |
 |-------|-------------|
 |[11625](https://patchwork.ffmpeg.org/patch/11625/raw)|Enhance 1:N transcoding performance.|
-|[11035](https://patchwork.ffmpeg.org/patch/11035/raw)|Fix libvpx to run on Intel(R) Xeon(R) processors.|
 |[H.265 FLV](https://github.com/VCDP/CDN/archive/v0.1.tar.gz)|Support H.265 in FLV for RTMP streaming.|
-|[IE_FILTERS](https://github.com/VCDP/FFmpeg-patch/tree/ffmpeg4.1_va/patches )|Enables FFmpeg analytics pipeline with the elementary inference features.|
+|[IE_FILTERS](https://github.com/VCDP/FFmpeg-patch/tree/ffmpeg4.2_va/patches )|Enables FFmpeg analytics pipeline with the elementary inference features.|
 |[SVT-HEVC](https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-HEVC plugin|
 |[SVT-AV1](https://github.com/OpenVisualCloud/SVT-AV1/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-AV1 plugin|
 

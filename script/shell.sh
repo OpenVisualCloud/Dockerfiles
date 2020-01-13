@@ -15,6 +15,6 @@ if [ -z "$TRAVIS" ] && [ -z "$JENKINS_URL" ]; then DOCKER_IT="-it"; else DOCKER_
 
 TEST="${DIR}/../../../../test/"
 
-sudo docker run $DEVICE_DIR --rm -v "${TEST}:/mnt:ro" $(env | grep -E '_(proxy|REPO|VER)=' | sed 's/^/-e /') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG /-e /') $DOCKER_IT "${PREFIX}/${IMAGE}" ${*-/bin/bash}
+sudo docker run $DEVICE_DIR --rm -v "${TEST}:/mnt:ro" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/-e /') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG \([^=]*\)=.*/-e \1/') $DOCKER_IT "${PREFIX}/${IMAGE}" ${*-/bin/bash}
 
 
