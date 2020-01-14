@@ -42,16 +42,10 @@ script:
 
 matrix:
   fast_finish: true
-  allow_failures: # NGINX RTMP tests are not stable, gst analytics images and dev images run out of time
+  allow_failures: # NGINX RTMP tests are not stable, analytics dev images run out of time
     - name: centos-7.6/dev
     - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx
-    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst
-    - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=dev
     - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev
-    - env: CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=dev
     - name: ubuntu-18.04/dev
     - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx
     - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst
-    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=dev
-    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev
-    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=dev
