@@ -7,10 +7,9 @@ fi
 BUILD_MP3LAME="${1:-ON}"
 BUILD_FDKAAC="${2:-ON}"
 ONLY_DOCKERFILES="${3:-OFF}"
-
+DOCKER_PREFIX="${4:-openvisualcloud}"
 TEMPLATE="${DIR}/../../../../template/"
 
-PREFIX="${PREFIX:-openvisualcloud}"
 
 for m4file in "${DIR}"/*.m4; do
     if test -f "$m4file"; then
@@ -24,8 +23,8 @@ fi
 
 if test "${ONLY_DOCKERFILES}" = 'OFF'; then
   if grep -q 'AS build' "${DIR}/Dockerfile"; then
-      sudo docker build --network=host --target build -t "${PREFIX}/${IMAGE}:build" "$DIR" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /')
+      sudo docker build --network=host --target build -t "${DOCKER_PREFIX}/${IMAGE}:build" "$DIR" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /')
   fi
 
-  sudo docker build --network=host -t "${PREFIX}/${IMAGE}:${VERSION}" -t "${PREFIX}/${IMAGE}:latest" "$DIR" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /')
+  sudo docker build --network=host -t "${DOCKER_PREFIX}/${IMAGE}:${VERSION}" -t "${DOCKER_PREFIX}/${IMAGE}:latest" "$DIR" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /')
 fi
