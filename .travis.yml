@@ -7,47 +7,47 @@ addons:
       - docker-ce
     update: true
 env:
-  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=ffmpeg PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=ffmpeg PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=gst PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=dev PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=dev PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=ffmpeg PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=ffmpeg PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=gst PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=service imageName=owt PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=dev PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=dev PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=service imageName=owt DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=dev DOCKER_PREFIX=ovccache
 
 before_install:
   - docker version
 before_script:
-  - docker pull ${PREFIX}/${echo ${buildOS} | tr -d - | tr -d .}/${usage}/${imageName}:build || true
-  - docker pull ${PREFIX}/${echo ${buildOS} | tr -d - | tr -d .}/${usage}/${imageName}:latest || true
+  - docker pull ${DOCKER_PREFIX}/${echo ${buildOS} | tr -d - | tr -d .}/${usage}/${imageName}:build || true
+  - docker pull ${DOCKER_PREFIX}/${echo ${buildOS} | tr -d - | tr -d .}/${usage}/${imageName}:latest || true
 script:
   - &basescript |
-    mkdir build && cd build && cmake -DBUILD_MP3LAME=OFF -DBUILD_FDKAAC=OFF -DPREFIX=${PREFIX} ..
+    mkdir build && cd build && cmake -DBUILD_MP3LAME=OFF -DBUILD_FDKAAC=OFF -DDOCKER_PREFIX=${PREFIX} ..
     cd ${CPU}/${buildOS}/${usage}/${imageName}
   - make
   - travis_retry ctest -V
 after_success:
   - docker login -u $REGISTRY_USER -p $REGISTRY_PASS
-  - docker push ${PREFIX}/${echo ${buildOS} | tr -d - | tr -d .}/${usage}/${imageName}:build
-  - docker push ${PREFIX}/${echo ${buildOS} | tr -d - | tr -d .}/${usage}/${imageName}:latest
+  - docker push ${DOCKER_PREFIX}/${echo ${buildOS} | tr -d - | tr -d .}/${usage}/${imageName}:build
+  - docker push ${DOCKER_PREFIX}/${echo ${buildOS} | tr -d - | tr -d .}/${usage}/${imageName}:latest
 
 matrix:
   fast_finish: true
   allow_failures: # NGINX RTMP tests are not stable, analytics dev images run out of time
     - name: centos-7.6/dev
-    - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx PREFIX=ovccache
-    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev PREFIX=ovccache
+    - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
     - name: ubuntu-18.04/dev
-    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx PREFIX=ovccache
-    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst PREFIX=ovccache
+    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst DOCKER_PREFIX=ovccache
