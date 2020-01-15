@@ -15,6 +15,10 @@ env:
   - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=ospray
   - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=ospray-mpi
   - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt
+  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt-immersive
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=dev
+  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev
+  - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=dev
   - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=ffmpeg
   - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst
   - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=ffmpeg
@@ -23,57 +27,25 @@ env:
   - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=ospray
   - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=ospray-mpi
   - CPU=Xeon buildOS=ubuntu-18.04 usage=service imageName=owt
-  - CPU=Xeon buildOS=centos-7.4 usage=analytics imageName=ffmpeg
-  - CPU=Xeon buildOS=centos-7.4 usage=analytics imageName=gst
-  - CPU=Xeon buildOS=centos-7.4 usage=media imageName=ffmpeg
-  - CPU=Xeon buildOS=centos-7.4 usage=media imageName=gst
-  - CPU=Xeon buildOS=centos-7.4 usage=media imageName=nginx
-  - CPU=Xeon buildOS=centos-7.4 usage=graphics imageName=ospray
-  - CPU=Xeon buildOS=centos-7.4 usage=graphics imageName=ospray-mpi
-  - CPU=Xeon buildOS=centos-7.5 usage=analytics imageName=ffmpeg
-  - CPU=Xeon buildOS=centos-7.5 usage=analytics imageName=gst
-  - CPU=Xeon buildOS=centos-7.5 usage=media imageName=ffmpeg
-  - CPU=Xeon buildOS=centos-7.5 usage=media imageName=gst
-  - CPU=Xeon buildOS=centos-7.5 usage=media imageName=nginx
-  - CPU=Xeon buildOS=centos-7.5 usage=graphics imageName=ospray
-  - CPU=Xeon buildOS=centos-7.5 usage=graphics imageName=ospray-mpi
-  - CPU=Xeon buildOS=ubuntu-16.04 usage=analytics imageName=ffmpeg
-  - CPU=Xeon buildOS=ubuntu-16.04 usage=analytics imageName=gst
-  - CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=ffmpeg
-  - CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=gst
-  - CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=nginx
-  - CPU=Xeon buildOS=ubuntu-16.04 usage=graphics imageName=ospray
-  - CPU=Xeon buildOS=ubuntu-16.04 usage=graphics imageName=ospray-mpi
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=dev
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=dev
 
 before_install:
   - docker version
 script:
   - &basescript |
-    mkdir build && cd build && cmake ..
+    mkdir build && cd build && cmake -DBUILD_MP3LAME=OFF -DBUILD_FDKAAC=OFF ..
     cd ${CPU}/${buildOS}/${usage}/${imageName}
   - make
   - travis_retry ctest -V
 
 matrix:
   fast_finish: true
-  allow_failures: # All images with GST will have GST SVT VP9 test failing. NGINX RTMP tests are not stable
-    - name: centos-7.4/dev
-    - env: CPU=Xeon buildOS=centos-7.4 usage=analytics imageName=gst
-    - env: CPU=Xeon buildOS=centos-7.4 usage=media imageName=gst
-    - env: CPU=Xeon buildOS=centos-7.4 usage=media imageName=nginx
-    - name: centos-7.5/dev
-    - env: CPU=Xeon buildOS=centos-7.5 usage=analytics imageName=gst
-    - env: CPU=Xeon buildOS=centos-7.5 usage=media imageName=gst
-    - env: CPU=Xeon buildOS=centos-7.5 usage=media imageName=nginx
+  allow_failures: # NGINX RTMP tests are not stable, analytics dev images run out of time
     - name: centos-7.6/dev
-    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst
-    - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=gst
     - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx
-    - name: ubuntu-16.04/dev
-    - env: CPU=Xeon buildOS=ubuntu-16.04 usage=analytics imageName=gst
-    - env: CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=gst
-    - env: CPU=Xeon buildOS=ubuntu-16.04 usage=media imageName=nginx
+    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev
     - name: ubuntu-18.04/dev
-    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst
-    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=gst
     - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx
+    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst
