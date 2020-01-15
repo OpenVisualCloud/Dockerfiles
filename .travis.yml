@@ -29,7 +29,7 @@ env:
 before_install:
   - docker version
 before_script:
-  - OS=echo ${buildOS} | tr -d - | tr -d .
+  - echo $REGISTRY_PASS | docker login -u $REGISTRY_USER --password-stdin
   - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:build || true
   - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest || true
 script:
@@ -39,7 +39,6 @@ script:
   - make
   - travis_retry ctest -V
 after_success:
-  - docker login -u $REGISTRY_USER -p $REGISTRY_PASS
   - docker push $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:build 
   - docker push $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest 
 
