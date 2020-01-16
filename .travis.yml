@@ -30,7 +30,7 @@ env:
 before_install:
   - docker version
 before_script:
-  - echo "$REGISTRY_PASS" | docker login --username  ovckey --password-stdin
+  - docker login --username ovckey --password "$REGISTRY_PASS"
   - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:build || true
   - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest || true
 script:
