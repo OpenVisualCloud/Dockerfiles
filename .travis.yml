@@ -1,5 +1,6 @@
 language: bash
 dist: xenial
+sudo: required
 services: docker
 addons:
   apt:
@@ -7,45 +8,45 @@ addons:
       - docker-ce
     update: true
 env:
-  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=ffmpeg
-  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=ffmpeg
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=gst
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx
-  - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=ospray
-  - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=ospray-mpi
-  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt
-  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt-immersive
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=dev
-  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev
-  - CPU=Xeon buildOS=centos-7.6 usage=graphics imageName=dev
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=ffmpeg
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=ffmpeg
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=gst
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=ospray
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=ospray-mpi
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=service imageName=owt
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=dev
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=graphics imageName=dev
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=svt DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=svt DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=ubuntu-18.04 usage=service imageName=owt DOCKER_PREFIX=ovccache
 
 before_install:
   - docker version
+before_script:
+  - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:build || true
+  - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest || true
 script:
   - &basescript |
-    mkdir build && cd build && cmake -DBUILD_MP3LAME=OFF -DBUILD_FDKAAC=OFF ..
+    mkdir build && cd build && cmake -DBUILD_MP3LAME=OFF -DBUILD_FDKAAC=OFF -DDOCKER_PREFIX=${DOCKER_PREFIX} ..
     cd ${CPU}/${buildOS}/${usage}/${imageName}
   - make
   - travis_retry ctest -V
+after_success:
+  - docker login -u ovckey -p $REGISTRY_PASS
+  - docker push $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:build 
+  - docker push $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest 
 
 matrix:
   fast_finish: true
   allow_failures: # NGINX RTMP tests are not stable, analytics dev images run out of time
     - name: centos-7.6/dev
-    - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx
-    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev
+    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
     - name: ubuntu-18.04/dev
-    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx
-    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst
+    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev DOCKER_PREFIX=ovccache

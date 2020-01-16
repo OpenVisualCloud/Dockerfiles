@@ -14,6 +14,10 @@ if (NOT DEFINED ONLY_DOCKERFILES)
     set(ONLY_DOCKERFILES "OFF")
 endif()
 
+if (NOT DEFINED DOCKER_PREFIX)
+    set(DOCKER_PREFIX "openvisualcloud")
+endif()
+
 enable_testing()
 
 file(GLOB dirs "*")
@@ -30,5 +34,6 @@ message(
     "Please familiarize yourself with those terms to ensure your distribution of those components complies with the terms of those licenses.\n"
     "\n-- Setting: BUILD_MP3LAME=${BUILD_MP3LAME}\n"
     "-- Setting: BUILD_FDKAAC=${BUILD_FDKAAC}\n"
-    "-- Setting: ONLY_DOCKERFILES=${ONLY_DOCKERFILES}\n")
+    "-- Setting: ONLY_DOCKERFILES=${ONLY_DOCKERFILES}\n"
+    "-- Setting: DOCKER_PREFIX=${DOCKER_PREFIX}\n")
 
