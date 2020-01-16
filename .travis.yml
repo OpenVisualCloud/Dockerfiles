@@ -30,8 +30,8 @@ env:
 before_install:
   - docker version
 before_script:
-  - echo "111=$REGISTRY_PASS"
-  - docker login -u ovckey -p $REGISTRY_PASS
+  - echo 111=${REGISTRY_PASS}
+  - docker login -u ovckey -p Intel123I
   - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:build || true
   - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest || true
 script:
