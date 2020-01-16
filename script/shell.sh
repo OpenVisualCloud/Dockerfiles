@@ -20,4 +20,3 @@ if echo ${IMAGE} | grep -q "vcaca"; then
 else
     sudo -E docker run $DEVICE_DIR --rm -v "${TEST}:/mnt:ro" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/-e /') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG \([^=]*\)=.*/-e \1/') $DOCKER_IT "${DOCKER_PREFIX}/${IMAGE}" ${*-/bin/bash}
 fi
-
