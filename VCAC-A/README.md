@@ -185,7 +185,7 @@ where you must:
 
 - Mount the `/var/tmp` directory.   
 - Set the `securityContext` to be `priviledged`. This will mount the devices for media and analytics acceleration.   
-- Select the VCAC-A node by label `vcac-zone=yes`.   
+- Select the VCAC-A node(s) by the `vcac-zone=yes` label. (You need to label the VCAC-A node(s) beforehand.)   
 
 #### See Also:   
 - [WeaveNet Installation](https://www.weave.works/docs/net/latest/install)   
