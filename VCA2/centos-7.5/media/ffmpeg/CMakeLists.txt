@@ -1,3 +1,3 @@
 set(image "vca2_ffmpeg_centos75")
-include("${CMAKE_SOURCE_DIR}/script/image.cmake")
-include("${CMAKE_SOURCE_DIR}/script/ffmpeg-tests.cmake")
+include(image)
+include(ffmpeg-tests)
