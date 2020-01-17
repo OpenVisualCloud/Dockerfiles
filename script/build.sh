@@ -1,8 +1,8 @@
 #!/bin/bash -e
 if test -z "${DIR}"; then 
     echo "This script should not be called directly."
-    exit -1
-fi 
+    exit 1
+fi
 
 BUILD_MP3LAME="${1:-ON}"
 BUILD_FDKAAC="${2:-ON}"

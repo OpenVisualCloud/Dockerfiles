@@ -2,7 +2,7 @@
 
 if test -z "${DIR}"; then
     echo "This script should not be called directly."
-    exit -1
+    exit 1
 fi
 
 DOCKER_PREFIX="${DOCKER_PREFIX:-openvisualcloud}"
