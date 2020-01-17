@@ -8,7 +8,7 @@ BUILD_MP3LAME="${1:-ON}"
 BUILD_FDKAAC="${2:-ON}"
 ONLY_DOCKERFILES="${3:-OFF}"
 DOCKER_PREFIX="${4:-openvisualcloud}"
-TEMPLATE="${DIR}/../../../../template/"
+TEMPLATE="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/../template/"
 BUILD_CACHE=""
 FULL_CACHE=""
 
