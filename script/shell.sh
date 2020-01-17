@@ -5,7 +5,7 @@ if [[ -z $DIR ]]; then
     exit 1
 fi
 
-DOCKER_PREFIX="${DOCKER_PREFIX:-openvisualcloud}"
+: "${DOCKER_PREFIX:=openvisualcloud}"
 
 if [[ -d /dev/dri ]]; then
     DEVICE_DIR=--device=/dev/dri:/dev/dri
