@@ -130,7 +130,7 @@ The VCAC-A node does not have a dedicated IP address accessible from the network
 
 First designate certain IP network range for the WeaveNet virtual network. The default is `172.30.0.0/16`. Modify `/etc/environment` to add this network range into your `no_proxy` environment variable, if you are behind a corporate firewall.     
 
-Run the [`setup_weave.sh`](script/setup_weave.sh) script, as `./setup_weave.sh <cluster-master-node-host-name> [virtual-network-IP-range]`, on every cluster node. Start with the cluster master node and then on each cluster worker node. The script performs the following tasks:      
+Run the [`setup_weave.sh`](script/setup_weave.sh) script, as `./setup_weave.sh <cluster-master-node-host-name> [virtual-network-IP-range]`, on every cluster node, starting with the cluster master node and then on each cluster worker node. The script performs the following tasks:      
 - Download the WeaveNet software under `/usr/local/bin`.       
 - Start a `weave.service` that connects your node to the cluster master node.   
 - Configure `kubelet` of your node IP address.   
@@ -144,11 +144,11 @@ For VCAC-A, run the [`setup_weave.sh`](script/setup_weave.sh) script on both the
 
 #### Setup Kubernetes:
 
-Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster. During the master-node setup, you need to add `--apiserver-advertise-address=172.30.xx.xx` to your `kudeadm init` command, where `172.32.xx.xx` is the WeaveNet IP address displayed during the [Setup WeaveNet](#Setup-WeaveNet) section.   
+Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster, with the following additions during the master-node setup:   
+- Add `--apiserver-advertise-address=$(/usr/local/bin/weave expose)` to your `kudeadm init` command. The command `/usr/local/bin/weave expose` retrieve the WeaveNet IP address of the master-node.          
+- When Kubernetes asks you to install a POD network plugin, you can install any Layer-3 (IP) [network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking). For example, [flannel](https://github.com/coreos/flannel) is a good place to start.      
 
-Kubernetes asks you to install a POD network plugin during the master-node setup. You can install any Layer-3 (IP) [network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking). For example, [flannel](https://github.com/coreos/flannel) is a good place to start.      
-
-Join the Kubernetes worker nodes to the cluster, and you are done with the Kubernetes setup.  
+Join the Kubernetes worker nodes to the cluster and you are done with the Kubernetes setup.     
 
 ---
 
