@@ -144,17 +144,16 @@ For VCAC-A, run the [`setup_weave.sh`](script/setup_weave.sh) script on both the
 
 #### Setup Kubernetes:
 
-Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster, with the following additions during the master-node setup:   
-- Add `--apiserver-advertise-address=$(/usr/local/bin/weave expose)` to your `kudeadm init` command. `$(/usr/local/bin/weave expose)` retrieves the WeaveNet IP address of the master-node.          
-- You can install any Layer-3 (IP-based) [POD network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking). For example, [flannel](https://github.com/coreos/flannel) is a good place to start.      
+- Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster, with the following additions during the master-node setup:   
+  - Add `--apiserver-advertise-address=$(/usr/local/bin/weave expose)` to your `kudeadm init` command. `$(/usr/local/bin/weave expose)` retrieves the WeaveNet IP address of the master-node.          
+  - You can install any Layer-3 (IP-based) [POD network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking). For example, [flannel](https://github.com/coreos/flannel) is a good place to start.      
 
-Join the Kubernetes worker nodes to the cluster and you are done with the Kubernetes setup.     
+- Join the Kubernetes worker nodes to the cluster. For VCAC-A, join both the VCAC-A host and each VCAC-A node to the Kubernetes cluster.    
+- Finally, add a node label to each VCAC-A worker node for POD scheduling as follows:    
 
----
-
-For VCAC-A, join both the VCAC-A host and each VCAC-A node to the Kubernetes cluster.    
-
----
+```bash
+kubectl label node <node-name> vcac-zone=yes
+```
 
 #### Develop Deployment Script:
 
@@ -185,7 +184,7 @@ where you must:
 
 - Mount the `/var/tmp` directory.   
 - Set the `securityContext` to be `priviledged`. This will mount the devices for media and analytics acceleration.   
-- Select the VCAC-A node(s) by the `vcac-zone=yes` label. (You need to label the VCAC-A node(s) beforehand.)   
+- Select the VCAC-A node(s) by the `vcac-zone=yes` label.      
 
 #### See Also:   
 - [WeaveNet Installation](https://www.weave.works/docs/net/latest/install)   
