@@ -145,8 +145,8 @@ For VCAC-A, run the [`setup_weave.sh`](script/setup_weave.sh) script on both the
 #### Setup Kubernetes:
 
 Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster, with the following additions during the master-node setup:   
-- Add `--apiserver-advertise-address=$(/usr/local/bin/weave expose)` to your `kudeadm init` command. The command `/usr/local/bin/weave expose` retrieve the WeaveNet IP address of the master-node.          
-- When Kubernetes asks you to install a POD network plugin, you can install any Layer-3 (IP) [network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking). For example, [flannel](https://github.com/coreos/flannel) is a good place to start.      
+- Add `--apiserver-advertise-address=$(/usr/local/bin/weave expose)` to your `kudeadm init` command. `$(/usr/local/bin/weave expose)` retrieves the WeaveNet IP address of the master-node.          
+- You can install any Layer-3 (IP-based) [POD network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking). For example, [flannel](https://github.com/coreos/flannel) is a good place to start.      
 
 Join the Kubernetes worker nodes to the cluster and you are done with the Kubernetes setup.     
 
