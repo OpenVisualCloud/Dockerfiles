@@ -1,5 +1,5 @@
 # Build QAT Engine
-ARG QAT_ENGINE_VER=v0.5.39
+ARG QAT_ENGINE_VER=v0.5.42
 ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/${QAT_ENGINE_VER}.tar.gz
 
 RUN wget -O - ${QAT_ENGINE_REPO} | tar xz && mv QAT_Engine-${QAT_ENGINE_VER} QAT_Engine && \

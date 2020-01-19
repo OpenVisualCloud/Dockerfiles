@@ -17,8 +17,8 @@ RUN kernel_version=$(cat /proc/version | cut -f3 -d' ') && \
     yes "" | make -j8 modules;
 
 # Build the QAT Driver
-ARG QAT_DRIVER_VER=1.7.l.4.3.0-00033
-ARG QAT_DRIVER_REPO=https://01.org/sites/default/files/downloads/intelr-quickassist-technology/qat${QAT_DRIVER_VER}.tar.gz
+ARG QAT_DRIVER_VER=1.7.l.4.7.0-00006
+ARG QAT_DRIVER_REPO=https://01.org/sites/default/files/downloads/qat${QAT_DRIVER_VER}.tar.gz
 
 RUN kernel_version=$(cat /proc/version | cut -f3 -d' ') && \
     mkdir qat-driver && \

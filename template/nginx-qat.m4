@@ -1,5 +1,5 @@
 # Build NGINX Asynchronous Mode
-ARG NGINX_QAT_VER=v0.3.6
+ARG NGINX_QAT_VER=v0.4.0
 ARG NGINX_QAT_REPO=https://github.com/intel/asynch_mode_nginx/archive/${NGINX_QAT_VER}.tar.gz
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
