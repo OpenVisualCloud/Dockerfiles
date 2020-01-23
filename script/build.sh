@@ -28,7 +28,7 @@ if [[ $1 == -n ]]; then
 fi
 
 if [[ ${ONLY_DOCKERFILES} == OFF ]]; then
-    build_args=$(env | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /')
+    build_args=$(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /')
     if grep -q 'AS build' "${DIR}/Dockerfile"; then
         sudo -E docker build --network=host ${BUILD_CACHE} --target build -t "${DOCKER_PREFIX}/${IMAGE}:build" "$DIR" $build_args
     fi
