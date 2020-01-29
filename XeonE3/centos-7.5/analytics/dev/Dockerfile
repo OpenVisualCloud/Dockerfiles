@@ -283,17 +283,8 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
     make install DESTDIR=/home/build && \
     make install;
 
-ARG PYTHON_VER=3.6.6
-ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
-
 RUN yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel \
-    readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
-RUN wget -O - ${PYTHON_REPO} | tar xz && \
-    cd Python-${PYTHON_VER} && \
-    ./configure --prefix=/usr/local && \
-    make && \
-    make install && \
-    make install DESTDIR=/home/build
+    readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel python36
 RUN yum install -y -q python-yaml
 
 

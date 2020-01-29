@@ -250,9 +250,6 @@ RUN cd neo && \
 
 #clinfo needs to be installed after build directory is copied over
 
-ARG PYTHON_VER=3.6.6
-ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
-
 RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools python3-yaml
 
 
