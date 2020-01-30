@@ -122,41 +122,37 @@ where
 
 ## Setup the VCAC-A as Kubernetes Node:
 
-You can setup the VCAC-A as a Kubernetes worker node. Any subsequent deployment will be as simple as `kubectl apply`. It is recommended that you setup the VCAC-A as a Kubernetes worker node for application development.
+You can setup the VCAC-A as a Kubernetes worker node. Any subsequent deployment will be as simple as `kubectl apply`. It is recommended that you setup the VCAC-A as a Kubernetes worker node for application development and deployment.  
 
-The VCAC-A node does not have a dedicated IP address accessible from the network. Instead, the VCAC-A node accesses the network via NAT on the host machine. This does not meet the Kubernetes networking requirements, which assume that all workers are accessible via a unique IP address. [WeaveNet](https://github.com/weaveworks/weave) comes to rescue, which supports partially connected mesh network devices. With some `kubectl` workarounds, it's possible to use the VCAC-A as any regular Kubernetes nodes.   
+The VCAC-A node does not have a dedicated IP address accessible from the network. Instead, the VCAC-A node accesses the network via NAT on the host machine. Strictly speaking, this does not meet the Kubernetes networking requirement, which states that all worker nodes are accessible via a unique IP address. [WeaveNet](https://github.com/weaveworks/weave) comes to rescue, which supports partially connected network devices. The following sections describe the steps to setup the Weave virtual network and then install Kubernetes on top of the WeaveNet.    
+
+#### Setup WeaveNet:
+
+First designate certain IP network range for the WeaveNet virtual network. The default is `172.30.0.0/16`. Modify `/etc/environment` to add this network range into your `no_proxy` environment variable, if you are behind a corporate firewall.     
+
+Run the [`setup_weave.sh`](script/setup_weave.sh) script, as `./setup_weave.sh <cluster-master-node-host-name> [virtual-network-IP-range]`, on every cluster node, starting with the cluster master node and then on each cluster worker node. The script performs the following tasks:      
+- Download the WeaveNet software under `/usr/local/bin`.       
+- Start a `weave.service` that connects your node to the cluster master node.   
+- Configure `kubelet` of your node IP address.   
+- Show the WeaveNet IP address.     
+
+---
+
+For VCAC-A, run the [`setup_weave.sh`](script/setup_weave.sh) script on both the VCAC-A host and each VCAC-A node.    
+
+---
 
 #### Setup Kubernetes:
 
-- Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster. You must install [WeaveNet](https://www.weave.works/docs/net/latest/kubernetes/kube-addon) as the cluster networking solution.     
-- Logon to the VCAC-A host and then the VCAC-A node. Join both the host and the VCAC-A node as worker nodes. 
-- Optionally, label the VCAC-A worker as `vcac-zone=yes`: `kubectl label node vcanode0 "vcac-zone=yes"`    
+- Follow the [instructions](https://kubernetes.io/docs/setup) to setup the Kubernetes cluster, with the following additions during the master-node setup:   
+  - Add `--apiserver-advertise-address=$(/usr/local/bin/weave expose)` to your `kudeadm init` command. `$(/usr/local/bin/weave expose)` retrieves the WeaveNet IP address of the master-node.          
+  - You can install any Layer-3 (IP-based) [POD network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking). For example, [flannel](https://github.com/coreos/flannel) is a good place to start.      
 
-#### Kubectl Workarounds:
+- Join the Kubernetes worker nodes to the cluster. For VCAC-A, join both the VCAC-A host and each VCAC-A node to the Kubernetes cluster.    
+- Finally, add a node label to each VCAC-A worker node for POD scheduling as follows:    
 
-The `kubectl logs` and `kubectl exec` commands do not work on the VCAC-A nodes as the nodes are not directly accessible from the Kubernetes master. Instead, use `kubectl vcac logs` and `kubectl vcac exec`. Setup as follows:   
-- Copy the [kubectl-vcac-exec](script/kubectl-vcac-exec) and [kubectl-vcac-logs](script/kubectl-vcac-logs) scripts to any of the execution `PATH`, for example, under `~/bin`, on your Kubernetes master. Change permission to make them executable.   
-- Create a host file on the Kubernetes master under either `~/.vcac-hosts` or `/etc/vcac-hosts`, which describes the access information. The host file looks like the following:   
-
-```
-vcanode0/172.32.1.1 vcac-node-host
-vcanode1/172.32.1.2 vcac-node-host
-```
-
-where each line describes a VCAC-A node. `vcanode0/172.32.1.1` is the pair of the VCAC-A node name and internal IP address. The pair must be unique. The second field describes the VCAC-A host hostname or `username@hostname`, if the username differs.      
-
-- Setup password-less access from your Kubernetes master to the VCAC-A host(s), and from the VCAC-A host(s) to the VCAC-A node(s), if you haven't done so, as follows:   
-
-```sh
-ssh-keygen
-ssh-copy-id <username>@<hostname>
-```
-
-Now you can use `kubectl vcac logs` or `kubectl vcac exec` to retrieve logs and execute remote commands:  
-
-```sh
-kubectl vcac logs -f <pod-id>
-kubectl vcac exec -it <pod-id> /bin/bash
+```bash
+kubectl label node <node-name> vcac-zone=yes
 ```
 
 #### Develop Deployment Script:
@@ -188,9 +184,9 @@ where you must:
 
 - Mount the `/var/tmp` directory.   
 - Set the `securityContext` to be `priviledged`. This will mount the devices for media and analytics acceleration.   
-- Select the VCAC-A node by label `vcac-zone=yes`.   
+- Select the VCAC-A node(s) by the `vcac-zone=yes` label.      
 
-#### See Also:
-
+#### See Also:   
+- [WeaveNet Installation](https://www.weave.works/docs/net/latest/install)   
 - [AD Insertion Sample VCAC-A Setup](https://github.com/OpenVisualCloud/Ad-Insertion-Sample/blob/master/doc/vcac-a.md)
 - [Smart City Sample VCAC-A Setup](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/doc/vcac-a.md)
