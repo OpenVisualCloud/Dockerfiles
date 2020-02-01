@@ -298,20 +298,45 @@ RUN cd neo && \
 
 #clinfo needs to be installed after build directory is copied over
 
+# Build libjson-c
+ARG LIBJSONC_VER=0.13.1-20180305
+ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-${LIBJSONC_VER}.tar.gz
+
+RUN wget -O - ${LIBJSONC_REPO} | tar xz && \
+    cd json-c-json-c-${LIBJSONC_VER} && \
+    sh autogen.sh && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
+    make -j8 && \
+    make install DESTDIR="/home/build" && \
+    make install;
+
+# Build librdkafka
+ARG LIBRDKAFKA_VER=0.11.6
+ARG FILE_NAME=v${LIBRDKAFKA_VER}
+ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
+
+RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
+    cd librdkafka-${LIBRDKAFKA_VER} && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
+
 ARG OPENCV_VER=4.1.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
-RUN  ln -sf /usr/share/zoneinfo/UTC /etc/localtime;
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libeigen3-dev
 
 RUN wget ${OPENCV_REPO} && \
     tar -zxvf ${OPENCV_VER}.tar.gz && \
     cd opencv-${OPENCV_VER} && \
     mkdir build && \
     cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -D BUILD_EXAMPLES=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_DOCS=OFF -D BUILD_TESTS=OFF .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
     make -j $(nproc) && \
     make install DESTDIR=/home/build && \
     make install
+
 
 # Build DLDT-Inference Engine
 ARG DLDT_VER=2019_R3
@@ -393,30 +418,6 @@ ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
 
 
 
-# Build libjson-c
-ARG LIBJSONC_VER=0.13.1-20180305
-ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-${LIBJSONC_VER}.tar.gz
-
-RUN wget -O - ${LIBJSONC_REPO} | tar xz && \
-    cd json-c-json-c-${LIBJSONC_VER} && \
-    sh autogen.sh && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
-    make -j8 && \
-    make install DESTDIR="/home/build" && \
-    make install;
-
-# Build librdkafka
-ARG LIBRDKAFKA_VER=0.11.6
-ARG FILE_NAME=v${LIBRDKAFKA_VER}
-ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
-
-RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
-    cd librdkafka-${LIBRDKAFKA_VER} && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install;
-
 # Fetch FFmpeg source
 ARG FFMPEG_VER=n4.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
@@ -452,8 +453,16 @@ RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
     make -j8 && \
-    make install DESTDIR="/home/build"
+    make install && make install DESTDIR="/home/build"
 
+
+
+# remake opencv videoio to incorporate ffmpeg/gst
+RUN cd opencv-${OPENCV_VER}/build && \
+    rm -rf * && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
+    cd modules/videoio && \
+    make -j $(nproc) && \
+    cp -f ../../lib/libopencv_videoio.so.${OPENCV_VER} /home/build/usr/local/lib
 
 # Clean up after build
 RUN rm -rf /home/build/usr/include && \
