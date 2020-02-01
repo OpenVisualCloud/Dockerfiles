@@ -1,6 +1,4 @@
-if(NOT DEFINED os_dirs)
-    file(GLOB os_dirs "*")
-endif()
+file(GLOB os_dirs "*")
 
 foreach(dir ${os_dirs})
     if(EXISTS ${dir}/CMakeLists.txt)
