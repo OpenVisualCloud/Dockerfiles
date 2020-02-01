@@ -38,11 +38,12 @@ script:
     cd ${CPU}/${buildOS}/${usage}/${imageName}
   - make
   - travis_retry ctest -V
-after_success:
-  - docker login -u ovckey -p $REGISTRY_PASS
-  - docker push $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:build 
-  - docker push $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest 
-
+after_success: |
+   if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+        docker login -u ovckey -p $REGISTRY_PASS
+        docker push $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:build 
+        docker push $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest 
+   fi
 matrix:
   fast_finish: true
   allow_failures: # NGINX RTMP tests are not stable, analytics dev images run out of time
