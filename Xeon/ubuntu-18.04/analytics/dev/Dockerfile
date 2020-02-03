@@ -196,9 +196,6 @@ RUN git clone ${SVT_VP9_REPO} && \
     make install 
 
 #include(transform360.m4)
-ARG PYTHON_VER=3.6.6
-ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
-
 RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools python3-yaml
 
 
@@ -670,7 +667,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2  libnuma1 libass9 libssl1.1 libpciaccess0   libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-pip python3-setuptools python3-yaml libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid python3-numpy python3-gi python3-gi-cairo python3-dev \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2  libnuma1 libass9 libssl1.1 libpciaccess0   libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-yaml libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid python3-numpy python3-gi python3-gi-cairo python3-dev \
 vim && \
     rm -rf /var/lib/apt/lists/*
 
