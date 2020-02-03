@@ -6,5 +6,5 @@ RUN yum install -y -q python-yaml
 RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools python3-yaml
 )dnl
 
-define(`INSTALL_PKGS_PYTHON', ifelse(index(DOCKER_IMAGE,ubuntu),-1, python-yaml , python3 python3-pip python3-setuptools python3-yaml ))dnl
+define(`INSTALL_PKGS_PYTHON', ifelse(index(DOCKER_IMAGE,ubuntu),-1, python-yaml , python3 python3-yaml ))dnl
 
