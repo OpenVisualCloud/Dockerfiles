@@ -195,101 +195,6 @@ RUN git clone ${SVT_VP9_REPO} && \
     make install DESTDIR=/home/build && \
     make install 
 
-ARG OPENCV_VER=4.1.0
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
-
-RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-dev python-numpy
-
-RUN wget ${OPENCV_REPO} && \
-    tar -zxvf ${OPENCV_VER}.tar.gz && \
-    cd opencv-${OPENCV_VER} && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -D BUILD_EXAMPLES=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_DOCS=OFF -D BUILD_TESTS=OFF .. && \
-    make -j $(nproc) && \
-    make install DESTDIR=/home/build && \
-    make install
-
-# Build DLDT-Inference Engine
-ARG DLDT_VER=2019_R3
-ARG DLDT_REPO=https://github.com/opencv/dldt.git
-
-RUN apt-get update && apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
-
-RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
-    cd dldt && \
-    git submodule init && \
-    git submodule update --recursive && \
-    cd inference-engine && \
-    mkdir build && \
-    cd build && \
-    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES=OFF -DENABLE_OPENCV=OFF .. && \
-    make -j $(nproc) && \
-    rm -rf ../bin/intel64/Release/lib/libgtest* && \
-    rm -rf ../bin/intel64/Release/lib/libgmock* && \
-    rm -rf ../bin/intel64/Release/lib/libmock* && \
-    rm -rf ../bin/intel64/Release/lib/libtest*
-
-ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
-
-RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
-    mkdir -p ${libdir} && \
-    cp -r dldt/inference-engine/bin/intel64/Release/lib/* ${libdir} && \
-    mkdir -p /opt/intel/dldt/inference-engine/src && \
-    cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
-    mkdir -p /opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/inference-engine/build/share/* /opt/intel/dldt/inference-engine/share/ && \
-    mkdir -p /opt/intel/dldt/inference-engine/external/ && \
-    cp -r dldt/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
-
-RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
-    mkdir -p build${libdir} && \
-    cp -r dldt/inference-engine/bin/intel64/Release/lib/* build${libdir} && \
-    mkdir -p build/opt/intel/dldt/inference-engine/src && \
-    cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
-    mkdir -p build/opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/inference-engine/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
-    mkdir -p build/opt/intel/dldt/inference-engine/external/ && \
-    cp -r dldt/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
-
-RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
-        pkgconfiglibdir="$p/lib/x86_64-linux-gnu" && \
-        mkdir -p "${pkgconfiglibdir}/pkgconfig" && \
-        pc="${pkgconfiglibdir}/pkgconfig/dldt.pc" && \
-        echo "prefix=/opt" > "$pc" && \
-        echo "libdir=${libdir}" >> "$pc" && \
-        echo "includedir=/opt/intel/dldt/inference-engine/include" >> "$pc" && \
-        echo "" >> "$pc" && \
-        echo "Name: DLDT" >> "$pc" && \
-        echo "Description: Intel Deep Learning Deployment Toolkit" >> "$pc" && \
-        echo "Version: 5.0" >> "$pc" && \
-        echo "" >> "$pc" && \
-        echo "Libs: -L\${libdir} -linference_engine" >> "$pc" && \
-        echo "Cflags: -I\${includedir}" >> "$pc"; \
-    done;
-
-ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
-
-# DLDT IE C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.0.tar.gz
-
-ARG c_api_libdir="/usr/local/lib"
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.0 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
-ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
-
-#install Model Optimizer in the DLDT for Dev
-
-
-
 # Build the gstreamer core
 ARG GST_VER=1.16.0
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
@@ -453,6 +358,102 @@ RUN cd SVT-AV1/gstreamer-plugin && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
+
+ARG OPENCV_VER=4.1.0
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgtk2.0-dev pkg-config libeigen3-dev
+
+RUN wget ${OPENCV_REPO} && \
+    tar -zxvf ${OPENCV_VER}.tar.gz && \
+    cd opencv-${OPENCV_VER} && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
+    make -j $(nproc) && \
+    make install DESTDIR=/home/build && \
+    make install
+
+
+# Build DLDT-Inference Engine
+ARG DLDT_VER=2019_R3
+ARG DLDT_REPO=https://github.com/opencv/dldt.git
+
+RUN apt-get update && apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
+
+RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
+    cd dldt && \
+    git submodule init && \
+    git submodule update --recursive && \
+    cd inference-engine && \
+    mkdir build && \
+    cd build && \
+    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=OFF -DENABLE_SAMPLES=OFF -DENABLE_OPENCV=OFF .. && \
+    make -j $(nproc) && \
+    rm -rf ../bin/intel64/Release/lib/libgtest* && \
+    rm -rf ../bin/intel64/Release/lib/libgmock* && \
+    rm -rf ../bin/intel64/Release/lib/libmock* && \
+    rm -rf ../bin/intel64/Release/lib/libtest*
+
+ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
+
+RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    mkdir -p ${libdir} && \
+    cp -r dldt/inference-engine/bin/intel64/Release/lib/* ${libdir} && \
+    mkdir -p /opt/intel/dldt/inference-engine/src && \
+    cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
+    mkdir -p /opt/intel/dldt/inference-engine/share && \
+    cp -r dldt/inference-engine/build/share/* /opt/intel/dldt/inference-engine/share/ && \
+    mkdir -p /opt/intel/dldt/inference-engine/external/ && \
+    cp -r dldt/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
+
+RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    mkdir -p build${libdir} && \
+    cp -r dldt/inference-engine/bin/intel64/Release/lib/* build${libdir} && \
+    mkdir -p build/opt/intel/dldt/inference-engine/src && \
+    cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
+    mkdir -p build/opt/intel/dldt/inference-engine/share && \
+    cp -r dldt/inference-engine/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
+    mkdir -p build/opt/intel/dldt/inference-engine/external/ && \
+    cp -r dldt/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
+
+RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
+        pkgconfiglibdir="$p/lib/x86_64-linux-gnu" && \
+        mkdir -p "${pkgconfiglibdir}/pkgconfig" && \
+        pc="${pkgconfiglibdir}/pkgconfig/dldt.pc" && \
+        echo "prefix=/opt" > "$pc" && \
+        echo "libdir=${libdir}" >> "$pc" && \
+        echo "includedir=/opt/intel/dldt/inference-engine/include" >> "$pc" && \
+        echo "" >> "$pc" && \
+        echo "Name: DLDT" >> "$pc" && \
+        echo "Description: Intel Deep Learning Deployment Toolkit" >> "$pc" && \
+        echo "Version: 5.0" >> "$pc" && \
+        echo "" >> "$pc" && \
+        echo "Libs: -L\${libdir} -linference_engine" >> "$pc" && \
+        echo "Cflags: -I\${includedir}" >> "$pc"; \
+    done;
+
+ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
+
+# DLDT IE C API
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.0.tar.gz
+
+ARG c_api_libdir="/usr/local/lib"
+RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
+    cd dldt-c_api-2.0.0 && \
+    mkdir -p build && cd build && \
+    cmake -DENABLE_AVX512F=OFF .. && \
+    make -j8 && \
+    make install && \
+    make install DESTDIR=/home/build
+ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
+
+#install Model Optimizer in the DLDT for Dev
+
+
 
 RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin
 

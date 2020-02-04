@@ -250,89 +250,6 @@ RUN cd neo && \
 
 #clinfo needs to be installed after build directory is copied over
 
-RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools python3-yaml
-
-
-
-# OpenVINO verion
-# R3 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
-
-
-#Install OpenVino dependencies
-RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends cpio joe nano sudo unzip wget less \
-libpng12-dev libcairo2-dev libpango1.0-dev \
-libglib2.0-dev libgtk2.0-dev libswscale-dev libavcodec-dev libavformat-dev build-essential \
-cmake libusb-1.0-0-dev
-
-#Download and unpack OpenVino
-RUN mkdir /tmp2
-RUN wget ${OPENVINO_URL} -P /tmp2
-RUN if [ -f /tmp2/${OPENVINO_BUNDLE}.tgz ]; \
-    then tar xzvf /tmp2/${OPENVINO_BUNDLE}.tgz -C /tmp2 && rm /tmp2/${OPENVINO_BUNDLE}.tgz; \
-    else echo "Please prepare the OpenVino installation bundle"; \
-fi
-
-# Create a silent configuration file for install
-RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
-    echo "CONTINUE_WITH_OPTIONAL_ERROR=yes" >> /tmp2/silent.cfg         && \
-    echo "PSET_INSTALL_DIR=/opt/intel" >> /tmp2/silent.cfg              && \
-    echo "CONTINUE_WITH_INSTALLDIR_OVERWRITE=yes" >> /tmp2/silent.cfg   && \
-    echo "COMPONENTS=DEFAULTS" >> /tmp2/silent.cfg                      && \
-    echo "COMPONENTS=ALL" >> /tmp2/silent.cfg                           && \
-    echo "PSET_MODE=install" >> /tmp2/silent.cfg                        && \
-    echo "INTEL_SW_IMPROVEMENT_PROGRAM_CONSENT=no" >> /tmp2/silent.cfg  && \
-    echo "SIGNING_ENABLED=no" >> /tmp2/silent.cfg
-
-#Install OpenVino
-RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
-
-ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
-ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
-ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
-#ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
-
-# OPENVINO C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.0.tar.gz
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.0 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
-
-#Remove components of OpenVino that won't be used
-ARG CV_BASE_DIR=/opt/intel/openvino
-RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
-    rm -rf ${CV_BASE_DIR}/python && \
-    rm -rf ${CV_BASE_DIR}/documentation && \
-    rm -rf ${CV_BASE_DIR}/install_dependiencies && \
-    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
-    rm -rf ${CV_BASE_DIR}/openvx/samples && \
-    rm -rf ${CV_BASE_DIR}/opencv/samples
-
-#Copy over directories to clean image
-RUN mkdir -p /home/build/usr/local/lib && \
-    mkdir -p /home/build/opt/intel && \
-    mkdir -p /home/build/usr/lib && \
-    cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
-    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
-    cp -r /usr/lib/* /home/build/usr/lib
-
-#Give all user exec permission
-RUN chmod -R 775 /opt/intel/ ;
-
-
-
-
 # Build the gstreamer core
 ARG GST_VER=1.16.0
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
@@ -498,20 +415,107 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      make install
 
 
+ARG PYTHON_VER=3.6.6
+ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
+
+RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools python3-yaml
+
+
+
 ARG OPENCV_VER=4.1.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
-RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-dev python-numpy
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgtk2.0-dev pkg-config libeigen3-dev
 
 RUN wget ${OPENCV_REPO} && \
     tar -zxvf ${OPENCV_VER}.tar.gz && \
     cd opencv-${OPENCV_VER} && \
     mkdir build && \
     cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -D BUILD_EXAMPLES=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_DOCS=OFF -D BUILD_TESTS=OFF .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
     make -j $(nproc) && \
     make install DESTDIR=/home/build && \
     make install
+
+
+# OpenVINO verion
+# R3 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
+
+
+#Install OpenVino dependencies
+RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends cpio joe nano sudo unzip wget less \
+libpng12-dev libcairo2-dev libpango1.0-dev \
+libglib2.0-dev libgtk2.0-dev libswscale-dev libavcodec-dev libavformat-dev build-essential \
+cmake libusb-1.0-0-dev
+
+#Download and unpack OpenVino
+RUN mkdir /tmp2
+RUN wget ${OPENVINO_URL} -P /tmp2
+RUN if [ -f /tmp2/${OPENVINO_BUNDLE}.tgz ]; \
+    then tar xzvf /tmp2/${OPENVINO_BUNDLE}.tgz -C /tmp2 && rm /tmp2/${OPENVINO_BUNDLE}.tgz; \
+    else echo "Please prepare the OpenVino installation bundle"; \
+fi
+
+# Create a silent configuration file for install
+RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
+    echo "CONTINUE_WITH_OPTIONAL_ERROR=yes" >> /tmp2/silent.cfg         && \
+    echo "PSET_INSTALL_DIR=/opt/intel" >> /tmp2/silent.cfg              && \
+    echo "CONTINUE_WITH_INSTALLDIR_OVERWRITE=yes" >> /tmp2/silent.cfg   && \
+    echo "COMPONENTS=DEFAULTS" >> /tmp2/silent.cfg                      && \
+    echo "COMPONENTS=ALL" >> /tmp2/silent.cfg                           && \
+    echo "PSET_MODE=install" >> /tmp2/silent.cfg                        && \
+    echo "INTEL_SW_IMPROVEMENT_PROGRAM_CONSENT=no" >> /tmp2/silent.cfg  && \
+    echo "SIGNING_ENABLED=no" >> /tmp2/silent.cfg
+
+#Install OpenVino
+RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
+
+ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
+ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
+ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
+#ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
+
+# OPENVINO C API
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.0.tar.gz
+RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
+    cd dldt-c_api-2.0.0 && \
+    mkdir -p build && cd build && \
+    cmake -DENABLE_AVX512F=OFF .. && \
+    make -j8 && \
+    make install && \
+    make install DESTDIR=/home/build
+
+#Remove components of OpenVino that won't be used
+ARG CV_BASE_DIR=/opt/intel/openvino
+RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
+    rm -rf ${CV_BASE_DIR}/python && \
+    rm -rf ${CV_BASE_DIR}/documentation && \
+    rm -rf ${CV_BASE_DIR}/install_dependiencies && \
+    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
+    rm -rf ${CV_BASE_DIR}/openvx/samples && \
+    rm -rf ${CV_BASE_DIR}/opencv/samples
+
+#Copy over directories to clean image
+RUN mkdir -p /home/build/usr/local/lib && \
+    mkdir -p /home/build/opt/intel && \
+    mkdir -p /home/build/usr/lib && \
+    cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
+    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
+    cp -r /usr/lib/* /home/build/usr/lib
+
+#Give all user exec permission
+RUN chmod -R 775 /opt/intel/ ;
+
+
+
 
 RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin
 
@@ -654,8 +658,16 @@ RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libinference_engine_c_api  && \
     make -j8 && \
-    make install DESTDIR="/home/build"
+    make install && make install DESTDIR="/home/build"
 
+
+
+# remake opencv videoio to incorporate ffmpeg/gst
+RUN cd opencv-${OPENCV_VER}/build && \
+    rm -rf * && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
+    cd modules/videoio && \
+    make -j $(nproc) && \
+    cp -f ../../lib/libopencv_videoio.so.${OPENCV_VER} /home/build/usr/local/lib
 
 
 FROM ubuntu:16.04
