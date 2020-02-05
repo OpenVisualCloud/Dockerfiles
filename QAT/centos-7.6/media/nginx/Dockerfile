@@ -48,7 +48,7 @@ RUN wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
 # load qat driver
 ADD qat-driver.tar.gz /
-RUN tar cf - /opt/intel/QAT/build | (mkdir -p /home/build && cd /home/build && tar xf -)
+RUN tar cf - /opt/intel/QAT | (mkdir -p /home/build && cd /home/build && tar xf -)
 
 # Build OpenSSL for QAT
 ARG QAT_OPENSSL_VER=OpenSSL_1_1_1c
