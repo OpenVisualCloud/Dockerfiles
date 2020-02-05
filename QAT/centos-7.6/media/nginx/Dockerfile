@@ -24,8 +24,6 @@ RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
     make install
 
 
-#include(qat-kernel.m4)
-#include(qat-driver.m4)
 # Build OpenSSL for QAT
 ARG QAT_OPENSSL_VER=OpenSSL_1_1_1c
 ARG QAT_OPENSSL_REPO=https://github.com/openssl/openssl/archive/${QAT_OPENSSL_VER}.tar.gz
@@ -38,9 +36,74 @@ RUN wget -O - ${QAT_OPENSSL_REPO} | tar xz && mv openssl-${QAT_OPENSSL_VER} open
     make install; 
 
 
-#include(qat-engine.m4)
-#include(qat-zip.m4)
-#include(nginx-qat.m4)
+# Build QAT Engine
+ARG QAT_ENGINE_VER=v0.5.42
+ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/${QAT_ENGINE_VER}.tar.gz
+
+ADD qat-driver.tar.gz /
+RUN wget -O - ${QAT_ENGINE_REPO} | tar xz && \
+    cd QAT_Engine* && \
+    ./autogen.sh && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir=/home/openssl --with-openssl_install_dir=/opt/openssl --enable-upstream_driver --enable-usdm --prefix=/opt/intel/qat-engine && \
+    PERL5LIB=/home/openssl make -j8 && \
+    PERL5LIB=/home/openssl make install DESTDIR=/home/build && \
+    PERL5LIB=/home/openssl make install 
+
+
+# Build QATZip
+ARG QATZIP_VER=v1.0.1
+ARG QATZIP_REPO=https://github.com/intel/QATzip/archive/${QATZIP_VER}.tar.gz
+
+RUN wget -O - ${QATZIP_REPO} | tar xz && mv QATzip-${QATZIP_VER#v} QATzip && \
+    cd QATzip && \
+    ./configure --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/qat-zip && \
+    make -j8 && \
+    make install && \
+    (cd /opt/intel/qat-zip/lib64 && ln -s libqatzip.so libqatzip.so.1)
+
+# Build nginx-http-flv
+ARG NGINX_HTTP_FLV_VER=v1.2.7
+ARG NGINX_HTTP_FLV_REPO=https://github.com/winshining/nginx-http-flv-module.git
+
+ARG NGINX_HTTP_FLV_PATCHES_RELEASE_VER=0.2
+ARG NGINX_HTTP_FLV_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${NGINX_HTTP_FLV_PATCHES_RELEASE_VER}.tar.gz
+ARG NGINX_HTTP_FLV_PATCHES_PATH=/home/CDN-${NGINX_HTTP_FLV_PATCHES_RELEASE_VER}
+RUN wget -O - ${NGINX_HTTP_FLV_PATCHES_RELEASE_URL} | tar xz
+
+RUN git clone ${NGINX_HTTP_FLV_REPO} && \
+    cd nginx-http-flv-module && \
+    git checkout ${NGINX_HTTP_FLV_VER} && \
+    mkdir -p /home/build/var/www/html && \
+    cp -f stat.xsl /home/build/var/www/html && \
+    find ${NGINX_HTTP_FLV_PATCHES_PATH}/Nginx-HTTP-FLV_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+
+# Build nginx-upload-module
+ARG NGINX_UPLOAD_VER=2.3.0
+ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/${NGINX_UPLOAD_VER}.tar.gz
+
+RUN wget -O - ${NGINX_UPLOAD_REPO} | tar xz
+
+# Build NGINX Asynchronous Mode
+ARG NGINX_QAT_VER=v0.4.0
+ARG NGINX_QAT_REPO=https://github.com/intel/asynch_mode_nginx/archive/${NGINX_QAT_VER}.tar.gz
+
+RUN yum install -y -q openssl-devel pcre2-devel zlib-devel libxslt-devel
+
+RUN wget -O - ${NGINX_QAT_REPO} | tar xz && cd asynch_mode_nginx* && \
+    ./configure --with-ld-opt="-Wl,-rpath=/opt/intel/QAT/build,-rpath=/opt/intel/qat-zip/lib64 -L/opt/openssl/lib -L/opt/intel/qat-zip/lib64 -lqatzip -lz" --with-cc-opt="-DNGX_SECURE_MEM -I/opt/openssl/include -I/opt/intel/qat-zip/include -Wno-error=deprecated-declarations" --add-dynamic-module=modules/nginx_qatzip_module --add-dynamic-module=modules/nginx_qat_module --prefix=/var/www --sbin-path=/usr/local/sbin/nginx --modules-path=/usr/local/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/www/log/error.log --pid-path=/var/www/nginx.pid --lock-path=/var/www/nginx.lock --http-log-path=/var/www/log/access.log --http-client-body-temp-path=/var/www/tmp/client_body --http-proxy-temp-path=/var/www/tmp/proxy --http-fastcgi-temp-path=/var/www/tmp/fastcgi --http-uwsgi-temp-path=/var/www/tmp/uwsgi --http-scgi-temp-path=/var/www/tmp/scgi --user=nobody --group=nobody --with-select_module --with-poll_module --with-threads --with-file-aio --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_auth_request_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-pcre --add-module=../nginx-http-flv-module --add-module=../nginx-upload-module-${NGINX_UPLOAD_VER}  && \
+    make -j8 && \
+    make install DESTDIR=/home/build;
+
+# NGINX Setup
+COPY *.conf /home/build/etc/nginx
+RUN mkdir -p /home/build/var/www/tmp/client_body && \
+    mkdir -p /home/build/var/www/tmp/proxy && \
+    mkdir -p /home/build/var/www/tmp/fastcgi && \
+    mkdir -p /home/build/var/www/tmp/uwsgi && \
+    mkdir -p /home/build/var/www/tmp/scgi && \
+    mkdir -p /home/build/var/www/cache;
+
+
 
 #FROM openvisualcloud/xeon-centos76-media-nginx:latest
 #LABEL Description="This is the base image for a NGINX service"
