@@ -174,7 +174,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.0
+ARG SVT_AV1_VER=v0.8.1
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
@@ -391,17 +391,8 @@ RUN cd SVT-AV1/gstreamer-plugin && \
     make install DESTDIR=/home/build && \
     make install
 
-ARG PYTHON_VER=3.6.6
-ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
-
 RUN yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel \
-    readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
-RUN wget -O - ${PYTHON_REPO} | tar xz && \
-    cd Python-${PYTHON_VER} && \
-    ./configure --prefix=/usr/local && \
-    make && \
-    make install && \
-    make install DESTDIR=/home/build
+    readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel python36
 RUN yum install -y -q python-yaml
 
 

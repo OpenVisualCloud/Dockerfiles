@@ -166,7 +166,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.0
+ARG SVT_AV1_VER=v0.8.1
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 RUN git clone ${SVT_AV1_REPO} && \
@@ -196,7 +196,6 @@ RUN git clone ${SVT_VP9_REPO} && \
     make install 
 
 #include(transform360.m4)
-
 # Build libjson-c
 ARG LIBJSONC_VER=0.13.1-20180305
 ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-${LIBJSONC_VER}.tar.gz
@@ -383,9 +382,6 @@ RUN cd SVT-AV1/gstreamer-plugin && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install
-
-ARG PYTHON_VER=3.6.6
-ARG PYTHON_REPO=https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz
 
 RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools python3-yaml
 
