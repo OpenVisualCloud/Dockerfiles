@@ -24,43 +24,6 @@ RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
     make install
 
 
-# Build OpenSSL for QAT
-ARG QAT_OPENSSL_VER=OpenSSL_1_1_1c
-ARG QAT_OPENSSL_REPO=https://github.com/openssl/openssl/archive/${QAT_OPENSSL_VER}.tar.gz
-
-RUN wget -O - ${QAT_OPENSSL_REPO} | tar xz && mv openssl-${QAT_OPENSSL_VER} openssl && \
-    cd openssl && \
-    ./config --prefix=/opt/openssl --openssldir=/opt/openssl -Wl,-rpath,\${LIBRPATH} && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install; 
-
-
-# Build QAT Engine
-ARG QAT_ENGINE_VER=v0.5.42
-ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/${QAT_ENGINE_VER}.tar.gz
-
-ADD qat-driver.tar.gz /
-RUN wget -O - ${QAT_ENGINE_REPO} | tar xz && \
-    cd QAT_Engine* && \
-    ./autogen.sh && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir=/home/openssl --with-openssl_install_dir=/opt/openssl --enable-upstream_driver --enable-usdm --prefix=/opt/intel/qat-engine && \
-    PERL5LIB=/home/openssl make -j8 && \
-    PERL5LIB=/home/openssl make install DESTDIR=/home/build && \
-    PERL5LIB=/home/openssl make install 
-
-
-# Build QATZip
-ARG QATZIP_VER=v1.0.1
-ARG QATZIP_REPO=https://github.com/intel/QATzip/archive/${QATZIP_VER}.tar.gz
-
-RUN wget -O - ${QATZIP_REPO} | tar xz && mv QATzip-${QATZIP_VER#v} QATzip && \
-    cd QATzip && \
-    ./configure --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/qat-zip && \
-    make -j8 && \
-    make install && \
-    (cd /opt/intel/qat-zip/lib64 && ln -s libqatzip.so libqatzip.so.1)
-
 # Build nginx-http-flv
 ARG NGINX_HTTP_FLV_VER=v1.2.7
 ARG NGINX_HTTP_FLV_REPO=https://github.com/winshining/nginx-http-flv-module.git
@@ -83,16 +46,57 @@ ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/${
 
 RUN wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
+# load qat driver
+ADD qat-driver.tar.gz /
+RUN tar cf - /opt/intel/QAT/build | (mkdir -p /home/build && cd /home/build && tar xf -)
+
+# Build OpenSSL for QAT
+ARG QAT_OPENSSL_VER=OpenSSL_1_1_1c
+ARG QAT_OPENSSL_REPO=https://github.com/openssl/openssl/archive/${QAT_OPENSSL_VER}.tar.gz
+
+RUN wget -O - ${QAT_OPENSSL_REPO} | tar xz && mv openssl-${QAT_OPENSSL_VER} openssl && \
+    cd openssl && \
+    ./config --prefix=/opt/openssl --openssldir=/opt/openssl -Wl,-rpath,\${LIBRPATH} && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install; 
+
+
+# Build QAT Engine
+ARG QAT_ENGINE_VER=v0.5.42
+ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/${QAT_ENGINE_VER}.tar.gz
+
+RUN wget -O - ${QAT_ENGINE_REPO} | tar xz && \
+    cd QAT_Engine* && \
+    ./autogen.sh && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir=/home/openssl --with-openssl_install_dir=/opt/openssl --enable-upstream_driver --enable-usdm --prefix=/opt/intel/qat-engine && \
+    PERL5LIB=/home/openssl make -j8 && \
+    PERL5LIB=/home/openssl make install DESTDIR=/home/build && \
+    PERL5LIB=/home/openssl make install 
+
+
+# Build QATZip
+ARG QATZIP_VER=v1.0.1
+ARG QATZIP_REPO=https://github.com/intel/QATzip/archive/${QATZIP_VER}.tar.gz
+
+RUN wget -O - ${QATZIP_REPO} | tar xz && \
+    cd QATzip* && \
+    ./configure --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/qat-zip && \
+    make -j8 && \
+    make install && \
+    (cd /opt/intel/qat-zip/lib64 && ln -s libqatzip.so libqatzip.so.1) && \
+    tar cf - /opt/intel/qat-zip | (cd /home/build; tar xf -)
+
 # Build NGINX Asynchronous Mode
 ARG NGINX_QAT_VER=v0.4.0
 ARG NGINX_QAT_REPO=https://github.com/intel/asynch_mode_nginx/archive/${NGINX_QAT_VER}.tar.gz
 
-RUN yum install -y -q openssl-devel pcre2-devel zlib-devel libxslt-devel
+RUN yum install -y -q pcre-devel zlib-devel libxslt-devel
 
 RUN wget -O - ${NGINX_QAT_REPO} | tar xz && cd asynch_mode_nginx* && \
-    ./configure --with-ld-opt="-Wl,-rpath=/opt/intel/QAT/build,-rpath=/opt/intel/qat-zip/lib64 -L/opt/openssl/lib -L/opt/intel/qat-zip/lib64 -lqatzip -lz" --with-cc-opt="-DNGX_SECURE_MEM -I/opt/openssl/include -I/opt/intel/qat-zip/include -Wno-error=deprecated-declarations" --add-dynamic-module=modules/nginx_qatzip_module --add-dynamic-module=modules/nginx_qat_module --prefix=/var/www --sbin-path=/usr/local/sbin/nginx --modules-path=/usr/local/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/www/log/error.log --pid-path=/var/www/nginx.pid --lock-path=/var/www/nginx.lock --http-log-path=/var/www/log/access.log --http-client-body-temp-path=/var/www/tmp/client_body --http-proxy-temp-path=/var/www/tmp/proxy --http-fastcgi-temp-path=/var/www/tmp/fastcgi --http-uwsgi-temp-path=/var/www/tmp/uwsgi --http-scgi-temp-path=/var/www/tmp/scgi --user=nobody --group=nobody --with-select_module --with-poll_module --with-threads --with-file-aio --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_auth_request_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-pcre --add-module=../nginx-http-flv-module --add-module=../nginx-upload-module-${NGINX_UPLOAD_VER}  && \
+    ./configure --with-ld-opt="-Wl,-rpath=/opt/intel/QAT/build,-rpath=/opt/intel/qat-zip/lib64,-rpath=/opt/openssl/lib,-rpath=/opt/intel/qat-engine/lib -L/opt/openssl/lib -L/opt/intel/qat-zip/lib64 -lqatzip -lz" --with-cc-opt="-DNGX_SECURE_MEM -I/opt/openssl/include -I/opt/intel/qat-zip/include -Wno-error=deprecated-declarations" --add-dynamic-module=modules/nginx_qatzip_module --add-dynamic-module=modules/nginx_qat_module --prefix=/var/www --sbin-path=/usr/local/sbin/nginx --modules-path=/var/www/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/www/log/error.log --pid-path=/var/www/nginx.pid --lock-path=/var/www/nginx.lock --http-log-path=/var/www/log/access.log --http-client-body-temp-path=/var/www/tmp/client_body --http-proxy-temp-path=/var/www/tmp/proxy --http-fastcgi-temp-path=/var/www/tmp/fastcgi --http-uwsgi-temp-path=/var/www/tmp/uwsgi --http-scgi-temp-path=/var/www/tmp/scgi --user=nobody --group=nobody --with-select_module --with-poll_module --with-threads --with-file-aio --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_auth_request_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=../nginx-http-flv-module --add-module=../nginx-upload-module-${NGINX_UPLOAD_VER}  && \
     make -j8 && \
-    make install DESTDIR=/home/build;
+    make install DESTDIR=/home/build
 
 # NGINX Setup
 COPY *.conf /home/build/etc/nginx
@@ -104,13 +108,25 @@ RUN mkdir -p /home/build/var/www/tmp/client_body && \
     mkdir -p /home/build/var/www/cache;
 
 
+# Generate a self-certificate for testing purpose
+RUN mkdir -p /etc/nginx && \
+    printf "US\nOR\nPortland\nOregon\nData Center Group\nIntel Corporation\n$(hostname)\nnobody@intel.com\n" | /opt/openssl/bin/openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout /home/build/etc/nginx/cert.key -out /home/build/etc/nginx/cert.crt && \
+    chmod 640 /home/build/etc/nginx/cert.key && \
+    chmod 644 /home/build/etc/nginx/cert.crt
 
-#FROM openvisualcloud/xeon-centos76-media-nginx:latest
-#LABEL Description="This is the base image for a NGINX service"
-#LABEL Vendor="Intel Corporation"
-#WORKDIR /home
+
+FROM openvisualcloud/xeon-centos76-media-ffmpeg:latest
+LABEL Description="This is the base image for the NGINX-QAT service"
+LABEL Vendor="Intel Corporation"
+WORKDIR /home
 
 # Prerequisites
-#include(install.pkgs.m4)
+RUN  \
+    yum install -y -q pcre zlib libxslt ; \
+    rm -rf /var/cache/yum/*;
 # Install
-#include(install.m4)
+COPY --from=build /home/build /
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib64
+CMD ["/usr/local/sbin/nginx"]
+VOLUME /etc/nginx /var/www/html /var/www/tmp/client_body /var/www/tmp/proxy /var/www/tmp/fastcgi /var/www/tmp/uwsgi /var/www/tmp/scgi /var/www/cache /var/www/dash /var/www/hls
+

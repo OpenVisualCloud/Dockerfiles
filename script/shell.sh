@@ -8,7 +8,7 @@ fi
 : "${DOCKER_PREFIX:=openvisualcloud}"
 
 if [[ -d /dev/dri ]]; then
-    DEVICE_DIR=--device=/dev/dri:/dev/dri
+    DEVICE_DIR="--device=/dev/dri:/dev/dri $DEVICE_DIR"
 fi
 
 if [[ -z $TRAVIS && -z $JENKINS_URL ]]; then DOCKER_IT="-it"; else DOCKER_IT=""; fi
