@@ -22,24 +22,24 @@ The software stack images provide ready to use software stacks for application d
 
 | Image | Description |
 | :-----: | ----- | 
-| [ffmpeg](doc/ffmpeg.md) |Image optimized for media creation and delivery. Included codecs: aac, mp3, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. The GPU images are accelerated with vaapi and qsv. See [ffmpeg.md](doc/ffmpeg.md) for details.|
-| [gst](doc/gst.md) |Image optimized for media creation and delivery. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with vaapi. See [gst.md](doc/gst.md) for details.|
-| [nginx](doc/nginx.md) |Image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.|
-| [svt](doc/svt.md) |Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. See [svt.md](doc/svt.md) for details.|
+| [ffmpeg](doc/ffmpeg.md) |Image optimized for media creation and delivery. Included codecs: aac, mp3, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. The GPU images are accelerated with vaapi and qsv. See [ffmpeg.md](doc/ffmpeg.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-ffmpeg)<br>docker pull [openvisualcloud/xeon-centos76-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-ffmpeg)|
+| [gst](doc/gst.md) |Image optimized for media creation and delivery. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with vaapi. See [gst.md](doc/gst.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-media-gst](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-gst)<br>docker pull [openvisualcloud/xeon-centos76-media-gst](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-gst)|
+| [nginx](doc/nginx.md) |Image optimized for web hosting and caching. Based on FFmpeg, included NGINX the web server and RTMP the RTMP, DASH and HLS streaming module. See [nginx.md](doc/nginx.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-media-nginx](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-nginx)<br>docker pull [openvisualcloud/xeon-centos76-media-nginx](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-nginx)|
+| [svt](doc/svt.md) |Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. See [svt.md](doc/svt.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-svt)<br>docker pull [openvisualcloud/xeon-centos76-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-svt)|
 
 - **Media Analytics**   
 
 | Image | Description |
 | :-----: | :----- | 
-| [ffmpeg](doc/ffmpeg.md) |Image optimized for media analytics. Included what are in the FFmpeg image, and the Intel<sup>&reg;</sup> OpenVINO<sup>&trade;</sup> inference engine. See [ffmpeg.md](doc/ffmpeg.md) for details.|
-| [gst](doc/gst.md) |Image optimized for media analytics. Included what are in the GStreamer image, and the Intel OpenVINO inference engine. See [gst.md](doc/gst.md) for details.|
+| [ffmpeg](doc/ffmpeg.md) |Image optimized for media analytics. Included what are in the FFmpeg image, and the Intel<sup>&reg;</sup> OpenVINO<sup>&trade;</sup> inference engine. See [ffmpeg.md](doc/ffmpeg.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg)<br>docker pull [openvisualcloud/xeon-centos76-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-centos76-analytics-ffmpeg)|
+| [gst](doc/gst.md) |Image optimized for media analytics. Included what are in the GStreamer image, and the Intel OpenVINO inference engine. See [gst.md](doc/gst.md) for details.<br><br>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-gst](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-gst)<br>docker pull [openvisualcloud/xeon-centos76-analytics-gst](https://hub.docker.com/r/openvisualcloud/xeon-centos76-analytics-gst)|
 
 - **Cloud Gaming and Graphics**
 
 | Image | Description |
 | :-----: | :----- | 
-| [ospray](doc/ospray.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.|
-| [ospray-mpi](doc/ospray-mpi.md) |Image optimized for intel ray tracing api. Based on embree, included ospray Ray Tracing engine with examples(which require OpenImageIO) and multi-host connection via MPI. See [ospray-mpi.md](doc/ospray-mpi.md) for details.|
+| [ospray](doc/ospray.md) | Image optimized for Intel ray tracing api. Based on Embree, included Ospray Ray Tracing engine and examples. See [ospray.md](doc/ospray.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-graphics-ospray](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-graphics-ospray)<br>docker pull [openvisualcloud/xeon-centos76-graphics-ospray](https://hub.docker.com/r/openvisualcloud/xeon-centos76-graphics-ospray)|
+| [ospray-mpi](doc/ospray-mpi.md) |Image optimized for Intel ray tracing api. Based on Embree, included Ospray Ray Tracing engine with examples (which require OpenImageIO) and multi-host connection via MPI. See [ospray-mpi.md](doc/ospray-mpi.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-graphics-ospray-mpi](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-graphics-ospray-mpi)<br>docker pull [openvisualcloud/xeon-centos76-graphics-ospray-mpi](https://hub.docker.com/r/openvisualcloud/xeon-centos76-graphics-ospray-mpi)|
 
 ### Development Images:     
 
@@ -47,7 +47,9 @@ The development images enable application compilation, debugging (with the debug
 
 | Image | Description |
 | :-----: | :----- | 
-| dev | Image containing the FFmpeg and GStreamer C++ development files. The Intel OpenVINO model optimizer is to be included. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.|
+| media | Image containing the FFmpeg and GStreamer C++ development files. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-dev)<br>docker pull [openvisualcloud/xeon-centos76-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-dev)|
+| analytics | Image containing the FFmpeg and GStreamer C++ development files, with Intel OpenVINO inference engine and the model optimizer. See [ffmpeg.md](doc/ffmpeg.md) and [gst.md](doc/gst.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-dev)<br>docker pull [openvisualcloud/xeon-centos76-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-analytics-dev)|
+| graphics | Image containing the C++ development files for the Intel ray tracing API. See [ospray-mpi.md](doc/ospray-mpi.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-graphics-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-graphics-dev)<br>docker pull [openvisualcloud/xeon-centos76-graphics-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-graphics-dev)|
 
 ### Service Images:
 
@@ -55,8 +57,8 @@ The service images provides ready to use services. See their image descriptions 
 
 | Image | Description |
 | :-----: | :----- | 
-| [owt](doc/owt.md)| Image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit. Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details. |
-| [owt-immersive](doc/owt-immersive.md)| Image optimized for ultra-high resolution immersive video low latency streaming based on the WebRTC technology and Open WebRTC Toolkit. Included SVT-HEVC tile based 4K and 8K transcoding and field of view (FoV) adaptive streaming. see [owt-immersive.md](doc/owt-immersive.md) for details. |
+| [owt](doc/owt.md)| Image optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit. Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [owt.md](doc/owt.md) for details.<hr>docker pull [openvisualcloud/xeon-ubuntu1804-service-owt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-service-owt)<br>docker pull [openvisualcloud/xeon-centos76-service-owt](https://hub.docker.com/r/openvisualcloud/xeon-centos76-service-owt)|
+| [owt-immersive](doc/owt-immersive.md)| Image optimized for ultra-high resolution immersive video low latency streaming based on the WebRTC technology and Open WebRTC Toolkit. Included SVT-HEVC tile based 4K and 8K transcoding and field of view (FoV) adaptive streaming. see [owt-immersive.md](doc/owt-immersive.md) for details.|
 
 ### Support Matrix:
 
