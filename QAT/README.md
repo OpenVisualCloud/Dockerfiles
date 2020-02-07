@@ -3,7 +3,7 @@ Enhance security and compression performance in cloud, networking, big data, and
 
 This document describes the system setup to use Intel QAT within docker containers.  
 
-### Install Driver and Service
+### Install Driver and Service:
 
 - Follow the [instructions](https://01.org/sites/default/files/downloads//336212-006qatsw-gettingstarted.pdf) to install the supported OS, kernel, Intel QAT driver and service on the host. For CentOS 7.6, the steps are as follows:   
 
@@ -23,7 +23,7 @@ echo 1024 | sudo tee /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
 sudo systemctl restart qat_service
 ```
 
-### Configure QATzip and QATengine
+### Configure QATzip and QATengine:
 
 QATzip is a utility (`qzip`) for data compression. QATengine is a crypto engine that can be used in the openssl framework. The asynchronous mode NGINX requires both QATzip and QATengine.   
 
