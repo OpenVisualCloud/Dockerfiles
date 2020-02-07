@@ -51,7 +51,6 @@ ADD qat.tar.gz /home/build/
 RUN mkdir -p /opt/intel /home/build/opt/intel && \
     ln -s /home/build/opt/intel/QAT /opt/intel/QAT
 
-
 # Build QATZip
 ARG QATZIP_VER=v1.0.1
 ARG QATZIP_REPO=https://github.com/intel/QATzip/archive/${QATZIP_VER}.tar.gz
@@ -152,9 +151,6 @@ CMD ["/usr/local/sbin/nginx"]
 VOLUME /etc/nginx /var/www/html /var/www/tmp/client_body /var/www/tmp/proxy /var/www/tmp/fastcgi /var/www/tmp/uwsgi /var/www/tmp/scgi /var/www/cache /var/www/dash /var/www/hls
 ENV OPENSSL_ENGINES=/opt/openssl/lib/engines-1.1
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64
-# setup the qat group
-ARG QAT_GID_VER
-RUN groupadd -g ${QAT_GID_VER} qat
 
 
 

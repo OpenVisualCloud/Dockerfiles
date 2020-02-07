@@ -31,5 +31,5 @@ define(`INSTALL_PKGS_NGINX',ifelse(index(DOCKER_IMAGE,ubuntu),-1,pcre zlib libxs
 define(`INSTALL_NGINX',dnl
 CMD ["/usr/local/sbin/nginx"]
 VOLUME /etc/nginx /var/www/html /var/www/tmp/client_body /var/www/tmp/proxy /var/www/tmp/fastcgi /var/www/tmp/uwsgi /var/www/tmp/scgi /var/www/cache /var/www/dash /var/www/hls
-defn(`INSTALL_QAT_OPENSSL',`INSTALL_QAT')
+defn(`INSTALL_QAT_OPENSSL')
 )dnl
