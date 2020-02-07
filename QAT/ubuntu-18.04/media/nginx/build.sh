@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="qat-centos76-media-nginx"
+IMAGE="qat-ubuntu1804-media-nginx"
 VERSION="20.1"
 DIR=$(dirname $(readlink -f "$0"))
 

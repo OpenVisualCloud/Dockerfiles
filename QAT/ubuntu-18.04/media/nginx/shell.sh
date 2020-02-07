@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="qat-centos76-media-nginx"
+IMAGE="qat-ubuntu1804-media-nginx"
 DIR=$(dirname $(readlink -f "$0"))
 
 . "${DIR}/../../../../script/qatshell.sh"

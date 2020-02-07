@@ -1,5 +1,5 @@
 
-FROM centos:7.6.1810 AS build
+FROM ubuntu:18.04 AS build
 WORKDIR /home
 define(`BUILD_LINKAGE',shared)dnl
 define(`BUILD_TOOLS_NO_ASM')dnl
@@ -15,7 +15,7 @@ include(nginx-qat.m4)
 include(nginx-cert.m4)
 include(cleanup.m4)
 
-FROM openvisualcloud/xeon-centos76-media-ffmpeg:latest
+FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:latest
 LABEL Description="This is the base image for the NGINX-QAT service"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
