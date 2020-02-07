@@ -25,11 +25,11 @@ sudo systemctl restart qat_service
 
 ### Configure QATzip and QATengine
 
-QATzip is a utility (`qzip`) for data compression. QATengine is a crypto engine that can be used in the openssl framework. The asynchrnous mode nginx requires both QATzip and QATengine.   
+QATzip is a utility (`qzip`) for data compression. QATengine is a crypto engine that can be used in the openssl framework. The asynchronous mode NGINX requires both QATzip and QATengine.   
 
 While the docker images contain QATzip and QATengine, you **must** configure QATzip and QATengine on each host that the containers run. The QATzip configuration files are located at [QATzip/config_file](https://github.com/intel/QATzip/tree/master/config_file) and the QATengine configuration files are located at [QATengine/qat/config](https://github.com/intel/QAT_Engine/tree/master/qat/config). 
 
-There are multiple versions of the configuration files optimized for different adpaters and usage scenarios. Select the ones that meet your platform and usage pattern. Copy them to the `/etc` directory. Note that QATzip looks for `NumberDcInstances` and QATengine looks for `NumberCyInstances`. Thus you will need to merge the QATzip and QATengine configuration files together as you need both in `nginx`.   
+There are multiple versions of the configuration files optimized for different adpaters and usage scenarios. Select the ones that meet your adapter and usage pattern. Copy them to the `/etc` directory. Note that QATzip looks for `NumberDcInstances` and QATengine looks for `NumberCyInstances`. Thus you will need to merge the QATzip and QATengine configuration files together as you need both in NGINX.    
 
 For example, `/etc/c6xx_dev0.conf` might look similar to the following:  
 
@@ -71,7 +71,7 @@ The docker images **must** run with the following devices/configuration files at
 - `/dev/qat_*`: The qat devices.  
 - `/dev/usdm_drv`: The usdm device.  
 
-For example, run the following script to start the nginx Ubuntu image:   
+For example, run the following script to start the NGINX Ubuntu image:   
 
 ```bash
 docker run $(ls -1 -d /etc/*_dev?.conf /dev/hugepages | sed 's/\(.*\)/-v \1:\1/') $(ls -1 /dev/uio* /dev/qat_* /dev/usdm_drv | sed 's/\(.*\)/--device=\1:\1/') -it openvisualcloud/qat-ubuntu1804-media-nginx
@@ -79,7 +79,7 @@ docker run $(ls -1 -d /etc/*_dev?.conf /dev/hugepages | sed 's/\(.*\)/-v \1:\1/'
 
 ### Run Docker Images as Non-Root:
 
-To run the docker images as a non-root user, you need to create a `qat` group and make your user part of the `qat` group. The GID of the `qat` group within the containers **mst** match that of the `qat` group on the host.   
+To run the docker images as a non-root user, you need to create a `qat` group and make your user part of the `qat` group. The GID of the `qat` group within the containers **must** match that of the `qat` group on the host.   
 
 ### See Also:
 
