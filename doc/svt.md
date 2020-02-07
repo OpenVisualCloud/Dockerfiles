@@ -12,7 +12,7 @@ SVT Images get built with following SVT transcoders
 
 ### Evaluate SVT 
 
-The easiest way to evalute SVT is through the latest release on [DOCKERHUB] (https://hub.docker.com/u/openvisualcloud), log onto a Linux PC with docker engine installed, execute "docker run <image> <command>" to try various SVT related functions. Refer to below examples: 
+The easiest way to evalute SVT is through the latest release on [Docker Hub](https://hub.docker.com/u/openvisualcloud), log onto a Linux PC with docker engine installed, execute "docker run <image> <command>" to try various SVT related functions. Refer to below examples: 
 
 - SVT HEVC encoder:
 ```bash
