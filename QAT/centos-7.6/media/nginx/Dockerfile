@@ -74,7 +74,7 @@ ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/${QAT_ENGINE_VER
 RUN wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
     ./autogen.sh && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir=/home/openssl --with-openssl_install_dir=/opt/openssl --enable-upstream_driver --enable-usdm --prefix=/opt/intel/QATengine && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir=/home/openssl --with-openssl_install_dir=/opt/openssl --enable-upstream_driver --enable-usdm --prefix=/opt/intel/QATengine --enable-qat_debug && \
     PERL5LIB=/home/openssl make -j8 && \
     PERL5LIB=/home/openssl make install && \
     tar cf - /opt/openssl | (cd /home/build && tar xf -)
@@ -99,7 +99,12 @@ RUN mkdir -p /home/build/var/www/tmp/client_body && \
     mkdir -p /home/build/var/www/tmp/fastcgi && \
     mkdir -p /home/build/var/www/tmp/uwsgi && \
     mkdir -p /home/build/var/www/tmp/scgi && \
-    mkdir -p /home/build/var/www/cache;
+    mkdir -p /home/build/var/www/cache && \
+    mkdir -p /home/build/var/www/dash && \
+    mkdir -p /home/build/var/www/hls && \
+    mkdir -p /home/build/var/www/upload && \
+    mkdir -p /home/build/var/www/html && \
+    touch /home/build/var/www/html/index.html;
 
 
 # Generate a self-certificate for testing purpose
