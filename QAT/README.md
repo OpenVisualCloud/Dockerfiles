@@ -81,6 +81,10 @@ docker run $(ls -1 -d /etc/*_dev?.conf /dev/hugepages | sed 's/\(.*\)/-v \1:\1/'
 
 To run the docker images as a non-root user, you need to create a `qat` group and make your user part of the `qat` group. The GID of the `qat` group within the containers **must** match that of the `qat` group on the host.   
 
+### Known Limitations:   
+
+- The docker images must be built and tested on the host with Intel QAT installed.  
+
 ### See Also:
 
 - [Intel QuickAssist Technology](https://01.org/intel-quickassist-technology)   
