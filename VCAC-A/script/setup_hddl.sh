@@ -1,110 +1,136 @@
 #!/bin/bash
 
-DIR=$(dirname $(readlink -f "$0"))
+DIR="/opt/intel/openvino/hddl"
+docker_build_dir="${DIR}/ubuntu-openvino-hddl"
+docker_compose_dir="${DIR}/ov_hddl"
 openvino_name="l_openvino_toolkit_p_2019.3.334"
 ov_link="http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/$openvino_name.tgz"
-py_ver='3.7.2'
-py_link="https://www.python.org/ftp/python/$py_ver/Python-$py_ver.tgz"
-package_name="intel-vcaa-hddl"
 ov_hddl="ov_hddl"
 ov_hddl_version="v1"
-hddldaemon_cfg="hddldaemon.cfg"
 
-build_hddl_package()
+build_hddl_container()
 {
-        dockerfile="$DIR/Dockerfile.hddldaemon"
+	mkdir -p "$docker_build_dir"
+        dockerfile="${docker_build_dir}/Dockerfile"
+	entryfile="${docker_build_dir}/run_hddl.sh"
 	gen_Dockerfile "$dockerfile"
-	docker build -t ${ov_hddl}:${ov_hddl_version} $(env | grep -E '(proxy|PROXY)=' | sed 's/^/--build-arg /') -f "$dockerfile" "${DIR}"
-        local container_id=$(docker create -it ${ov_hddl}:${ov_hddl_version} /bin/bash)
-        docker cp $container_id:/root/package/${package_name}.tar.gz "$DIR"
-        docker cp $container_id:/root/package/ov_ver.log "$DIR"
-        #docker container rm $container_id
-	#docker image rm ${ov_hddl}:${ov_hddl_version}
+	gen_entryfile "$entryfile"
+	docker build -t ${ov_hddl}:${ov_hddl_version} $(env | grep -E '(proxy|PROXY)=' | sed 's/^/--build-arg /') "${docker_build_dir}/"
 }
 
-install_hddl_package()
+#docker compose will keep container up even cross node reboot
+install_hddl_compose()
 {
-        export LC_ALL=C
-        apt-get install -y sudo libboost-filesystem1.58-dev nasm libboost-thread1.58-dev libboost-program-options1.58-dev libboost-all-dev libjson0-dev libusb-1.0-0-dev cmake libelf-dev
-	ov_ver=`cat ov_ver.log`
-	mkdir -p /opt/intel/
-	tar zxf ${package_name}.tar.gz -C /opt/intel/
-	mv /opt/intel/openvino /opt/intel/$ov_ver
-        ln -s /opt/intel/$ov_ver /opt/intel/openvino
-	cd /opt/intel/$ov_ver/deployment_tools/inference_engine/external/hddl/drivers/drv_ion 
-        make && make install
-        if [ $? != 0 ] ;then
-		echo "[Error] Failed to install drv_ion"
-	fi
-        make clean
-	cd /opt/intel/$ov_ver/deployment_tools/inference_engine/external/hddl/drivers/drv_vsc 
-        make && make install
-        if [ $? != 0 ] ;then
-		echo "[Error] Failed to install drv_vsc"
-	fi
-        make clean
-
-        # Load SMBus driver
-	modprobe i2c-i801
-	modprobe i2c-dev
+	curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` > /usr/bin/docker-compose
+	chmod +x /usr/bin/docker-compose
+	mkdir -p "$docker_compose_dir"
+	composefile="${docker_compose_dir}/docker-compose.yml"
+	gen_Dockercomposefile "$composefile"
+	cd "$docker_compose_dir"
+	docker-compose up -d ov_hddl_run
 }
 
 gen_Dockerfile()
 {
     cat > "$1" <<EOF
-FROM ubuntu:16.04
-RUN apt-get update && apt-get install -y -q apt-utils lsb-release vim net-tools bzip2 wget curl git gcc g++ automake libtool pkg-config autoconf make cmake cmake-curses-gui gcc-multilib g++-multilib libboost-dev libssl-dev build-essential
-RUN apt-get install -y build-essential libncursesw5-dev libgdbm-dev libc6-dev zlib1g-dev libsqlite3-dev tk-dev libssl-dev openssl libffi-dev
-RUN mkdir -p /root/package
-RUN wget -P /root/package $py_link
-RUN wget -P /root/package $ov_link
-	
-#install python3.7
-RUN cd /root/package && \\
-    tar xzf Python-$py_ver.tgz && \\
-    cd Python-$py_ver && \\
-    ./configure && \\
-    make && make install
-
-#install openvino
-RUN cd /root/package && \\
-    tar xzf $openvino_name.tgz && \\
-    apt-get install -y cpio && \\
-    cd $openvino_name && \\
-    sed -i "s/ACCEPT_EULA=decline/ACCEPT_EULA=accept/" silent.cfg && \\
-    bash install.sh --ignore-signature --cli-mode -s silent.cfg
-
+FROM ubuntu:18.04 as builder
+ARG DOWNLOAD_LINK=https://github.com/libusb/libusb/archive/v1.0.22.tar.gz
+ARG INSTALL_DIR=/opt/intel/openvino
+ARG TEMP_DIR=/tmp/openvino_installer
+ADD $ov_link \$TEMP_DIR/openvino.tgz
+ADD \$DOWNLOAD_LINK \$TEMP_DIR/libusb.tar.gz
+RUN apt-get update && apt-get install -y --no-install-recommends \\
+    cpio sudo python3-pip python3-setuptools \\
+    libboost-filesystem1.65 libboost-thread1.65 libboost-program-options1.65 \\
+    libjson-c-dev build-essential autoconf automake libtool \\
+    kmod libelf-dev libusb-1.0-0 lsb-release && \\
+    rm -rf /var/lib/apt/lists/*
+RUN cd \$TEMP_DIR && \\
+    tar xf openvino.tgz && \\
+    cd l_openvino_toolkit* && \\
+    sed -i 's/decline/accept/g' silent.cfg && \\
+    ./install.sh -s silent.cfg
+RUN cd \$TEMP_DIR && \\
+    tar xvf libusb.tar.gz && \\
+    cd libusb-1.0.22/ && \\
+    ./autogen.sh enable_udev=no && \\
+    make -j \$(nproc) && \\
+    cp ./libusb/.libs/libusb-1.0.so /lib/x86_64-linux-gnu/libusb-1.0.so.0
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager && \\
-    python3 deployment_manager.py --targets=hddl --output_dir=/root/package --archive_name=${package_name}
-RUN ls /opt/intel | grep  openvino_ > /root/package/ov_ver.log
+    python3 deployment_manager.py --targets=hddl --output_dir=/root --archive_name=hddl
+
+FROM ubuntu:18.04
+RUN apt-get update && apt-get install -y sudo libboost-filesystem1.65 nasm \\
+    libboost-thread1.65 libboost-program-options1.65 libboost-all-dev libjson-c-dev libusb-1.0-0 \\
+    autoconf automake libtool kmod libelf-dev lsb-release && \\
+    apt-get clean && \\
+    rm -rf /var/lib/apt/lists/*
+COPY --from=builder /lib/x86_64-linux-gnu/libusb-1.0.so.0 /lib/x86_64-linux-gnu/libusb-1.0.so.0
+RUN mkdir -p /opt/intel
+COPY --from=builder /root/hddl.tar.gz /opt/intel
+RUN cd /opt/intel && tar xvf hddl.tar.gz && rm hddl.tar.gz
+COPY run_hddl.sh /usr/local/bin
+ENTRYPOINT ["/usr/local/bin/run_hddl.sh"]
 EOF
 }
 
-setup_crontab()
+gen_entryfile()
 {
-    crontab - <<EOF
-SHELL=/bin/bash
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-MAILTO=""
-* * * * * pid=/var/run/run_hddl_daemon.pid;if [-f \$pid] && kill -0 \$(cat \$pid) 2>/dev/null;then exit 0;fi;echo \$\$ >\$pid;. /opt/intel/openvino/bin/setupvars.sh;modprobe myd_ion;modprobe i2c-i801;modprobe i2c-dev;/opt/intel/openvino/deployment_tools/inference_engine/external/hddl/bin/hddldaemon >/var/log/hddl-daemon.log 2>&1
+	cat > "$1" <<EOF
+#!/bin/bash
+
+if [ "\$1" == "init" ]; then
+        modprobe i2c-dev i2c-i801 i2c-hid
+        cd /opt/intel/openvino/deployment_tools/inference_engine/external/hddl/drivers
+        bash setup.sh install
+	while true; do sleep 3600; done
+else
+        while [ ! -c /dev/ion ] ; do sleep 1; done
+        source /opt/intel/openvino/bin/setupvars.sh
+        cd /opt/intel/openvino/deployment_tools/inference_engine/external/hddl/bin
+        while true; do ./hddldaemon; sleep 1; done
+fi
+EOF
+	chmod +x "$1"
+}
+
+gen_Dockercomposefile()
+{
+	cat > "$1" <<EOF
+version: '3.7'
+services:
+  ov_hddl_init:
+      image: ov_hddl:v1
+      command: init
+      container_name: ov_hddl_init
+      volumes:
+        - /usr/src:/usr/src
+        - /lib/modules:/lib/modules
+      restart: unless-stopped
+      privileged: true
+  ov_hddl_run:
+      image: ov_hddl:v1
+      depends_on:
+        - ov_hddl_init
+      container_name: ov_hddl_run
+      volumes:
+        - /dev:/dev
+        - /var/tmp:/var/tmp
+      restart: unless-stopped
+      privileged: true
 EOF
 }
 
 case "$0" in
     *install*)
-        install_hddl_package "$@"
-        setup_crontab
+        build_hddl_container
+        install_hddl_compose
         ;;
     *setup*)
-        build_hddl_package
-
         NODEUSER="root"
         for nodeip in $(sudo vcactl network ip 2>/dev/null | grep -E '^[0-9.]+$'); do
             echo "setup on $nodeip" $0
             scp "$0" $NODEUSER@$nodeip:/root/install-hddl.sh
-            scp "$DIR/ov_ver.log" $NODEUSER@$nodeip:/root
-	    scp "$DIR/${package_name}.tar.gz" $NODEUSER@$nodeip:/root
-
 	    # install package on VCAC-A
             ssh $NODEUSER@$nodeip /root/install-hddl.sh
         done
