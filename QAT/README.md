@@ -25,7 +25,7 @@ sudo systemctl restart qat_service
 
 ### Configure QATzip and QATengine:
 
-QATzip is a utility (`qzip`) for data compression. QATengine is a crypto engine that can be used in the openssl framework. The asynchronous mode NGINX requires both QATzip and QATengine.   
+QATzip is a utility (`qzip`) for data compression. QATengine is a crypto engine that can be used in the openssl framework. The async mode NGINX requires both QATzip and QATengine.   
 
 While the docker images contain QATzip and QATengine, you **must** configure QATzip and QATengine on each host that the containers run. The QATzip configuration files are located at [QATzip/config_file](https://github.com/intel/QATzip/tree/master/config_file) and the QATengine configuration files are located at [QATengine/qat/config](https://github.com/intel/QAT_Engine/tree/master/qat/config). 
 
@@ -88,4 +88,8 @@ To run the docker images as a non-root user, you need to create a `qat` group an
 ### See Also:
 
 - [Intel QuickAssist Technology](https://01.org/intel-quickassist-technology)   
+- [QATzip](https://github.com/intel/QATzip)   
+- [QATengine](https://github.com/intel/QAT_Engine)   
+- [Async Mode Nginx](https://github.com/intel/asynch_mode_nginx)  
+
 
