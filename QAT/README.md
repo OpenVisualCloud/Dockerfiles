@@ -64,8 +64,7 @@ sudo systemctl restart qat_service
 
 ### Run Docker Images: 
 
-The docker images **must** run with the following devices/configuration files attached:  
-- `/etc/*_dev?.conf`: The configuration files for QATzip and QATengine.   
+The docker images **must** run with the following devices attached:  
 - `/dev/hugepages`: The hugepage kernel pages.  
 - `/dev/uio*`: The uio devices.  
 - `/dev/qat_*`: The qat devices.  
@@ -74,7 +73,7 @@ The docker images **must** run with the following devices/configuration files at
 For example, run the following script to start the NGINX Ubuntu image:   
 
 ```bash
-docker run $(ls -1 -d /etc/*_dev?.conf /dev/hugepages | sed 's/\(.*\)/-v \1:\1/') $(ls -1 /dev/uio* /dev/qat_* /dev/usdm_drv | sed 's/\(.*\)/--device=\1:\1/') -it openvisualcloud/qat-ubuntu1804-media-nginx
+docker run -v /dev/hugepages:/dev/hugepages $(ls -1 /dev/uio* /dev/qat_* /dev/usdm_drv | sed 's/\(.*\)/--device=\1:\1/') -it openvisualcloud/qat-ubuntu1804-media-nginx
 ```
 
 ### Run Docker Images as Non-Root:
