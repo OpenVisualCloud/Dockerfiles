@@ -23,11 +23,12 @@ include(libva-utils.m4)
 include(media-driver.m4)
 include(media-sdk.m4)
 include(opencl.m4)
-include(opencv.m4)
-include(dldt-ie.m4)
 include(libjsonc.m4)
 include(librdkafka.m4)
+include(opencv.m4)
+include(dldt-ie.m4)
 include(ffmpeg.m4)
+OPENCV_REMAKE_VIDEOIO()
 include(cleanup.m4)dnl
 
 FROM centos:7.5.1804
