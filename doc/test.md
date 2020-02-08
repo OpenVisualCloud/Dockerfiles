@@ -41,4 +41,7 @@
 | Analytics:GStreamer | V | V | 
 | Dev | V | V |  
 
+| Platform: QAT | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
+|-----|:---:|:---:|:---:|:---:|:---:|
+| Media:NGINX | V | V | - | - | V |
 
