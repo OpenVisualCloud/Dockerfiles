@@ -1,5 +1,5 @@
 
-FROM centos:7.4.1708 AS build
+FROM centos:7.6.1810 AS build
 WORKDIR /home
 
 # COMMON BUILD TOOLS
@@ -61,7 +61,6 @@ RUN wget -O - ${QATZIP_REPO} | tar xz && \
     make -j8 && \
     make install && \
     (cd /opt/intel/QATzip/lib64 && ln -s libqatzip.so libqatzip.so.1) && \
-    rm -rf /opt/intel/QATzip/share/man && \
     tar cf - /opt/intel/QATzip | (cd /home/build; tar xf -)
 
 # Build OpenSSL for QAT
@@ -73,8 +72,6 @@ RUN wget -O - ${QAT_OPENSSL_REPO} | tar xz && mv openssl-${QAT_OPENSSL_VER} open
     ./config --prefix=/opt/openssl --openssldir=/opt/openssl -Wl,-rpath,\${LIBRPATH} && \
     make -j8 && \
     make install && \
-    rm -rf /opt/openssl/share/doc && \
-    rm -rf /opt/openssl/share/man && \
     echo
 
 # Build QAT Engine
@@ -123,20 +120,10 @@ RUN mkdir -p /home/build/etc/nginx && \
     chmod 640 /home/build/etc/nginx/cert.key && \
     chmod 644 /home/build/etc/nginx/cert.crt
 
-# Clean up after build
-RUN rm -rf /home/build/usr/include && \
-    rm -rf /home/build/usr/share/doc && \
-    rm -rf /home/build/usr/share/gtk-doc && \
-    rm -rf /home/build/usr/share/man && \
-    rm -rf /home/build/usr/local/include && \
-    rm -rf /home/build/usr/local/share/doc && \
-    rm -rf /home/build/usr/local/share/gtk-doc && \
-    rm -rf /home/build/usr/local/share/man && \
-    find /home/build -name "*.a" -exec rm -f {} \;
 
 
-FROM openvisualcloud/xeon-centos74-media-ffmpeg:latest
-LABEL Description="This is the base image for the NGINX-QAT service"
+FROM openvisualcloud/xeon-centos76-media-dev:latest
+LABEL Description="This is the media development image"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
