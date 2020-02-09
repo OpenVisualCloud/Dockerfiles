@@ -78,7 +78,7 @@ docker run -v /dev/hugepages:/dev/hugepages $(ls -1 /dev/uio* /dev/qat_* /dev/us
 
 ### Run Docker Images as Non-Root:
 
-To run the docker images as a non-root user, you need to create a `qat` group and make your user part of the `qat` group. The GID of the `qat` group within the containers **must** match that of the `qat` group on the host.   
+To access the mounted [devices](#run-docker-images), the user must have the access permission. The [sample](https://github.com/xwu2git/Dockerfiles/blob/qat/QAT/ubuntu-18.04/media/nginx/nginx.conf) NGINX configuration runs the NGINX instance as root. If you plan to run NGINX as a non-root user (for example, nobody), you need to create a `qat` group and assign your user to be part of the `qat` group. The GID of the `qat` group within the containers **must** match that of the `qat` group on the host.   
 
 ### Known Limitations:   
 
