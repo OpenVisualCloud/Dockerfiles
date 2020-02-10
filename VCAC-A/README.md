@@ -149,15 +149,19 @@ For VCAC-A, run the [`setup_weave.sh`](script/setup_weave.sh) script on both the
   - You can install any Layer-3 (IP-based) [POD network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking). For example, [flannel](https://github.com/coreos/flannel) is a good place to start.      
 
 - Join the Kubernetes worker nodes to the cluster. For VCAC-A, join both the VCAC-A host and each VCAC-A node to the Kubernetes cluster.    
-- Finally, add a node label to each VCAC-A worker node for POD scheduling as follows:    
+- Add a node label to each VCAC-A worker node for POD scheduling as follows:    
 
 ```bash
 kubectl label node <node-name> vcac-zone=yes
 ```
 
+- Optionally, for non-priliveged containers (as in production), it is recommended to install the Intel [GPU](https://github.com/intel/intel-device-plugins-for-kubernetes/blob/master/cmd/gpu_plugin/README.md) and [VPU](https://github.com/intel/intel-device-plugins-for-kubernetes/blob/master/cmd/vpu_plugin/README.md) device plugins. The GPU device plugin is for enabling media acceleration and the VPU device plugin is for enabling analytics acceleration.    
+
 #### Develop Deployment Script:
 
 The VCAC-A deployment script looks like the following (from the [Smart City](https://github.com/OpenVisualCloud/Smart-City-Sample) sample):
+
+**Run Containers as Privileged** (for development):  
 
 ```
 ...
@@ -186,7 +190,25 @@ where you must:
 - Set the `securityContext` to be `priviledged`. This will mount the devices for media and analytics acceleration.   
 - Select the VCAC-A node(s) by the `vcac-zone=yes` label.      
 
+**Run Containers as Non-Privileged** (required to install the GPU and VPU device plugins): 
+
+```
+...
+      containers:
+        - name: traffic-office1-analytics
+          image: smtc_analytics_object_detection_vcac-a_gst:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              vpu.intel.com/hddl: 1
+              gpu.intel.com/i915: 1
+      nodeSelector:
+          vcac-zone: "yes"
+...
+```
+
 #### See Also:   
 - [WeaveNet Installation](https://www.weave.works/docs/net/latest/install)   
 - [AD Insertion Sample VCAC-A Setup](https://github.com/OpenVisualCloud/Ad-Insertion-Sample/blob/master/doc/vcac-a.md)
 - [Smart City Sample VCAC-A Setup](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/doc/vcac-a.md)
+- [Intel Device Plugins for Kubernetes](https://github.com/intel/intel-device-plugins-for-kubernetes)   
