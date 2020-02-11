@@ -41,6 +41,4 @@ RUN apt-get update && apt-get install -y sudo libboost-filesystem1.65 nasm \
 
 COPY --from=builder /lib/x86_64-linux-gnu/libusb-1.0.so.0 /lib/x86_64-linux-gnu/libusb-1.0.so.0
 COPY --from=builder /home/opt/intel /opt/intel
-COPY run_hddl.sh /usr/local/bin
-ENTRYPOINT ["/usr/local/bin/run_hddl.sh"]
-
+COPY *_hddl.sh /usr/local/bin/
