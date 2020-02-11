@@ -1,5 +1,5 @@
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=d18b4acf9139be2e83150e318ffd3dba1c432e74
+ARG SVT_VP9_VER=v0.1.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 RUN git clone ${SVT_VP9_REPO} && \

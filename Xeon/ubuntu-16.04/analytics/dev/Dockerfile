@@ -74,18 +74,6 @@ RUN wget -O - ${MP3LAME_REPO} | tar xz && \
     make install DESTDIR=/home/build && \
     make install
 
-# Build fdk-aac
-ARG FDK_AAC_VER=v0.1.6
-ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
-
-RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
-    cd fdk-aac && \
-    autoreconf -fiv && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install
-
 
 # Build opus
 ARG OPUS_VER=1.2.1
@@ -183,7 +171,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=d18b4acf9139be2e83150e318ffd3dba1c432e74
+ARG SVT_VP9_VER=v0.1.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 RUN git clone ${SVT_VP9_REPO} && \
@@ -630,7 +618,7 @@ RUN cd /home/FFmpeg; \
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api  && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels  --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api  && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
