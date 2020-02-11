@@ -36,7 +36,7 @@ FROM ubuntu:18.04
 
 RUN apt-get update && apt-get install -y sudo libboost-filesystem1.65-dev nasm \
     libboost-thread1.65-dev libboost-program-options1.65-dev libjson-c-dev \
-    libusb-1.0-0 autoconf automake libtool kmod libelf-dev lsb-release && \
+    libusb-1.0-0 autoconf automake make libtool kmod libelf-dev lsb-release && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /lib/x86_64-linux-gnu/libusb-1.0.so.0 /lib/x86_64-linux-gnu/libusb-1.0.so.0
