@@ -11,7 +11,7 @@ run_hddl_compose()
     mkdir -p /root/ov_hddl
     cd /root/ov_hddl
     gen_Dockercomposefile
-    docker-compose up
+    docker-compose up -d
 }
 
 gen_Dockercomposefile()
@@ -24,18 +24,16 @@ services:
       command: [ "/usr/local/bin/init_hddl.sh" ]
       container_name: ov_hddl_init
       volumes:
-        - /usr/src:/usr/src
+        - /usr/src:/usr/src:ro
         - /lib/modules:/lib/modules
       restart: on-failure
       privileged: true
   ov_hddl_run:
       image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon
       command: [ "/usr/local/bin/run_hddl.sh" ]
-      depends_on:
-        - ov_hddl_init
       container_name: ov_hddl_run
       volumes:
-        - /dev:/dev
+        - /lib/modules:/lib/modules:ro
         - /var/tmp:/var/tmp
       restart: unless-stopped
       privileged: true
