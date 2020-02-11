@@ -4,6 +4,7 @@ WORKDIR /home
 define(`BUILD_LINKAGE',shared)dnl
 
 include(build-tools.m4)
+include(libnice014.m4)
 include(openssl.m4)
 include(libre.m4)
 include(usrsctp.m4)
