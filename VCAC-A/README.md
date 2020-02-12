@@ -26,12 +26,12 @@ See each sub-folder for a list of media analytics software stacks targeted for t
 
 | Framework | Dockerfile | Docker Image |
 |:---------:|:-----------|:-------------|
-|   FFMpeg  | [ubuntu-18.04/analytics/ffmpeg/Dockerfile](ubuntu-18.04/analytics/ffmpeg/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg) |
-| GStreamer | [ubuntu-18.04/analytics/gst/Dockerfile](ubuntu-18.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-gst) |
-|  build | [ubuntu-18.04/dev/Dockerfile](ubuntu-18.04/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-dev`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-dev) |
-|   FFMpeg  | [ubuntu-16.04/analytics/ffmpeg/Dockerfile](ubuntu-16.04/analytics/ffmpeg/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-analytics-ffmpeg) |
-| GStreamer | [ubuntu-16.04/analytics/gst/Dockerfile](ubuntu-16.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-gst`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-analytics-gst) |
-|  build | [ubuntu-16.04/dev/Dockerfile](ubuntu-16.04/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-dev`](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1604-dev) |
+|   FFMpeg  | [ubuntu-18.04/analytics/ffmpeg/Dockerfile](ubuntu-18.04/analytics/ffmpeg/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg) |
+| GStreamer | [ubuntu-18.04/analytics/gst/Dockerfile](ubuntu-18.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-gst`](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-gst) |
+|  build | [ubuntu-18.04/analytics/dev/Dockerfile](ubuntu-18.04/analytics/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1804-analytics-dev`](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-dev) |
+|   FFMpeg  | [ubuntu-16.04/analytics/ffmpeg/Dockerfile](ubuntu-16.04/analytics/ffmpeg/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg`](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg) |
+| GStreamer | [ubuntu-16.04/analytics/gst/Dockerfile](ubuntu-16.04/analytics/gst/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-gst`](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-gst) |
+|  build | [ubuntu-16.04/analytics/dev/Dockerfile](ubuntu-16.04/analytics/dev/Dockerfile) | [`openvisualcloud/vcaca-ubuntu1604-analytics-dev`](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-dev) |
 
 Use the following command to transfer any desired image to the VCAC-A:     
 
