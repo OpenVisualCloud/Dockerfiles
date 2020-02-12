@@ -11,8 +11,6 @@ ARG OPENH264_BINARY=https://github.com/cisco/openh264/releases/download/v${OPENH
 ARG LICODE_COMMIT="8b4692c88f1fc24dedad66b4f40b1f3d804b50ca"
 ARG LICODE_REPO=https://github.com/lynckia/licode.git
 ARG LICODE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/tree/master/scripts/patches/licode/
-ARG NICE_VER="0.1.4"
-ARG NICE_REPO=http://nice.freedesktop.org/releases/libnice-${NICE_VER}.tar.gz
 ARG SCVP_VER="1.0.0"
 ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v${SCVP_VER}.tar.gz
 ARG WEBRTC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-webrtc.git
@@ -82,19 +80,6 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,`dnl
     git apply ${SERVER_PATH}/scripts/patches/licode/*.patch && \
     mkdir -p ${SERVER_PATH}/build/libdeps/build/include && \
     cp erizoAPI/lib/json.hpp ${SERVER_PATH}/build/libdeps/build/include && \
-
-    # Install libnice for owt
-    cd ${SERVER_PATH}/third_party && \
-    wget -O - ${NICE_REPO} | tar xz && \
-    cd libnice-${NICE_VER} && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-agentlock.patch && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-agentlock-plus.patch && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-removecandidate.patch && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-keepalive.patch && \
-    patch -p1 < ${SERVER_PATH}/scripts/patches/libnice014-startcheck.patch && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
-    make -s V= && \
-    make install && \
 
     # Install webrtc for owt
     cd ${SERVER_PATH}/third_party && mkdir webrtc  && cd webrtc &&\

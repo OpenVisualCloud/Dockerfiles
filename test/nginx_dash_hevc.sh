@@ -10,5 +10,5 @@ case "$1" in
 esac
     
 dd if=/dev/urandom bs=115200 count=300 of=test.yuv # 10 seconds video
-#ffmpeg -re -f rawvideo -vcodec rawvideo -s 320x240 -r 30 -pix_fmt yuv420p -i test.yuv -c:v libsvt_hevc -f flv rtmp://localhost/dash/test
-#curl -sSf http://127.0.0.1/dash/test/index.mpd
+ffmpeg -re -f rawvideo -vcodec rawvideo -s 320x240 -r 30 -pix_fmt yuv420p -i test.yuv -c:v libsvt_hevc -f flv rtmp://localhost/dash/test
+curl -sSf http://localhost/dash/test/index.mpd
