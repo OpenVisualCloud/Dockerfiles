@@ -17,7 +17,7 @@ run_hddl_compose()
 gen_Dockercomposefile()
 {
     cat > docker-compose.yml <<EOF
-version: '3.7'
+version: '2.4'
 services:
   ov_hddl_init:
       image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon
@@ -26,17 +26,23 @@ services:
       volumes:
         - /usr/src:/usr/src:ro
         - /lib/modules:/lib/modules
+	- /etc/modules-load.d
       restart: on-failure
       privileged: true
   ov_hddl_run:
       image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon
       command: [ "/usr/local/bin/run_hddl.sh" ]
       container_name: ov_hddl_run
+      device_cgroup_rules:
+        - 'c 10:* rmw'
+        - 'c 89:* rmw'
+        - 'c 189:* rmw'
+        - 'c 180:* rmw'
       volumes:
-        - /lib/modules:/lib/modules:ro
+        - /dev:/dev
         - /var/tmp:/var/tmp
       restart: unless-stopped
-      privileged: true
+      privileged: false
 EOF
 }
 
