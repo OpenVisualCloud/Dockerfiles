@@ -26,7 +26,7 @@ services:
       volumes:
         - /usr/src:/usr/src:ro
         - /lib/modules:/lib/modules
-	- /etc/modules-load.d
+        - /etc/modules-load.d
       restart: on-failure
       privileged: true
   ov_hddl_run:
