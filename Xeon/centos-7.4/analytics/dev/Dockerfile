@@ -154,6 +154,32 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install DESTDIR="/home/build" && \
      make install
 
+# Install required packges
+RUN yum install -y ninja-build python36-setuptools
+
+# Build Meson
+ARG MESON_VER=0.53.1
+ARG MESON_REPO=https://github.com/mesonbuild/meson
+
+RUN git clone ${MESON_REPO}; \
+    cd meson; \
+    git checkout ${MESON_VER}; \
+    python3.6 setup.py install;
+
+# Build dav1d
+ARG LIBDAV1D_VER=0.5.2
+ARG LIBDAV1D_REPO=https://code.videolan.org/videolan/dav1d.git
+
+RUN  git clone ${LIBDAV1D_REPO}; \
+     cd dav1d; \
+     git checkout ${LIBDAV1D_VER}; \
+     meson build --prefix /usr --libdir /usr/lib64 --buildtype release; \
+     ninja-build -C build; \
+     cd build; \
+     DESTDIR="/home/build" ninja-build install; \
+     ninja-build install;
+
+
 # Fetch SVT-HEVC
 ARG SVT_HEVC_VER=v1.4.3
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
@@ -666,7 +692,7 @@ RUN cd /home/FFmpeg; \
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 

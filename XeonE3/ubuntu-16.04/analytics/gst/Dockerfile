@@ -150,6 +150,32 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install DESTDIR="/home/build" && \
      make install
 
+# Install required packges
+RUN apt-get update -y && apt-get install -y python3-pip ninja-build;
+
+# Build Meson
+ARG MESON_VER=0.53.1
+ARG MESON_REPO=https://github.com/mesonbuild/meson
+
+RUN git clone ${MESON_REPO}; \
+    cd meson; \
+    git checkout ${MESON_VER}; \
+    python3 setup.py install;
+
+# Build dav1d
+ARG LIBDAV1D_VER=0.5.2
+ARG LIBDAV1D_REPO=https://code.videolan.org/videolan/dav1d.git
+
+RUN  git clone ${LIBDAV1D_REPO}; \
+     cd dav1d; \
+     git checkout ${LIBDAV1D_VER}; \
+     meson build --prefix /usr --libdir /usr/lib/x86_64-linux-gnu --buildtype release; \
+     ninja -C build; \
+     cd build; \
+     DESTDIR="/home/build" ninja install; \
+     ninja install;
+
+
 # Fetch SVT-HEVC
 ARG SVT_HEVC_VER=v1.4.3
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
