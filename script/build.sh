@@ -4,11 +4,11 @@ if [[ -z $DIR ]]; then
     exit 1
 fi
 
-BUILD_MP3LAME="${1:-ON}"
-BUILD_FDKAAC="${2:-ON}"
-ONLY_DOCKERFILES="${3:-OFF}"
-DOCKER_PREFIX="${4:-openvisualcloud}"
-VERSION="${5:-1.0}"
+BUILD_VERSION="${1:-1.0}"
+BUILD_MP3LAME="${2:-ON}"
+BUILD_FDKAAC="${3:-ON}"
+ONLY_DOCKERFILES="${4:-OFF}"
+DOCKER_PREFIX="${5:-openvisualcloud}"
 TEMPLATE="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/../template/"
 BUILD_CACHE=""
 FULL_CACHE=""
