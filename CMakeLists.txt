@@ -18,6 +18,10 @@ if (NOT DEFINED DOCKER_PREFIX)
     set(DOCKER_PREFIX "openvisualcloud")
 endif()
 
+if (NOT DEFINED VERSION)
+    set(VERSION "1.0")
+endif()
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/script/")
 
 enable_testing()
@@ -32,4 +36,5 @@ message(
     "\n-- Setting: BUILD_MP3LAME=${BUILD_MP3LAME}\n"
     "-- Setting: BUILD_FDKAAC=${BUILD_FDKAAC}\n"
     "-- Setting: ONLY_DOCKERFILES=${ONLY_DOCKERFILES}\n"
-    "-- Setting: DOCKER_PREFIX=${DOCKER_PREFIX}\n")
+    "-- Setting: DOCKER_PREFIX=${DOCKER_PREFIX}\n"
+    "-- Setting: VERSION=${VERSION}\n")
