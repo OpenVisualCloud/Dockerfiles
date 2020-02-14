@@ -44,6 +44,19 @@ RUN  wget -O - ${YASM_REPO} | tar xz && \
      make -j8 && \
      make install
 
+# Build AOM
+ARG AOM_VER=b6f1767eedbaddeb1ff5aa409a710ef61078640e
+ARG AOM_REPO=https://aomedia.googlesource.com/aom
+
+RUN  git clone ${AOM_REPO} && \
+     mkdir aom/aom_build && \
+     cd aom/aom_build && \
+     git checkout ${AOM_VER} && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX="/usr/local" -DCMAKE_INSTALL_LIBDIR=lib64 .. && \
+     make -j8 && \
+     make install DESTDIR="/home/build" && \
+     make install
+
 # Fetch SVT-HEVC
 ARG SVT_HEVC_VER=v1.4.3
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC

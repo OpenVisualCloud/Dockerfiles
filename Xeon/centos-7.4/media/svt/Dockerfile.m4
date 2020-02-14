@@ -4,6 +4,7 @@ WORKDIR /home
 define(`BUILD_LINKAGE',shared)dnl
 
 include(build-tools.m4)
+include(libaom.m4)
 include(svt-hevc.m4)
 include(svt-av1.m4)
 include(svt-vp9.m4)
