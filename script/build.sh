@@ -34,5 +34,5 @@ if [[ ${ONLY_DOCKERFILES} == OFF ]]; then
         sudo -E docker build --network=host ${BUILD_CACHE} --target build -t "${DOCKER_PREFIX}/${IMAGE}:build" "$DIR" $build_args
     fi
 
-    sudo -E docker build --network=host ${FULL_CACHE} -t "${DOCKER_PREFIX}/${IMAGE}:${VERSION}" -t "${DOCKER_PREFIX}/${IMAGE}:latest" "$DIR" $build_args
+    sudo -E docker build --network=host ${FULL_CACHE} -t "${DOCKER_PREFIX}/${IMAGE}:${BUILD_VERSION}" -t "${DOCKER_PREFIX}/${IMAGE}:latest" "$DIR" $build_args
 fi
