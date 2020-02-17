@@ -15,7 +15,7 @@ The following scripts run on the host serving the VCAC-A node.
 - **`Setup proxy, datetime, DNS, and passwordless access`** : [setup_access.sh](./script/setup_access.sh)
 - **`Install docker-ce on VCAC-A`**: [setup_docker.sh](./script/setup_docker.sh). Alternatively, you can install docker-ee instead on the VCAC-A yourself.
 - **`Install hddldaemon on VCAC-A`** : [setup_hddl.sh](./script/setup_hddl.sh). Any inference requests initiated within the docker containers are routed to the HDDL daemon for execution.    
-
+**note**: Alternatively, you can deploy hddldaemon as daemonSet for K8S: [setup_hddl_daemonset.yaml](./script/setup_hddl_daemonset.yaml). You can use kubectl apply -f setup_hddl_daemonset.yaml to deploy it.
 #### See Also:
 
 - The [VCAC-A](https://github.com/OpenVisualCloud/VCAC-SW/tree/VCAC-A) System Software   
