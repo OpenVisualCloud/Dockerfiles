@@ -606,12 +606,6 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      make install
 
 
-RUN yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel \
-    readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel python36
-RUN yum install -y -q python-yaml
-
-
-
 ARG OPENCV_VER=4.1.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
@@ -903,7 +897,7 @@ WORKDIR /home
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
     yum install -y -q   libxcb SDL2 libass numactl libvdpau  glib2-2.56.1 pango gobject-introspection libpciaccess libxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora libpciaccess libX11 openblas-serial uuid python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base \
-mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo librtmp python-yaml ; \
+mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
     rm -rf /var/cache/yum/*;

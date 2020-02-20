@@ -417,12 +417,6 @@ RUN cd SVT-AV1/gstreamer-plugin && \
     make install DESTDIR=/home/build && \
     make install
 
-RUN yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel \
-    readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel python36
-RUN yum install -y -q python-yaml
-
-
-
 ARG OPENCV_VER=4.1.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
@@ -715,7 +709,7 @@ WORKDIR /home
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
     yum install -y -q   libxcb SDL2 libass numactl   glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base \
-libsoup libjpeg-turbo librtmp python-yaml ; \
+libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
     rm -rf /var/cache/yum/*;

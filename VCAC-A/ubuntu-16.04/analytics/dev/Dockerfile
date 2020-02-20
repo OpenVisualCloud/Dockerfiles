@@ -441,10 +441,6 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      make install
 
 
-RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools python3-yaml
-
-
-
 ARG OPENCV_VER=4.1.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
@@ -699,7 +695,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Prerequisites
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libsdl2-2.0-0 libasound2 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libvdpau1 libnuma1 libass5 libssl1.0.0   libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libglib2.0-0 libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 python3 python3-yaml libgtk2.0 libdrm2 libxv1 uuid python3-numpy python3-gi python3-gi-cairo python3-dev \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv1 libsdl2-2.0-0 libasound2 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libvdpau1 libnuma1 libass5 libssl1.0.0   libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libglib2.0-0 libpng12-0 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 uuid python3-numpy python3-gi python3-gi-cairo python3-dev \
 libdrm2 libjson-c2 libboost-thread1.58.0 libboost-filesystem1.58.0 libboost-system1.58.0 libusb-1.0-0-dev  vim && \
     rm -rf /var/lib/apt/lists/*
 
