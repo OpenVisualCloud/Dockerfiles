@@ -8,7 +8,7 @@ The FFmpeg docker images are compiled with the following audio and video codecs:
 |-------|:-------:|-------|:-------:|
 |fdk-acc|0.1.6|x265|2.9|
 |mp3lame|3.100|vpx|1.7.0|
-|opus|1.2.1|aom|1.0.0|
+|opus|1.2.1|dav1d|0.5.2|
 |ogg|1.3.3|SVT-HEVC|v1.4.3|
 |vorbis|1.3.6|SVT-AV1|v0.8.1|
 |x264|stable|SVT-VP9*|v0.1.0|

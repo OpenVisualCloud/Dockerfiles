@@ -4,10 +4,11 @@ if [[ -z $DIR ]]; then
     exit 1
 fi
 
-BUILD_MP3LAME="${1:-ON}"
-BUILD_FDKAAC="${2:-ON}"
-ONLY_DOCKERFILES="${3:-OFF}"
-DOCKER_PREFIX="${4:-openvisualcloud}"
+BUILD_VERSION="${1:-1.0}"
+BUILD_MP3LAME="${2:-ON}"
+BUILD_FDKAAC="${3:-ON}"
+ONLY_DOCKERFILES="${4:-OFF}"
+DOCKER_PREFIX="${5:-openvisualcloud}"
 TEMPLATE="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/../template/"
 BUILD_CACHE=""
 FULL_CACHE=""
@@ -33,5 +34,5 @@ if [[ ${ONLY_DOCKERFILES} == OFF ]]; then
         sudo -E docker build --network=host ${BUILD_CACHE} --target build -t "${DOCKER_PREFIX}/${IMAGE}:build" "$DIR" $build_args
     fi
 
-    sudo -E docker build --network=host ${FULL_CACHE} -t "${DOCKER_PREFIX}/${IMAGE}:${VERSION}" -t "${DOCKER_PREFIX}/${IMAGE}:latest" "$DIR" $build_args
+    sudo -E docker build --network=host ${FULL_CACHE} -t "${DOCKER_PREFIX}/${IMAGE}:${BUILD_VERSION}" -t "${DOCKER_PREFIX}/${IMAGE}:latest" "$DIR" $build_args
 fi
