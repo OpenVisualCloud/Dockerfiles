@@ -1,8 +1,8 @@
 # ![logo][]  Software Stack Dockerfiles
-[![HOMEPAGE](https://img.shields.io/badge/HOMEPAGE-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
+[![HOMEPAGE](https://img.shields.io/badge/Homepage-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
 [![Dockerhub](https://img.shields.io/badge/Images-Dockerhub-blue.svg)](https://hub.docker.com/u/openvisualcloud)
-[![Stable release](https://img.shields.io/badge/latest_release-v20.1-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/tag/v20.1)
-[![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
+[![Stable release](https://img.shields.io/badge/Release-Latest-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/latest)
+[![Contributions](https://img.shields.io/badge/Contributions-Welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
 
@@ -70,7 +70,7 @@ The project supports the following platforms and OS'es:
 | [Xeon E3](XeonE3) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
 | [VCA2](VCA2) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
 | [VCAC-A](VCAC-A) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS |
-| [QAT](QAT) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS |
+| [QAT](QAT) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
 
 Please see [Development and Test Report](doc/test.md) for the latest development statuses.    
 
