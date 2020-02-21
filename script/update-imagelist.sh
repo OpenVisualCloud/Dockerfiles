@@ -29,9 +29,9 @@ imagelist==1 && !/^\|.*\|$/ {
                 if (system("test -d "os1"/"usage1"/"image1)!=0) continue;
                 c2=c2"<br>["os1"/"usage1"/"image1"]("os1"/"usage1"/"image1")";
                 c3=c3"<br>";
-                image2=platform1"-"os2"-"usage1"-"image1;
-                if (system("test -n \"$(docker search "image2" | grep ^"prefix"/)\"")==0)
-                    c3=c3"["prefix"/"image2"](https://hub.docker.com/r/"prefix"/"image2")";
+                image2=prefix"/"platform1"-"os2"-"usage1"-"image1;
+                if (system("curl --silent -f -lSL -o /dev/null https://hub.docker.com/v2/repositories/"image2"/tags/latest")==0)
+                    c3=c3"["image2"](https://hub.docker.com/r/"image2")";
             }
             if (length(c2)==0) continue;
             print "|"usage1"-"image1"|"substr(c2,5)"|"substr(c3,5)"|";
@@ -44,5 +44,5 @@ imagelist==0 {
 /^\|Image\|Dockerfile\|Docker Image\|$/ {
     imagelist=1;
 }
-' README.tmp > README.md
+' README.tmp > README.md 2> /dev/null
 rm -f README.tmp
