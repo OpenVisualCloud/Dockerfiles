@@ -1,12 +1,7 @@
 
 Enhance security and compression performance in cloud, networking, big data, and storage applications — for data in motion and at rest. Now you can accelerate compute-intensive operations with Intel<sup>&reg;</sup> QuickAssist Technology (Intel QAT).   
 
-### Docker Images:
-
-|Image|Dockerfile|Docker Image|
-|:-:|---|---|
-|media-nginx|[ubuntu-18.04/media/nginx](ubuntu-18.04/media/nginx)<br>[ubuntu-16.04/media/nginx](ubuntu-16.04/media/nginx)<br>[centos-7.6/media/nginx](centos-7.6/media/nginx)<br>[centos-7.5/media/nginx](centos-7.5/media/nginx)<br>[centos-7.4/media/nginx](centos-7.4/media/nginx)|coming...<br>coming...<br>coming...<br>coming...<br>coming...|
-|media-dev|[ubuntu-18.04/media/dev](ubuntu-18.04/media/dev)<br>[ubuntu-16.04/media/dev](ubuntu-16.04/media/dev)<br>[centos-7.6/media/dev](centos-7.6/media/dev)<br>[centos-7.5/media/dev](centos-7.5/media/dev)<br>[centos-7.4/media/dev](centos-7.4/media/dev)|coming...<br>coming...<br>coming...<br>coming...<br>coming...|
+This document describes the system setup to use Intel QAT within docker containers.
 
 ### Install Driver and Service:
 
@@ -68,6 +63,14 @@ sudo systemctl restart qat_service
 ```
 
 ### Run Docker Images: 
+
+The table lists the available docker images:   
+
+|Image|Dockerfile|Docker Image|
+|:-:|---|---|
+|media-nginx|[ubuntu-18.04/media/nginx](ubuntu-18.04/media/nginx)<br>[ubuntu-16.04/media/nginx](ubuntu-16.04/media/nginx)<br>[centos-7.6/media/nginx](centos-7.6/media/nginx)<br>[centos-7.5/media/nginx](centos-7.5/media/nginx)<br>[centos-7.4/media/nginx](centos-7.4/media/nginx)|coming...<br>coming...<br>coming...<br>coming...<br>coming...|
+|media-dev|[ubuntu-18.04/media/dev](ubuntu-18.04/media/dev)<br>[ubuntu-16.04/media/dev](ubuntu-16.04/media/dev)<br>[centos-7.6/media/dev](centos-7.6/media/dev)<br>[centos-7.5/media/dev](centos-7.5/media/dev)<br>[centos-7.4/media/dev](centos-7.4/media/dev)|coming...<br>coming...<br>coming...<br>coming...<br>coming...|
+
 
 The docker images **must** run with the following devices attached:  
 - `/dev/hugepages`: The hugepage kernel pages.  

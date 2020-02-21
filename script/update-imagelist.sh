@@ -12,7 +12,7 @@ awk -v prefix=$1 -v platform1=$2 -- '
 BEGIN {
     nos=split("ubuntu-18.04 ubuntu-16.04 centos-7.6 centos-7.5 centos-7.4",os," ");
     nusage=split("media analytics graphics service",usage," ");
-    nimage=split("ffmpeg gst nginx ospray ospray-mpi owt owt-immersive dev",image," ");
+    nimage=split("ffmpeg gst nginx ospray ospray-mpi owt owt-immersive dev hddldaemon",image," ");
     imagelist=0;
 }
 imagelist==1 && !/^\|.*\|$/ {
