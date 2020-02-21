@@ -27,8 +27,8 @@ See each sub-folder for a list of media analytics software stacks targeted for t
 |Image|Dockerfile|Docker Image|
 |---|---|---|
 |analytics-ffmpeg|[ubuntu-18.04/analytics/ffmpeg](ubuntu-18.04/analytics/ffmpeg)<br>[ubuntu-16.04/analytics/ffmpeg](ubuntu-16.04/analytics/ffmpeg)|<br>|
-|analytics-gst|[ubuntu-18.04/analytics/gst](ubuntu-18.04/analytics/gst)<br>[ubuntu-16.04/analytics/gst](ubuntu-16.04/analytics/gst)|docker pull [openvisualcloud/vcaca-ubuntu1804-analytics-gst](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-gst)<br>docker pull [openvisualcloud/vcaca-ubuntu1604-analytics-gst](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-gst)|
-|analytics-dev|[ubuntu-18.04/analytics/dev](ubuntu-18.04/analytics/dev)<br>[ubuntu-16.04/analytics/dev](ubuntu-16.04/analytics/dev)|docker pull [openvisualcloud/vcaca-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-dev)<br>docker pull [openvisualcloud/vcaca-ubuntu1604-analytics-dev](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-dev)|
+|analytics-gst|[ubuntu-18.04/analytics/gst](ubuntu-18.04/analytics/gst)<br>[ubuntu-16.04/analytics/gst](ubuntu-16.04/analytics/gst)|[openvisualcloud/vcaca-ubuntu1804-analytics-gst](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-gst)<br>[openvisualcloud/vcaca-ubuntu1604-analytics-gst](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-gst)|
+|analytics-dev|[ubuntu-18.04/analytics/dev](ubuntu-18.04/analytics/dev)<br>[ubuntu-16.04/analytics/dev](ubuntu-16.04/analytics/dev)|[openvisualcloud/vcaca-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-dev)<br>[openvisualcloud/vcaca-ubuntu1604-analytics-dev](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-dev)|
 
 
 Use the following command to transfer any desired image to the VCAC-A:     

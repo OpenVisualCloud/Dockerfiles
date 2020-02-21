@@ -31,7 +31,7 @@ imagelist==1 && !/^\|.*\|$/ {
                 c3=c3"<br>";
                 image2=platform1"-"os2"-"usage1"-"image1;
                 if (system("test -n \"$(docker search "image2" | grep ^"prefix"/)\"")==0)
-                    c3=c3"docker pull ["prefix"/"image2"](https://hub.docker.com/r/"prefix"/"image2")";
+                    c3=c3"["prefix"/"image2"](https://hub.docker.com/r/"prefix"/"image2")";
             }
             if (length(c2)==0) continue;
             print "|"usage1"-"image1"|"substr(c2,5)"|"substr(c3,5)"|";
