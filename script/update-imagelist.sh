@@ -17,7 +17,7 @@ BEGIN {
 }
 imagelist==1 && !/^\|.*\|$/ {
     imagelist=0;
-    print "|---|---|---|";
+    print "|:-:|---|---|";
     for (u1=1;u1<=nusage;u1++) {
         usage1=usage[u1];
         for (i1=1;i1<=nimage;i1++) {
@@ -28,10 +28,12 @@ imagelist==1 && !/^\|.*\|$/ {
                 gsub(/[-.]/,"",os2);
                 if (system("test -d "os1"/"usage1"/"image1)!=0) continue;
                 c2=c2"<br>["os1"/"usage1"/"image1"]("os1"/"usage1"/"image1")";
-                c3=c3"<br>";
                 image2=prefix"/"platform1"-"os2"-"usage1"-"image1;
-                if (system("curl --silent -f -lSL -o /dev/null https://hub.docker.com/v2/repositories/"image2"/tags/latest")==0)
-                    c3=c3"["image2"](https://hub.docker.com/r/"image2")";
+                if (system("curl --silent -f -lSL -o /dev/null https://hub.docker.com/v2/repositories/"image2"/tags/latest")==0) {
+                    c3=c3"<br>["image2"](https://hub.docker.com/r/"image2")";
+                } else {
+                    c3=c3"<br>coming...";
+                }
             }
             if (length(c2)==0) continue;
             print "|"usage1"-"image1"|"substr(c2,5)"|"substr(c3,5)"|";
