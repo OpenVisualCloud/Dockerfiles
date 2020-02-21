@@ -7,7 +7,7 @@ fi
 BUILD_VERSION="${1:-1.0}"
 BUILD_MP3LAME="${2:-ON}"
 BUILD_FDKAAC="${3:-ON}"
-ONLY_DOCKERFILES="${4:-OFF}"
+UPDATE_DOCKERFILES="${4:-OFF}"
 DOCKER_PREFIX="${5:-openvisualcloud}"
 TEMPLATE="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/../template/"
 BUILD_CACHE=""
@@ -28,7 +28,7 @@ if [[ $1 == -n ]]; then
     exit 0
 fi
 
-if [[ ${ONLY_DOCKERFILES} == OFF ]]; then
+if [[ ${UPDATE_DOCKERFILES} == OFF ]]; then
     build_args=$(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /')
     if grep -q 'AS build' "${DIR}/Dockerfile"; then
         sudo -E docker build --network=host ${BUILD_CACHE} --target build -t "${DOCKER_PREFIX}/${IMAGE}:build" "$DIR" $build_args
