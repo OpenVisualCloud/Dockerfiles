@@ -8,31 +8,35 @@ fi
 test -f README.md
 echo "Updating $2/README.md..."
 mv -f README.md README.tmp
-awk -v prefix=$1 -v platform1=$2 -- '
+
+awk -v prefix=$1 -v platform1=$2 -v images="$(find . -maxdepth 3 -mindepth 3 -type d -print | cut -f2-4 -d'/')" -- '
 BEGIN {
-    nos=split("ubuntu-18.04 ubuntu-16.04 centos-7.6 centos-7.5 centos-7.4",os," ");
-    nusage=split("media analytics graphics service",usage," ");
-    nimage=split("ffmpeg gst nginx ospray ospray-mpi owt owt-immersive dev hddldaemon",image," ");
+    split(images,images2," ");
+    for (image1 in images2) {
+        split(images2[image1],parts,"/");
+        os[parts[1]]=1;
+        usage[parts[2]]=1;
+        image[parts[3]]=1;
+        dockerfile[images2[image1]]=1;
+    }
     imagelist=0;
 }
 imagelist==1 && !/^\|.*\|$/ {
     imagelist=0;
     print "|:-:|---|---|";
-    for (u1=1;u1<=nusage;u1++) {
-        usage1=usage[u1];
-        for (i1=1;i1<=nimage;i1++) {
-            image1=image[i1];
+    for (usage1 in usage) {
+        for (image1 in image) {
             c2=c3="";
-            for (o1=1;o1<=nos;o1++) {
-                os1=os2=os[o1];
+            for (os1 in os) {
+                os2=os1;
                 gsub(/[-.]/,"",os2);
-                if (system("test -d "os1"/"usage1"/"image1)!=0) continue;
+                if (!dockerfile[os1"/"usage1"/"image1]) continue;
                 c2=c2"<br>["os1"/"usage1"/"image1"]("os1"/"usage1"/"image1")";
                 image2=prefix"/"platform1"-"os2"-"usage1"-"image1;
                 if (system("curl --silent -f -lSL -o /dev/null https://hub.docker.com/v2/repositories/"image2"/tags/latest")==0) {
                     c3=c3"<br>["image2"](https://hub.docker.com/r/"image2")";
                 } else {
-                    c3=c3"<br>coming...";
+                    c3=c3"<br>";
                 }
             }
             if (length(c2)==0) continue;

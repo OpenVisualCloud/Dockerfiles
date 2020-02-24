@@ -26,10 +26,10 @@ The following table shows a list of docker images targeted for the VCAC-A:
 
 |Image|Dockerfile|Docker Image|
 |:-:|---|---|
-|analytics-ffmpeg|[ubuntu-18.04/analytics/ffmpeg](ubuntu-18.04/analytics/ffmpeg)<br>[ubuntu-16.04/analytics/ffmpeg](ubuntu-16.04/analytics/ffmpeg)|[openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg)<br>[openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg)|
-|analytics-gst|[ubuntu-18.04/analytics/gst](ubuntu-18.04/analytics/gst)<br>[ubuntu-16.04/analytics/gst](ubuntu-16.04/analytics/gst)|[openvisualcloud/vcaca-ubuntu1804-analytics-gst](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-gst)<br>[openvisualcloud/vcaca-ubuntu1604-analytics-gst](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-gst)|
-|analytics-dev|[ubuntu-18.04/analytics/dev](ubuntu-18.04/analytics/dev)<br>[ubuntu-16.04/analytics/dev](ubuntu-16.04/analytics/dev)|[openvisualcloud/vcaca-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-dev)<br>[openvisualcloud/vcaca-ubuntu1604-analytics-dev](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-dev)|
 |analytics-hddldaemon|[ubuntu-18.04/analytics/hddldaemon](ubuntu-18.04/analytics/hddldaemon)|[openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon)|
+|analytics-dev|[ubuntu-16.04/analytics/dev](ubuntu-16.04/analytics/dev)<br>[ubuntu-18.04/analytics/dev](ubuntu-18.04/analytics/dev)|[openvisualcloud/vcaca-ubuntu1604-analytics-dev](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-dev)<br>[openvisualcloud/vcaca-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-dev)|
+|analytics-gst|[ubuntu-16.04/analytics/gst](ubuntu-16.04/analytics/gst)<br>[ubuntu-18.04/analytics/gst](ubuntu-18.04/analytics/gst)|[openvisualcloud/vcaca-ubuntu1604-analytics-gst](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-gst)<br>[openvisualcloud/vcaca-ubuntu1804-analytics-gst](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-gst)|
+|analytics-ffmpeg|[ubuntu-16.04/analytics/ffmpeg](ubuntu-16.04/analytics/ffmpeg)<br>[ubuntu-18.04/analytics/ffmpeg](ubuntu-18.04/analytics/ffmpeg)|[openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1604-analytics-ffmpeg)<br>[openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg)|
 
 
 Use the following command to transfer any desired image to the VCAC-A:     
