@@ -19,16 +19,21 @@ BEGIN {
         image[parts[3]]=1;
         dockerfile[images2[image1]]=1;
     }
+    asorti(os);
+    asorti(usage);
+    asorti(image);
     imagelist=0;
 }
 imagelist==1 && !/^\|.*\|$/ {
     imagelist=0;
     print "|:-:|---|---|";
-    for (usage1 in usage) {
-        for (image1 in image) {
+    for (u1 in usage) {
+        usage1=usage[u1];
+        for (i1 in image) {
+            image1=image[i1];
             c2=c3="";
-            for (os1 in os) {
-                os2=os1;
+            for (o1 in os) {
+                os2=os1=os[o1];
                 gsub(/[-.]/,"",os2);
                 if (!dockerfile[os1"/"usage1"/"image1]) continue;
                 c2=c2"<br>["os1"/"usage1"/"image1"]("os1"/"usage1"/"image1")";
