@@ -9,15 +9,15 @@ test -f README.md
 echo "Updating $2/README.md..."
 mv -f README.md README.tmp
 
-awk -v prefix=$1 -v platform1=$2 -v images="$(find . -maxdepth 3 -mindepth 3 -type d -print | cut -f2-4 -d'/')" -- '
+awk -v prefix=$1 -v platform1=$2 -v images="$(find . -maxdepth 3 -mindepth 3 -type d -print)" -- '
 BEGIN {
     split(images,images2," ");
-    for (image1 in images2) {
-        split(images2[image1],parts,"/");
-        os[parts[1]]=1;
-        usage[parts[2]]=1;
-        image[parts[3]]=1;
-        dockerfile[images2[image1]]=1;
+    for (i1 in images2) {
+        dockerfile[images2[i1]]=1;
+        split(images2[i1],parts,"/");
+        os[parts[2]]=1;
+        usage[parts[3]]=1;
+        image[parts[4]]=1;
     }
     asorti(os);
     asorti(usage);
@@ -35,7 +35,7 @@ imagelist==1 && !/^\|.*\|$/ {
             for (o1 in os) {
                 os2=os1=os[o1];
                 gsub(/[-.]/,"",os2);
-                if (!dockerfile[os1"/"usage1"/"image1]) continue;
+                if (!dockerfile["./"os1"/"usage1"/"image1]) continue;
                 c2=c2"<br>["os1"/"usage1"/"image1"]("os1"/"usage1"/"image1")";
                 image2=prefix"/"platform1"-"os2"-"usage1"-"image1;
                 if (system("curl --silent -f -lSL -o /dev/null https://hub.docker.com/v2/repositories/"image2"/tags/latest")==0) {
