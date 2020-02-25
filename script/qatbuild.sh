@@ -13,5 +13,5 @@ if test -d /opt/intel/QAT; then
    export QAT_GID_VER=$(getent group qat | cut -f3 -d:)
    . "${DIR}/../../../../script/build.sh"
 else 
-   echo "Build must run on a Intel QAT platform."
+   echo "Build must run on an Intel QAT platform."
 fi

@@ -1,7 +1,7 @@
 # OpenVINO verion
-# R3 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2019.3.334
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/15944/l_openvino_toolkit_p_2019.3.334.tgz
+# 2020.1 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.1.023
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/l_openvino_toolkit_p_2020.1.023.tgz
 
 
 #Install OpenVino dependencies
@@ -43,18 +43,18 @@ ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/in
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
 ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
 #ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 # OPENVINO C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.0.tar.gz
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
 RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.0 && \
+    cd dldt-c_api-2.0.1 && \
     mkdir -p build && cd build && \
     cmake -DENABLE_AVX512F=OFF .. && \
     make -j8 && \
     make install && \
     make install DESTDIR=/home/build
-define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_api )dnl
+define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_wrapper )dnl
 
 ifelse(index(DOCKER_IMAGE,-dev),-1,
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
@@ -70,14 +70,16 @@ RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz       && \
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     python3.6 ./deployment_manager.py --targets hddl vpu cpu            && \
     cd /root/ && ls -lh                                                 && \
-    tar zxf openvino_deploy_package.tar.gz
+    tar zxf openvino_deploy_package.tar.gz                              && \
+    mv openvino_deploy_package openvino
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     ./deployment_manager.py --targets hddl vpu cpu                      && \
     cd /root/ && ls -lh                                                 && \
-    tar zxf openvino_deploy_package.tar.gz
+    tar zxf openvino_deploy_package.tar.gz                              && \
+    mv openvino_deploy_package openvino
 ),
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
@@ -112,7 +114,7 @@ ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/exter
 ifelse(index(DOCKER_IMAGE,-dev),-1,,ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
 )dnl
 #ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:/usr/local/lib:$IE_PLUGINS_PATH
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:/usr/local/lib:$IE_PLUGINS_PATH
 )dnl
 
 define(`INSTALL_PKGS_OPENVINO',dnl

@@ -111,6 +111,19 @@ RUN git clone ${VPX_REPO} && \
     make install
 
 
+# Build AOM
+ARG AOM_VER=b6f1767eedbaddeb1ff5aa409a710ef61078640e
+ARG AOM_REPO=https://aomedia.googlesource.com/aom
+
+RUN  git clone ${AOM_REPO} && \
+     mkdir aom/aom_build && \
+     cd aom/aom_build && \
+     git checkout ${AOM_VER} && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX="/usr/local" -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu .. && \
+     make -j8 && \
+     make install DESTDIR="/home/build" && \
+     make install
+
 # Build x264
 ARG X264_VER=stable
 ARG X264_REPO=https://github.com/mirror/x264
@@ -182,9 +195,16 @@ RUN git clone ${SVT_HEVC_REPO} && \
 ARG SVT_AV1_VER=v0.8.1
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
+ARG SVT_AV1_PATCHES_RELEASE_VER=0.3
+ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
+ARG SVT_AV1_PATCHES_PATH=/home/CDN-${SVT_AV1_PATCHES_RELEASE_VER}
+RUN wget -O - ${SVT_AV1_PATCHES_RELEASE_URL} | tar xz
+
 RUN git clone ${SVT_AV1_REPO} && \
-    cd SVT-AV1/Build/linux && \
+    cd SVT-AV1 && \
     git checkout ${SVT_AV1_VER} && \
+    find ${SVT_AV1_PATCHES_PATH}/SVT-AV1_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
+    cd Build/linux && \
     mkdir -p ../../Bin/Release && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
@@ -519,19 +539,17 @@ RUN wget ${OPENCV_REPO} && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2019_R3
+ARG DLDT_VER=2020.1
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 
 RUN apt-get update && apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     cd dldt && \
-    git submodule init && \
-    git submodule update --recursive && \
-    cd inference-engine && \
+    git submodule update --init --recursive && \
     mkdir build && \
     cd build && \
-    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ON -DENABLE_SAMPLES=OFF -DENABLE_OPENCV=OFF .. && \
+    cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ON -DENABLE_SAMPLES=OFF -DENABLE_OPENCV=OFF -DENABLE_TESTS=OFF -DENABLE_GNA=OFF -DENABLE_PROFILING_ITT=OFF -DENABLE_SAMPLES_CORE=OFF -DENABLE_SEGMENTATION_TESTS=OFF -DENABLE_OBJECT_DETECTION_TESTS=OFF -DBUILD_TESTS=OFF -DNGRAPH_UNIT_TEST_ENABLE=OFF -DNGRAPH_TEST_UTIL_ENABLE=OFF .. && \
     make -j $(nproc) && \
     rm -rf ../bin/intel64/Release/lib/libgtest* && \
     rm -rf ../bin/intel64/Release/lib/libgmock* && \
@@ -543,22 +561,22 @@ ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
     mkdir -p ${libdir} && \
-    cp -r dldt/inference-engine/bin/intel64/Release/lib/* ${libdir} && \
+    cp -r dldt/bin/intel64/Release/lib/* ${libdir} && \
     mkdir -p /opt/intel/dldt/inference-engine/src && \
     cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
     mkdir -p /opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/inference-engine/build/share/* /opt/intel/dldt/inference-engine/share/ && \
+    cp -r dldt/build/share/* /opt/intel/dldt/inference-engine/share/ && \
     mkdir -p /opt/intel/dldt/inference-engine/external/ && \
     cp -r dldt/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
     mkdir -p build${libdir} && \
-    cp -r dldt/inference-engine/bin/intel64/Release/lib/* build${libdir} && \
+    cp -r dldt/bin/intel64/Release/lib/* build${libdir} && \
     mkdir -p build/opt/intel/dldt/inference-engine/src && \
     cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/inference-engine/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
+    cp -r dldt/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/external/ && \
     cp -r dldt/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
 
@@ -582,11 +600,11 @@ ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 
 # DLDT IE C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.0.tar.gz
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
 
 ARG c_api_libdir="/usr/local/lib"
 RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.0 && \
+    cd dldt-c_api-2.0.1 && \
     mkdir -p build && cd build && \
     cmake -DENABLE_AVX512F=OFF .. && \
     make -j8 && \

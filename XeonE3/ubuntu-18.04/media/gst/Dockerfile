@@ -111,6 +111,19 @@ RUN git clone ${VPX_REPO} && \
     make install
 
 
+# Build AOM
+ARG AOM_VER=b6f1767eedbaddeb1ff5aa409a710ef61078640e
+ARG AOM_REPO=https://aomedia.googlesource.com/aom
+
+RUN  git clone ${AOM_REPO} && \
+     mkdir aom/aom_build && \
+     cd aom/aom_build && \
+     git checkout ${AOM_VER} && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX="/usr/local" -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu .. && \
+     make -j8 && \
+     make install DESTDIR="/home/build" && \
+     make install
+
 # Build x264
 ARG X264_VER=stable
 ARG X264_REPO=https://github.com/mirror/x264
@@ -182,9 +195,16 @@ RUN git clone ${SVT_HEVC_REPO} && \
 ARG SVT_AV1_VER=v0.8.1
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
+ARG SVT_AV1_PATCHES_RELEASE_VER=0.3
+ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
+ARG SVT_AV1_PATCHES_PATH=/home/CDN-${SVT_AV1_PATCHES_RELEASE_VER}
+RUN wget -O - ${SVT_AV1_PATCHES_RELEASE_URL} | tar xz
+
 RUN git clone ${SVT_AV1_REPO} && \
-    cd SVT-AV1/Build/linux && \
+    cd SVT-AV1 && \
     git checkout ${SVT_AV1_VER} && \
+    find ${SVT_AV1_PATCHES_PATH}/SVT-AV1_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
+    cd Build/linux && \
     mkdir -p ../../Bin/Release && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
