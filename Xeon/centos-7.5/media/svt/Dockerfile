@@ -11,7 +11,7 @@ ARG CMAKE_REPO=https://cmake.org/files
 RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
     cd cmake-${CMAKE_VER} && \
     ./bootstrap --prefix="/usr/local" --system-curl && \
-
+    make -j8 && \
     make install
 
 # Install automake, use version 1.14 on CentOS

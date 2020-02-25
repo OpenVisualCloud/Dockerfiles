@@ -807,7 +807,7 @@ RUN cd /home/FFmpeg; \
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libaom --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_wrapper --enable-librdkafka --enable-libjson_c  && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_wrapper --enable-librdkafka --enable-libjson_c  && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
