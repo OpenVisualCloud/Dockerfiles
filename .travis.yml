@@ -35,9 +35,9 @@ before_script:
   - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest || true
 script:
   - mkdir build && cd build && cmake -DBUILD_MP3LAME=OFF -DBUILD_FDKAAC=OFF -DDOCKER_PREFIX=${DOCKER_PREFIX} ..
-  - travis_wait 180 ${TRAVIS_BUILD_DIR}/script/travis_build.sh ${TRAVIS_BUILD_DIR}/build/${CPU}/${buildOS}/${usage}/${imageName} 
-  - echo "Last 5000 lines log:" && tail --lines=5000 /home/travis/travis.log
-after_success: |
+  - travis_wait 180 ${TRAVIS_BUILD_DIR}/script/travis_build.sh ${CPU}/${buildOS}/${usage}/${imageName} 
+  - tail --lines=5000 travis.log
+after_success: 
    if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
         docker login -u ovckey -p $REGISTRY_PASS
         docker push $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:build 
@@ -46,7 +46,7 @@ after_success: |
 
 matrix:
   fast_finish: true
-  allow_failures: # NGINX RTMP tests are not stable.
+  allow_failures: # test cases run not stable.
     - name: centos-7.6 nginx
     - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx DOCKER_PREFIX=ovccache
     - name: ubuntu-18.04 nginx
