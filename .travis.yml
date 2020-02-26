@@ -37,7 +37,7 @@ script:
   - &basescript |
     mkdir build && cd build && cmake -DBUILD_MP3LAME=OFF -DBUILD_FDKAAC=OFF -DDOCKER_PREFIX=${DOCKER_PREFIX} ..
   - travis_wait 180 ${TRAVIS_BUILD_DIR}/script/travis_build.sh ${CPU}/${buildOS}/${usage}/${imageName} 
-  - tail --lines=5000 log_${CPU}_*.log
+  - tail --lines=5000 travis.log
 after_success: |
    if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
         docker login -u ovckey -p $REGISTRY_PASS

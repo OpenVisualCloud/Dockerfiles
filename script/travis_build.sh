@@ -8,4 +8,5 @@ echo "Building $BUILD_NAME"
 BUILD_NAME=$(sed 's/[\/+]/_/g' <<< $BUILD_NAME)
 BUILD_NAME=$(sed 's/[\.\-]//g' <<< $BUILD_NAME)
 
-make >> "log_$BUILD_NAME.log" && ctest >> "log_$BUILD_NAME.log"
+make >> "travis.log" || exit 1 
+ctest >> "travis.log" || exit 1
