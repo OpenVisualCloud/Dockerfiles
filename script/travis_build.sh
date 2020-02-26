@@ -2,7 +2,7 @@
 
 BUILD_NAME=$1
 BUILD_ROOT=`pwd`
-BIULD_LOG=${BUILD_ROOT}/travis.log
+BUILD_LOG=${BUILD_ROOT}/travis.log
 echo "BUILD_LOG=$BUILD_LOG"
 echo "Building $BUILD_NAME"
 cd "$1" || exit 1
