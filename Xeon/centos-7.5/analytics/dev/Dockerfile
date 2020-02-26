@@ -603,7 +603,7 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 
 #Install va gstreamer plugins
 
-ARG VA_GSTREAMER_PLUGINS_VER=e2813c8af5 
+ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
 # preview branch with python api yolov3 support
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
@@ -629,30 +629,51 @@ RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
 RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0
-RUN mkdir -p build/usr/local/lib64/gstreamer-1.0/python && \
-    cp -r gst-video-analytics/python/gvapython.py build/usr/local/lib64/gstreamer-1.0/python
-RUN mkdir -p /usr/local/lib64/gstreamer-1.0/python && \
-    cp -r gst-video-analytics/python/gvapython.py /usr/local/lib64/gstreamer-1.0/python
+#RUN mkdir -p build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python && \
+#    cp -r gst-video-analytics/python/gvapython.py build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python
+#RUN mkdir -p /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python && \
+#    cp -r gst-video-analytics/python/gvapython.py /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python
 
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
 
+#ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
+#RUN mkdir -p build/usr/lib/python3.6/gstgva && \
+#    cp -r gst-video-analytics/python/gstgva/* build/usr/lib/python3.6/gstgva
+#RUN mkdir -p /usr/lib/python3.6/gstgva && \
+#    cp -r gst-video-analytics/python/gstgva/* /usr/lib/python3.6/gstgva
+#)dnl
 
-RUN mkdir -p build/usr/lib64/python3.6/gstgva && \
-    cp -r gst-video-analytics/python/gstgva/* build/usr/lib64/python3.6/gstgva
-RUN mkdir -p /usr/lib64/python3.6/gstgva && \
-    cp -r gst-video-analytics/python/gstgva/* /usr/lib64/python3.6/gstgva
+#ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
+#RUN mkdir -p build/usr/lib/python3.5/gstgva && \
+#    cp -r gst-video-analytics/python/gstgva/* build/usr/lib/python3.5/gstgva
+#RUN mkdir -p /usr/lib/python3.5/gstgva && \
+#    cp -r gst-video-analytics/python/gstgva/* /usr/lib/python3.5/gstgva
+#)dnl
+
+#ifelse(index(DOCKER_IMAGE,centos),-1,,
+#RUN mkdir -p build/usr/lib64/python3.6/gstgva && \
+#    cp -r gst-video-analytics/python/gstgva/* build/usr/lib64/python3.6/gstgva
+#RUN mkdir -p /usr/lib64/python3.6/gstgva && \
+#    cp -r gst-video-analytics/python/gstgva/* /usr/lib64/python3.6/gstgva
+#)dnl
 
 # Build gstreamer python
-ARG GST_VER=1.16.0
-ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
-RUN ls -l
-RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
-    cd gst-python-${GST_VER} && \
-    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 --with-pygi-overrides-dir=/usr/lib64/python3.6/site-packages/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/lib64/" PYTHON=/usr/bin/python3 && \
-    make -j $(nproc) && \
-    make install && \
-    make install DESTDIR=/home/build
+#ARG GST_VER=1.16.0
+#ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
+#RUN ls -l
+#RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
+#    cd gst-python-${GST_VER} && \
+#    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) --libexecdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) --with-pygi-overrides-dir=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64/python3.6/site-packages,lib/python3/dist-packages)/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64/,lib/x86_64-linux-gnu/)" PYTHON=/usr/bin/python3 && \
+#    make -j $(nproc) && \
+#    make install && \
+#    make install DESTDIR=/home/build
 
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+#ifelse(index(DOCKER_IMAGE,centos),-1,,
+#ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+#)dnl
+#ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
+#ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
+#)dnl
 
 
 
@@ -712,7 +733,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
-    yum install -y -q   libxcb SDL2 libass numactl   glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base \
+    yum install -y -q   libxcb SDL2 libass numactl   glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid \
 libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
@@ -731,7 +752,16 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib
+64/gstreamer-1.0
+#ifelse(index(DOCKER_IMAGE,centos),-1,,
+#ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+#)dnl
+#ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
+#ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
+#)dnl
 
-RUN python3 -m pip install numpy
+#ifelse(index(DOCKER_IMAGE,centos),-1,,
+#RUN python3 -m pip install numpy
+#)dnl
 
