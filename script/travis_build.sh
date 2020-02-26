@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+echo "where are we" && pwd
 cd "$1" || exit 1
 BUILD_NAME=$1
 
