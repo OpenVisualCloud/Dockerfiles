@@ -40,57 +40,18 @@ RUN  wget -O - ${YASM_REPO} | tar xz && \
      make -j8 && \
      make install
 
-# Fetch SVT-HEVC
-ARG SVT_HEVC_VER=v1.4.3
-ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
+# Build AOM
+ARG AOM_VER=b6f1767eedbaddeb1ff5aa409a710ef61078640e
+ARG AOM_REPO=https://aomedia.googlesource.com/aom
 
-RUN git clone ${SVT_HEVC_REPO} && \
-    cd SVT-HEVC/Build/linux && \
-    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
-    git checkout ${SVT_HEVC_VER} && \
-    mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install 
-
-
-# Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.1
-ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
-
-ARG SVT_AV1_PATCHES_RELEASE_VER=0.3
-ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
-ARG SVT_AV1_PATCHES_PATH=/home/CDN-${SVT_AV1_PATCHES_RELEASE_VER}
-RUN wget -O - ${SVT_AV1_PATCHES_RELEASE_URL} | tar xz
-
-RUN git clone ${SVT_AV1_REPO} && \
-    cd SVT-AV1 && \
-    git checkout ${SVT_AV1_VER} && \
-    find ${SVT_AV1_PATCHES_PATH}/SVT-AV1_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
-    cd Build/linux && \
-    mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install 
-
-#Remove build residue from SVT-AV1 build -- temp fix for bug
-RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
-
-
-# Fetch SVT-VP9
-ARG SVT_VP9_VER=v0.1.0
-ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
-
-RUN git clone ${SVT_VP9_REPO} && \
-    cd SVT-VP9/Build/linux && \
-    git checkout ${SVT_VP9_VER} && \
-    mkdir -p ../../Bin/Release && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install 
+RUN  git clone ${AOM_REPO} && \
+     mkdir aom/aom_build && \
+     cd aom/aom_build && \
+     git checkout ${AOM_VER} && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX="/usr/local" -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu .. && \
+     make -j8 && \
+     make install DESTDIR="/home/build" && \
+     make install
 
 # Clean up after build
 RUN rm -rf /home/build/usr/include && \
@@ -103,7 +64,7 @@ RUN rm -rf /home/build/usr/include && \
     rm -rf /home/build/usr/local/share/man && \
     find /home/build -name "*.a" -exec rm -f {} \;
 
-FROM ubuntu:16.04
+FROM openvisualcloud/xeon-ubuntu1604-media-ffmpeg:latest
 LABEL Description="This is the showcase image for SVT Ubuntu 16.04 LTS"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
