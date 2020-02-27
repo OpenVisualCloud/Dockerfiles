@@ -67,7 +67,6 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 #Install va gstreamer plugins
 
 ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
-# preview branch with python api yolov3 support
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
@@ -144,10 +143,10 @@ ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
     libgtk2.0 libdrm2 libxv1 uuid \
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
-    libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid \
+    libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid python3-dev \
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-    openblas-serial uuid \
+    openblas-serial uuid python3 \
 )dnl
 )dnl
 
@@ -156,8 +155,7 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubun
 ENV PKG_CONFIG_PATH=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib
-64,lib/x86_64-linux-gnu)/gstreamer-1.0
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
 #ifelse(index(DOCKER_IMAGE,centos),-1,,
 #ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 #)dnl

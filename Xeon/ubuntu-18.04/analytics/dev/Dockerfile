@@ -596,7 +596,6 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 #Install va gstreamer plugins
 
 ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
-# preview branch with python api yolov3 support
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
@@ -724,7 +723,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2  libnuma1 libass9 libssl1.1 libpciaccess0   libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends  libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2  libnuma1 libass9 libssl1.1 libpciaccess0   libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid python3-dev \
 vim && \
     rm -rf /var/lib/apt/lists/*
 

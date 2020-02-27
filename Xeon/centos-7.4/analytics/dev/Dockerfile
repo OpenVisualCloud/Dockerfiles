@@ -605,7 +605,6 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 #Install va gstreamer plugins
 
 ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
-# preview branch with python api yolov3 support
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
@@ -734,7 +733,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
-    yum install -y -q   libxcb SDL2 libass numactl   glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid \
+    yum install -y -q   libxcb SDL2 libass numactl   glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid python3 \
 libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
@@ -753,8 +752,7 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib
-64/gstreamer-1.0
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
 #ifelse(index(DOCKER_IMAGE,centos),-1,,
 #ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 #)dnl
