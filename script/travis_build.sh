@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-BUILD_LOG="$(pwd)/travis.log"
+BUILD_LOG="$PWD/travis.log"
 
 {
     cd "$1" || exit 1
