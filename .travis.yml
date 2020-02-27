@@ -47,7 +47,11 @@ after_success:
 matrix:
   fast_finish: true
   allow_failures: # test cases run not stable.
-    - name: centos-7.6 nginx
+    - name: xeon-centos7.6-media-nginx
     - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx DOCKER_PREFIX=ovccache
-    - name: ubuntu-18.04 nginx
+    - name: xeon-ubuntu-18.04-name-nginx
     - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+    - name: xeon-centos76-analytics-dev
+    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev DOCKER_PREFIX=ovccache 
+    - name: xeon-ubuntu1804-anlytics-dev
+    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
