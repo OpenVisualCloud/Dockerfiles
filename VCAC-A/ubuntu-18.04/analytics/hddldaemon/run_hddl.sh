@@ -5,6 +5,6 @@ while [ ! -c /dev/ion ] ; do
 	sleep 1
 done
 
-source /opt/intel/openvino/bin/setupvars.sh
-cd /opt/intel/openvino/deployment_tools/inference_engine/external/hddl/bin
+source /opt/intel/hddl/bin/setupvars.sh
+cd /opt/intel/hddl/deployment_tools/inference_engine/external/hddl/bin
 ./hddldaemon
