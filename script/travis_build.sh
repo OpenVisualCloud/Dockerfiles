@@ -1,11 +1,9 @@
 #!/bin/bash -e
 
-cd "$1" || exit 1
-BUILD_NAME=$1
+BUILD_LOG="$PWD/travis.log"
 
-echo "Building $BUILD_NAME"
-
-BUILD_NAME=$(sed 's/[\/+]/_/g' <<< $BUILD_NAME)
-BUILD_NAME=$(sed 's/[\.\-]//g' <<< $BUILD_NAME)
-
-make >> "log_$BUILD_NAME.log"
+{
+    cd "$1" || exit 1
+    make || exit 1
+    (ctest || ctest -V --rerun-failed) 
+} > "$BUILD_LOG"
