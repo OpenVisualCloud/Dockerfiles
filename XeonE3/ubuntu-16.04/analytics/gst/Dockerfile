@@ -700,52 +700,8 @@ RUN mkdir -p build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 RUN mkdir -p /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-#RUN mkdir -p build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python && \
-#    cp -r gst-video-analytics/python/gvapython.py build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python
-#RUN mkdir -p /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python && \
-#    cp -r gst-video-analytics/python/gvapython.py /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0/python
 
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-
-#ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
-#RUN mkdir -p build/usr/lib/python3.6/gstgva && \
-#    cp -r gst-video-analytics/python/gstgva/* build/usr/lib/python3.6/gstgva
-#RUN mkdir -p /usr/lib/python3.6/gstgva && \
-#    cp -r gst-video-analytics/python/gstgva/* /usr/lib/python3.6/gstgva
-#)dnl
-
-#ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-#RUN mkdir -p build/usr/lib/python3.5/gstgva && \
-#    cp -r gst-video-analytics/python/gstgva/* build/usr/lib/python3.5/gstgva
-#RUN mkdir -p /usr/lib/python3.5/gstgva && \
-#    cp -r gst-video-analytics/python/gstgva/* /usr/lib/python3.5/gstgva
-#)dnl
-
-#ifelse(index(DOCKER_IMAGE,centos),-1,,
-#RUN mkdir -p build/usr/lib64/python3.6/gstgva && \
-#    cp -r gst-video-analytics/python/gstgva/* build/usr/lib64/python3.6/gstgva
-#RUN mkdir -p /usr/lib64/python3.6/gstgva && \
-#    cp -r gst-video-analytics/python/gstgva/* /usr/lib64/python3.6/gstgva
-#)dnl
-
-# Build gstreamer python
-#ARG GST_VER=1.16.0
-#ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
-#RUN ls -l
-#RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
-#    cd gst-python-${GST_VER} && \
-#    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) --libexecdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) --with-pygi-overrides-dir=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64/python3.6/site-packages,lib/python3/dist-packages)/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64/,lib/x86_64-linux-gnu/)" PYTHON=/usr/bin/python3 && \
-#    make -j $(nproc) && \
-#    make install && \
-#    make install DESTDIR=/home/build
-
-#ifelse(index(DOCKER_IMAGE,centos),-1,,
-#ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
-#)dnl
-#ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
-#ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
-#)dnl
-
 
 
 
@@ -788,14 +744,4 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-#ifelse(index(DOCKER_IMAGE,centos),-1,,
-#ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
-#)dnl
-#ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
-#ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
-#)dnl
-
-#ifelse(index(DOCKER_IMAGE,centos),-1,,
-#RUN python3 -m pip install numpy
-#)dnl
 
