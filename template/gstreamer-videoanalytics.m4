@@ -96,7 +96,7 @@ ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubun
 
 define(`INSTALL_PKGS_VA_GST_PLUGINS',
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-    libgtk2.0 libdrm2 libxv1 uuid \
+    libgtk2.0 libdrm2 libxv1 uuid python3-dev \
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
     libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid python3-dev \
