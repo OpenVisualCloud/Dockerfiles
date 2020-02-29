@@ -37,6 +37,8 @@ VAAPI expects rendering device to be set in order to work. Dockers readily spin 
 autologin-user=<SYSTEM_USER_NAME>
 
    - ```sudo systemctl restart lightdm```
+ - Define display device in the environment if not already<br>
+ ```export DISPLAY=:0.0```
  - Allow any user to connect to XServer<br>
  ```xhost +```
 - Add ```-v /tmp/.X11-unix:/tmp/.X11-unix``` in docker run command when running the docker
