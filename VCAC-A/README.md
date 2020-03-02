@@ -14,7 +14,14 @@ The following scripts run on the host serving the VCAC-A node.
 
 - **`Setup proxy, datetime, DNS, and passwordless access`** : [setup_access.sh](./script/setup_access.sh)
 - **`Install docker-ce on VCAC-A`**: [setup_docker.sh](./script/setup_docker.sh). Alternatively, you can install docker-ee instead on the VCAC-A yourself.
-- **`Install hddldaemon on VCAC-A`** : [setup_hddl.sh](./script/setup_hddl.sh). Any inference requests initiated within the docker containers are routed to the HDDL daemon for execution. **Note**: Alternatively, for Kubernetes, you can instead deploy a daemonSet, [`setup_hddl_daemonset.yaml`](script/setup_hddl_daemonset.yaml), as follows: `kubectl apply -f setup_hddl_daemonset.yaml`.
+- **`Install hddldaemon on VCAC-A`** : [setup_hddl.sh](./script/setup_hddl.sh). Any inference requests initiated within the docker containers are routed to the HDDL daemon for execution.  
+
+---
+
+- By default, the [setup_hddl.sh](./script/setup_hddl.sh) script installs the latest HDDL daemon image. You can specify the tag of the HDDL daemon image as an input parameter.   
+- If you setup VCAC-A for Kubernetes only, you can deploy the daemonSet script, [`setup_hddl_daemonset.yaml`](script/setup_hddl_daemonset.yaml) instead, as follows: `kubectl apply -f setup_hddl_daemonset.yaml`. By default, the latest HDDL daemon image is used. Modify the script if you need to use a specific HDDL daemon image.   
+
+---
 
 #### See Also:
 
