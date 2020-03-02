@@ -19,7 +19,7 @@ The following scripts run on the host serving the VCAC-A node.
 ---
 
 - By default, the [setup_hddl.sh](./script/setup_hddl.sh) script installs the latest HDDL daemon image. You can specify the tag of the HDDL daemon image as an input parameter.   
-- If you setup VCAC-A for Kubernetes only, you can deploy the daemonSet script, [`setup_hddl_daemonset.yaml`](script/setup_hddl_daemonset.yaml) instead, as follows: `kubectl apply -f setup_hddl_daemonset.yaml`. By default, the latest HDDL daemon image is used. Modify the script if you need to use a specific HDDL daemon image.   
+- If you setup VCAC-A for Kubernetes only, you can deploy the daemonSet script, [`setup_hddl_daemonset.yaml`](script/setup_hddl_daemonset.yaml) instead, as follows: `kubectl apply -f setup_hddl_daemonset.yaml`. By default, the script deploys the latest HDDL daemon image. Modify the script if you need to use a specific HDDL daemon image.   
 
 ---
 
