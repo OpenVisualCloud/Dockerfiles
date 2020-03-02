@@ -10,7 +10,7 @@ run_hddl_compose()
 
     mkdir -p /root/ov_hddl
     cd /root/ov_hddl
-    gen_Dockercomposefile
+    gen_Dockercomposefile $1
     docker-compose up -d
 }
 
@@ -20,7 +20,7 @@ gen_Dockercomposefile()
 version: '2.4'
 services:
   ov_hddl_init:
-      image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon
+      image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:$1
       command: [ "/usr/local/bin/init_hddl.sh" ]
       container_name: ov_hddl_init
       volumes:
@@ -30,7 +30,7 @@ services:
       restart: on-failure
       privileged: true
   ov_hddl_run:
-      image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon
+      image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:$1
       command: [ "/usr/local/bin/run_hddl.sh" ]
       container_name: ov_hddl_run
       device_cgroup_rules:
@@ -48,7 +48,7 @@ EOF
 
 case "$0" in
     *install*)
-        run_hddl_compose
+        run_hddl_compose $1
         ;;
     *setup*)
         NODEUSER="root"
@@ -56,7 +56,7 @@ case "$0" in
             echo "setup on $nodeip" $0
             scp "$0" $NODEUSER@$nodeip:/root/install-hddl.sh
             # install package on VCAC-A
-            ssh $NODEUSER@$nodeip /root/install-hddl.sh
+            ssh $NODEUSER@$nodeip /root/install-hddl.sh ${1:-latest}
         done
         ;;
 esac
