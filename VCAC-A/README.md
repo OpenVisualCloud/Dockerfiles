@@ -189,7 +189,7 @@ where you must:
 - Set the `securityContext` to be `priviledged`. This will mount the devices for media and analytics acceleration.   
 - Select the VCAC-A node(s) by the `vcac-zone=yes` label.      
 
-**Run Containers as Non-Privileged** (required to install the GPU and VPU device plugins): 
+**Run Containers as Non-Privileged** (GPU and VPU device plugins required to be installed): 
 
 ```
 ...
