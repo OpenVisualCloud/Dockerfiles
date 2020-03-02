@@ -5,23 +5,15 @@ The Intel VCAC-A is designed to accelerate analytics computation. This README de
 
 Please follow the [Software Installation Guide, Section 2.0-Section 2.2.4](https://cdrdv2.intel.com/v1/dl/getContent/611894) to build and configure the software packages for the host and the VCAC-A, with the following additional steps:    
 
----
-
-To use the VCAC-A as a container platform, we only need to build the **BASIC** system image.       
-The following scripts run on the host serving the VCAC-A node.   
-
----
+> To use the VCAC-A as a container platform, we only need to build the **BASIC** system image.       
+> The following scripts run on the host serving the VCAC-A node.   
 
 - **`Setup proxy, datetime, DNS, and passwordless access`** : [setup_access.sh](./script/setup_access.sh)
 - **`Install docker-ce on VCAC-A`**: [setup_docker.sh](./script/setup_docker.sh). Alternatively, you can install docker-ee instead on the VCAC-A yourself.
 - **`Install hddldaemon on VCAC-A`** : [setup_hddl.sh](./script/setup_hddl.sh). Any inference requests initiated within the docker containers are routed to the HDDL daemon for execution.  
 
----
-
-- By default, the [setup_hddl.sh](./script/setup_hddl.sh) script installs the latest HDDL daemon image. You can specify the tag of the HDDL daemon image as an input parameter.   
-- If you setup VCAC-A for Kubernetes only, you can deploy the daemonSet script, [`setup_hddl_daemonset.yaml`](script/setup_hddl_daemonset.yaml) instead, as follows: `kubectl apply -f setup_hddl_daemonset.yaml`. By default, the script deploys the latest HDDL daemon image. Modify the script if you need to use a specific HDDL daemon image.   
-
----
+> By default, the [setup_hddl.sh](./script/setup_hddl.sh) script installs the latest HDDL daemon image. You can specify the tag of the HDDL daemon image as an input parameter.   
+> If you setup VCAC-A for Kubernetes only, you can deploy the daemonSet script, [`setup_hddl_daemonset.yaml`](script/setup_hddl_daemonset.yaml) instead, as follows: `kubectl apply -f setup_hddl_daemonset.yaml`. By default, the script deploys the latest HDDL daemon image. Modify the script if you need to use a specific HDDL daemon image.   
 
 #### See Also:
 
