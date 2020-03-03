@@ -18,7 +18,7 @@ The following scripts run on the host serving the VCAC-A node.
 
 #### See Also:
 
-- The [VCAC-A](https://github.com/OpenVisualCloud/VCAC-SW/tree/VCAC-A) System Software   
+- The [VCAC-A](https://github.com/OpenVisualCloud/VCAC-SW-Analytics) System Software   
 
 ## Upload Images onto the VCAC-A:
 
