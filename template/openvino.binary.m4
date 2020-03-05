@@ -59,12 +59,10 @@ define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_wrapper )dnl
 ifelse(index(DOCKER_IMAGE,-dev),-1,
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
 # Install python3.6 fpr deployment manager on ubuntu1604
-RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz       && \
-    tar -xvf Python-3.6.3.tgz                                           && \
-    cd Python-3.6.3                                                     && \
-    ./configure                                                         && \
-    make -j $(nproc)                                                    && \
-    make install
+RUN apt-get install -y software-properties-common python-software-properties && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get -y update && \
+    apt-get install -y python3.6
 
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
@@ -72,6 +70,9 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     cd /root/ && ls -lh                                                 && \
     tar zxf openvino_deploy_package.tar.gz                              && \
     mv openvino_deploy_package openvino
+
+#Remove python3.6
+RUN apt-get autoremove -y python3.6
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
 #Deploy small package using deployment manager
