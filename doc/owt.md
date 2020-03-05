@@ -71,3 +71,10 @@ The OWT service provides the following settings in configuration files to config
 
 Note: You also need to configure your cloud security rule to allow public access to ports listed in above table.
 
+### OWT Environment Requirement
+
+Different module tries to connect to RabbitMQ server running on the same system. Hence, no_proxy variable needs to be specified:
+
+```bash
+export no_proxy=localhost
+```
