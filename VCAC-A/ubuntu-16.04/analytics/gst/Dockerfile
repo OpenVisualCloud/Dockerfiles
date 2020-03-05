@@ -518,7 +518,11 @@ RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz       && \
     cd Python-3.6.3                                                     && \
     ./configure                                                         && \
     make -j $(nproc)                                                    && \
-    make install
+    apt-get install -y checkinstall					&& \
+    checkinstall --install=no --nodoc -y --pkgname=python36-from-source	
+
+RUN cd Python-3.6.3							&& \ 
+    dpkg -i python36-from-source_3.6.3-1_amd64.deb
 
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
@@ -526,6 +530,10 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     cd /root/ && ls -lh                                                 && \
     tar zxf openvino_deploy_package.tar.gz                              && \
     mv openvino_deploy_package openvino
+
+#Remove python3.6
+RUN cd Python-3.6.3							&& \
+    dpkg -r python36-from-source
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
