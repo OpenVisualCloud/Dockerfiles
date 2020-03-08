@@ -39,6 +39,7 @@ case "$0" in
             nodeint=$(sudo ip -4 address show | awk -v net=$nodenet '/^[0-9]+:/{name=$2}/inet /&&$2==net{print name}' | cut -f1 -d:)
             sudo iptables -t nat -A POSTROUTING -s $nodenet -d 0/0 -j MASQUERADE
             sudo iptables -I FORWARD -j ACCEPT -i $nodeint
+            sudo iptables -I FORWARD -j ACCEPT -o $nodeint
 
             # Setup address
             nodeip=$(echo $nodeinfo | cut -f1 -d,)
