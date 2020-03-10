@@ -528,6 +528,7 @@ RUN mkdir -p /home/build/usr/local/lib && \
     mkdir -p /home/build/usr/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
     cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
+    
     cp -r /usr/lib/* /home/build/usr/lib
 
 #Give all user exec permission
