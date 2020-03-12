@@ -130,7 +130,7 @@ The VCAC-A node does not have a dedicated IP address accessible from the network
 
 First designate certain IP network range for the WeaveNet virtual network. The default is `172.30.0.0/16`. Modify `/etc/environment` to add this network range into your `no_proxy` environment variable, if you are behind a corporate firewall.     
 
-Run the [`setup_weave.sh`](script/setup_weave.sh) script, as `sudo setup_weave.sh <cluster-master-node-host-name> [virtual-network-IP-range]`, on every cluster node, starting with the cluster master node and then on each cluster worker node. The script performs the following tasks:      
+Run the [`setup_weave.sh`](script/setup_weave.sh) script, as `./setup_weave.sh <cluster-master-node-host-name> [virtual-network-IP-range]`, on every cluster node, starting with the cluster master node and then on each cluster worker node. The script performs the following tasks:      
 - Download the WeaveNet software under `/usr/local/bin`.       
 - Start a `weave.service` that connects your node to the cluster master node.   
 - Configure `kubelet` of your node IP address.   
