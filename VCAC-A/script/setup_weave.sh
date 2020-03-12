@@ -5,6 +5,10 @@ if test -z "$1"; then
     exit -3
 fi
 
+if test ! -x /usr/bin/sudo; then
+    alias sudo=
+fi
+
 echo "Create /etc/weave.conf"
 sudo tee /etc/weave.conf <<EOF
 PEERS="$1"
@@ -16,6 +20,7 @@ sudo curl -L git.io/weave -o /usr/local/bin/weave
 sudo chmod a+x /usr/local/bin/weave
 
 echo "Setup weave.service"
+mac=$(ip link list $(ip route get 8.8.8.8 | awk '/ dev /{split(substr($0,index($0," dev ")),f);print f[2];exit}') | awk '/link\/ether/{print$2}' | cut -b 1-9)$(cut -b 7-11,24-26 /proc/sys/kernel/random/uuid | sed 's/-/:/g')
 sudo tee /etc/systemd/system/weave.service <<EOF
 [Unit]
 Description=Weave Network
@@ -27,7 +32,7 @@ Before=kubelet.service
 [Service]
 EnvironmentFile=/etc/weave.conf
 ExecStartPre=/usr/local/bin/weave reset --force
-ExecStartPre=/usr/local/bin/weave launch --no-restart --ipalloc-range=\${IP_RANGE} \$PEERS
+ExecStartPre=/usr/local/bin/weave launch --no-restart --name $mac --ipalloc-range=\${IP_RANGE} \$PEERS
 ExecStartPre=/bin/sh -c 'echo KUBELET_EXTRA_ARGS=\\\\\"--node-ip=\$\$(/usr/local/bin/weave expose)\\\\\" > /etc/default/kubelet'
 ExecStart=/usr/bin/docker attach weave
 ExecStop=/usr/local/bin/weave stop
