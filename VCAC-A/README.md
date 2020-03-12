@@ -66,6 +66,8 @@ You can setup the VCAC-A as a docker swarm worker node. Any subsequent deploymen
 
 Run the [setup_swarm.sh](./script/setup_swarm.sh) script on the host to setup docker swarm. The script initializes the host as a swarm master and labels the VCAC-A with `vcac_zone=yes`.   
 
+> The Docker Swarm mode is limited to a single VCAC-A on a host system, (because `docker swarm init` must bind to a specific network interface,) unless you use the [WeaveNet](#setup-weavenet) workaround. In such a case, initialize docker swarm with `./setup_swarm.sh $(/usr/local/bin/weave expose)`.   
+
 #### Develop Docker-Compose Script:
 
 Docker Compose File Format version 3 does not support device mount. We need to use the [docker-in-docker](https://hub.docker.com/_/docker) workaround (to be able to mount the media and analytics devices.) The workaround launches a privileged docker container that subsequently runs the application container. The [`vcac-container-launcher:latest`](https://github.com/OpenVisualCloud/Smart-City-Sample/blob/master/analytics/common/VCAC-A/Dockerfile.1.launcher) Dockerfile builds to an enhanced dock-in-docker image that additionally passes on environment variables, mounts network and volumes, and gracefully shutdown.   
