@@ -37,19 +37,19 @@ The software stack images provide ready to use software stacks for application d
 - **Cloud Gaming and Graphics**
 
 | Image | Description |
-| :-----: | :----- | 
-| [ospray](doc/ospray.md) | <p>Docker images optimized for Intel OSPRay. Included the Intel OSPRay ray tracing engine and examples. See [`doc/ospray.md`](doc/ospray.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-graphics-ospray](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-graphics-ospray)<br>docker pull [openvisualcloud/xeon-centos76-graphics-ospray](https://hub.docker.com/r/openvisualcloud/xeon-centos76-graphics-ospray)|
-| [ospray-mpi](doc/ospray-mpi.md) | <p>Docker images optimized for Intel OSPRay and multi-host connections. Included the Intel OSPRay ray tracing engine with multi-host connections via MPI. See [`doc/ospray-mpi.md`](doc/ospray-mpi.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-graphics-ospray-mpi](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-graphics-ospray-mpi)<br>docker pull [openvisualcloud/xeon-centos76-graphics-ospray-mpi](https://hub.docker.com/r/openvisualcloud/xeon-centos76-graphics-ospray-mpi)|
+| :-----: | :----- |
+| [ospray](doc/ospray.md) | <p>Docker images optimized for Intel OSPRay. Included the Intel OSPRay ray tracing engine and examples. See [`doc/ospray.md`](doc/ospray.md) for additional details.</p>|
+| [ospray-mpi](doc/ospray-mpi.md) | <p>Docker images optimized for Intel OSPRay and multi-host connections. Included the Intel OSPRay ray tracing engine with multi-host connections via MPI. See [`doc/ospray-mpi.md`](doc/ospray-mpi.md) for additional details.</p>|
 
-### Development Images:     
+### Development Images:
 
-The development images enable C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images.       
+The development images enable C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with these images and then copy the applications to the corresponding deployment images.
 
 | Image | Description |
-| :-----: | :----- | 
+| :-----: | :----- |
 | media | <p>Docker images for FFmpeg or GStreamer C++ application development. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-dev)<br>docker pull [openvisualcloud/xeon-centos76-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-dev)|
 | analytics | <p>Docker images for FFmpeg or GStreamer C++ application development, with Intel OpenVINO inference engine and the model optimizer. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-dev)<br>docker pull [openvisualcloud/xeon-centos76-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-analytics-dev)|
-| graphics | <p>Docker image for Intel OSPRay C++ application development. See [`doc/ospray-mpi.md`](doc/ospray-mpi.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-graphics-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-graphics-dev)<br>docker pull [openvisualcloud/xeon-centos76-graphics-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-graphics-dev)|
+| graphics | <p>Docker image for Intel OSPRay C++ application development. See [`doc/ospray-mpi.md`](doc/ospray-mpi.md) for additional details.</p>|
 
 ### Service Images:
 
