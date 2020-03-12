@@ -5,19 +5,27 @@ if test -z "$1"; then
     exit -3
 fi
 
+sudo () {
+    if test -x /usr/bin/sudo; then
+        /usr/bin/sudo $@
+    else
+        $@
+    fi
+}
+
 echo "Create /etc/weave.conf"
-tee /etc/weave.conf <<EOF
+sudo tee /etc/weave.conf <<EOF
 PEERS="$1"
 IP_RANGE="${2:-172.30.0.0/16}"
 EOF
 
 echo "Download the WeaveNet software"
-curl -L git.io/weave -o /usr/local/bin/weave
-chmod a+x /usr/local/bin/weave
+sudo curl -L git.io/weave -o /usr/local/bin/weave
+sudo chmod a+x /usr/local/bin/weave
 
 echo "Setup weave.service"
 mac=$(ip link list $(ip route get 8.8.8.8 | awk '/ dev /{split(substr($0,index($0," dev ")),f);print f[2];exit}') | awk '/link\/ether/{print$2}' | cut -b 1-9)$(cut -b 7-11,24-26 /proc/sys/kernel/random/uuid | sed 's/-/:/g')
-tee /etc/systemd/system/weave.service <<EOF
+sudo tee /etc/systemd/system/weave.service <<EOF
 [Unit]
 Description=Weave Network
 Documentation=http://docs.weave.works/weave/latest_release/
@@ -38,11 +46,11 @@ WantedBy=multi-user.target
 EOF
 
 echo "Enable weave.service"
-systemctl daemon-reload
-systemctl enable weave.service
+sudo systemctl daemon-reload
+sudo systemctl enable weave.service
 
 echo "Start weave.service"
-systemctl stop weave.service
-systemctl start weave.service
+sudo systemctl stop weave.service
+sudo systemctl start weave.service
 
 echo "This node IP: $(/usr/local/bin/weave expose)"
