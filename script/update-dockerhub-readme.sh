@@ -1,14 +1,14 @@
 #!/bin/bash -e
 IFS=$'\n\t'
 
-if [[ -z "$2" ]]; then
-    echo "Usage: ./update-dockerhub-readme.sh <docker_prefix> <image>"
+if [[ -z "$3" ]]; then
+    echo "Usage: ./update-dockerhub-readme.sh <docker_prefix> <image> <readme_filepath>"
     exit 1
 fi 
 
 DOCKER_PREFIX="$1"
 IMAGE="$2"
-README_FILEPATH="$(echo "$PWD/README.md" | sed 's/build\///')"
+README_FILEPATH="$3"
 DOCKERHUB_TOKEN=~/.dockerhub_token
 REPO_URL="https://hub.docker.com/v2/repositories/${DOCKER_PREFIX}/${IMAGE}/"
 

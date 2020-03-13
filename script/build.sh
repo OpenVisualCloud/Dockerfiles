@@ -37,5 +37,6 @@ if [[ ${UPDATE_DOCKERFILES} == OFF ]]; then
 
     sudo -E docker build --network=host ${FULL_CACHE} -t "${DOCKER_PREFIX}/${IMAGE}:${BUILD_VERSION}" -t "${DOCKER_PREFIX}/${IMAGE}:latest" "$DIR" $build_args
 elif [[ ${UPDATE_DOCKERHUB_README} == ON ]]; then
-    $(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/update-dockerhub-readme.sh ${DOCKER_PREFIX} ${IMAGE}
+    README_FILEPATH="$(echo "$PWD/README.md" | sed 's/build\///')"
+    $(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/update-dockerhub-readme.sh ${DOCKER_PREFIX} ${IMAGE} ${README_FILEPATH}
 fi
