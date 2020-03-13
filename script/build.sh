@@ -8,7 +8,8 @@ BUILD_VERSION="${1:-1.0}"
 BUILD_MP3LAME="${2:-ON}"
 BUILD_FDKAAC="${3:-ON}"
 UPDATE_DOCKERFILES="${4:-OFF}"
-DOCKER_PREFIX="${5:-openvisualcloud}"
+UPDATE_DOCKERHUB_README="${5:-OFF}"
+DOCKER_PREFIX="${6:-openvisualcloud}"
 TEMPLATE="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/../template/"
 BUILD_CACHE=""
 FULL_CACHE=""
@@ -35,4 +36,6 @@ if [[ ${UPDATE_DOCKERFILES} == OFF ]]; then
     fi
 
     sudo -E docker build --network=host ${FULL_CACHE} -t "${DOCKER_PREFIX}/${IMAGE}:${BUILD_VERSION}" -t "${DOCKER_PREFIX}/${IMAGE}:latest" "$DIR" $build_args
+elif [[ ${UPDATE_DOCKERHUB_README} == ON ]]; then
+    $(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/update-dockerhub-readme.sh ${DOCKER_PREFIX} ${IMAGE}
 fi
