@@ -13,7 +13,7 @@ DOCKERHUB_TOKEN=~/.dockerhub_token
 REPO_URL="https://hub.docker.com/v2/repositories/${DOCKER_PREFIX}/${IMAGE}/"
 
 if [[ ! -e "${README_FILEPATH}" ]]; then
-    echo "no such file: ${README_FILEPATH}"
+    echo "${README_FILEPATH} Error: no such file"
     exit 1
 fi
 
