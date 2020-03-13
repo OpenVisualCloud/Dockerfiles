@@ -8,9 +8,14 @@ fi
 
 DOCKER_PREFIX="$1"
 IMAGE="$2"
-README_FILEPATH="$PWD/README.md"
+README_FILEPATH="$(echo "$PWD/README.md" | sed 's/build\///')"
 DOCKERHUB_TOKEN=~/.dockerhub_token
 REPO_URL="https://hub.docker.com/v2/repositories/${DOCKER_PREFIX}/${IMAGE}/"
+
+if [[ ! -e "${README_FILEPATH}" ]]; then
+    echo "no such file: ${README_FILEPATH}"
+    exit 1
+fi
 
 echo "Updating ${README_FILEPATH}"
 
