@@ -22,10 +22,8 @@ echo "Updating ${README_FILEPATH}"
 # Acquire a token for the Docker Hub API
 if [[ ! -e "${DOCKERHUB_TOKEN}" ]]; then
     echo "Dockerhub token doesn't exist, creating......"
-    echo -n "Input docker hub user name:"
-    read DOCKERHUB_USERNAME
-    echo -n "Input docker hub password:"
-    read DOCKERHUB_PASSWORD
+    read -p "Input docker hub user name: " DOCKERHUB_USERNAME
+    read -sp "Input docker hub password: " DOCKERHUB_PASSWORD
     LOGIN_PAYLOAD="{\"username\": \"${DOCKERHUB_USERNAME}\", \"password\": \"${DOCKERHUB_PASSWORD}\"}"
     curl -s -H "Content-Type: application/json" -X POST -d ${LOGIN_PAYLOAD} https://hub.docker.com/v2/users/login/ | jq -r .token > "${DOCKERHUB_TOKEN}" 
     echo "Dockerhub token is stored in ${DOCKERHUB_TOKEN}"
