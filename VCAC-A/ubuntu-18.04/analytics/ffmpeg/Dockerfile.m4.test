@@ -1,0 +1,35 @@
+
+FROM ubuntu:18.04 AS build
+WORKDIR /home
+define(`BUILD_LINKAGE',shared)dnl
+
+exclude - build-tools.m4
+libogg.m4 - |libogg|BSD 3-clause "New" or "Revised" License|
+libvorbis.m4 - |libvorbis|BSD 3-clause "New" or "Revised" License|
+exclude - libmp3lame.m4
+exclude - libfdk-aac.m4
+libopus.m4 - |Opus Interactive Audio Codec|BSD 3-clause "New" or "Revised" License|
+libvpx.m4 - |libvpx|BSD 3-clause "New" or "Revised" License|
+libx264.m4 - |x264|GNU General Public License v2.0 or later|
+libx265.m4 - |x265|GNU General Public License v2.0 or later|
+dav1d.m4 - |dav1d|BSD 2-clause "Simplified" License|
+gmmlib.m4 - |Intel Graphics Memory Management Library| MIT License|
+libdrm.m4 - |libdrm|MIT license|
+libva.m4 - |Intel libva | MIT License|
+exclude - (libva-utils.m4)
+media-driver.m4 - |Intel media-driver | MIT License|
+media-sdk.m4 - |Intel media SDK|MIT License|
+include(opencl.m4)
+libjsonc.m4 - |json-c|MIT License|
+librdkafka.m4 - |librdkafka|BSD 2-clause "Simplified" License|
+include(opencv.m4)
+openvino.binary.m4 - |OpenVINO|End User License Agreement for the Intel(R) Software Development Products|
+ffmpeg.m4 - |FFmpeg|GNU Lesser General Public License v2.1 or later|
+exclude - cleanup.m4
+
+FROM ubuntu:18.04
+LABEL Description="This is the base image for FFMPEG & DLDT Ubuntu 18.04 LTS"
+LABEL Vendor="Intel Corporation"
+
+exclude - install.pkgs.m4
+exclude - install.m4
