@@ -30,6 +30,10 @@ if (UPDATE_IMAGELIST STREQUAL "ON")
     set(UPDATE_DOCKERFILES "ON")
 endif()
 
+if (NOT DEFINED UPDATE_IMAGE_README)
+    set(UPDATE_IMAGE_README "OFF")
+endif()
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/script/")
 
 enable_testing()
@@ -44,4 +48,5 @@ message(
     "-- Setting: BUILD_FDKAAC=${BUILD_FDKAAC}\n"
     "-- Setting: DOCKER_PREFIX=${DOCKER_PREFIX}\n"
     "-- Setting: UPDATE_DOCKERFILES=${UPDATE_DOCKERFILES}\n"
-    "-- Setting: UPDATE_IMAGELIST=${UPDATE_IMAGELIST}\n")
+    "-- Setting: UPDATE_IMAGELIST=${UPDATE_IMAGELIST}\n"
+    "-- Setting: UPDATE_IMAGE_README=${UPDATE_IMAGE_README}\n")
