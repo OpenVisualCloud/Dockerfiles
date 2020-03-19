@@ -34,6 +34,10 @@ if (NOT DEFINED UPDATE_IMAGE_README)
     set(UPDATE_IMAGE_README "OFF")
 endif()
 
+if (UPDATE_IMAGE_README STREQUAL "ON")
+    set(UPDATE_DOCKERFILES "ON")
+endif()
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/script/")
 
 enable_testing()
