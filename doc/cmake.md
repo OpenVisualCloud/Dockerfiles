@@ -7,7 +7,10 @@ You can use the following build options to customize the build process:
 - **UPDATE_DOCKERFILES**: Set to ```ON``` to update the Dockerfiles only without actually building them, or ```OFF``` (default) to update and build the Dockerfiles.
 - **UPDATE_IMAGELIST**: Set to ```ON``` to update the image list in each platform README.md.
 - **UPDATE_IMAGE_README**: Set to ```ON``` to update/generate the README file for all Dockerfiles.
-Build examples:
+- **UPDATE_DOCKERHUB_README**: Set to ```ON``` to upload image README.md to docker hub.  
+
+Build examples:   
+
 ```
 cd build
 cmake -DBUILD_MP3LAME=ON ..

@@ -21,13 +21,13 @@ version: '2.4'
 services:
   ov_hddl_init:
       image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:$1
-      command: [ "/usr/local/bin/init_hddl.sh" ]
+      command: [ "/bin/bash", "-c", "/usr/local/bin/init_hddl.sh;while true; do sleep 36000000;done" ]
       container_name: ov_hddl_init
       volumes:
         - /usr/src:/usr/src:ro
         - /lib/modules:/lib/modules
-        - /etc/modules-load.d
-      restart: on-failure
+        - /etc/modules-load.d:/etc/modules-load.d
+      restart: unless-stopped
       privileged: true
   ov_hddl_run:
       image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:$1
