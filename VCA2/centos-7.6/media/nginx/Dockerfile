@@ -47,7 +47,7 @@ ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/${
 RUN wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
 # Build nginx & nginx-http-flv
-ARG NGINX_VER=1.15.12
+ARG NGINX_VER=1.16.1
 ARG NGINX_REPO=https://nginx.org/download/nginx-${NGINX_VER}.tar.gz
 
 RUN yum install -y -q openssl-devel pcre2-devel zlib-devel libxslt-devel
