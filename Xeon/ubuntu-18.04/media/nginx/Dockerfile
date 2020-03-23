@@ -43,7 +43,7 @@ ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/${
 RUN wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
 # Build nginx & nginx-http-flv
-ARG NGINX_VER=1.15.12
+ARG NGINX_VER=1.16.1
 ARG NGINX_REPO=https://nginx.org/download/nginx-${NGINX_VER}.tar.gz
 
 RUN apt-get update && apt-get install -y -q --no-install-recommends libssl-dev libpcre3-dev zlib1g-dev libxslt1-dev

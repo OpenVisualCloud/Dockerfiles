@@ -1,5 +1,5 @@
 # Build nginx & nginx-http-flv
-ARG NGINX_VER=1.15.12
+ARG NGINX_VER=1.16.1
 ARG NGINX_REPO=https://nginx.org/download/nginx-${NGINX_VER}.tar.gz
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
