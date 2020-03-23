@@ -138,6 +138,7 @@ ARG c_api_libdir="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)"
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}:${c_api_libdir}
 ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ifelse(index(DOCKER_IMAGE,-dev),-1,,dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q python3-pip;
 )dnl
@@ -145,4 +146,5 @@ ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 RUN apt-get update && apt-get -y install python3-pip
 )dnl
 RUN python3 -m pip install pyyaml
+)dnl
 )dnl
