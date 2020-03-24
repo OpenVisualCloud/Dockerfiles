@@ -455,8 +455,6 @@ ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.1.023
 ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/l_openvino_toolkit_p_2020.1.023.tgz
 
 
-#Install OpenVino dependencies
-
 #Download and unpack OpenVino
 RUN mkdir /tmp2
 RUN wget ${OPENVINO_URL} -P /tmp2

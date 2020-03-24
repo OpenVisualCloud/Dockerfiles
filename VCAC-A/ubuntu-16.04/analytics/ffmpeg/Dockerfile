@@ -311,7 +311,6 @@ RUN wget ${OPENCV_REPO} && \
 ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.1.023
 ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/l_openvino_toolkit_p_2020.1.023.tgz
 
-
 #Install OpenVino dependencies
 RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends cpio joe nano sudo unzip wget less \
 libpng12-dev libcairo2-dev libpango1.0-dev \
