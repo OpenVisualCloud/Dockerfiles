@@ -115,11 +115,12 @@ license_subs = {
                 "svt-hevc.1-3-0" : ["|Intel SVT-HEVC|BSD-2-Clause Plus Patent License|"],
                 "svt-hevc" : ["|Intel SVT-HEVC|BSD-2-Clause Plus Patent License|"],
                 "svt-vp9" : ["|Intel SVT-VP9|BSD-2-Clause Plus Patent License|"],
-                "usrsctp" : ["|usrsctp|BSD 3-clause \"New\" or \"Revised\" License|"]
+                "usrsctp" : ["|usrsctp|BSD 3-clause \"New\" or \"Revised\" License|"],
+                "libusb" : ["|libusb|GNU Lesser General Public License v2.1|"]
                }
 
 # M4 files for which no license is needed
-license_exclude = ['automake', 'build-tools', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog']
+license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog']
 
 # Walk through the repo and find folder with Dockerfiles.m4
 def walk_path(path):
@@ -146,9 +147,12 @@ def url_generator(local_path, image_name, image_type, image_os, image_platform):
 # Generate links to docs of included components
 def included_components(image_name):
     included_holder = ''
-    for comp in included_subs[image_name]:
-        included_holder += comp
-        included_holder += '\t'
+    if image_name in included_subs:
+        included_holder += "- #### Included components:\n"
+        for comp in included_subs[image_name]:
+            included_holder += comp
+            included_holder += '\t'
+    included_holder += '\n\n'
     return included_holder
     
 # Generate quick reference part of README
@@ -157,9 +161,7 @@ def quick_reference(local_path, image_name, image_type, image_os, image_platform
     text_holder += "- #### Supported platform and OS\n"
     text_holder += "Intel&reg; "+platform_subs[image_platform]+", "+os_subs[image_os]
     text_holder += "\n\n"
-    text_holder += "- #### Included components:\n"
     text_holder += included_components(image_name)
-    text_holder += "\n\n"
     text_holder +="""
 - #### Where to get help:
 - [Open Visual Cloud Dockerfiles Github](https://github.com/OpenVisualCloud/Dockerfiles)
