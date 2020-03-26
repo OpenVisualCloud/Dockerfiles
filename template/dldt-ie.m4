@@ -82,17 +82,7 @@ define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_wrapper )dnl
 ifelse(index(DOCKER_IMAGE,-dev),-1,,
 ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
-#install MO dependencies
-#RUN pip3 install numpy scipy
-RUN git clone https://github.com/google/protobuf.git && \
-    cd protobuf && \
-    git submodule update --init --recursive && \
-    ./autogen.sh && \
-    ./configure && \
-    make && \
-    make install && \
-    make install DESTDIR=/home/build
-#RUN apt-get update && apt-get install -y sudo
+
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
 RUN cd dldt/model-optimizer && \
 if [ "x$PYTHON_TRUSTED_HOST" = "x" ] ; \
