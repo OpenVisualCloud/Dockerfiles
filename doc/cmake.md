@@ -24,7 +24,7 @@ cmake -DBUILD_FDKAAC=ON -DBUILD_MP3LAME=OFF ..
 `python3` is required on the host system to use this.
 
     cd build
-    cmake -UPDATE_IMAGE_README=ON ..
+    cmake -DUPDATE_IMAGE_README=ON ..
 
 ### Use Alternative Repo:
 
