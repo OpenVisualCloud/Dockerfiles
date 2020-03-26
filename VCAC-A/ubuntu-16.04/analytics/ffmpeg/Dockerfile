@@ -361,7 +361,7 @@ RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz       && \
     cd Python-3.6.3                                                     && \
     ./configure                                                         && \
     make -j $(nproc)                                                    && \
-    apt-get install -y checkinstall					&& \
+    apt-get install -y checkinstall apt-utils             		&& \
     checkinstall --install=no --nodoc -y --pkgname=python36-from-source	
 
 RUN cd Python-3.6.3							&& \ 
