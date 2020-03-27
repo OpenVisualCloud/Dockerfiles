@@ -5,8 +5,8 @@ You can use the following build options to customize the build process:
 - **BUILD_MP3LAME**: Set to ```ON``` (default) to build the ```libmp3lame``` in the docker images, or ```OFF``` to disable including ```libmp3lame``` in the docker images.
 - **BUILD_FDKAAC**: Set to ```ON``` (default) to build the ```libfdk_aac``` in the docker images, or ```OFF``` to disable including ```libfdk_aac``` in the docker images.
 - **UPDATE_DOCKERFILES**: Set to ```ON``` to update the Dockerfiles only without actually building them, or ```OFF``` (default) to update and build the Dockerfiles.
-- **UPDATE_IMAGELIST**: Set to ```ON``` to update the image list in each platform README.md.
-- **UPDATE_IMAGE_README**: Set to ```ON``` to update/generate the README file for all Dockerfiles.
+- **UPDATE_IMAGELIST**: Set to ```ON``` to update the image list in each platform README.md. Install `gawk` if it is not available on your platform.
+- **UPDATE_IMAGE_README**: Set to ```ON``` to update/generate the README file for all Dockerfiles. Install `python3` if it is not available on your platform.
 - **UPDATE_DOCKERHUB_README**: Set to ```ON``` to upload image README.md to docker hub. Install `jq` if it is not available on your platform. 
 
 Build examples:   
