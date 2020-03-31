@@ -116,11 +116,10 @@ license_subs = {
                 "svt-hevc" : ["|Intel SVT-HEVC|BSD-2-Clause Plus Patent License|"],
                 "svt-vp9" : ["|Intel SVT-VP9|BSD-2-Clause Plus Patent License|"],
                 "usrsctp" : ["|usrsctp|BSD 3-clause \"New\" or \"Revised\" License|"],
-                "libusb" : ["|libusb|GNU Lesser General Public License v2.1|"]
                }
 
 # M4 files for which no license is needed
-license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog']
+license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog','libusb']
 
 # Walk through the repo and find folder with Dockerfiles.m4
 def walk_path(path):

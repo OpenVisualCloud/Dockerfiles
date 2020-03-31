@@ -31,7 +31,6 @@ This docker installs third party components licensed under various open source l
 | Components | License |
 | ----- | ----- |
 |Ubuntu| [Various](https://hub.docker.com/_/ubuntu) |
-|libusb|GNU Lesser General Public License v2.1|
 |OpenVINO|End User License Agreement for the Intel(R) Software Development Products|
 
 
