@@ -11,13 +11,27 @@ IMAGE="$2"
 README_FILEPATH="$3"
 DOCKERHUB_TOKEN=~/.dockerhub_token
 REPO_URL="https://hub.docker.com/v2/repositories/${DOCKER_PREFIX}/${IMAGE}/"
+IGNORE_LIST=("graphics" "owt-immersive")
+IGNORE_FLAG=-1
 
 if [[ ! -e "${README_FILEPATH}" ]]; then
     echo "${README_FILEPATH} Error: no such file"
     exit 1
 fi
 
-echo "Updating ${README_FILEPATH}"
+for i in ${IGNORE_LIST[*]}
+    do
+        if [[ $IMAGE =~ $i ]]; then
+            IGNORE_FLAG=0
+            break
+        fi
+done
+
+if [[ ${IGNORE_FLAG} == 0 ]]; then
+    echo "Ignore ${README_FILEPATH}"
+else
+    echo "Updating ${README_FILEPATH}"
+fi
 
 # Acquire a token for the Docker Hub API
 if [[ ! -e "${DOCKERHUB_TOKEN}" ]]; then
@@ -40,5 +54,3 @@ else
     echo "Failed to update ${README_FILEPATH}"
     exit 1
 fi
-~
-
