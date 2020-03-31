@@ -261,7 +261,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in FFmpeg or GStreamer media creation and delivery images . ")
         elif image_type=="graphics":
             my_file.write("This image is for Intel OSPRay C++ application development. ")
-        if image_platform=="xeone3" or image_platform="vcaca":
+        if image_platform=="xeone3" or image_platform=="vcaca":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="analytics":
@@ -270,7 +270,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in media delivery GStreamer image, inferencing engine and video analytics plugins. ")
         if image_name=="ffmpeg":
             my_file.write("Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. ")
-        if image_platform=="xeone3" or image_platform="vcaca":
+        if image_platform=="xeone3" or image_platform=="vcaca":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. ")
         my_fiile.write("The docker image can be be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="media":
