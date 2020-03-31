@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes, also included Intel hardware accelaration software stack such as media driver, media SDK, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [xeone3-ubuntu-1804-service-owt](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/ubuntu-18.04/service/owt/Dockerfile)

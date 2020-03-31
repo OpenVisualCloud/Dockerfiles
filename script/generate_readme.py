@@ -272,7 +272,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. ")
         if image_platform=="xeone3" or image_platform=="vcaca":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. ")
-        my_fiile.write("The docker image can be be used in the FROM field of a downstream Dockerfile. ")
+        my_file.write("The docker image can be be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="media":
         my_file.write("Optimized for the media creation and delivery use case. ")
         if image_name=="gst":
@@ -285,7 +285,7 @@ def create_readme(path, path_components):
             my_file.write("Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. ")
         if image_platform=="xeone3":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
-        my_fiile.write("The docker image can be be used in the FROM field of a downstream Dockerfile. ")
+        my_file.write("The docker image can be be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="service":
         my_file.write("Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). ")
         if image_name=="owt":
