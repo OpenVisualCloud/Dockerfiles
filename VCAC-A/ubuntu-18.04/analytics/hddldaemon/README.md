@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. The docker image can be be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Optimized OpenVINO HDDL daemon installed and configured. Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [vcac-a-ubuntu-1804-analytics-hddldaemon](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/VCAC-A/ubuntu-18.04/analytics/hddldaemon/Dockerfile)
