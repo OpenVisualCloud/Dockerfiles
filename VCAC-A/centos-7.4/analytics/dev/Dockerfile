@@ -1,0 +1,769 @@
+
+FROM centos:7.4.1708 AS build
+WORKDIR /home
+
+# COMMON BUILD TOOLS
+RUN yum install -y -q bzip2 make autoconf libtool git wget ca-certificates pkg-config gcc gcc-c++ bison flex patch epel-release yum-devel libcurl-devel zlib-devel;
+
+# Install cmake
+ARG CMAKE_VER=3.13.1
+ARG CMAKE_REPO=https://cmake.org/files
+RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
+    cd cmake-${CMAKE_VER} && \
+    ./bootstrap --prefix="/usr/local" --system-curl && \
+    make -j8 && \
+    make install
+
+# Install automake, use version 1.14 on CentOS
+ARG AUTOMAKE_VER=1.14
+ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
+    cd automake-${AUTOMAKE_VER} && \
+    ./configure --prefix=/usr --libdir=/usr/local/lib64 --disable-doc && \ 
+    make -j8 && \
+    make install
+
+# Build NASM
+ARG NASM_VER=2.13.03
+ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.bz2
+RUN  wget ${NASM_REPO} && \
+     tar -xaf nasm* && \
+     cd nasm-${NASM_VER} && \
+     ./autogen.sh && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
+     make -j8 && \
+     make install
+
+# Build YASM
+ARG YASM_VER=1.3.0
+ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.tar.gz
+RUN  wget -O - ${YASM_REPO} | tar xz && \
+     cd yasm-${YASM_VER} && \
+     sed -i "s/) ytasm.*/)/" Makefile.in && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
+     make -j8 && \
+     make install
+
+# Build ogg
+ARG OGG_VER=1.3.3
+ARG OGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-${OGG_VER}.tar.xz
+
+RUN wget -O - ${OGG_REPO} | tar xJ && \
+    cd libogg-${OGG_VER} && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
+
+# Build vorbis
+ARG VORBIS_VER=1.3.6
+ARG VORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VER}.tar.xz
+
+RUN wget -O - ${VORBIS_REPO} | tar xJ && \
+    cd libvorbis-${VORBIS_VER} && \
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64 && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
+
+# Build mp3lame
+ARG MP3LAME_VER=3.100
+ARG MP3LAME_REPO=https://sourceforge.net/projects/lame/files/lame/${MP3LAME_VER}/lame-${MP3LAME_VER}.tar.gz
+
+RUN wget -O - ${MP3LAME_REPO} | tar xz && \
+    cd lame-${MP3LAME_VER} && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared --enable-nasm && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
+
+# Build fdk-aac
+ARG FDK_AAC_VER=v0.1.6
+ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
+
+RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
+    cd fdk-aac && \
+    autoreconf -fiv && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
+
+
+# Build opus
+ARG OPUS_VER=1.2.1
+ARG OPUS_REPO=https://archive.mozilla.org/pub/opus/opus-${OPUS_VER}.tar.gz
+
+RUN wget -O - ${OPUS_REPO} | tar xz && \
+    cd opus-${OPUS_VER} && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
+
+# Build vpx
+ARG VPX_VER=tags/v1.7.0
+ARG VPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
+
+RUN git clone ${VPX_REPO} && \
+    cd libvpx && \
+    git checkout ${VPX_VER} && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
+
+
+# Build AOM
+ARG AOM_VER=b6f1767eedbaddeb1ff5aa409a710ef61078640e
+ARG AOM_REPO=https://aomedia.googlesource.com/aom
+
+RUN  git clone ${AOM_REPO} && \
+     mkdir aom/aom_build && \
+     cd aom/aom_build && \
+     git checkout ${AOM_VER} && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX="/usr/local" -DCMAKE_INSTALL_LIBDIR=lib64 .. && \
+     make -j8 && \
+     make install DESTDIR="/home/build" && \
+     make install
+
+# Build x264
+ARG X264_VER=stable
+ARG X264_REPO=https://github.com/mirror/x264
+
+RUN  git clone ${X264_REPO} && \
+     cd x264 && \
+     git checkout ${X264_VER} && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
+     make -j8 && \
+     make install DESTDIR="/home/build" && \
+     make install
+
+
+# Build x265
+ARG X265_VER=2.9
+ARG X265_REPO=https://github.com/videolan/x265/archive/${X265_VER}.tar.gz
+
+RUN  yum install -y -q numactl-devel libpciaccess-devel
+
+RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
+     cd x265/build/linux && \
+     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib64 ../../source && \
+     make -j8 && \
+     make install DESTDIR="/home/build" && \
+     make install
+
+# Install required packges
+RUN yum install -y ninja-build python36-setuptools
+
+# Build Meson
+ARG MESON_VER=0.53.1
+ARG MESON_REPO=https://github.com/mesonbuild/meson
+
+RUN git clone ${MESON_REPO}; \
+    cd meson; \
+    git checkout ${MESON_VER}; \
+    python3.6 setup.py install;
+
+# Build dav1d
+ARG LIBDAV1D_VER=0.5.2
+ARG LIBDAV1D_REPO=https://code.videolan.org/videolan/dav1d.git
+
+RUN  git clone ${LIBDAV1D_REPO}; \
+     cd dav1d; \
+     git checkout ${LIBDAV1D_VER}; \
+     meson build --prefix /usr --libdir /usr/lib64 --buildtype release; \
+     ninja-build -C build; \
+     cd build; \
+     DESTDIR="/home/build" ninja-build install; \
+     ninja-build install;
+
+
+#include(transform360.m4)
+# Fetch gmmlib
+ARG GMMLIB_VER=intel-gmmlib-18.3.0
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/${GMMLIB_VER}.tar.gz
+
+RUN wget -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
+
+
+# Build libdrm
+ARG LIBDRM_VER=2.4.96
+ARG LIBDRM_REPO=https://dri.freedesktop.org/libdrm/libdrm-${LIBDRM_VER}.tar.gz
+
+RUN yum install -y -q libpciaccess-devel
+
+RUN wget -O - ${LIBDRM_REPO} | tar xz && \
+    cd libdrm-${LIBDRM_VER} && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install ;
+
+
+# Build libva
+ARG LIBVA_VER=2.4.0
+ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
+
+RUN yum install -y -q libX11-devel mesa-libGL-devel which libdrm-devel
+
+RUN wget -O - ${LIBVA_REPO} | tar xz && \
+    cd libva-${LIBVA_VER} && \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
+
+
+# Build libva-utils
+ARG LIBVA_UTILS_VER=2.4.0
+ARG LIBVA_UTILS_REPO=https://github.com/intel/libva-utils/archive/${LIBVA_UTILS_VER}.tar.gz
+
+RUN wget -O - ${LIBVA_UTILS_REPO} | tar xz; \
+    cd libva-utils-${LIBVA_UTILS_VER}; \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig"; \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64; \
+    make -j8; \
+    make install DESTDIR=/home/build; \
+    make install;
+
+
+# Build media driver
+ARG MEDIA_DRIVER_VER=intel-media-kbl-19.1.1
+ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVER_VER}.tar.gz
+
+RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-devel
+
+RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver && \
+    mkdir -p media-driver/build && \
+    cd media-driver/build && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    cmake -DBUILD_TYPE=release -DBUILD_ALONG_WITH_CMRTLIB=1 -DMEDIA_VERSION="2.0.0" -DBS_DIR_GMMLIB=/home/gmmlib/Source/GmmLib -DBS_DIR_COMMON=/home/gmmlib/Source/Common -DBS_DIR_INC=/home/gmmlib/Source/inc -DBS_DIR_MEDIA=/home/media-driver -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install
+
+
+
+# Build Intel(R) Media SDK
+ARG MSDK_VER=MSS-KBL-2019-R1-HF1
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/${MSDK_VER}.tar.gz
+
+RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
+    mkdir -p MediaSDK/build && \
+    cd MediaSDK/build && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
+
+#install OpenCL
+
+
+RUN yum install -y devtoolset-6-gcc devtoolset-6-gcc-c++ opencl-headers
+ARG CLANG_VERSION=4.0.1
+
+RUN source /opt/rh/devtoolset-6/enable && \
+    wget http://releases.llvm.org/${CLANG_VERSION}/llvm-${CLANG_VERSION}.src.tar.xz && \
+    wget http://releases.llvm.org/${CLANG_VERSION}/cfe-${CLANG_VERSION}.src.tar.xz && \
+    wget http://releases.llvm.org/${CLANG_VERSION}/clang-tools-extra-${CLANG_VERSION}.src.tar.xz && \
+    wget http://releases.llvm.org/${CLANG_VERSION}/compiler-rt-${CLANG_VERSION}.src.tar.xz && \
+    xz -d llvm-${CLANG_VERSION}.src.tar.xz && \
+    tar xvf llvm-${CLANG_VERSION}.src.tar && \
+    xz -d cfe-${CLANG_VERSION}.src.tar.xz && \
+    tar xvf cfe-${CLANG_VERSION}.src.tar && \
+    xz -d clang-tools-extra-${CLANG_VERSION}.src.tar.xz && \
+    tar xvf clang-tools-extra-${CLANG_VERSION}.src.tar && \
+    xz -d compiler-rt-${CLANG_VERSION}.src.tar.xz && \
+    tar xvf compiler-rt-${CLANG_VERSION}.src.tar && \
+    cd llvm-${CLANG_VERSION}.src && \
+    mv ../cfe-${CLANG_VERSION}.src tools/clang && \
+    mv ../clang-tools-extra-${CLANG_VERSION}.src tools/clang/extra && \
+    mv ../compiler-rt-${CLANG_VERSION}.src projects/compiler-rt && \
+    mkdir build && \
+    cd build && \
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=On .. && \
+    make -j$(nproc)  && \
+    make install
+
+#install OpenCL
+RUN yum install -y centos-release-scl epel-release
+
+RUN yum -y -q install yum install libcxx
+RUN yum -y -q install yum install libcxx-devel devtoolset-4-gcc-c++ devtoolset-4-gcc
+
+RUN cd gmmlib && mkdir build && cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DARCH=64 .. && \
+    make -j$(nproc)
+
+RUN mkdir build_igc && \
+    cd build_igc && \
+    git clone https://github.com/intel/intel-graphics-compiler igc && \
+    cd igc && \
+    git checkout de3d1de && \
+    cd .. && \
+
+    git clone https://github.com/intel/llvm-patches llvm_patches && \
+    cd llvm_patches && \
+    git checkout 96d382b && \
+    cd .. && \
+
+    git clone -b release_40 https://github.com/llvm-mirror/llvm llvm_source && \
+    git clone -b release_40 https://github.com/llvm-mirror/clang clang_source && \
+
+    git clone -b master https://github.com/intel/opencl-clang common_clang && \
+    cd common_clang && \
+    git checkout 8248120 && \
+    cd .. && \
+
+    git clone https://github.com/KhronosGroup/OpenCL-Headers opencl_headers && \
+    cd opencl_headers && \
+    git checkout f039db6
+
+RUN cd build_igc && \
+    mkdir build && \
+    cd build && \
+    scl enable devtoolset-4 "cmake -DIGC_OPTION__OUTPUT_DIR=../igc-install/Release -DCMAKE_BUILD_TYPE=Release -DIGC_OPTION__ARCHITECTURE_TARGET=Linux64 ../igc/IGC" | tee cmake_output.log && \
+    yum install -y rpm rpm-libs rpm-build rpm-build-libs && \
+    scl enable devtoolset-4 "make -j$(nproc) package" | tee make_output.log && \
+    rpm -ivh intel-igc-core-0.1-0.x86_64.rpm intel-igc-media-0.1-0.x86_64.rpm intel-igc-opencl-devel-0.1-0.x86_64.rpm intel-igc-opencl-0.1-0.x86_64.rpm && \
+    ldconfig
+
+RUN git clone https://github.com/intel/compute-runtime neo && \
+    cd neo && \
+    git checkout 18.41.11649 && \
+    mkdir build && \
+    cd build && \
+    scl enable devtoolset-4 "PKG_CONFIG_PATH=/usr/lib/pkgconfig/ cmake -DCMAKE_BUILD_TYPE=Release .." && \
+    scl enable devtoolset-4 "make -j$(nproc) package" && \
+    rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm 
+
+RUN yum install -y ocl-icd-devel
+
+#clinfo needs to be installed after build directory is copied over
+
+# Build the gstreamer core
+ARG GST_VER=1.16.0
+ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
+
+RUN  yum install -y -q glib2-devel-2.56.1 gettext-devel gobject-introspection gobject-introspection-devel python-gobject-base
+RUN  wget -O - ${GST_REPO} | tar xJ && \
+     cd gstreamer-${GST_VER} && \
+     ./autogen.sh \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
+        --enable-shared \
+        --enable-introspection \
+        --disable-examples  \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
+     make install DESTDIR=/home/build && \
+     make install;
+
+# Build the gstremaer plugin bad set
+ARG GST_ORC_VER=0.4.28
+ARG GST_ORC_REPO=https://gstreamer.freedesktop.org/src/orc/orc-${GST_ORC_VER}.tar.xz
+
+RUN  wget -O - ${GST_ORC_REPO} | tar xJ && \
+     cd orc-${GST_ORC_VER} && \
+     ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 \
+                --libexecdir=/usr/local/lib64 \
+                --enable-shared \
+                --disable-examples  \
+                --disable-gtk-doc && \
+     make -j $(nproc) && \
+     make install DESTDIR=/home/build && \
+     make install
+
+# Build the gstremaer plugin base
+ARG GST_PLUGIN_BASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${GST_VER}.tar.xz
+
+RUN  yum install -y -q libXv-devel libvisual-devel libtheora-devel glib2-devel alsa-lib-devel cdparanoia-devel mesa-libGL-devel pango-devel
+
+RUN  yum install -y -q libXrandr-devel
+
+
+RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
+     cd gst-plugins-base-${GST_VER} && \
+     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+     ./autogen.sh \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
+        --enable-introspection \
+        --enable-shared \
+        --disable-examples  \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
+     make install DESTDIR=/home/build && \
+     make install
+
+
+# Build the gstremaer plugin good set
+ARG GST_PLUGIN_GOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-${GST_VER}.tar.xz
+
+RUN  yum install -y -q libsoup-devel libjpeg-devel
+
+RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
+     cd gst-plugins-good-${GST_VER} && \
+     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+     ./autogen.sh \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
+        --enable-shared \
+        --disable-examples  \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
+     make install DESTDIR=/home/build && \
+     make install
+
+
+# Build the gstreamer plugin bad set
+ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
+ARG GST_PATCHES_RELEASE_VER=v0.1
+ARG GST_PATCHES_RELEASE_URL=https://github.com/VCDP/gstreamer-patch/archive/${GST_PATCHES_RELEASE_VER}.tar.gz
+RUN wget -O - ${GST_PATCHES_RELEASE_URL} | tar xz
+
+RUN  yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && yum install -y -q openssl-devel librtmp-devel && yum remove -y rpmfusion-free-release
+
+RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
+     cd gst-plugins-bad-${GST_VER} && \
+     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+     find /home/gstreamer-patch-${GST_PATCHES_RELEASE_VER#*v}/ -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
+     ./autogen.sh \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
+        --enable-shared \
+        --disable-examples  \
+        --disable-gtk-doc \ 
+        --disable-shm \
+        --disable-mxf && \
+     make -j $(nproc) && \
+     make install DESTDIR=/home/build && \
+     make install
+
+# Build the gstremaer plugin ugly set
+ARG GST_PLUGIN_UGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-${GST_VER}.tar.xz
+
+RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ; \
+     cd gst-plugins-ugly-${GST_VER}; \
+     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig"; \
+     ./autogen.sh \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
+        --enable-shared \
+        --disable-examples  \
+        --disable-gtk-doc && \
+     make -j $(nproc) && \
+     make install DESTDIR=/home/build && \
+     make install
+
+# Build gst-libav
+ARG GST_PLUGIN_LIBAV_REPO=https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-${GST_VER}.tar.xz
+
+RUN yum install -y -q zlib-devel openssl-devel
+
+RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
+    cd gst-libav-${GST_VER} && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    ./autogen.sh \
+        --prefix="/usr/local" \
+        --libdir=/usr/local/lib64 \
+        --enable-shared \
+        --enable-gpl \
+        --disable-gtk-doc && \
+    make -j $(nproc) && \
+    make install DESTDIR=/home/build && \
+    make install
+
+
+# Build gstremaer plugin vaapi
+ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-${GST_VER}.tar.xz
+
+# https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/merge_requests/45
+ARG GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH=b219f6095f3014041896714dd88e7d90ee3d72dd
+ARG GST_PLUGIN_VAAPI_REPO_GIT=https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git
+
+RUN  yum install -y -q libXrandr-devel
+
+#RUN  git clone https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git -b 1.14 --depth 10 && \
+#     cd gstreamer-vaapi && git reset --hard ${GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH} && \
+RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
+     cd gstreamer-vaapi-${GST_VER} && \
+     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+     ./autogen.sh \
+        --prefix=/usr/local \
+        --libdir=/usr/local/lib64 \
+        --libexecdir=/usr/local/lib64 \
+        --enable-shared \
+        --disable-examples \
+        --disable-gtk-doc  && \
+     make -j $(nproc) && \
+     make install DESTDIR=/home/build && \
+     make install
+
+
+ARG OPENCV_VER=4.1.0
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
+
+RUN yum install -y -q eigen3-devel
+
+RUN wget ${OPENCV_REPO} && \
+    tar -zxvf ${OPENCV_VER}.tar.gz && \
+    cd opencv-${OPENCV_VER} && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
+    make -j $(nproc) && \
+    make install DESTDIR=/home/build && \
+    make install
+
+
+# OpenVINO verion
+# 2020.1 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.1.023
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/l_openvino_toolkit_p_2020.1.023.tgz
+
+#Install OpenVino dependencies
+RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
+
+#Download and unpack OpenVino
+RUN mkdir /tmp2
+RUN wget ${OPENVINO_URL} -P /tmp2
+RUN if [ -f /tmp2/${OPENVINO_BUNDLE}.tgz ]; \
+    then tar xzvf /tmp2/${OPENVINO_BUNDLE}.tgz -C /tmp2 && rm /tmp2/${OPENVINO_BUNDLE}.tgz; \
+    else echo "Please prepare the OpenVino installation bundle"; \
+fi
+
+# Create a silent configuration file for install
+RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
+    echo "CONTINUE_WITH_OPTIONAL_ERROR=yes" >> /tmp2/silent.cfg         && \
+    echo "PSET_INSTALL_DIR=/opt/intel" >> /tmp2/silent.cfg              && \
+    echo "CONTINUE_WITH_INSTALLDIR_OVERWRITE=yes" >> /tmp2/silent.cfg   && \
+    echo "COMPONENTS=DEFAULTS" >> /tmp2/silent.cfg                      && \
+    echo "COMPONENTS=ALL" >> /tmp2/silent.cfg                           && \
+    echo "PSET_MODE=install" >> /tmp2/silent.cfg                        && \
+    echo "INTEL_SW_IMPROVEMENT_PROGRAM_CONSENT=no" >> /tmp2/silent.cfg  && \
+    echo "SIGNING_ENABLED=no" >> /tmp2/silent.cfg
+
+#Install OpenVino
+RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
+
+ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
+ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
+ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
+#ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
+
+# OPENVINO C API
+ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
+RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
+    cd dldt-c_api-2.0.1 && \
+    mkdir -p build && cd build && \
+    cmake -DENABLE_AVX512F=OFF .. && \
+    make -j8 && \
+    make install && \
+    make install DESTDIR=/home/build
+
+#Remove components of OpenVino that won't be used
+ARG CV_BASE_DIR=/opt/intel/openvino
+RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
+    rm -rf ${CV_BASE_DIR}/python && \
+    rm -rf ${CV_BASE_DIR}/documentation && \
+    rm -rf ${CV_BASE_DIR}/install_dependiencies && \
+    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
+    rm -rf ${CV_BASE_DIR}/openvx/samples && \
+    rm -rf ${CV_BASE_DIR}/opencv/samples
+
+#Copy over directories to clean image
+RUN mkdir -p /home/build/usr/local/lib && \
+    mkdir -p /home/build/opt/intel && \
+    mkdir -p /home/build/usr/lib && \
+    cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
+    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
+    
+    cp -r /usr/lib/* /home/build/usr/lib
+
+#Give all user exec permission
+RUN chmod -R 775 /opt/intel/ ;
+
+
+
+
+
+RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel python3 python36-gobject-devel python3-devel
+
+RUN yum install -y -q binutils uuid-devel
+
+ARG PAHO_INSTALL=true
+ARG PAHO_VER=1.3.0
+ARG PAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
+RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
+        wget -O - ${PAHO_REPO} | tar -xz && \
+        cd paho.mqtt.c-${PAHO_VER} && \
+        make && \
+        make install && \
+        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/local/lib64/ && \
+        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/local/lib64/ && \
+        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/local/lib64/ && \
+        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/local/lib64/ && \
+        cp build/output/paho_c_version /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_c_pub /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_c_sub /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_cs_pub /home/build/usr/local/bin/ && \
+        cp build/output/samples/paho_cs_sub /home/build/usr/local/bin/ && \
+        chmod 644 /home/build/usr/local/lib64/libpaho-mqtt3c.so.1.0 && \
+        chmod 644 /home/build/usr/local/lib64/libpaho-mqtt3cs.so.1.0 && \
+        chmod 644 /home/build/usr/local/lib64/libpaho-mqtt3a.so.1.0 && \
+        chmod 644 /home/build/usr/local/lib64/libpaho-mqtt3as.so.1.0 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3c.so.1.0 /home/build/usr/local/lib64/libpaho-mqtt3c.so.1 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3cs.so.1.0 /home/build/usr/local/lib64/libpaho-mqtt3cs.so.1 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3a.so.1.0 /home/build/usr/local/lib64/libpaho-mqtt3a.so.1 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3as.so.1.0 /home/build/usr/local/lib64/libpaho-mqtt3as.so.1 && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3c.so.1 /home/build/usr/local/lib64/libpaho-mqtt3c.so && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3cs.so.1 /home/build/usr/local/lib64/libpaho-mqtt3cs.so && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3a.so.1 /home/build/usr/local/lib64/libpaho-mqtt3a.so && \
+        ln /home/build/usr/local/lib64/libpaho-mqtt3as.so.1 /home/build/usr/local/lib64/libpaho-mqtt3as.so && \
+        cp src/MQTTAsync.h /home/build/usr/local/include/ && \
+        cp src/MQTTClient.h /home/build/usr/local/include/ && \
+        cp src/MQTTClientPersistence.h /home/build/usr/local/include/ && \
+        cp src/MQTTProperties.h /home/build/usr/local/include/ && \
+        cp src/MQTTReasonCodes.h /home/build/usr/local/include/ && \
+        cp src/MQTTSubscribeOpts.h /home/build/usr/local/include/; \
+    else \
+        echo "PAHO install disabled"; \
+    fi
+
+ARG RDKAFKA_INSTALL=true
+ARG RDKAFKA_VER=1.0.0
+ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.tar.gz
+RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
+        wget -O - ${RDKAFKA_REPO} | tar -xz && \
+        cd librdkafka-${RDKAFKA_VER} && \
+        ./configure --prefix=/usr/local --libdir=/usr/local/lib64/ && \
+        make && \
+        make install && \
+        make install DESTDIR=/home/build; \
+    else \
+        echo "RDKAFKA install disabled"; \
+    fi
+
+
+#Install va gstreamer plugins
+
+ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
+ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
+
+RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
+    cd gst-video-analytics && \
+    git checkout ${VA_GSTREAMER_PLUGINS_VER} && \
+    git submodule init && git submodule update && \
+    mkdir build && \
+    cd build && \
+    export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
+    export CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" && \
+    cmake \
+    -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
+    -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DDISABLE_SAMPLES=ON \
+    -DENABLE_PAHO_INSTALLATION=1 \
+    -DENABLE_RDKAFKA_INSTALLATION=1 \
+    -DHAVE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
+    -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
+    make -j4
+RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
+    cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
+RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
+    cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0
+
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
+
+
+
+# Fetch FFmpeg source
+ARG FFMPEG_VER=n4.2
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
+ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
+
+ARG FFMPEG_PATCHES_RELEASE_VER=0.2
+ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
+ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
+RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
+
+ARG FFMPEG_MA_RELEASE_VER=0.4.1
+ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
+ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
+RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
+
+RUN yum install -y -q libass-devel freetype-devel SDL2-devel libxcb-devel libvdpau-devel texinfo zlib-devel openssl-devel
+
+RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
+    cd FFmpeg && \
+    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
+   find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+
+# Compile FFmpeg
+RUN cd /home/FFmpeg && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libinference_engine_c_wrapper  && \
+    make -j8 && \
+    make install && make install DESTDIR="/home/build"
+
+
+
+# remake opencv videoio to incorporate ffmpeg/gst
+RUN cd opencv-${OPENCV_VER}/build && \
+    rm -rf * && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
+    cd modules/videoio && \
+    make -j $(nproc) && \
+    cp -f ../../lib/libopencv_videoio.so.${OPENCV_VER} /home/build/usr/local/lib
+
+
+FROM centos:7.4.1708
+LABEL Description="This is the image for FFMPEG & GSTREAMER application development on CentOS 7.6"
+LABEL Vendor="Intel Corporation"
+WORKDIR /home
+
+# Prerequisites
+RUN yum install -y epel-release;  \
+    yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
+    yum install -y -q   libxcb SDL2 libass numactl libvdpau  glib2-2.56.1 pango gobject-introspection libpciaccess libxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora libpciaccess libX11 openblas-serial uuid python3 \
+mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo librtmp ; \
+    yum remove -y -q epel-release; \
+    yum remove -y -q rpmfusion-free-release; \
+    rm -rf /var/cache/yum/*;
+
+# Install
+COPY --from=build /home/build /
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib64
+ENV LIBVA_DRIVERS_PATH=/usr/local/lib64/dri
+ENV LIBVA_DRIVER_NAME=iHD
+COPY --from=build /home/neo/build/intel-opencl-18.41-0.x86_64-igdrcl.rpm /home/
+RUN rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm && \
+    yum install -y epel-release && \
+    yum install -y ocl-icd-devel
+ENV GST_VAAPI_ALL_DRIVERS=1
+ENV DISPLAY=:0.0
+ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
+ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
+ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
+#ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:/usr/local/lib:$IE_PLUGINS_PATH
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0
+ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
+ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
+ENV PATH=/usr/bin:${PATH}:/usr/local/bin
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
+

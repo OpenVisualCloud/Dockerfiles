@@ -1,0 +1,5 @@
+set(image "vcaca_analytics_devel_centos75")
+include(image)
+include(ffmpeg-tests)
+include(gst-tests)
+include(dldt-gst-tests)
