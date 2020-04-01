@@ -262,6 +262,7 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
 #install OpenCL
 
 
+RUN yum install -y centos-release-scl
 RUN yum install -y devtoolset-6-gcc devtoolset-6-gcc-c++ opencl-headers
 ARG CLANG_VERSION=4.0.1
 
@@ -288,7 +289,6 @@ RUN source /opt/rh/devtoolset-6/enable && \
     make -j$(nproc)  && \
     make install
 
-#install OpenCL
 RUN yum install -y centos-release-scl epel-release
 
 RUN yum -y -q install yum install libcxx
