@@ -99,7 +99,7 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager && \
     mkdir -p /home/opt/intel && \
     cd /home/opt/intel && \
     tar xvf /home/hddl.tar.gz
-),dnl
+)dnl
 ),dnl
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
