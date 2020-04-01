@@ -272,7 +272,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. ")
         if image_name=="hddldaemon":
             my_file.write("Optimized OpenVINO HDDL daemon installed and configured. ")
-        if image_platform=="XeonE3" or image_platform=="VCA2" or image_platform=="VCAC-A":
+        if image_platform=="XeonE3" or image_platform=="VCA2" or image_platform=="VCAC-A" and image_name!="hddldaemon":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="media":
