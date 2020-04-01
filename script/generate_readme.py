@@ -257,9 +257,9 @@ def create_readme(path, path_components):
         my_file.write("This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. ")
         if image_type=="analytics":
             my_file.write("Included what are in FFmpeg & GStreamer media analytics images. ")
-        elif image_type=="media":
+        if image_type=="media":
             my_file.write("Included what are in FFmpeg or GStreamer media creation and delivery images . ")
-        elif image_type=="graphics":
+        if image_type=="graphics":
             my_file.write("This image is for Intel OSPRay C++ application development. ")
         if image_platform=="xeone3" or image_platform=="vcaca":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
@@ -270,6 +270,8 @@ def create_readme(path, path_components):
             my_file.write("Included what are in media delivery GStreamer image, inferencing engine and video analytics plugins. ")
         if image_name=="ffmpeg":
             my_file.write("Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. ")
+        if image_name=="hddldaemon":
+            my_file.write("Optimized OpenVINO HDDL daemon installed and configured. ")
         if image_platform=="xeone3" or image_platform=="vcaca":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
