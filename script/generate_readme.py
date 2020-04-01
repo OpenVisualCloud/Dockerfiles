@@ -250,7 +250,7 @@ def create_readme(path, path_components):
     image_type = path_components[2]
     image_os = path_components[1]
     image_platform = path_components[0]
-    
+ 
     if image_platform=="QAT":
         my_file.write("Optimized for NGINX web server with compute-intensive operations acceleration with Intel® QuickAssist Technology (Intel® QAT).The docker image can be used in the FROM field of a downstream Dockerfile.")
     elif image_name=="dev":
@@ -261,7 +261,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in FFmpeg or GStreamer media creation and delivery images . ")
         if image_type=="graphics":
             my_file.write("This image is for Intel OSPRay C++ application development. ")
-        if image_platform=="xeone3" or image_platform=="vcaca":
+        if image_platform=="XeonE3" or image_platform=="VCA2" or image_platform=="VCAC-A":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="analytics":
@@ -272,7 +272,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. ")
         if image_name=="hddldaemon":
             my_file.write("Optimized OpenVINO HDDL daemon installed and configured. ")
-        if image_platform=="xeone3" or image_platform=="vcaca":
+        if image_platform=="XeonE3" or image_platform=="VCA2" or image_platform=="VCAC-A":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="media":
@@ -285,7 +285,7 @@ def create_readme(path, path_components):
             my_file.write("Optimized for NGINX web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy. ")
         if image_name=="svt":
             my_file.write("Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. ")
-        if image_platform=="xeone3":
+        if image_platform=="XeonE3" or image_platform=="VCA2":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="service":
@@ -294,7 +294,7 @@ def create_readme(path, path_components):
             my_file.write("Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. ")
         if image_name=="owt-immersive":
             my_file.write("Docker image optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. ")
-        if image_os=="xeone3":
+        if image_os=="XeonE3":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="graphics":
