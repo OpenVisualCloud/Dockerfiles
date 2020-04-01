@@ -38,7 +38,7 @@ OPENCV_REMAKE_VIDEOIO()
 include(cleanup.m4)dnl
 
 FROM centos:7.5.1804
-LABEL Description="This is the image for FFMPEG & GSTREAMER application development on CentOS 7.6"
+LABEL Description="This is the image for FFMPEG & GSTREAMER application development on CentOS 7.5"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 

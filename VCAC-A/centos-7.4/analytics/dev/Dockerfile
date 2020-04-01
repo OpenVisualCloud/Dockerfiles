@@ -732,7 +732,7 @@ RUN cd opencv-${OPENCV_VER}/build && \
 
 
 FROM centos:7.4.1708
-LABEL Description="This is the image for FFMPEG & GSTREAMER application development on CentOS 7.6"
+LABEL Description="This is the image for FFMPEG & GSTREAMER application development on CentOS 7.4"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 

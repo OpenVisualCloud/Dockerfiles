@@ -486,7 +486,7 @@ RUN rm -rf /home/build/usr/include && \
     find /home/build -name "*.a" -exec rm -f {} \;
 
 FROM centos:7.5.1804
-LABEL Description="This is the base image for FFMPEG & DLDT CentOS 7.6"
+LABEL Description="This is the base image for FFMPEG & DLDT CentOS 7.5"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 

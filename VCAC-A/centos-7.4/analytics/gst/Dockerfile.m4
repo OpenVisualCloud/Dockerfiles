@@ -34,7 +34,7 @@ include(gstreamer-videoanalytics.m4)
 include(cleanup.m4)dnl
 
 FROM centos:7.4.1708
-LABEL Description="This is the image for DLDT and GST on CentOS 7.6."
+LABEL Description="This is the image for DLDT and GST on CentOS 7.4."
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
