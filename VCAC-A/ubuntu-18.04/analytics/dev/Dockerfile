@@ -575,19 +575,18 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         echo "PAHO install disabled"; \
     fi
 
-ARG RDKAFKA_INSTALL=true
-ARG RDKAFKA_VER=1.0.0
-ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.tar.gz
-RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
-        wget -O - ${RDKAFKA_REPO} | tar -xz && \
-        cd librdkafka-${RDKAFKA_VER} && \
-        ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu/ && \
-        make && \
-        make install && \
-        make install DESTDIR=/home/build; \
-    else \
-        echo "RDKAFKA install disabled"; \
-    fi
+# Build librdkafka
+ARG LIBRDKAFKA_VER=1.0.0
+ARG FILE_NAME=v${LIBRDKAFKA_VER}
+ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
+
+RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
+    cd librdkafka-${LIBRDKAFKA_VER} && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
+
 
 
 #Install va gstreamer plugins
@@ -647,7 +646,7 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libinference_engine_c_wrapper  && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libinference_engine_c_wrapper --enable-librdkafka  && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 

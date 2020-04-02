@@ -1,5 +1,5 @@
 # Build librdkafka
-ARG LIBRDKAFKA_VER=0.11.6
+ARG LIBRDKAFKA_VER=1.0.0
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
 ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
 
@@ -10,3 +10,4 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
     make install DESTDIR=/home/build && \
     make install;
 define(`FFMPEG_CONFIG_LIBRDKAFKA',--enable-librdkafka )dnl
+define(`RDKAFKA_INSTALLED',true)dnl

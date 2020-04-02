@@ -251,7 +251,7 @@ RUN wget -O - ${LIBJSONC_REPO} | tar xz && \
     make install;
 
 # Build librdkafka
-ARG LIBRDKAFKA_VER=0.11.6
+ARG LIBRDKAFKA_VER=1.0.0
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
 ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
 
@@ -594,19 +594,6 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         echo "PAHO install disabled"; \
     fi
 
-ARG RDKAFKA_INSTALL=true
-ARG RDKAFKA_VER=1.0.0
-ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.tar.gz
-RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
-        wget -O - ${RDKAFKA_REPO} | tar -xz && \
-        cd librdkafka-${RDKAFKA_VER} && \
-        ./configure --prefix=/usr/local --libdir=/usr/local/lib64/ && \
-        make && \
-        make install && \
-        make install DESTDIR=/home/build; \
-    else \
-        echo "RDKAFKA install disabled"; \
-    fi
 
 
 #Install va gstreamer plugins
