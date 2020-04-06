@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. This is development image aim towards  enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. This image is for Intel OSPRay C++ application development. The docker image can be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. This image is for Intel OSPRay C++ application development. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [xeon-centos-74-graphics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7.4/graphics/dev/Dockerfile)

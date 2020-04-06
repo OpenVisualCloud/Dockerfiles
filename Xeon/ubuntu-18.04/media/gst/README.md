@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. The docker image can be used to invoke gstreamer commands or be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [xeon-ubuntu-1804-media-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/ubuntu-18.04/media/gst/Dockerfile)

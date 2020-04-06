@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in the GStreamer image. Inferencing engine and tracking plugins to be included, also included Intel hardware accelaration software stack such as media driver, media SDK, OpenVINO, gmmlib and libva. The docker image can be used to invoke gstreamer commands or be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery GStreamer image, inferencing engine and video analytics plugins. Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [xeone3-centos-74-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/centos-7.4/analytics/gst/Dockerfile)

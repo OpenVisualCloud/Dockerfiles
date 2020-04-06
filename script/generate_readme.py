@@ -116,11 +116,10 @@ license_subs = {
                 "svt-hevc" : ["|Intel SVT-HEVC|BSD-2-Clause Plus Patent License|"],
                 "svt-vp9" : ["|Intel SVT-VP9|BSD-2-Clause Plus Patent License|"],
                 "usrsctp" : ["|usrsctp|BSD 3-clause \"New\" or \"Revised\" License|"],
-                "libusb" : ["|libusb|GNU Lesser General Public License v2.1|"]
                }
 
 # M4 files for which no license is needed
-license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog']
+license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog','libusb']
 
 # Walk through the repo and find folder with Dockerfiles.m4
 def walk_path(path):
@@ -251,40 +250,52 @@ def create_readme(path, path_components):
     image_type = path_components[2]
     image_os = path_components[1]
     image_platform = path_components[0]
-    
+ 
     if image_platform=="QAT":
         my_file.write("Optimized for NGINX web server with compute-intensive operations acceleration with Intel® QuickAssist Technology (Intel® QAT).The docker image can be used in the FROM field of a downstream Dockerfile.")
     elif image_name=="dev":
-        my_file.write("This is development image aim towards  enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. ")
+        my_file.write("This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. ")
         if image_type=="analytics":
-            my_file.write("Included what are in the FFmpeg image. Inferencing engine and tracking plugins to be included, also included Intel hardware accelaration software stack such as media driver, media SDK, gmmlib, OpenVINO and libva. ")
-        elif image_type=="media":
-            my_file.write("Image for FFmpeg or GStreamer C++ application development for Media creation and media delivery. ")
-        elif image_type=="graphics":
+            my_file.write("Included what are in FFmpeg & GStreamer media analytics images. ")
+        if image_type=="media":
+            my_file.write("Included what are in FFmpeg or GStreamer media creation and delivery images . ")
+        if image_type=="graphics":
             my_file.write("This image is for Intel OSPRay C++ application development. ")
+        if image_platform=="XeonE3" or image_platform=="VCA2" or image_platform=="VCAC-A":
+            my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="analytics":
         my_file.write("Optimized for Media Analytics. ")
         if image_name=="gst":
-            my_file.write("Included what are in the GStreamer image. Inferencing engine and tracking plugins to be included, also included Intel hardware accelaration software stack such as media driver, media SDK, OpenVINO, gmmlib and libva. The docker image can be used to invoke gstreamer commands or be used in the FROM field of a downstream Dockerfile. ")
+            my_file.write("Included what are in media delivery GStreamer image, inferencing engine and video analytics plugins. ")
         if image_name=="ffmpeg":
-            my_file.write("Included what are in the FFmpeg image. Inferencing engine and tracking plugins to be included, also included Intel hardware accelaration software stack such as media driver, media SDK, gmmlib, OpenVINO and libva.	The docker image can be used to invoke FFmpeg commands or be used in the FROM field of a downstream Dockerfile. ")
+            my_file.write("Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. ")
+        if image_name=="hddldaemon":
+            my_file.write("With OpenVINO HDDL daemon installed and configured. ")
+        if image_platform=="XeonE3" or image_platform=="VCA2" or image_platform=="VCAC-A" and image_name!="hddldaemon":
+            my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. ")
+        my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="media":
         my_file.write("Optimized for the media creation and delivery use case. ")
         if image_name=="gst":
-            my_file.write("Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. The docker image can be used to invoke gstreamer commands or be used in the FROM field of a downstream Dockerfile. ")
+            my_file.write("Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. ")
         if image_name=="ffmpeg":
-            my_file.write("Included FFmpeg and codecs such as aac, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC, also included Intel hardware accelaration software stack such as media driver, media SDK, gmmlib and libva. The docker image can be used to invoke FFmpeg commands or be used in the FROM field of a downstream Dockerfile. ")
+            my_file.write("Included FFmpeg and codecs such as aac, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. ")
         if image_name=="nginx":
-            my_file.write("Optimized for NGINX web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy. The docker image can be used in the FROM field of a downstream Dockerfile. ")
+            my_file.write("Optimized for NGINX web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy. ")
         if image_name=="svt":
-            my_file.write("Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. The docker image can be used in the FROM field of a downstream Dockerfile. ")
+            my_file.write("Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. ")
+        if image_platform=="XeonE3" or image_platform=="VCA2":
+            my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
+        my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="service":
         my_file.write("Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). ")
         if image_name=="owt":
-            my_file.write("Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes, also included Intel hardware accelaration software stack such as media driver, media SDK, gmmlib and libva. ")
+            my_file.write("Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. ")
         if image_name=="owt-immersive":
             my_file.write("Docker image optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. ")
+        if image_os=="XeonE3":
+            my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="graphics":
         if image_name=="ospray":
