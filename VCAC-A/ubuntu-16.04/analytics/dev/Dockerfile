@@ -419,15 +419,18 @@ RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
 ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-${GST_VER}.tar.xz
 
 # https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/merge_requests/45
-ARG GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH=b219f6095f3014041896714dd88e7d90ee3d72dd
-ARG GST_PLUGIN_VAAPI_REPO_GIT=https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git
+ARG GST_PLUGIN_VAAPI_PATCH_BRANCH=preview/python_api-yolov3_support
+ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/opencv/gst-video-analytics.git
 
 RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev libegl1-mesa-dev autopoint bison flex libudev-dev
 
-#RUN  git clone https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git -b 1.14 --depth 10 && \
-#     cd gstreamer-vaapi && git reset --hard ${GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH} && \
 RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      cd gstreamer-vaapi-${GST_VER} && \
+     git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
+     cd gst-video-analytics && git checkout ${GST_PLUGIN_VAAPI_PATCH_BRANCH} && \
+     cd .. && \
+     git apply gst-video-analytics/patches/gstreamer-vaapi/vasurface_qdata.patch && \
+     rm -fr gst-video-analytics && \
      export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
      ./autogen.sh \
         --prefix=/usr/local \
