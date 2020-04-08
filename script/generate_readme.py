@@ -72,7 +72,7 @@ license_subs = {
                 "gst-plugin-base" : ["|gst plugin base|GNU Lesser General Public License v2.1 or later|"],
                 "gst-plugin-bad" : ["|gst plugin bad|GNU Lesser General Public License v2.1 or later|"],
                 "gst-plugin-good" : ["|gst plugin good|GNU Lesser General Public License v2.1 or later|"],
-                "gst-plugin-libav" : ["|gst plugin libav|GNU Lesser General Public License v2.1 or later|"],
+                "gst-plugin-libav" : ["|gst plugin libav|GNU Library General Public License Version 2|"],
                 "gst-plugin-svt" : ["|gst plugin svt|GNU Lesser General Public License v2.1 or later|"],
                 "gst-plugin-ugly" : ["|gst plugin ugly|GNU Lesser General Public License v2.1 or later|"],
                 "gst-plugin-vaapi" : ["|gst plugin vaapi|GNU Lesser General Public License v2.1 or later|"],
