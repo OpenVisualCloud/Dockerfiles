@@ -57,7 +57,7 @@ This docker installs third party components licensed under various open source l
 |gst plugin good|GNU Lesser General Public License v2.1 or later|
 |gst plugin bad|GNU Lesser General Public License v2.1 or later|
 |gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Lesser General Public License v2.1 or later|
+|gst plugin libav|GNU Library General Public License Version 2|
 |gst plugin svt|GNU Lesser General Public License v2.1 or later|
 |gst plugin vaapi|GNU Lesser General Public License v2.1 or later|
 |opencv|BSD 3-clause "New" or "Revised" License|
