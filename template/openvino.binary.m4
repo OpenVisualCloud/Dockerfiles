@@ -1,7 +1,7 @@
 # OpenVINO verion
-# 2020.1 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.1.023
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/l_openvino_toolkit_p_2020.1.023.tgz
+# 2020.2 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.2.120
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/l_openvino_toolkit_p_2020.2.120.tgz
 
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
 #Install OpenVino dependencies
@@ -48,16 +48,10 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph
 ,)dnl
 
 ifelse(index(DOCKER_IMAGE,-hddldaemon),-1,
-# OPENVINO C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.1 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
-define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_wrapper )dnl
+define(`FFMPEG_EXTRA_CFLAGS_IE',-I/opt/intel/openvino/deployment_tools/inference_engine/include )dnl
+define(`FFMPEG_EXTRA_LDFLAGS_IE',-L/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64 )dnl
+define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_api )dnl
+define(`IE_C_API_PATH',/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so)dnl
 ,)dnl
 
 ifelse(index(DOCKER_IMAGE,-dev),-1,
@@ -77,9 +71,8 @@ RUN cd Python-3.6.3							&& \
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     python3.6 ./deployment_manager.py --targets hddl vpu cpu            && \
-    cd /root/ && ls -lh                                                 && \
-    tar zxf openvino_deploy_package.tar.gz                              && \
-    mv openvino_deploy_package openvino
+    cd /root/ && ls -lh && mkdir -p openvino                            && \
+    tar zvxf openvino_deploy_package.tar.gz -C openvino
 
 #Remove python3.6
 RUN cd Python-3.6.3							&& \
@@ -90,9 +83,8 @@ ifelse(index(DOCKER_IMAGE,hddldaemon),-1,
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     ./deployment_manager.py --targets hddl vpu cpu                      && \
-    cd /root/ && ls -lh                                                 && \
-    tar zxf openvino_deploy_package.tar.gz                              && \
-    mv openvino_deploy_package openvino
+    cd /root/ && ls -lh && mkdir -p openvino                            && \
+    tar zvxf openvino_deploy_package.tar.gz -C openvino
 ,dnl
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager && \
     python3 deployment_manager.py --targets=hddl --output_dir=/home --archive_name=hddl && \
@@ -124,7 +116,8 @@ RUN mkdir -p /home/build/usr/local/lib && \
     mkdir -p /home/build/usr/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
     ifelse(index(DOCKER_IMAGE,-dev),-1,cp -rH /root/openvino /home/build/opt/intel/,cp -rH /opt/intel/openvino /home/build/opt/intel/) && \
-    ifelse(index(DOCKER_IMAGE,-dev),-1,cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && \)
+    ifelse(index(DOCKER_IMAGE,-dev),-1,cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && )\
+    ifelse(index(DOCKER_IMAGE,-dev),-1,cp defn(`IE_C_API_PATH') /home/build/.defn(`IE_C_API_PATH') && )\
     cp -r /usr/lib/* /home/build/usr/lib
 ,)dnl
 
