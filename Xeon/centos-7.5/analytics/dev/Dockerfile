@@ -511,6 +511,7 @@ ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
+RUN yum install -y python3-devel
 RUN cd dldt/model-optimizer && \
 if [ "x$PYTHON_TRUSTED_HOST" = "x" ] ; \
 then pip3 install --target=/home/build/mo_libs -r requirements.txt && \
