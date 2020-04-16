@@ -23,7 +23,7 @@ The FFmpeg builds included the following patches for feature enhancement, better
 |-------|-------------|
 |[11625](https://patchwork.ffmpeg.org/patch/11625/raw)|Enhance 1:N transcoding performance.|
 |[H.265 FLV](https://github.com/VCDP/CDN/archive/v0.1.tar.gz)|Support H.265 in FLV for RTMP streaming.|
-|[IE_FILTERS](https://github.com/VCDP/FFmpeg-patch/tree/ffmpeg4.2_va/patches )|Enables FFmpeg analytics pipeline with the elementary inference features.|
+|[ANALYTICS](https://github.com/VCDP/FFmpeg-patch/tree/ffmpeg4.2_va/patches )|Enables FFmpeg analytics pipeline with the elementary inference features.|
 |[SVT-HEVC](https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-HEVC plugin|
 |[SVT-AV1](https://github.com/OpenVisualCloud/SVT-AV1/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-AV1 plugin|
 
@@ -59,12 +59,13 @@ ffmpeg -y -init_hw_device qsv=hw -filter_hw_device hw -f rawvideo -pix_fmt yuv42
 ffmpeg -hwaccel qsv -c:v h264_qsv -i test.mp4 -f null /dev/null
 ```
 
-- Face detection and emotion identification, save metadata to json format: 
+- Face detection and emotion identification, save metadata to json format:
 
 ```bash
 ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./face-detection-adas-0001/FP32/face-detection-adas-0001.xml:device=CPU, \
-classify=model=./emotions_recognition/emotions-recognition-retail-0003.xml:model_proc=emotions-recognition-retail-0003.json:device=CPU \
--an -f iemetadata -source_url $URL -custom_tag $TAG emotion-meta.json
+classify=model=./emotions_recognition/emotions-recognition-retail-0003.xml:model_proc=emotions-recognition-retail-0003.json:device=CPU, \
+metaconvert=converter=json:method=all \
+-an -f metapublish -output_format batch -y emotion-meta.json
 ```
 
 - Object Detection:  
@@ -77,11 +78,9 @@ ffmpeg -i ~/Videos/xxx.mp4 -vf detect=model=./mobilenet-ssd.xml:model_proc=mobil
 
 ```bash
 ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=./face-detection-retail-0004.xml:device=CPU, \
-classify=model=./face-reidentification-retail-0095.xml:model_proc=./face-reidentification-retail-0095.json:device=CPU" -an -f null /dev/null
-
-ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=./face-detection-retail-0004.xml:device=CPU, \
-classify=model=./face-reidentification-retail-0095.xml:model_proc=./face-reidentification-retail-0095.json:device=CPU,identify=gallery=./gallery" \
--f iemetadata -y /tmp/face-identify.json
+classify=model=./face-reidentification-retail-0095.xml:model_proc=./face-reidentification-retail-0095.json:device=CPU,identify=gallery=./gallery, \
+metaconvert=converter=json:method=all" \
+-f metapublish -output_format batch -y /tmp/face-identify.json
 ```
 
 - Car attribute recognition:  
@@ -91,23 +90,19 @@ ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=vehicle-detection-adas-0002.xml:mod
 classify=model=vehicle-attributes-recognition-barrier-0039.xml:model_proc=vehicle-attributes-recognition-barrier-0039.json:device=CPU" -an -f null /dev/null
 ```
 
-- Car-Bike-Person detection:   
+- Car-Bike-Person detection:
 
 ```bash
 ffmpeg -i ~/Videos/xxx.mp4 -vf "detect=model=person-vehicle-bike-detection-crossroad-0078.xml:model_proc=person-vehicle-bike-detection-crossroad-0078.json:device=CPU" -an -f null /dev/null
 ```
 
-- GPU decode + face detection:  
- 
+- GPU decode with `VAAPI` + detection:
+
 ```bash
 ffmpeg -flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_device /dev/dri/renderD128 \
-# uncomment to choose different devices:
-#-i $STREAM -vf "detect=model=$D_FACE_RT_MODEL:device=CPU" -an -f null - \
-#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=GPU" -an -f null -
-#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=VPU" -an -f null -
-#-i $STREAM -vf "detect=model=$D_FACE_RT_FP16_MODEL:device=HDDL" -an -f null -
+-i $STREAM -vf "detect=model=$DETECTION_MODEL:device=$DEVICE" -an -f null - \
 ```
 
-### See Also:
+### See Also
 
-- [FFmpeg Video Analytics Plugin](https://github.com/VCDP/FFmpeg-patch)   
+- [FFmpeg Video Analytics Plugin](https://github.com/VCDP/FFmpeg-patch)
