@@ -83,11 +83,29 @@ RUN yum install -y python3-devel
 )dnl
 RUN cd dldt/model-optimizer && \
 if [ "x$PYTHON_TRUSTED_HOST" = "x" ] ; \
+ifelse(index(DOCKER_IMAGE,1604),-1,
 then pip3 install --target=/home/build/mo_libs -r requirements.txt && \
 pip3 install -r requirements.txt; \
 else pip3 install --target=/home/build/mo_libs -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
 pip3 install -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST; \
 fi
+,dnl
+then pip3 install -U pip && \
+pip3 install --target=/home/build/mo_libs -U futures && \
+pip3 install --target=/home/build/mo_libs --upgrade setuptools && \
+pip3 install --target=/home/build/mo_libs -r requirements.txt && \
+pip3 install -U futures && \
+pip3 install --upgrade setuptools && \
+pip3 install -r requirements.txt; \
+else pip3 install -U pip -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --target=/home/build/mo_libs -U futures -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --target=/home/build/mo_libs --upgrade setuptools -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --target=/home/build/mo_libs -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install -U futures -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --upgrade setuptools -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST; \
+fi
+)dnl
 
 #Copy over Model Optimizer to same directory as Inference Engine
 RUN cp -r dldt/model-optimizer /opt/intel/dldt/model-optimizer

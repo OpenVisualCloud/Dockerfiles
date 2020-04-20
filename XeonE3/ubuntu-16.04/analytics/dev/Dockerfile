@@ -608,9 +608,19 @@ ARG PYTHON_TRUSTED_INDEX_URL
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
 RUN cd dldt/model-optimizer && \
 if [ "x$PYTHON_TRUSTED_HOST" = "x" ] ; \
-then pip3 install --target=/home/build/mo_libs -r requirements.txt && \
+then pip3 install -U pip && \
+pip3 install --target=/home/build/mo_libs -U futures && \
+pip3 install --target=/home/build/mo_libs --upgrade setuptools && \
+pip3 install --target=/home/build/mo_libs -r requirements.txt && \
+pip3 install -U futures && \
+pip3 install --upgrade setuptools && \
 pip3 install -r requirements.txt; \
-else pip3 install --target=/home/build/mo_libs -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+else pip3 install -U pip -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --target=/home/build/mo_libs -U futures -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --target=/home/build/mo_libs --upgrade setuptools -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --target=/home/build/mo_libs -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install -U futures -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --upgrade setuptools -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
 pip3 install -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST; \
 fi
 
@@ -696,7 +706,7 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 
 #Install va gstreamer plugins
 
-ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
+ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \

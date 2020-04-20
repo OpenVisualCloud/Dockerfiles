@@ -55,7 +55,7 @@ include(librdkafka.m4)
 
 #Install va gstreamer plugins
 
-ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
+ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
@@ -91,7 +91,7 @@ ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
     libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid python3-dev \
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-    openblas-serial uuid python3 \
+    openblas-serial uuid python3 boost-regex \
 )dnl
 )dnl
 
