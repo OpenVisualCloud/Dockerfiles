@@ -506,6 +506,7 @@ RUN yum copr enable -y jdanecki/intel-opencl
 RUN yum install -y intel-opencl
 RUN yum install -y ocl-icd libgomp
 RUN ln -s /usr/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so
+ARG local_lib_path="/usr/local/lib64"
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}

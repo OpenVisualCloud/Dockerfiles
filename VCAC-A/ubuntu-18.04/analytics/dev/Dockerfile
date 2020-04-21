@@ -586,33 +586,9 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 
 #Install va gstreamer plugins
 
-ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
-ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
-
-RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
-    cd gst-video-analytics && \
-    git checkout ${VA_GSTREAMER_PLUGINS_VER} && \
-    git submodule init && git submodule update && \
-    mkdir build && \
-    cd build && \
-    export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
-    export CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" && \
-    cmake \
-    -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
-    -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DDISABLE_SAMPLES=ON \
-    -DENABLE_PAHO_INSTALLATION=1 \
-    -DENABLE_RDKAFKA_INSTALLATION=1 \
-    -DHAVE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
-    -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
-    make -j4
-RUN mkdir -p build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
-    cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-RUN mkdir -p /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
-    cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-
+#DL Streamer to be used
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
 
 
 
@@ -684,4 +660,5 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
 
