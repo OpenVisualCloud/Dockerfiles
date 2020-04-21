@@ -466,9 +466,9 @@ RUN wget ${OPENCV_REPO} && \
 
 
 # OpenVINO verion
-# 2020.1 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.1.023
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/l_openvino_toolkit_p_2020.1.023.tgz
+# 2020.2 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.2.120
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/l_openvino_toolkit_p_2020.2.120.tgz
 
 #Install OpenVino dependencies
 RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends cpio joe nano sudo unzip wget less \
@@ -504,15 +504,6 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/sh
 #ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
-# OPENVINO C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.1 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
 
 # Install python3.6 fpr deployment manager on ubuntu1604
 RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz       && \
@@ -529,9 +520,8 @@ RUN cd Python-3.6.3							&& \
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     python3.6 ./deployment_manager.py --targets hddl vpu cpu            && \
-    cd /root/ && ls -lh                                                 && \
-    tar zxf openvino_deploy_package.tar.gz                              && \
-    mv openvino_deploy_package openvino
+    cd /root/ && ls -lh && mkdir -p openvino                            && \
+    tar zvxf openvino_deploy_package.tar.gz -C openvino
 
 #Remove python3.6
 RUN cd Python-3.6.3							&& \
@@ -544,6 +534,7 @@ RUN mkdir -p /home/build/usr/local/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
     cp -rH /root/openvino /home/build/opt/intel/ && \
     cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && \
+    cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so /home/build/./opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so && \
     cp -r /usr/lib/* /home/build/usr/lib
 
 #Give all user exec permission
@@ -611,7 +602,7 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 
 #Install va gstreamer plugins
 
-ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
+ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \

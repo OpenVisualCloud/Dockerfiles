@@ -17,9 +17,9 @@ RUN wget -O - ${LIBUSB_REPO} | tar xz && \
     cp ./libusb/.libs/libusb-1.0.so /lib/x86_64-linux-gnu/libusb-1.0.so.0
 
 # OpenVINO verion
-# 2020.1 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.1.023
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/l_openvino_toolkit_p_2020.1.023.tgz
+# 2020.2 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.2.120
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/l_openvino_toolkit_p_2020.2.120.tgz
 
 
 #Download and unpack OpenVino

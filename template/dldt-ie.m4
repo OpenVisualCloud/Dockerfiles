@@ -1,5 +1,5 @@
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.1
+ARG DLDT_VER=2020.2
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
@@ -25,6 +25,7 @@ ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
     mkdir -p ${libdir} && \
     cp -r dldt/bin/intel64/Release/lib/* ${libdir} && \
     mkdir -p /opt/intel/dldt/inference-engine/src && \
@@ -36,6 +37,7 @@ RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
     mkdir -p build${libdir} && \
     cp -r dldt/bin/intel64/Release/lib/* build${libdir} && \
     mkdir -p build/opt/intel/dldt/inference-engine/src && \
@@ -61,22 +63,14 @@ RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/o
         echo "Cflags: -I\${includedir}" >> "$pc"; \
     done;
 
+ARG local_lib_path="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)"
+ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 
-# DLDT IE C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
-
-ARG c_api_libdir="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)"
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.1 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
-ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
-define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_wrapper )dnl
+define(`FFMPEG_EXTRA_CFLAGS_IE',-I/opt/intel/dldt/inference-engine/include )dnl
+define(`FFMPEG_EXTRA_LDFLAGS_IE',-L/opt/intel/dldt/inference-engine/lib/intel64 )dnl
+define(`FFMPEG_CONFIG_DLDT_IE',--enable-libinference_engine_c_api )dnl
 
 #install Model Optimizer in the DLDT for Dev
 ifelse(index(DOCKER_IMAGE,-dev),-1,,
@@ -84,13 +78,34 @@ ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
+ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
+RUN yum install -y python3-devel
+)dnl
 RUN cd dldt/model-optimizer && \
 if [ "x$PYTHON_TRUSTED_HOST" = "x" ] ; \
+ifelse(index(DOCKER_IMAGE,1604),-1,
 then pip3 install --target=/home/build/mo_libs -r requirements.txt && \
 pip3 install -r requirements.txt; \
 else pip3 install --target=/home/build/mo_libs -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
 pip3 install -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST; \
 fi
+,dnl
+then pip3 install -U pip && \
+pip3 install --target=/home/build/mo_libs -U futures && \
+pip3 install --target=/home/build/mo_libs --upgrade setuptools && \
+pip3 install --target=/home/build/mo_libs -r requirements.txt && \
+pip3 install -U futures && \
+pip3 install --upgrade setuptools && \
+pip3 install -r requirements.txt; \
+else pip3 install -U pip -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --target=/home/build/mo_libs -U futures -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --target=/home/build/mo_libs --upgrade setuptools -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --target=/home/build/mo_libs -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install -U futures -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install --upgrade setuptools -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST && \
+pip3 install -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PYTHON_TRUSTED_HOST; \
+fi
+)dnl
 
 #Copy over Model Optimizer to same directory as Inference Engine
 RUN cp -r dldt/model-optimizer /opt/intel/dldt/model-optimizer
@@ -123,10 +138,10 @@ ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
 )dnl
 
 define(`INSTALL_IE',dnl
+ARG local_lib_path="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)"
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
-ARG c_api_libdir="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)"
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}:${c_api_libdir}
-ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
+ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ifelse(index(DOCKER_IMAGE,-dev),-1,,dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
