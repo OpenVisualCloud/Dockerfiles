@@ -48,8 +48,8 @@ RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/s
 
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager && \
     python3 deployment_manager.py --targets=hddl --output_dir=/home --archive_name=hddl && \
-    mkdir -p /home/opt/intel && \
-    cd /home/opt/intel && \
+    mkdir -p /home/opt/intel/openvino && \
+    cd /home/opt/intel/openvino && \
     tar xvf /home/hddl.tar.gz
 
 
