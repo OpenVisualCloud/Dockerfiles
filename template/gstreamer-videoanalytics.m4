@@ -113,6 +113,7 @@ ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubun
 ifelse(index(DOCKER_IMAGE,vcaca),-1,,
 ifelse(index(DOCKER_IMAGE,1804),-1,,
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/data_processing/dl_streamer/lib/:/opt/intel/openvino/opencv/lib/
 )dnl
 )dnl
 )dnl

@@ -661,4 +661,5 @@ ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/data_processing/dl_streamer/lib/:/opt/intel/openvino/opencv/lib/
 
