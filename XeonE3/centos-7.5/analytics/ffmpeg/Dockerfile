@@ -187,7 +187,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.2
+ARG SVT_AV1_VER=v0.8.3
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
@@ -506,6 +506,7 @@ RUN yum copr enable -y jdanecki/intel-opencl
 RUN yum install -y intel-opencl
 RUN yum install -y ocl-icd libgomp
 RUN ln -s /usr/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so
+ARG local_lib_path="/usr/local/lib64"
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
