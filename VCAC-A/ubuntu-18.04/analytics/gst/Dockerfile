@@ -492,6 +492,8 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     ./deployment_manager.py --targets hddl vpu cpu                      && \
     cd /root/ && ls -lh && mkdir -p openvino                            && \
     tar zvxf openvino_deploy_package.tar.gz -C openvino
+RUN cp -r /opt/intel/openvino/data_processing /root/openvino		&& \
+    cp -r /opt/intel/openvino/opencv /root/openvino
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
