@@ -517,7 +517,7 @@ RUN cd SVT-AV1/gstreamer-plugin && \
 ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-${GST_VER}.tar.xz
 
 # https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/merge_requests/45
-ARG GST_PLUGIN_VAAPI_PATCH_BRANCH=preview/python_api-yolov3_support
+ARG GST_PLUGIN_VAAPI_PATCH_VER=v1.0.0
 ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/opencv/gst-video-analytics.git
 
 RUN  yum install -y -q libXrandr-devel
@@ -525,7 +525,7 @@ RUN  yum install -y -q libXrandr-devel
 RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      cd gstreamer-vaapi-${GST_VER} && \
      git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
-     cd gst-video-analytics && git checkout ${GST_PLUGIN_VAAPI_PATCH_BRANCH} && \
+     cd gst-video-analytics && git checkout ${GST_PLUGIN_VAAPI_PATCH_VER} && \
      cd .. && \
      git apply gst-video-analytics/patches/gstreamer-vaapi/vasurface_qdata.patch && \
      rm -fr gst-video-analytics && \
@@ -733,9 +733,7 @@ RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
 RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0
-
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
-
 
 
 # Fetch FFmpeg source

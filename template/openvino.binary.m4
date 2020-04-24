@@ -85,11 +85,15 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     ./deployment_manager.py --targets hddl vpu cpu                      && \
     cd /root/ && ls -lh && mkdir -p openvino                            && \
     tar zvxf openvino_deploy_package.tar.gz -C openvino
-,dnl
+ifelse(index(DOCKER_IMAGE,gst),-1,,
+
+RUN cp -r /opt/intel/openvino/data_processing /root/openvino		&& \
+    cp -r /opt/intel/openvino/opencv /root/openvino
+),dnl
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager && \
     python3 deployment_manager.py --targets=hddl --output_dir=/home --archive_name=hddl && \
-    mkdir -p /home/opt/intel && \
-    cd /home/opt/intel && \
+    mkdir -p /home/opt/intel/openvino && \
+    cd /home/opt/intel/openvino && \
     tar xvf /home/hddl.tar.gz
 )dnl
 ),dnl

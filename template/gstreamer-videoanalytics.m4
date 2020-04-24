@@ -54,7 +54,7 @@ include(librdkafka.m4)
 )
 
 #Install va gstreamer plugins
-
+define(`BUILD_VA_GSTREAMER',dnl
 ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
@@ -80,8 +80,17 @@ RUN mkdir -p build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
 RUN mkdir -p /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0)dnl
 
+ifelse(index(DOCKER_IMAGE,vcaca),-1,
+defn(`BUILD_VA_GSTREAMER'),
+ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,
+defn(`BUILD_VA_GSTREAMER'),
+#DL Streamer to be used
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
+)dnl
+)dnl
 
 define(`INSTALL_PKGS_VA_GST_PLUGINS',
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
@@ -101,4 +110,10 @@ ENV PKG_CONFIG_PATH=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x8
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
+ifelse(index(DOCKER_IMAGE,vcaca),-1,,
+ifelse(index(DOCKER_IMAGE,1804),-1,,
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/data_processing/dl_streamer/lib/:/opt/intel/openvino/opencv/lib/
+)dnl
+)dnl
 )dnl
