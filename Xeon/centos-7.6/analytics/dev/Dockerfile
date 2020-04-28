@@ -424,7 +424,7 @@ RUN cd SVT-AV1/gstreamer-plugin && \
     make install DESTDIR=/home/build && \
     make install
 
-ARG OPENCV_VER=4.1.0
+ARG OPENCV_VER=4.3.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
 RUN yum install -y -q eigen3-devel
@@ -588,8 +588,8 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
 
 
 
-#Install va gstreamer plugins
 
+#Install va gstreamer plugins from source
 ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
@@ -616,6 +616,25 @@ RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
 RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
+
+RUN mkdir -p build/opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* build/opt/intel/dl_streamer/python
+RUN mkdir -p /opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* /opt/intel/dl_streamer/python
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+
+# Build gstreamer python
+ARG GST_VER=1.16.0
+ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
+RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
+    cd gst-python-${GST_VER} && \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 --with-pygi-overrides-dir=/usr/lib64/python3.6/site-packages/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/lib64/" PYTHON=/usr/bin/python3 && \
+    make -j $(nproc) && \
+    make install && \
+    make install DESTDIR=/home/build
+
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 
 
 # Fetch FFmpeg source
@@ -673,7 +692,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
-    yum install -y -q   libxcb SDL2 libass numactl   glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid python3 boost-regex \
+    yum install -y -q   libxcb SDL2 libass numactl   glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base boost-regex \
 libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
@@ -695,4 +714,7 @@ ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+RUN python3 -m pip install numpy
 
