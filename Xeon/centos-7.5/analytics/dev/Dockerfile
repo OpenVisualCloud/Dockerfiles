@@ -605,7 +605,6 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
-    -DDISABLE_SAMPLES=ON \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DHAVE_VAAPI=OFF  \
