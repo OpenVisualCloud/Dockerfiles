@@ -492,8 +492,6 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     ./deployment_manager.py --targets hddl vpu cpu                      && \
     cd /root/ && ls -lh && mkdir -p openvino                            && \
     tar zvxf openvino_deploy_package.tar.gz -C openvino
-RUN cp -r /opt/intel/openvino/data_processing /root/openvino		&& \
-    cp -r /opt/intel/openvino/opencv /root/openvino
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
@@ -568,11 +566,51 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 
 
 
+#Install va gstreamer plugins from source
+ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
+ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
-#DL Streamer to be used
+RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
+    cd gst-video-analytics && \
+    git checkout ${VA_GSTREAMER_PLUGINS_VER} && \
+    git submodule init && git submodule update && \
+    mkdir build && \
+    cd build && \
+    export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
+    export CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" && \
+    cmake \
+    -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
+    -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_PAHO_INSTALLATION=1 \
+    -DENABLE_RDKAFKA_INSTALLATION=1 \
+    -DHAVE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
+    -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
+    make -j4
+RUN mkdir -p build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
+    cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
+RUN mkdir -p /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
+    cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
 
+RUN mkdir -p build/opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* build/opt/intel/dl_streamer/python
+RUN mkdir -p /opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* /opt/intel/dl_streamer/python
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+
+# Build gstreamer python
+ARG GST_VER=1.16.0
+ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
+RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
+    cd gst-python-${GST_VER} && \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu --libexecdir=/usr/local/lib/x86_64-linux-gnu --with-pygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/lib/x86_64-linux-gnu/" PYTHON=/usr/bin/python3 && \
+    make -j $(nproc) && \
+    make install && \
+    make install DESTDIR=/home/build
+
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 
 
 # Clean up after build
@@ -614,8 +652,6 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/data_processing/dl_streamer/lib/:/opt/intel/openvino/opencv/lib/
-ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/openvino/data_processing/dl_streamer/python
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
