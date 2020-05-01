@@ -53,7 +53,6 @@ ifelse(RDKAFKA_INSTALLED,true,,dnl
 include(librdkafka.m4)
 )
 
-define(`BUILD_VA_GSTREAMER',dnl
 #Install va gstreamer plugins from source
 ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
@@ -102,17 +101,6 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/)dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/)dnl
-)dnl
-
-ifelse(index(DOCKER_IMAGE,vcaca),-1,
-defn(`BUILD_VA_GSTREAMER'),
-ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,
-defn(`BUILD_VA_GSTREAMER'),
-#DL Streamer to be used
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
-)dnl
-)dnl
 
 define(`INSTALL_PKGS_VA_GST_PLUGINS',
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
@@ -132,24 +120,10 @@ ENV PKG_CONFIG_PATH=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x8
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
-ifelse(index(DOCKER_IMAGE,vcaca),-1,
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ifelse(index(DOCKER_IMAGE,centos),-1,,
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 RUN python3 -m pip install numpy)
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/)dnl
-,
-ifelse(index(DOCKER_IMAGE,1804),-1,
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
-ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-,
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/opt/intel/openvino/data_processing/dl_streamer/lib/
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/data_processing/dl_streamer/lib/:/opt/intel/openvino/opencv/lib/
-ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/openvino/data_processing/dl_streamer/python
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
-)dnl
-)dnl
 )dnl
