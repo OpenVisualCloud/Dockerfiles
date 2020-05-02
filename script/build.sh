@@ -32,10 +32,10 @@ fi
 if [[ ${UPDATE_DOCKERFILES} == OFF ]]; then
     build_args=$(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /')
     if grep -q 'AS build' "${DIR}/Dockerfile"; then
-        sudo -E docker build --network=host ${BUILD_CACHE} --target build -t "${DOCKER_PREFIX}/${IMAGE}:build" "$DIR" $build_args
+        docker build --network=host ${BUILD_CACHE} --target build -t "${DOCKER_PREFIX}/${IMAGE}:build" "$DIR" $build_args
     fi
 
-    sudo -E docker build --network=host ${FULL_CACHE} -t "${DOCKER_PREFIX}/${IMAGE}:${BUILD_VERSION}" -t "${DOCKER_PREFIX}/${IMAGE}:latest" "$DIR" $build_args
+    docker build --network=host ${FULL_CACHE} -t "${DOCKER_PREFIX}/${IMAGE}:${BUILD_VERSION}" -t "${DOCKER_PREFIX}/${IMAGE}:latest" "$DIR" $build_args
 elif [[ ${UPDATE_DOCKERHUB_README} == ON ]]; then
     README_FILEPATH="$(echo "$PWD/README.md" | sed 's/build\///')"
     ${SCRIPT_ROOT}/update-dockerhub-readme.sh ${DOCKER_PREFIX} ${IMAGE} ${README_FILEPATH}
