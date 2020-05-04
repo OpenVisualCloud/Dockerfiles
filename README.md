@@ -142,6 +142,6 @@ build.sh:
 ```bash
 for dep in .2 .1; do   
     image=$(grep -m1 '#' "Dockerfile$dep" | cut -d' ' -f2)   
-    sudo docker build --network=host --file="Dockerfile$dep" -t "$image:latest" . $(env | grep -E '_(proxy)=' | sed 's/^/--build-arg /')   
+    docker build --network=host --file="Dockerfile$dep" -t "$image:latest" . $(env | grep -E '_(proxy)=' | sed 's/^/--build-arg /')   
 done  
 ```
