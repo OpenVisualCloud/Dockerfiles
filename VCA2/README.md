@@ -6,13 +6,6 @@ See the following documents for instructions on how to setup Intel VCA 2:
 
 The Dockerfiles presented in this repo are targeted to run on the Intel VCA 2 nodes. Therefore the host installation steps mentioned in the parent [README.md](../README.md) apply to each Intel VCA 2 node instead. 
 
-The build and test scripts additionally require "sudo" to be available on the node:
-
-```sh
-Ubuntu: apt-get install -y sudo 
-CentOS: yum install -y sudo
-```
-
 ### GPU Dockers:
 
 VAAPI expects rendering device to be set in order to work. Dockers readily spin up with this config. Specify the display device on host by doing following.
