@@ -19,7 +19,7 @@ cd build
 cmake -DBUILD_FDKAAC=ON -DBUILD_MP3LAME=OFF ..
 ```
 
-### Command Make Commands
+### Command Make Targets
 
 - **update_link**: Update the image links in the platform README.md.  
 - **update_dockerfile**: Update the Dockerfiles. Do this after modifying any templates.  
@@ -49,4 +49,3 @@ For a list of all REPOs and their versions, run the following command:
 ```bash
 grep -E '_(REPO|VER)=' template/*.m4
 ```
-
