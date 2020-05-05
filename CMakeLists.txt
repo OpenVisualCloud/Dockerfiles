@@ -2,6 +2,11 @@ cmake_minimum_required (VERSION 2.8)
 
 Project(DockerFiles NONE)
 
+add_custom_target(update_link)
+add_custom_target(update_dockerfile)
+add_custom_target(generate_readme)
+add_custom_target(upload_readme)
+
 if (NOT DEFINED BUILD_VERSION)
     set(BUILD_VERSION "1.0")
 endif()
@@ -14,36 +19,8 @@ if (NOT DEFINED BUILD_FDKAAC)
     set(BUILD_FDKAAC "ON")
 endif()
 
-if (NOT DEFINED UPDATE_DOCKERFILES)
-    set(UPDATE_DOCKERFILES "OFF")
-endif()
-
 if (NOT DEFINED DOCKER_PREFIX)
     set(DOCKER_PREFIX "openvisualcloud")
-endif()
-
-if (NOT DEFINED UPDATE_IMAGELIST)
-    set(UPDATE_IMAGELIST "OFF")
-endif()
-
-if (NOT DEFINED UPDATE_DOCKERHUB_README)
-    set(UPDATE_DOCKERHUB_README "OFF")
-endif()
-
-if (UPDATE_IMAGELIST STREQUAL "ON")
-    set(UPDATE_DOCKERFILES "ON")
-endif()
-
-if (NOT DEFINED UPDATE_IMAGE_README)
-    set(UPDATE_IMAGE_README "OFF")
-endif()
-
-if (UPDATE_IMAGE_README STREQUAL "ON")
-    set(UPDATE_DOCKERFILES "ON")
-endif()
-
-if (UPDATE_DOCKERHUB_README STREQUAL "ON")
-    set(UPDATE_DOCKERFILES "ON")
 endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/script/")
@@ -59,8 +36,4 @@ message(
     "-- Setting: BUILD_MP3LAME=${BUILD_MP3LAME}\n"
     "-- Setting: BUILD_FDKAAC=${BUILD_FDKAAC}\n"
     "-- Setting: DOCKER_PREFIX=${DOCKER_PREFIX}\n"
-    "-- Setting: UPDATE_DOCKERFILES=${UPDATE_DOCKERFILES}\n"
-    "-- Setting: UPDATE_IMAGELIST=${UPDATE_IMAGELIST}\n"
-    "-- Setting: UPDATE_IMAGE_README=${UPDATE_IMAGE_README}\n"
-    "-- Setting: UPDATE_DOCKERHUB_README=${UPDATE_DOCKERHUB_README}\n")
-
+)

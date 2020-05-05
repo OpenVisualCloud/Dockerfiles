@@ -1,6 +1,9 @@
-import os
+#!/usr/bin/python3
+
 from pathlib import Path
 import re
+import os
+import sys
 
 REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/master/"
 
@@ -120,14 +123,6 @@ license_subs = {
 
 # M4 files for which no license is needed
 license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog','libusb']
-
-# Walk through the repo and find folder with Dockerfiles.m4
-def walk_path(path):
-    for root, dirs, files in os.walk(path):
-        for my_file in files:
-            if ( my_file == 'Dockerfile.m4' ):
-                path_components = parse_ingredients(root)
-                create_readme(root, path_components)
 
 # Find image platform / OS / image type / image name from file path
 def parse_ingredients(path):
@@ -312,8 +307,9 @@ def create_readme(path, path_components):
     my_file.write(generate_license(path, image_name, image_type, image_os, image_platform))
     my_file.close()
 
-def main():
-    walk_path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if len(sys.argv)<1:
+    print("Usage: <README path>\n")
+    exit(1)
 
-if __name__ == "__main__":
-    main()
+path=sys.argv[1]
+create_readme(path, parse_ingredients(path))
