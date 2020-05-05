@@ -309,7 +309,7 @@ def create_readme(path, path_components):
 
 if len(sys.argv)<1:
     print("Usage: <README path>\n")
-    exit(-1)
+    exit(1)
 
 path=sys.argv[1]
 create_readme(path, parse_ingredients(path))
