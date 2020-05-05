@@ -1,5 +1,5 @@
 
-### Customize Build Process:
+### Customize the Build Process:
 
 You can use the following build options to customize the build process:
 - **BUILD_MP3LAME**: Set to ```ON``` (default) to build the ```libmp3lame``` in the docker images, or ```OFF``` to disable including ```libmp3lame``` in the docker images.
@@ -11,20 +11,30 @@ You can use the following build options to customize the build process:
 
 Build examples:   
 
-```
+```bash
 cd build
 cmake -DBUILD_MP3LAME=ON ..
 ```
 
-```
+```bash
 cd build
 cmake -DBUILD_FDKAAC=ON -DBUILD_MP3LAME=OFF ..
 ```
-#### Generate README files:
-`python3` is required on the host system to use this.
 
-    cd build
-    cmake -DUPDATE_IMAGE_README=ON ..
+### Command Make Commands
+
+- **update_link**: Update the image links in the platform README.md.  
+- **update_dockerfile**: Update the Dockerfiles. Do this after modifying any templates.  
+- **generate_readme**: Generate the image README.md for dockerhub.   
+- **upload_readme**: Upload the image README.md to dockerhub.  
+
+Example: Generate the dockerhub READMEs  
+
+```bash
+cd build
+cmake ..
+make generate_readme
+```
 
 ### Use Alternative Repo:
 
@@ -41,6 +51,4 @@ For a list of all REPOs and their versions, run the following command:
 ```bash
 grep -E '_(REPO|VER)=' template/*.m4
 ```
-~
-
 
