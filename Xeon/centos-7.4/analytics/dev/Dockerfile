@@ -206,7 +206,6 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 ARG SVT_VP9_VER=v0.2.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
-RUN ls
 RUN git clone ${SVT_VP9_REPO} && \
     cd SVT-VP9/Build/linux && \
     git checkout ${SVT_VP9_VER} && \
