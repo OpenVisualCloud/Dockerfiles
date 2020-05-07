@@ -225,7 +225,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=v0.1.0
+ARG SVT_VP9_VER=v0.2.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 RUN git clone ${SVT_VP9_REPO} && \
@@ -237,6 +237,7 @@ RUN git clone ${SVT_VP9_REPO} && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install )
+
 
 # Fetch gmmlib
 ARG GMMLIB_VER=intel-gmmlib-18.3.0
