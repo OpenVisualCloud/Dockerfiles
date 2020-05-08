@@ -46,7 +46,7 @@ RUN  wget -O - ${YASM_REPO} | tar xz && \
 
 # Build ogg
 ARG OGG_VER=1.3.3
-ARG OGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-${OGG_VER}.tar.xz
+ARG OGG_REPO=https://github.com/xiph/ogg/releases/download/v${OGG_VER}/libogg-${OGG_VER}.tar.xz
 
 RUN wget -O - ${OGG_REPO} | tar xJ && \
     cd libogg-${OGG_VER} && \
@@ -57,10 +57,11 @@ RUN wget -O - ${OGG_REPO} | tar xJ && \
 
 # Build vorbis
 ARG VORBIS_VER=1.3.6
-ARG VORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VER}.tar.xz
+ARG VORBIS_REPO=https://github.com/xiph/vorbis/archive/v${VORBIS_VER}.tar.gz
 
-RUN wget -O - ${VORBIS_REPO} | tar xJ && \
-    cd libvorbis-${VORBIS_VER} && \
+RUN wget -O - ${VORBIS_REPO} | tar xz && \
+    cd vorbis-${VORBIS_VER} && \
+    ./autogen.sh && \
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64 && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
     make -j8 && \
