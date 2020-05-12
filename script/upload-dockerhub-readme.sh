@@ -1,18 +1,19 @@
 #!/bin/bash -e
 IFS=$'\n\t'
 
-if [[ -z "$3" ]]; then
-    echo "Usage: ./update-dockerhub-readme.sh <docker_prefix> <image> <readme_filepath>"
+if [[ -z "$2" ]]; then
+    echo "Usage: ./update-dockerhub-readme.sh <docker_prefix> <readme_filepath>"
     exit 1
 fi 
 
 DOCKER_PREFIX="$1"
-IMAGE="$2"
-README_FILEPATH="$3"
+README_FILEPATH="$2"
+IMAGE=$(echo $README_FILEPATH | awk -F"Dockerfiles/" '{print $2}' | awk -F"/README.md" '{print $1}' | sed 's/[-.]//g'| sed 's/\//-/g' | tr 'A-Z' 'a-z')
 DOCKERHUB_TOKEN=~/.dockerhub_token
 REPO_URL="https://hub.docker.com/v2/repositories/${DOCKER_PREFIX}/${IMAGE}/"
-IGNORE_LIST=("graphics" "owt-immersive")
+IGNORE_LIST=("graphics" "immersive")
 IGNORE_FLAG=-1
+
 
 if [[ ! -e "${README_FILEPATH}" ]]; then
     echo "${README_FILEPATH} Error: no such file"
@@ -29,6 +30,7 @@ done
 
 if [[ ${IGNORE_FLAG} == 0 ]]; then
     echo "Ignore ${README_FILEPATH}"
+    exit 0
 else
     echo "Updating ${README_FILEPATH}"
 fi
