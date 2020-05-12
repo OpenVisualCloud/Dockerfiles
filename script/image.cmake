@@ -10,5 +10,5 @@ add_dependencies(update_dockerfile update_${image}_dockerfile)
 add_custom_target(generate_${image}_readme COMMAND "${CMAKE_SOURCE_DIR}/script/generate_readme.py" "${CMAKE_CURRENT_SOURCE_DIR}")
 add_dependencies(generate_readme generate_${image}_readme)
 
-add_custom_target(upload_${image}_readme COMMAND "${CMAKE_SOURCE_DIR}/script/upload-dockerhub-readme.sh" ${DOCKER_PREFIX} ${image} "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+add_custom_target(upload_${image}_readme COMMAND "${CMAKE_SOURCE_DIR}/script/upload-dockerhub-readme.sh" ${DOCKER_PREFIX} "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 add_dependencies(upload_readme upload_${image}_readme)

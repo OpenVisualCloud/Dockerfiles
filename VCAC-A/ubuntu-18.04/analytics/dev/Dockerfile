@@ -584,7 +584,6 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
     make install;
 
 
-
 #Install va gstreamer plugins from source
 ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
@@ -618,6 +617,7 @@ RUN mkdir -p /opt/intel/dl_streamer/python && \
     cp -r gst-video-analytics/python/* /opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+
 
 # Build gstreamer python
 ARG GST_VER=1.16.0
