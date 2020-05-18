@@ -36,7 +36,7 @@ include(gst-plugin-svt.m4)
 include(gst-plugin-vaapi.m4)
 include(opencv.m4)
 include(dldt-ie.m4)
-include(gstreamer-videoanalytics.m4)
+include(gst-plugin-gva.m4)
 include(ffmpeg.m4)
 OPENCV_REMAKE_VIDEOIO()
 include(cleanup.m4)dnl

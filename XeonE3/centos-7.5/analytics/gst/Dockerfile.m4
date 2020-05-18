@@ -35,7 +35,7 @@ include(gst-plugin-svt.m4)
 include(gst-plugin-vaapi.m4)
 include(opencv.m4)
 include(dldt-ie.m4)
-include(gstreamer-videoanalytics.m4)
+include(gst-plugin-gva.m4)
 include(cleanup.m4)dnl
 
 FROM centos:7.5.1804
