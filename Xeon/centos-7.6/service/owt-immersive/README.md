@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Docker image optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. The docker image can be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. Optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Docker image optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [xeon-centos-76-service-owt-immersive](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7.6/service/owt-immersive/Dockerfile)
