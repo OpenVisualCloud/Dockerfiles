@@ -284,9 +284,9 @@ def create_readme(path, path_components):
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="service":
-        my_file.write("Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). ")
+        my_file.write("Optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). ")
         if image_name=="owt":
-            my_file.write("Optimized for for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. ")
+            my_file.write("Optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. ")
         if image_name=="owt-immersive":
             my_file.write("Docker image optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. ")
         if image_os=="XeonE3":
