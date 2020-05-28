@@ -1,6 +1,7 @@
 
 FROM centos:7.6.1810 AS build
 WORKDIR /home
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 define(`BUILD_LINKAGE',shared)dnl
 
 include(build-tools.m4)

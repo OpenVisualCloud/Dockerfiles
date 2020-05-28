@@ -8,9 +8,12 @@ ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/opencv/gst-video-an
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,dnl
 RUN  yum install -y -q libXrandr-devel
 ,dnl
-RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev libegl1-mesa-dev autopoint bison flex libudev-dev
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev libegl1-mesa-dev autopoint bison flex libudev-dev	&& \
+     apt-get clean && \
+     rm -rf /var/lib/apt/lists/*
 )dnl
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      cd gstreamer-vaapi-${GST_VER} && \
      git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
@@ -26,7 +29,7 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
         --enable-defn(`BUILD_LINKAGE') \
         --disable-examples \
         --disable-gtk-doc ifelse(index(DOCKER_IMAGE,-dev),-1,--disable-debug) && \
-     make -j $(nproc) && \
+     make -j "$(nproc)" && \
      make install DESTDIR=/home/build && \
      make install
 

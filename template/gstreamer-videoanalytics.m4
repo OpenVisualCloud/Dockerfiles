@@ -1,5 +1,7 @@
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
-    RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin
+    RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin	&& \
+        apt-get clean	&& \
+        rm -rf /var/lib/apt/lists/*
 )dnl
 
 ifelse(index(DOCKER_IMAGE,centos),-1,,
@@ -13,6 +15,7 @@ ifelse(index(DOCKER_IMAGE,centos74),-1,,
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
 ARG PAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         wget -O - ${PAHO_REPO} | tar -xz && \
         cd paho.mqtt.c-${PAHO_VER} && \
@@ -50,7 +53,7 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
     fi
 
 ifelse(RDKAFKA_INSTALLED,true,,dnl
-include(librdkafka.m4)
+`include(librdkafka.m4)'
 )
 
 #Install va gstreamer plugins from source
@@ -66,8 +69,8 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
     export CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" && \
     cmake \
-    -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
-    -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
     -DCMAKE_BUILD_TYPE=Release \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=ifelse(RDKAFKA_INSTALLED,true,1,0) \
@@ -90,10 +93,11 @@ ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 # Build gstreamer python
 ARG GST_VER=1.16.0
 ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
     cd gst-python-${GST_VER} && \
     ./autogen.sh --prefix=/usr/local --libdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) --libexecdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) --with-pygi-overrides-dir=/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64/python3.6/site-packages,lib/python3/dist-packages)/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64/,lib/x86_64-linux-gnu/)" PYTHON=/usr/bin/python3 && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install && \
     make install DESTDIR=/home/build
 

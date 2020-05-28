@@ -11,21 +11,21 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,
 RUN yum install -y -q eigen3-devel
 )dnl
 
-RUN wget ${OPENCV_REPO} && \
+RUN wget "${OPENCV_REPO}" && \
     tar -zxvf ${OPENCV_VER}.tar.gz && \
     cd opencv-${OPENCV_VER} && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install DESTDIR=/home/build && \
     make install
 
 define(`OPENCV_REMAKE_VIDEOIO',`
 # remake opencv videoio to incorporate ffmpeg/gst
 RUN cd opencv-${OPENCV_VER}/build && \
-    rm -rf * && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
+    rm -rf ./* && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
     cd modules/videoio && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     cp -f ../../lib/libopencv_videoio.so.${OPENCV_VER} /home/build/usr/local/lib
 ')dnl

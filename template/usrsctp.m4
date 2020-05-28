@@ -9,6 +9,7 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q which
 )dnl
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${USRSCTP_URL} | tar xz && \
     mv ${USRSCTP_EXTRACT} usrsctp && \
     cd usrsctp && \

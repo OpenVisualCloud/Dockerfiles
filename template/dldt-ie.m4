@@ -6,7 +6,8 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-RUN apt-get update && apt-get -y install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
+RUN apt-get update && apt-get -y --no-install-recommends install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
+    
 )dnl
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
@@ -15,7 +16,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     mkdir build && \
     cd build && \
     cmake ifelse(index(BUILD_LINKAGE,static),-1,,-DBUILD_SHARED_LIBS=OFF) -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ifelse(index(DOCKER_IMAGE,xeon-),-1,ON,OFF) -DENABLE_SAMPLES=OFF -DENABLE_OPENCV=OFF -DENABLE_TESTS=OFF -DENABLE_GNA=OFF -DENABLE_PROFILING_ITT=OFF -DENABLE_SAMPLES_CORE=OFF -DENABLE_SEGMENTATION_TESTS=OFF -DENABLE_OBJECT_DETECTION_TESTS=OFF -DBUILD_TESTS=OFF -DNGRAPH_UNIT_TEST_ENABLE=OFF -DNGRAPH_TEST_UTIL_ENABLE=OFF .. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     rm -rf ../bin/intel64/Release/lib/libgtest* && \
     rm -rf ../bin/intel64/Release/lib/libgmock* && \
     rm -rf ../bin/intel64/Release/lib/libmock* && \
@@ -112,7 +113,7 @@ RUN cp -r dldt/model-optimizer /opt/intel/dldt/model-optimizer
 RUN cp -r dldt/model-optimizer /home/build/opt/intel/dldt/model-optimizer
 )dnl
 
-ifelse(index(DOCKER_IMAGE,-dev),-1,,
+ifelse(index(DOCKER_IMAGE,-dev),-1,,`
 #install OpenVINO tools in the DLDT for Dev
 RUN cd dldt/tools && \
     python3 -m pip install -r benchmark/requirements.txt
@@ -124,13 +125,14 @@ RUN cp -r dldt/tools /home/build/opt/intel/dldt/tools
 #install model downloader for dev images
 ARG OPEN_MODEL_ZOO_VER=2020.1
 ARG OPEN_MODEL_ZOO_REPO=https://github.com/opencv/open_model_zoo/archive/${OPEN_MODEL_ZOO_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OPEN_MODEL_ZOO_REPO} | tar xz && \
     mkdir -p /opt/intel/dldt/open_model_zoo && \
     cp -r open_model_zoo-${OPEN_MODEL_ZOO_VER}/* /opt/intel/dldt/open_model_zoo/. && \
     mkdir -p /home/build/opt/intel/dldt/open_model_zoo && \
     cp -r open_model_zoo-${OPEN_MODEL_ZOO_VER}/* /home/build/opt/intel/dldt/open_model_zoo/. && \
     python3 -m pip install pyyaml 
-)dnl
+')dnl
 define(`INSTALL_MO',dnl
 ifelse(index(DOCKER_IMAGE,dev),-1,,
 ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
@@ -148,7 +150,9 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q python3-pip;
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-RUN apt-get update && apt-get -y install python3-pip
+RUN apt-get update && apt-get -y --no-install-recommends install python3-pip	&& \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*    
 )dnl
 RUN python3 -m pip install pyyaml
 )dnl
