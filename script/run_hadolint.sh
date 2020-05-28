@@ -14,7 +14,7 @@ echo "Scanning each Dockerfile"
 echo "$ALL_FILES" | while read line 
 do
    printf "\nAnalyzing DOCKERFILE: $line"
-   docker exec -i my_linter hadolint --ignore DL3003 --ignore DL3008 --ignore SC2164 --ignore SC1073 --ignore SC1072 --ignore DL4001 --ignore SC2039 - < $line || error=true
+   docker exec -i my_linter hadolint --ignore DL3003 --ignore SC2164 --ignore SC1073 --ignore SC1072 --ignore DL4001 --ignore SC2039 - < $line || error=true
    if [ $error ]
    then 
         printf "FAILURE: See above\n"
