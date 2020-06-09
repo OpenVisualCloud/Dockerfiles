@@ -150,7 +150,7 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q python3-pip;
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-RUN apt-get update && apt-get -y --no-install-recommends install python3-pip	&& \
+RUN apt-get update && apt-get -y --no-install-recommends install python3-pip python3-setuptools 	&& \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*    
 )dnl

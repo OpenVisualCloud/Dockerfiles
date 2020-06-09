@@ -13,7 +13,6 @@ define(`FFMPEG_MA_PATCHES',``
 ARG FFMPEG_MA_RELEASE_VER=0.5
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
-RUN [ wget "google.com", "chow" ]
 RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
 '')dnl
 ifelse(index(DOCKER_IMAGE,dev),-1,

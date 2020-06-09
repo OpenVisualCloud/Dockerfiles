@@ -3,9 +3,9 @@ ARG LIBVA_VER=2.4.0
 ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-RUN apt-get remove libva*
+RUN apt-get remove -y libva*
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev openbox	&& \
+RUN apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev openbox	&& \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*
 )dnl
