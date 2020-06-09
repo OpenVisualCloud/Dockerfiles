@@ -4,9 +4,7 @@ WORKDIR /home
 
 # COMMON BUILD TOOLS
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev  && \
-apt-get clean       && \
-rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev
 
 # Install cmake
 ARG CMAKE_VER=3.13.1
@@ -164,7 +162,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Install required packges
-RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build && \
+RUN apt-get update -y && apt-get install -y python3-pip ninja-build && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*;
 
@@ -263,7 +261,7 @@ RUN wget -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
 ARG LIBVA_VER=2.4.0
 ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
 
-RUN apt-get remove libva*
+RUN apt-get remove -y libva*
 
 RUN apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev openbox	&& \
     apt-get clean	&& \
@@ -523,7 +521,6 @@ RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 ARG FFMPEG_MA_RELEASE_VER=0.5
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
-RUN [ wget "google.com", "chow" ]
 RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libass-dev libfreetype6-dev libvdpau-dev libsdl2-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev texinfo zlib1g-dev libssl-dev

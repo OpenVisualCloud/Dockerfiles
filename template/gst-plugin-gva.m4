@@ -14,7 +14,7 @@ ARG PAHO_INSTALL=true
 include(paho.mqtt.c.m4)
 
 ifelse(RDKAFKA_INSTALLED,true,,dnl
-include(librdkafka.m4)
+`include(librdkafka.m4)'
 )
 
 #Install va gstreamer plugins from source

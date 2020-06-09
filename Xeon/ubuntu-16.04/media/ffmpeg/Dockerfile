@@ -4,9 +4,7 @@ WORKDIR /home
 
 # COMMON BUILD TOOLS
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev  && \
-apt-get clean       && \
-rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev
 
 # Install cmake
 ARG CMAKE_VER=3.13.1
@@ -151,7 +149,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Install required packges
-RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build && \
+RUN apt-get update -y && apt-get install -y python3-pip ninja-build && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*;
 

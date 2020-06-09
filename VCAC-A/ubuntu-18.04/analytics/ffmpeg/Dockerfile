@@ -206,7 +206,7 @@ RUN wget -O - ${LIBDRM_REPO} | tar xz && \
 ARG LIBVA_VER=2.4.0
 ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
 
-RUN apt-get remove libva*
+RUN apt-get remove -y libva*
 
 RUN apt-get update && apt-get install -y -q --no-install-recommends libdrm-dev libx11-dev xorg-dev libgl1-mesa-dev openbox	&& \
     apt-get clean	&& \

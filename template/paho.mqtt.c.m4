@@ -1,5 +1,6 @@
 ARG PAHO_VER=1.3.0
 ARG PAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         wget -O - ${PAHO_REPO} | tar -xz && \
         cd paho.mqtt.c-${PAHO_VER} && \

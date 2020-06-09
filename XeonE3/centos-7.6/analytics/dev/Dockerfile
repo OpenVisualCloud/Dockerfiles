@@ -741,6 +741,7 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
 
 
 
+
 #Install va gstreamer plugins from source
 ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
@@ -754,8 +755,8 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
     export CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" && \
     cmake \
-    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
+    -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
@@ -775,6 +776,7 @@ RUN mkdir -p /opt/intel/dl_streamer/python && \
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 
+
 # Build gstreamer python
 ARG GST_VER=1.16.0
 ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
@@ -785,6 +787,8 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
     make -j "$(nproc)" && \
     make install && \
     make install DESTDIR=/home/build
+
+
 
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 
@@ -804,7 +808,6 @@ RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 ARG FFMPEG_MA_RELEASE_VER=0.5
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
-RUN [ wget "google.com", "chow" ]
 RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
 
 RUN yum install -y -q libass-devel freetype-devel SDL2-devel libxcb-devel libvdpau-devel texinfo zlib-devel openssl-devel

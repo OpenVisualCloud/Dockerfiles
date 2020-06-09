@@ -4,9 +4,7 @@ WORKDIR /home
 
 # COMMON BUILD TOOLS
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev  && \
-apt-get clean       && \
-rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev
 
 # Install cmake
 ARG CMAKE_VER=3.13.1
@@ -164,7 +162,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Install required packges
-RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build && \
+RUN apt-get update -y && apt-get install -y python3-pip ninja-build && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*;
 
@@ -521,9 +519,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 
 
 
-RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin	&& \
-        apt-get clean	&& \
-        rm -rf /var/lib/apt/lists/*
+RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin
 
 
 
@@ -567,6 +563,7 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         echo "PAHO install disabled"; \
     fi
 
+
 # Build librdkafka
 ARG LIBRDKAFKA_VER=1.0.0
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
@@ -595,8 +592,8 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
     export CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" && \
     cmake \
-    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
+    -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
@@ -616,6 +613,7 @@ RUN mkdir -p /opt/intel/dl_streamer/python && \
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 
+
 # Build gstreamer python
 ARG GST_VER=1.16.0
 ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
@@ -626,6 +624,8 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
     make -j "$(nproc)" && \
     make install && \
     make install DESTDIR=/home/build
+
+
 
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 
