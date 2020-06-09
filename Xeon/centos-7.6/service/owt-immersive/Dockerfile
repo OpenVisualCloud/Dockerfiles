@@ -211,7 +211,7 @@ ARG WEBRTC_COMMIT="c2aa290cfe4f63d5bfbb6540122a5e6bf2783187"
 ARG FDKAAC_LIB=/home/build/usr/local/lib64
 RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
 RUN yum install -y -q patch centos-release-scl devtoolset-7
-
+ENV PYTHONIOENCODING=UTF-8
 # Install 360scvp
 RUN cd /home && \
     wget -O - ${SCVP_REPO} | tar xz && mv Immersive-Video-Sample-${SCVP_VER} Immersive-Video-Sample && \
