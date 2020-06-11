@@ -21,7 +21,7 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     echo "cd /home/owt" >> /home/launch.sh && \
     ifelse(index(DOCKER_IMAGE,xeon-),-1,
         echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
-    )
+    )dnl
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
@@ -46,7 +46,7 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     echo "cd /home/owt" >> /home/launch.sh && \
     ifelse(index(DOCKER_IMAGE,xeon-),-1,
         echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
-    )
+    )dnl
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \

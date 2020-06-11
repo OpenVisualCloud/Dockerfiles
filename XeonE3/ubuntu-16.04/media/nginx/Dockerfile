@@ -4,6 +4,7 @@ WORKDIR /home
 
 # COMMON BUILD TOOLS
 ENV DEBIAN_FRONTEND=noninteractive
+# hadolint ignore=DL3009
 RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev
 
 # Install cmake

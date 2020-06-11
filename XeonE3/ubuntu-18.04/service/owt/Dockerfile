@@ -4,6 +4,7 @@ WORKDIR /home
 
 # COMMON BUILD TOOLS
 ENV DEBIAN_FRONTEND=noninteractive
+# hadolint ignore=DL3009
 RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev
 
 # Install cmake
@@ -367,8 +368,7 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
     echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
-    
-    echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
+        echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     rm -rf /var/lib/apt/lists/*;

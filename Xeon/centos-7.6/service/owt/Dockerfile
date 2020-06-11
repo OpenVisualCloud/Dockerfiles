@@ -299,8 +299,7 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     echo "done" >> /home/launch.sh && \
     echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
-    
-    echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
+        echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     rm -rf /var/cache/yum/*;

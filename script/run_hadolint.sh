@@ -13,8 +13,8 @@ docker run -di --name my_linter hadolint/hadolint
 echo "Scanning each Dockerfile"
 for line in $(find "$REPO_ROOT" -name Dockerfile)
 do
-   printf "\nAnalyzing DOCKERFILE: %s" "$line"
-   docker exec -i my_linter hadolint --ignore DL3003 --ignore SC2164 --ignore SC1073 --ignore SC1072 --ignore DL4001 --ignore SC2039 - < $line || printf "FAILURE: See above\n"
+   printf "\nAnalyzing DOCKERFILE: %s\n" "$line"
+   docker exec -i my_linter hadolint --ignore DL3003 --ignore SC2164 --ignore SC1073 --ignore SC1072 --ignore DL4001 --ignore SC2039 --ignore DL3008 --ignore DL3007 --ignore DL3016 --ignore DL3013 - < $line || printf "FAILURE: See above\n"
 #   if [ $error ]
 #   then 
 #        printf "FAILURE: See above\n"

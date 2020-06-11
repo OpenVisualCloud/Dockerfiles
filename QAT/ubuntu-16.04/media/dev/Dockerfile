@@ -4,6 +4,7 @@ WORKDIR /home
 
 # COMMON BUILD TOOLS
 ENV DEBIAN_FRONTEND=noninteractive
+# hadolint ignore=DL3009
 RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev
 
 # Install cmake
@@ -74,7 +75,7 @@ ARG QAT_OPENSSL_REPO=https://github.com/openssl/openssl/archive/${QAT_OPENSSL_VE
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${QAT_OPENSSL_REPO} | tar xz && mv openssl-${QAT_OPENSSL_VER} openssl && \
     cd openssl && \
-    ./config --prefix=/opt/openssl --openssldir=/opt/openssl -Wl,-rpath,${LIBRPATH} && \
+    ./config --prefix=/opt/openssl --openssldir=/opt/openssl -Wl,-rpath,"\${LIBRPATH}" && \
     make -j8 && \
     make install && \
     echo
