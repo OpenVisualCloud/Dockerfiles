@@ -36,7 +36,7 @@ RUN git config --global user.email "you@example.com" && \
     git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
 
     # Install node modules for owt
-    npm install -g --loglevel error node-gyp grunt-cli underscore jsdoc && \
+    npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
     cd owt-server && npm install nan && \
 
     # Get openh264 for owt
@@ -58,7 +58,6 @@ RUN git config --global user.email "you@example.com" && \
     git reset --hard ${LICODE_COMMIT} && \
     wget -r -nH --cut-dirs=5 --no-parent ${LICODE_PATCH_REPO} && \
     git am ${SERVER_PATH}/scripts/patches/licode/*.patch && \
-    git cherry-pick ${LICODE_CHERRY_PICK} && \
 
     # Install webrtc for owt
     cd ${SERVER_PATH}/third_party && mkdir webrtc  && cd webrtc &&\

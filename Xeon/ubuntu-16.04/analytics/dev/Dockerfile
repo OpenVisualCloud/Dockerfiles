@@ -559,6 +559,7 @@ RUN wget -O - ${OPEN_MODEL_ZOO_REPO} | tar xz && \
     mkdir -p /home/build/opt/intel/dldt/open_model_zoo && \
     cp -r open_model_zoo-${OPEN_MODEL_ZOO_VER}/* /home/build/opt/intel/dldt/open_model_zoo/. && \
     python3 -m pip install pyyaml 
+ENV PYTHONIOENCODING=UTF-8
 
 
 RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin
@@ -746,9 +747,8 @@ ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
-RUN apt-get update && apt-get -y --no-install-recommends install python3-pip python3-setuptools 	&& \
-    apt-get clean	&& \
-    rm -rf /var/lib/apt/lists/*    
+ENV PYTHONIOENCODING=UTF-8
+RUN apt-get update && apt-get -y install python3-pip
 RUN python3 -m pip install pyyaml
 ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0

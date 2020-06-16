@@ -32,7 +32,7 @@ ARG FDKAAC_LIB=/home/build/usr/local/lib64
 RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
 RUN yum install -y -q patch centos-release-scl devtoolset-7
 )dnl
-
+ENV PYTHONIOENCODING=UTF-8
 # Install 360scvp
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # hadolint ignore=SC1091
@@ -62,7 +62,7 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,`dnl
     # Install node modules for owt
     npm config set proxy=${http_proxy} && \
     npm config set https-proxy=${http_proxy} && \
-    npm install -g --loglevel error node-gyp grunt-cli underscore jsdoc && \
+    npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
     cd ${SERVER_PATH} && npm install nan && \
 
     # Get openh264 for owt

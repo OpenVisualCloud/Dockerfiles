@@ -132,7 +132,8 @@ RUN wget -O - ${OPEN_MODEL_ZOO_REPO} | tar xz && \
     mkdir -p /home/build/opt/intel/dldt/open_model_zoo && \
     cp -r open_model_zoo-${OPEN_MODEL_ZOO_VER}/* /home/build/opt/intel/dldt/open_model_zoo/. && \
     python3 -m pip install pyyaml 
-')dnl
+)dnl
+ENV PYTHONIOENCODING=UTF-8
 define(`INSTALL_MO',dnl
 ifelse(index(DOCKER_IMAGE,dev),-1,,
 ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
@@ -145,6 +146,7 @@ ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ENV PYTHONIOENCODING=UTF-8
 ifelse(index(DOCKER_IMAGE,-dev),-1,,dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q python3-pip;
