@@ -661,6 +661,7 @@ RUN wget -O - ${OPEN_MODEL_ZOO_REPO} | tar xz && \
     mkdir -p /home/build/opt/intel/dldt/open_model_zoo && \
     cp -r open_model_zoo-${OPEN_MODEL_ZOO_VER}/* /home/build/opt/intel/dldt/open_model_zoo/. && \
     python3 -m pip install pyyaml 
+ENV PYTHONIOENCODING=UTF-8
 
 
 RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin
@@ -708,6 +709,7 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
 
 
 
+
 #Install va gstreamer plugins from source
 ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
@@ -742,6 +744,7 @@ RUN mkdir -p /opt/intel/dl_streamer/python && \
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 
+
 # Build gstreamer python
 ARG GST_VER=1.16.0
 ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
@@ -751,6 +754,8 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
     make -j $(nproc) && \
     make install && \
     make install DESTDIR=/home/build
+
+
 
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 
@@ -830,6 +835,7 @@ ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ENV PYTHONIOENCODING=UTF-8
 RUN apt-get update && apt-get -y install python3-pip
 RUN python3 -m pip install pyyaml
 ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
