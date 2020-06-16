@@ -43,7 +43,7 @@ RUN  wget -O - ${YASM_REPO} | tar xz && \
 # Build libnice
 ARG NICE_VER="0.1.4"
 ARG NICE_REPO=http://nice.freedesktop.org/releases/libnice-${NICE_VER}.tar.gz
-ARG LIBNICE_PATCH_VER="4.3"
+ARG LIBNICE_PATCH_VER="4.3.1"
 ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v${LIBNICE_PATCH_VER}.tar.gz
 
 RUN apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev
@@ -56,6 +56,7 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-removecandidate.patch && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-keepalive.patch && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-startcheck.patch && \
+    patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-closelock.patch && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
     make -s V= && \
     make install
@@ -265,7 +266,7 @@ RUN git config --global user.email "you@example.com" && \
     git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
 
     # Install node modules for owt
-    npm install -g --loglevel error node-gyp grunt-cli underscore jsdoc && \
+    npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
     cd owt-server && npm install nan && \
 
     # Get openh264 for owt
@@ -287,7 +288,6 @@ RUN git config --global user.email "you@example.com" && \
     git reset --hard ${LICODE_COMMIT} && \
     wget -r -nH --cut-dirs=5 --no-parent ${LICODE_PATCH_REPO} && \
     git am ${SERVER_PATH}/scripts/patches/licode/*.patch && \
-    git cherry-pick ${LICODE_CHERRY_PICK} && \
 
     # Install webrtc for owt
     cd ${SERVER_PATH}/third_party && mkdir webrtc  && cd webrtc &&\
