@@ -78,7 +78,6 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
 RUN cd Python-3.6.3							&& \
     dpkg -r python36-from-source
 )dnl
-ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
 ifelse(index(DOCKER_IMAGE,hddldaemon),-1,
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
@@ -92,7 +91,6 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager && \
     cd /home/opt/intel/openvino && \
     tar xvf /home/hddl.tar.gz
 )dnl
-),dnl
 #Remove components of OpenVino that won't be used
 ARG CV_BASE_DIR=/opt/intel/openvino
 RUN rm -rf ${CV_BASE_DIR}/uninstall* && \

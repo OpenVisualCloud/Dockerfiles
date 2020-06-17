@@ -500,20 +500,6 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/sh
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 
-#Remove components of OpenVino that won't be used
-ARG CV_BASE_DIR=/opt/intel/openvino
-RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
-    rm -rf ${CV_BASE_DIR}/python && \
-    rm -rf ${CV_BASE_DIR}/documentation && \
-    rm -rf ${CV_BASE_DIR}/install_dependiencies && \
-    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
-    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
-    rm -rf ${CV_BASE_DIR}/openvx/samples && \
-    rm -rf ${CV_BASE_DIR}/opencv/samples
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \

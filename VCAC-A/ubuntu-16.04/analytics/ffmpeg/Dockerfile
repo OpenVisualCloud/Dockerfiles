@@ -367,6 +367,25 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
 #Remove python3.6
 RUN cd Python-3.6.3							&& \
     dpkg -r python36-from-source
+#Deploy small package using deployment manager
+RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
+    ./deployment_manager.py --targets hddl vpu cpu                      && \
+    cd /root/ && ls -lh && mkdir -p openvino                            && \
+    tar zvxf openvino_deploy_package.tar.gz -C openvino
+#Remove components of OpenVino that won't be used
+ARG CV_BASE_DIR=/opt/intel/openvino
+RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
+    rm -rf ${CV_BASE_DIR}/python && \
+    rm -rf ${CV_BASE_DIR}/documentation && \
+    rm -rf ${CV_BASE_DIR}/install_dependiencies && \
+    rm -rf ${CV_BASE_DIR}/openvino_toolkit_uninstaller && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/demo && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/intel_models && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/model_optimizer && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/tools && \
+    rm -rf ${CV_BASE_DIR}/deployment_tools/inference_engine/samples && \
+    rm -rf ${CV_BASE_DIR}/openvx/samples && \
+    rm -rf ${CV_BASE_DIR}/opencv/samples
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
