@@ -200,10 +200,10 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.1
+ARG SVT_AV1_VER=v0.8.3
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
-ARG SVT_AV1_PATCHES_RELEASE_VER=0.3
+ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
 ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
 ARG SVT_AV1_PATCHES_PATH=/home/CDN-${SVT_AV1_PATCHES_RELEASE_VER}
 RUN wget -O - ${SVT_AV1_PATCHES_RELEASE_URL} | tar xz
@@ -225,7 +225,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=v0.1.0
+ARG SVT_VP9_VER=v0.2.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 RUN git clone ${SVT_VP9_REPO} && \
@@ -237,6 +237,7 @@ RUN git clone ${SVT_VP9_REPO} && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install )
+
 
 # Build the gstreamer core
 ARG GST_VER=1.16.0
@@ -402,7 +403,7 @@ RUN cd SVT-AV1/gstreamer-plugin && \
     make install DESTDIR=/home/build && \
     make install
 
-ARG OPENCV_VER=4.1.0
+ARG OPENCV_VER=4.3.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
 RUN yum install -y -q eigen3-devel
@@ -419,7 +420,7 @@ RUN wget ${OPENCV_REPO} && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.1
+ARG DLDT_VER=2020.2
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
@@ -440,6 +441,7 @@ ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
     mkdir -p ${libdir} && \
     cp -r dldt/bin/intel64/Release/lib/* ${libdir} && \
     mkdir -p /opt/intel/dldt/inference-engine/src && \
@@ -451,6 +453,7 @@ RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
     mkdir -p build${libdir} && \
     cp -r dldt/bin/intel64/Release/lib/* build${libdir} && \
     mkdir -p build/opt/intel/dldt/inference-engine/src && \
@@ -476,24 +479,15 @@ RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/o
         echo "Cflags: -I\${includedir}" >> "$pc"; \
     done;
 
+ARG local_lib_path="/usr/local/lib64"
+ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 
-# DLDT IE C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
-
-ARG c_api_libdir="/usr/local/lib64"
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.1 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
-ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
 
 #install Model Optimizer in the DLDT for Dev
 
+ENV PYTHONIOENCODING=UTF-8
 
 
 
@@ -539,24 +533,23 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         echo "PAHO install disabled"; \
     fi
 
-ARG RDKAFKA_INSTALL=true
-ARG RDKAFKA_VER=1.0.0
-ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.tar.gz
-RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
-        wget -O - ${RDKAFKA_REPO} | tar -xz && \
-        cd librdkafka-${RDKAFKA_VER} && \
-        ./configure --prefix=/usr/local --libdir=/usr/local/lib64/ && \
-        make && \
-        make install && \
-        make install DESTDIR=/home/build; \
-    else \
-        echo "RDKAFKA install disabled"; \
-    fi
+
+# Build librdkafka
+ARG LIBRDKAFKA_VER=1.0.0
+ARG FILE_NAME=v${LIBRDKAFKA_VER}
+ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
+
+RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
+    cd librdkafka-${LIBRDKAFKA_VER} && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
 
 
-#Install va gstreamer plugins
 
-ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
+#Install va gstreamer plugins from source
+ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
@@ -571,7 +564,6 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
-    -DDISABLE_SAMPLES=ON \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DHAVE_VAAPI=OFF  \
@@ -581,9 +573,29 @@ RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
 RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0
-
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
 
+RUN mkdir -p build/opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* build/opt/intel/dl_streamer/python
+RUN mkdir -p /opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* /opt/intel/dl_streamer/python
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+
+
+# Build gstreamer python
+ARG GST_VER=1.16.0
+ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
+RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
+    cd gst-python-${GST_VER} && \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 --with-pygi-overrides-dir=/usr/lib64/python3.6/site-packages/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/lib64/" PYTHON=/usr/bin/python3 && \
+    make -j $(nproc) && \
+    make install && \
+    make install DESTDIR=/home/build
+
+
+
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 
 
 # Clean up after build
@@ -605,7 +617,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
-    yum install -y -q numactl openssl glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid python3 \
+    yum install -y -q numactl openssl glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base boost-regex \
 libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
@@ -614,14 +626,18 @@ libsoup libjpeg-turbo librtmp ; \
 # Install
 COPY --from=build /home/build /
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib64
+ARG local_lib_path="/usr/local/lib64"
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
-ARG c_api_libdir="/usr/local/lib64"
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}:${c_api_libdir}
-ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
+ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ENV PYTHONIOENCODING=UTF-8
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+RUN python3 -m pip install numpy
 

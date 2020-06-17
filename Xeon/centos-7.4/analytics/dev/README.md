@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. This is development image aim towards  enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Included what are in the FFmpeg image. Inferencing engine and tracking plugins to be included, also included Intel hardware accelaration software stack such as media driver, media SDK, gmmlib, OpenVINO and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Included what are in FFmpeg & GStreamer media analytics images. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [xeon-centos-74-analytics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7.4/analytics/dev/Dockerfile)
@@ -51,7 +51,7 @@ This docker installs third party components licensed under various open source l
 |gst plugin good|GNU Lesser General Public License v2.1 or later|
 |gst plugin bad|GNU Lesser General Public License v2.1 or later|
 |gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Lesser General Public License v2.1 or later|
+|gst plugin libav|GNU Library General Public License Version 2|
 |gst plugin svt|GNU Lesser General Public License v2.1 or later|
 |opencv|BSD 3-clause "New" or "Revised" License|
 |DLDT|Apache License v2.0|

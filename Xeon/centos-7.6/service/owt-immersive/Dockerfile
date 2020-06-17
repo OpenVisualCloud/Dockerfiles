@@ -47,7 +47,7 @@ RUN  wget -O - ${YASM_REPO} | tar xz && \
 # Build libnice
 ARG NICE_VER="0.1.4"
 ARG NICE_REPO=http://nice.freedesktop.org/releases/libnice-${NICE_VER}.tar.gz
-ARG LIBNICE_PATCH_VER="4.3"
+ARG LIBNICE_PATCH_VER="4.3.1"
 ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v${LIBNICE_PATCH_VER}.tar.gz
 
 RUN yum install -y -q glib2-devel
@@ -60,6 +60,7 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-removecandidate.patch && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-keepalive.patch && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-startcheck.patch && \
+    patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-closelock.patch && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
     make -s V= && \
     make install
@@ -151,6 +152,7 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac  --enable-nonfree && \
+
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
@@ -210,7 +212,7 @@ ARG WEBRTC_COMMIT="c2aa290cfe4f63d5bfbb6540122a5e6bf2783187"
 ARG FDKAAC_LIB=/home/build/usr/local/lib64
 RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
 RUN yum install -y -q patch centos-release-scl devtoolset-7
-
+ENV PYTHONIOENCODING=UTF-8
 # Install 360scvp
 RUN cd /home && \
     wget -O - ${SCVP_REPO} | tar xz && mv Immersive-Video-Sample-${SCVP_VER} Immersive-Video-Sample && \
@@ -232,7 +234,7 @@ RUN git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
     # Install node modules for owt
     npm config set proxy=${http_proxy} && \
     npm config set https-proxy=${http_proxy} && \
-    npm install -g --loglevel error node-gyp grunt-cli underscore jsdoc && \
+    npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
     cd ${SERVER_PATH} && npm install nan && \
 
     # Get openh264 for owt

@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. This is development image aim towards  enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Image for FFmpeg or GStreamer C++ application development for Media creation and media delivery. The docker image can be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Included what are in FFmpeg or GStreamer media creation and delivery images . Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [xeone3-ubuntu-1604-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/ubuntu-16.04/media/dev/Dockerfile)
@@ -52,7 +52,7 @@ This docker installs third party components licensed under various open source l
 |gst plugin good|GNU Lesser General Public License v2.1 or later|
 |gst plugin bad|GNU Lesser General Public License v2.1 or later|
 |gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Lesser General Public License v2.1 or later|
+|gst plugin libav|GNU Library General Public License Version 2|
 |gst plugin svt|GNU Lesser General Public License v2.1 or later|
 |gst plugin vaapi|GNU Lesser General Public License v2.1 or later|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|

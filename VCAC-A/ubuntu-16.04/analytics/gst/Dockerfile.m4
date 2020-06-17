@@ -31,7 +31,7 @@ include(gst-plugin-libav.m4)
 include(gst-plugin-vaapi.m4)
 include(opencv.m4)
 include(openvino.binary.m4)
-include(gstreamer-videoanalytics.m4)
+include(gst-plugin-gva.m4)
 include(cleanup.m4)dnl
 
 FROM ubuntu:16.04

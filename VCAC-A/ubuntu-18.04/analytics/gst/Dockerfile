@@ -411,15 +411,18 @@ RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
 ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-${GST_VER}.tar.xz
 
 # https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/merge_requests/45
-ARG GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH=b219f6095f3014041896714dd88e7d90ee3d72dd
-ARG GST_PLUGIN_VAAPI_REPO_GIT=https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git
+ARG GST_PLUGIN_VAAPI_PATCH_VER=v1.0.0
+ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/opencv/gst-video-analytics.git
 
 RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev libegl1-mesa-dev autopoint bison flex libudev-dev
 
-#RUN  git clone https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git -b 1.14 --depth 10 && \
-#     cd gstreamer-vaapi && git reset --hard ${GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH} && \
 RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      cd gstreamer-vaapi-${GST_VER} && \
+     git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
+     cd gst-video-analytics && git checkout ${GST_PLUGIN_VAAPI_PATCH_VER} && \
+     cd .. && \
+     git apply gst-video-analytics/patches/gstreamer-vaapi/vasurface_qdata.patch && \
+     rm -fr gst-video-analytics && \
      export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
      ./autogen.sh \
         --prefix=/usr/local \
@@ -433,7 +436,7 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      make install
 
 
-ARG OPENCV_VER=4.1.0
+ARG OPENCV_VER=4.3.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libeigen3-dev
@@ -450,9 +453,9 @@ RUN wget ${OPENCV_REPO} && \
 
 
 # OpenVINO verion
-# 2020.1 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.1.023
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/l_openvino_toolkit_p_2020.1.023.tgz
+# 2020.2 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.2.120
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/l_openvino_toolkit_p_2020.2.120.tgz
 
 
 #Download and unpack OpenVino
@@ -483,22 +486,12 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/sh
 #ENV OpenCV_DIR=/opt/intel/openvino/opencv/share/OpenCV
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
-# OPENVINO C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.1 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
 
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     ./deployment_manager.py --targets hddl vpu cpu                      && \
-    cd /root/ && ls -lh                                                 && \
-    tar zxf openvino_deploy_package.tar.gz                              && \
-    mv openvino_deploy_package openvino
+    cd /root/ && ls -lh && mkdir -p openvino                            && \
+    tar zvxf openvino_deploy_package.tar.gz -C openvino
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/usr/local/lib && \
@@ -507,6 +500,7 @@ RUN mkdir -p /home/build/usr/local/lib && \
     cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
     cp -rH /root/openvino /home/build/opt/intel/ && \
     cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && \
+    cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so /home/build/./opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so && \
     cp -r /usr/lib/* /home/build/usr/lib
 
 #Give all user exec permission
@@ -558,24 +552,23 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         echo "PAHO install disabled"; \
     fi
 
-ARG RDKAFKA_INSTALL=true
-ARG RDKAFKA_VER=1.0.0
-ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.tar.gz
-RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
-        wget -O - ${RDKAFKA_REPO} | tar -xz && \
-        cd librdkafka-${RDKAFKA_VER} && \
-        ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu/ && \
-        make && \
-        make install && \
-        make install DESTDIR=/home/build; \
-    else \
-        echo "RDKAFKA install disabled"; \
-    fi
+
+# Build librdkafka
+ARG LIBRDKAFKA_VER=1.0.0
+ARG FILE_NAME=v${LIBRDKAFKA_VER}
+ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
+
+RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
+    cd librdkafka-${LIBRDKAFKA_VER} && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
 
 
-#Install va gstreamer plugins
 
-ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
+#Install va gstreamer plugins from source
+ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
@@ -590,7 +583,6 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
-    -DDISABLE_SAMPLES=ON \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DHAVE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
@@ -600,9 +592,29 @@ RUN mkdir -p build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 RUN mkdir -p /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
-
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 
+RUN mkdir -p build/opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* build/opt/intel/dl_streamer/python
+RUN mkdir -p /opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* /opt/intel/dl_streamer/python
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+
+
+# Build gstreamer python
+ARG GST_VER=1.16.0
+ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
+RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
+    cd gst-python-${GST_VER} && \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu --libexecdir=/usr/local/lib/x86_64-linux-gnu --with-pygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/lib/x86_64-linux-gnu/" PYTHON=/usr/bin/python3 && \
+    make -j $(nproc) && \
+    make install && \
+    make install DESTDIR=/home/build
+
+
+
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 
 
 # Clean up after build
@@ -623,7 +635,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.1 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libglib2.0-0 libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid python3-dev \
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.1 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libglib2.0-0 libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid python3-numpy python3-gi python3-gi-cairo python3-dev \
 libdrm2  libjson-c3 libboost-filesystem1.65.1 libboost-system1.65.1 libusb-1.0-0-dev libboost-program-options1.65.1 && \
     rm -rf /var/lib/apt/lists/*
 
@@ -644,4 +656,6 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/

@@ -200,10 +200,10 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.1
+ARG SVT_AV1_VER=v0.8.3
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
-ARG SVT_AV1_PATCHES_RELEASE_VER=0.3
+ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
 ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
 ARG SVT_AV1_PATCHES_PATH=/home/CDN-${SVT_AV1_PATCHES_RELEASE_VER}
 RUN wget -O - ${SVT_AV1_PATCHES_RELEASE_URL} | tar xz
@@ -225,7 +225,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=v0.1.0
+ARG SVT_VP9_VER=v0.2.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 RUN git clone ${SVT_VP9_REPO} && \
@@ -237,6 +237,7 @@ RUN git clone ${SVT_VP9_REPO} && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install )
+
 
 # Build the gstreamer core
 ARG GST_VER=1.16.0
@@ -410,7 +411,7 @@ ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PAT
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
-ARG FFMPEG_MA_RELEASE_VER=0.4.1
+ARG FFMPEG_MA_RELEASE_VER=0.5
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
 RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
@@ -430,10 +431,14 @@ RUN cd /home/FFmpeg && \
 RUN cd /home/FFmpeg; \
     patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
 
+# Patch FFmpeg source for SVT-VP9
+RUN cd /home/FFmpeg; \
+    git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9-with-hevc-av1.patch;
+
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libsvthevc --enable-libsvtav1  && \
+    ./configure --prefix="/usr/local" --extra-cflags="" --extra-ldflags="" --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libsvthevc --enable-libsvtav1 --enable-libsvtvp9  && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 

@@ -200,10 +200,10 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.1
+ARG SVT_AV1_VER=v0.8.3
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
-ARG SVT_AV1_PATCHES_RELEASE_VER=0.3
+ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
 ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
 ARG SVT_AV1_PATCHES_PATH=/home/CDN-${SVT_AV1_PATCHES_RELEASE_VER}
 RUN wget -O - ${SVT_AV1_PATCHES_RELEASE_URL} | tar xz
@@ -225,7 +225,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=v0.1.0
+ARG SVT_VP9_VER=v0.2.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 RUN git clone ${SVT_VP9_REPO} && \
@@ -237,6 +237,7 @@ RUN git clone ${SVT_VP9_REPO} && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install )
+
 
 #include(libdrm.m4)
 # Build libva
@@ -310,85 +311,11 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
 #install OpenCL
 
 
-RUN yum install -y centos-release-scl
-RUN yum install -y devtoolset-6-gcc devtoolset-6-gcc-c++ opencl-headers
-ARG CLANG_VERSION=4.0.1
-
-RUN source /opt/rh/devtoolset-6/enable && \
-    wget http://releases.llvm.org/${CLANG_VERSION}/llvm-${CLANG_VERSION}.src.tar.xz && \
-    wget http://releases.llvm.org/${CLANG_VERSION}/cfe-${CLANG_VERSION}.src.tar.xz && \
-    wget http://releases.llvm.org/${CLANG_VERSION}/clang-tools-extra-${CLANG_VERSION}.src.tar.xz && \
-    wget http://releases.llvm.org/${CLANG_VERSION}/compiler-rt-${CLANG_VERSION}.src.tar.xz && \
-    xz -d llvm-${CLANG_VERSION}.src.tar.xz && \
-    tar xvf llvm-${CLANG_VERSION}.src.tar && \
-    xz -d cfe-${CLANG_VERSION}.src.tar.xz && \
-    tar xvf cfe-${CLANG_VERSION}.src.tar && \
-    xz -d clang-tools-extra-${CLANG_VERSION}.src.tar.xz && \
-    tar xvf clang-tools-extra-${CLANG_VERSION}.src.tar && \
-    xz -d compiler-rt-${CLANG_VERSION}.src.tar.xz && \
-    tar xvf compiler-rt-${CLANG_VERSION}.src.tar && \
-    cd llvm-${CLANG_VERSION}.src && \
-    mv ../cfe-${CLANG_VERSION}.src tools/clang && \
-    mv ../clang-tools-extra-${CLANG_VERSION}.src tools/clang/extra && \
-    mv ../compiler-rt-${CLANG_VERSION}.src projects/compiler-rt && \
-    mkdir build && \
-    cd build && \
-    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=On .. && \
-    make -j$(nproc)  && \
-    make install
-
-RUN yum install -y centos-release-scl epel-release
-
-RUN yum -y -q install yum install libcxx
-RUN yum -y -q install yum install libcxx-devel devtoolset-4-gcc-c++ devtoolset-4-gcc
-
-RUN cd gmmlib && mkdir build && cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DARCH=64 .. && \
-    make -j$(nproc)
-
-RUN mkdir build_igc && \
-    cd build_igc && \
-    git clone https://github.com/intel/intel-graphics-compiler igc && \
-    cd igc && \
-    git checkout de3d1de && \
-    cd .. && \
-
-    git clone https://github.com/intel/llvm-patches llvm_patches && \
-    cd llvm_patches && \
-    git checkout 96d382b && \
-    cd .. && \
-
-    git clone -b release_40 https://github.com/llvm-mirror/llvm llvm_source && \
-    git clone -b release_40 https://github.com/llvm-mirror/clang clang_source && \
-
-    git clone -b master https://github.com/intel/opencl-clang common_clang && \
-    cd common_clang && \
-    git checkout 8248120 && \
-    cd .. && \
-
-    git clone https://github.com/KhronosGroup/OpenCL-Headers opencl_headers && \
-    cd opencl_headers && \
-    git checkout f039db6
-
-RUN cd build_igc && \
-    mkdir build && \
-    cd build && \
-    scl enable devtoolset-4 "cmake -DIGC_OPTION__OUTPUT_DIR=../igc-install/Release -DCMAKE_BUILD_TYPE=Release -DIGC_OPTION__ARCHITECTURE_TARGET=Linux64 ../igc/IGC" | tee cmake_output.log && \
-    yum install -y rpm rpm-libs rpm-build rpm-build-libs && \
-    scl enable devtoolset-4 "make -j$(nproc) package" | tee make_output.log && \
-    rpm -ivh intel-igc-core-0.1-0.x86_64.rpm intel-igc-media-0.1-0.x86_64.rpm intel-igc-opencl-devel-0.1-0.x86_64.rpm intel-igc-opencl-0.1-0.x86_64.rpm && \
-    ldconfig
-
-RUN git clone https://github.com/intel/compute-runtime neo && \
-    cd neo && \
-    git checkout 18.41.11649 && \
-    mkdir build && \
-    cd build && \
-    scl enable devtoolset-4 "PKG_CONFIG_PATH=/usr/lib/pkgconfig/ cmake -DCMAKE_BUILD_TYPE=Release .." && \
-    scl enable devtoolset-4 "make -j$(nproc) package" && \
-    rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm 
-
-RUN yum install -y ocl-icd-devel
+RUN yum install -y -q dnf dnf-plugins-core
+RUN yum install -y yum-plugin-copr
+RUN yum copr enable -y jdanecki/intel-opencl
+RUN yum install -y intel-opencl
+RUN yum install -y ocl-icd libgomp
 
 #clinfo needs to be installed after build directory is copied over
 
@@ -560,15 +487,18 @@ RUN cd SVT-AV1/gstreamer-plugin && \
 ARG GST_PLUGIN_VAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-${GST_VER}.tar.xz
 
 # https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi/merge_requests/45
-ARG GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH=b219f6095f3014041896714dd88e7d90ee3d72dd
-ARG GST_PLUGIN_VAAPI_REPO_GIT=https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git
+ARG GST_PLUGIN_VAAPI_PATCH_VER=v1.0.0
+ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/opencv/gst-video-analytics.git
 
 RUN  yum install -y -q libXrandr-devel
 
-#RUN  git clone https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git -b 1.14 --depth 10 && \
-#     cd gstreamer-vaapi && git reset --hard ${GST_PLUGIN_VAAPI_REPO_DISPLAY_LOCK_PATCH_HASH} && \
 RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      cd gstreamer-vaapi-${GST_VER} && \
+     git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
+     cd gst-video-analytics && git checkout ${GST_PLUGIN_VAAPI_PATCH_VER} && \
+     cd .. && \
+     git apply gst-video-analytics/patches/gstreamer-vaapi/vasurface_qdata.patch && \
+     rm -fr gst-video-analytics && \
      export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
      ./autogen.sh \
         --prefix=/usr/local \
@@ -582,7 +512,7 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      make install
 
 
-ARG OPENCV_VER=4.1.0
+ARG OPENCV_VER=4.3.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
 RUN yum install -y -q eigen3-devel
@@ -599,7 +529,7 @@ RUN wget ${OPENCV_REPO} && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.1
+ARG DLDT_VER=2020.2
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
@@ -620,6 +550,7 @@ ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
     mkdir -p ${libdir} && \
     cp -r dldt/bin/intel64/Release/lib/* ${libdir} && \
     mkdir -p /opt/intel/dldt/inference-engine/src && \
@@ -631,6 +562,7 @@ RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
     mkdir -p build${libdir} && \
     cp -r dldt/bin/intel64/Release/lib/* build${libdir} && \
     mkdir -p build/opt/intel/dldt/inference-engine/src && \
@@ -656,24 +588,15 @@ RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/o
         echo "Cflags: -I\${includedir}" >> "$pc"; \
     done;
 
+ARG local_lib_path="/usr/local/lib64"
+ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 
-# DLDT IE C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
-
-ARG c_api_libdir="/usr/local/lib64"
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.1 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
-ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
 
 #install Model Optimizer in the DLDT for Dev
 
+ENV PYTHONIOENCODING=UTF-8
 
 
 
@@ -719,24 +642,23 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         echo "PAHO install disabled"; \
     fi
 
-ARG RDKAFKA_INSTALL=true
-ARG RDKAFKA_VER=1.0.0
-ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.tar.gz
-RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
-        wget -O - ${RDKAFKA_REPO} | tar -xz && \
-        cd librdkafka-${RDKAFKA_VER} && \
-        ./configure --prefix=/usr/local --libdir=/usr/local/lib64/ && \
-        make && \
-        make install && \
-        make install DESTDIR=/home/build; \
-    else \
-        echo "RDKAFKA install disabled"; \
-    fi
+
+# Build librdkafka
+ARG LIBRDKAFKA_VER=1.0.0
+ARG FILE_NAME=v${LIBRDKAFKA_VER}
+ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
+
+RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
+    cd librdkafka-${LIBRDKAFKA_VER} && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
 
 
-#Install va gstreamer plugins
 
-ARG VA_GSTREAMER_PLUGINS_VER=v0.7.0 
+#Install va gstreamer plugins from source
+ARG VA_GSTREAMER_PLUGINS_VER=v1.0.0 
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
@@ -751,7 +673,6 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
-    -DDISABLE_SAMPLES=ON \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
     -DHAVE_VAAPI=OFF  \
@@ -761,9 +682,29 @@ RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
 RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0
-
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
 
+RUN mkdir -p build/opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* build/opt/intel/dl_streamer/python
+RUN mkdir -p /opt/intel/dl_streamer/python && \
+    cp -r gst-video-analytics/python/* /opt/intel/dl_streamer/python
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+
+
+# Build gstreamer python
+ARG GST_VER=1.16.0
+ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
+RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
+    cd gst-python-${GST_VER} && \
+    ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 --with-pygi-overrides-dir=/usr/lib64/python3.6/site-packages/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/lib64/" PYTHON=/usr/bin/python3 && \
+    make -j $(nproc) && \
+    make install && \
+    make install DESTDIR=/home/build
+
+
+
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 
 
 # Clean up after build
@@ -785,7 +726,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
-    yum install -y -q numactl openssl glib2-2.56.1 pango gobject-introspection libxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora libpciaccess libX11 openblas-serial uuid python3 \
+    yum install -y -q numactl openssl glib2-2.56.1 pango gobject-introspection libxcb mesa-libGL libXrandr libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora libpciaccess libX11 openblas-serial uuid python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base boost-regex \
 mesa-dri-drivers mesa-libGL libdrm  libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
@@ -796,20 +737,25 @@ COPY --from=build /home/build /
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib64
 ENV LIBVA_DRIVERS_PATH=/usr/local/lib64/dri
 ENV LIBVA_DRIVER_NAME=iHD
-COPY --from=build /home/neo/build/intel-opencl-18.41-0.x86_64-igdrcl.rpm /home/
-RUN rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm && \
-    yum install -y epel-release && \
-    yum install -y ocl-icd-devel
+RUN yum install -y -q dnf dnf-plugins-core yum-plugin-copr
+RUN yum copr enable -y jdanecki/intel-opencl
+RUN yum install -y intel-opencl
+RUN yum install -y ocl-icd libgomp
+RUN ln -s /usr/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so
 ENV GST_VAAPI_ALL_DRIVERS=1
 ENV DISPLAY=:0.0
+ARG local_lib_path="/usr/local/lib64"
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
-ARG c_api_libdir="/usr/local/lib64"
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}:${c_api_libdir}
-ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
+ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ENV PYTHONIOENCODING=UTF-8
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 ENV LIBRARY_PATH=${LIBRARY_PATH}:/usr/local/lib:/usr/lib
 ENV PATH=/usr/bin:${PATH}:/usr/local/bin
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+RUN python3 -m pip install numpy
 

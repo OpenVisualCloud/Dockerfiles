@@ -187,10 +187,10 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.1
+ARG SVT_AV1_VER=v0.8.3
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
-ARG SVT_AV1_PATCHES_RELEASE_VER=0.3
+ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
 ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
 ARG SVT_AV1_PATCHES_PATH=/home/CDN-${SVT_AV1_PATCHES_RELEASE_VER}
 RUN wget -O - ${SVT_AV1_PATCHES_RELEASE_URL} | tar xz
@@ -212,7 +212,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=v0.1.0
+ARG SVT_VP9_VER=v0.2.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 RUN git clone ${SVT_VP9_REPO} && \
@@ -224,6 +224,7 @@ RUN git clone ${SVT_VP9_REPO} && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     make install )
+
 
 # Fetch gmmlib
 ARG GMMLIB_VER=intel-gmmlib-18.3.0
@@ -310,85 +311,11 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
 #install OpenCL
 
 
-RUN yum install -y centos-release-scl
-RUN yum install -y devtoolset-6-gcc devtoolset-6-gcc-c++ opencl-headers
-ARG CLANG_VERSION=4.0.1
-
-RUN source /opt/rh/devtoolset-6/enable && \
-    wget http://releases.llvm.org/${CLANG_VERSION}/llvm-${CLANG_VERSION}.src.tar.xz && \
-    wget http://releases.llvm.org/${CLANG_VERSION}/cfe-${CLANG_VERSION}.src.tar.xz && \
-    wget http://releases.llvm.org/${CLANG_VERSION}/clang-tools-extra-${CLANG_VERSION}.src.tar.xz && \
-    wget http://releases.llvm.org/${CLANG_VERSION}/compiler-rt-${CLANG_VERSION}.src.tar.xz && \
-    xz -d llvm-${CLANG_VERSION}.src.tar.xz && \
-    tar xvf llvm-${CLANG_VERSION}.src.tar && \
-    xz -d cfe-${CLANG_VERSION}.src.tar.xz && \
-    tar xvf cfe-${CLANG_VERSION}.src.tar && \
-    xz -d clang-tools-extra-${CLANG_VERSION}.src.tar.xz && \
-    tar xvf clang-tools-extra-${CLANG_VERSION}.src.tar && \
-    xz -d compiler-rt-${CLANG_VERSION}.src.tar.xz && \
-    tar xvf compiler-rt-${CLANG_VERSION}.src.tar && \
-    cd llvm-${CLANG_VERSION}.src && \
-    mv ../cfe-${CLANG_VERSION}.src tools/clang && \
-    mv ../clang-tools-extra-${CLANG_VERSION}.src tools/clang/extra && \
-    mv ../compiler-rt-${CLANG_VERSION}.src projects/compiler-rt && \
-    mkdir build && \
-    cd build && \
-    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=On .. && \
-    make -j$(nproc)  && \
-    make install
-
-RUN yum install -y centos-release-scl epel-release
-
-RUN yum -y -q install yum install libcxx
-RUN yum -y -q install yum install libcxx-devel devtoolset-4-gcc-c++ devtoolset-4-gcc
-
-RUN cd gmmlib && mkdir build && cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DARCH=64 .. && \
-    make -j$(nproc)
-
-RUN mkdir build_igc && \
-    cd build_igc && \
-    git clone https://github.com/intel/intel-graphics-compiler igc && \
-    cd igc && \
-    git checkout de3d1de && \
-    cd .. && \
-
-    git clone https://github.com/intel/llvm-patches llvm_patches && \
-    cd llvm_patches && \
-    git checkout 96d382b && \
-    cd .. && \
-
-    git clone -b release_40 https://github.com/llvm-mirror/llvm llvm_source && \
-    git clone -b release_40 https://github.com/llvm-mirror/clang clang_source && \
-
-    git clone -b master https://github.com/intel/opencl-clang common_clang && \
-    cd common_clang && \
-    git checkout 8248120 && \
-    cd .. && \
-
-    git clone https://github.com/KhronosGroup/OpenCL-Headers opencl_headers && \
-    cd opencl_headers && \
-    git checkout f039db6
-
-RUN cd build_igc && \
-    mkdir build && \
-    cd build && \
-    scl enable devtoolset-4 "cmake -DIGC_OPTION__OUTPUT_DIR=../igc-install/Release -DCMAKE_BUILD_TYPE=Release -DIGC_OPTION__ARCHITECTURE_TARGET=Linux64 ../igc/IGC" | tee cmake_output.log && \
-    yum install -y rpm rpm-libs rpm-build rpm-build-libs && \
-    scl enable devtoolset-4 "make -j$(nproc) package" | tee make_output.log && \
-    rpm -ivh intel-igc-core-0.1-0.x86_64.rpm intel-igc-media-0.1-0.x86_64.rpm intel-igc-opencl-devel-0.1-0.x86_64.rpm intel-igc-opencl-0.1-0.x86_64.rpm && \
-    ldconfig
-
-RUN git clone https://github.com/intel/compute-runtime neo && \
-    cd neo && \
-    git checkout 18.41.11649 && \
-    mkdir build && \
-    cd build && \
-    scl enable devtoolset-4 "PKG_CONFIG_PATH=/usr/lib/pkgconfig/ cmake -DCMAKE_BUILD_TYPE=Release .." && \
-    scl enable devtoolset-4 "make -j$(nproc) package" && \
-    rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm 
-
-RUN yum install -y ocl-icd-devel
+RUN yum install -y -q dnf dnf-plugins-core
+RUN yum install -y yum-plugin-copr
+RUN yum copr enable -y jdanecki/intel-opencl
+RUN yum install -y intel-opencl
+RUN yum install -y ocl-icd libgomp
 
 #clinfo needs to be installed after build directory is copied over
 
@@ -405,7 +332,7 @@ RUN wget -O - ${LIBJSONC_REPO} | tar xz && \
     make install;
 
 # Build librdkafka
-ARG LIBRDKAFKA_VER=0.11.6
+ARG LIBRDKAFKA_VER=1.0.0
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
 ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
 
@@ -416,7 +343,7 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
     make install DESTDIR=/home/build && \
     make install;
 
-ARG OPENCV_VER=4.1.0
+ARG OPENCV_VER=4.3.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
 RUN yum install -y -q eigen3-devel
@@ -433,7 +360,7 @@ RUN wget ${OPENCV_REPO} && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.1
+ARG DLDT_VER=2020.2
 ARG DLDT_REPO=https://github.com/opencv/dldt.git
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
@@ -454,6 +381,7 @@ ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
     mkdir -p ${libdir} && \
     cp -r dldt/bin/intel64/Release/lib/* ${libdir} && \
     mkdir -p /opt/intel/dldt/inference-engine/src && \
@@ -465,6 +393,7 @@ RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r dldt/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
     mkdir -p build${libdir} && \
     cp -r dldt/bin/intel64/Release/lib/* build${libdir} && \
     mkdir -p build/opt/intel/dldt/inference-engine/src && \
@@ -490,24 +419,15 @@ RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/o
         echo "Cflags: -I\${includedir}" >> "$pc"; \
     done;
 
+ARG local_lib_path="/usr/local/lib64"
+ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 
-# DLDT IE C API
-ARG DLDT_C_API_REPO=https://raw.githubusercontent.com/VCDP/FFmpeg-patch/ffmpeg4.2_va/thirdparty/dldt-c-api/source/v2.0.1.tar.gz
-
-ARG c_api_libdir="/usr/local/lib64"
-RUN wget -O - ${DLDT_C_API_REPO} | tar xz && \
-    cd dldt-c_api-2.0.1 && \
-    mkdir -p build && cd build && \
-    cmake -DENABLE_AVX512F=OFF .. && \
-    make -j8 && \
-    make install && \
-    make install DESTDIR=/home/build
-ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
 
 #install Model Optimizer in the DLDT for Dev
 
+ENV PYTHONIOENCODING=UTF-8
 
 
 # Fetch FFmpeg source
@@ -520,7 +440,7 @@ ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PAT
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
-ARG FFMPEG_MA_RELEASE_VER=0.4.1
+ARG FFMPEG_MA_RELEASE_VER=0.5
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/home/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
 RUN wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
@@ -540,10 +460,14 @@ RUN cd /home/FFmpeg && \
 RUN cd /home/FFmpeg; \
     patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
 
+# Patch FFmpeg source for SVT-VP9
+RUN cd /home/FFmpeg; \
+    git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9-with-hevc-av1.patch;
+
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_wrapper --enable-librdkafka --enable-libjson_c  && \
+    ./configure --prefix="/usr/local" --extra-cflags="-I/opt/intel/dldt/inference-engine/include " --extra-ldflags="-L/opt/intel/dldt/inference-engine/lib/intel64 " --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libsvthevc --enable-libsvtav1 --enable-libsvtvp9 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
@@ -583,13 +507,15 @@ COPY --from=build /home/build /
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib64
 ENV LIBVA_DRIVERS_PATH=/usr/local/lib64/dri
 ENV LIBVA_DRIVER_NAME=iHD
-COPY --from=build /home/neo/build/intel-opencl-18.41-0.x86_64-igdrcl.rpm /home/
-RUN rpm -ivh intel-opencl-18.41-0.x86_64-igdrcl.rpm && \
-    yum install -y epel-release && \
-    yum install -y ocl-icd-devel
+RUN yum install -y -q dnf dnf-plugins-core yum-plugin-copr
+RUN yum copr enable -y jdanecki/intel-opencl
+RUN yum install -y intel-opencl
+RUN yum install -y ocl-icd libgomp
+RUN ln -s /usr/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so
+ARG local_lib_path="/usr/local/lib64"
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
-ARG c_api_libdir="/usr/local/lib64"
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}:${c_api_libdir}
-ENV PKG_CONFIG_PATH=${c_api_libdir}/pkgconfig:$PKG_CONFIG_PATH
+ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ENV PYTHONIOENCODING=UTF-8
 

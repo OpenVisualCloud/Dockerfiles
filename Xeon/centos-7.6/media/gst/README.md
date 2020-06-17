@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. The docker image can be used to invoke gstreamer commands or be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [xeon-centos-76-media-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7.6/media/gst/Dockerfile)
@@ -48,7 +48,7 @@ This docker installs third party components licensed under various open source l
 |gst plugin good|GNU Lesser General Public License v2.1 or later|
 |gst plugin bad|GNU Lesser General Public License v2.1 or later|
 |gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Lesser General Public License v2.1 or later|
+|gst plugin libav|GNU Library General Public License Version 2|
 |gst plugin svt|GNU Lesser General Public License v2.1 or later|
 
 

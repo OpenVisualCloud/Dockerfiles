@@ -1,4 +1,4 @@
-This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included FFmpeg and codecs such as aac, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC, also included Intel hardware accelaration software stack such as media driver, media SDK, gmmlib and libva. The docker image can be used to invoke FFmpeg commands or be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included FFmpeg and codecs such as aac, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
  - [xeon-centos-75-media-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7.5/media/ffmpeg/Dockerfile)
