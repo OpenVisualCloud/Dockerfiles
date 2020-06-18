@@ -163,7 +163,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Install required packges
-RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build && \
+RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools&& \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*;
 
@@ -902,7 +902,9 @@ ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
 ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
 ENV PYTHONIOENCODING=UTF-8
-RUN apt-get update && apt-get -y install python3-pip
+RUN apt-get update && apt-get -y --no-install-recommends install python3-pip python3-setuptools 	&& \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*    
 RUN python3 -m pip install pyyaml
 ENV PYTHONPATH=${PYTHONPATH}:/mo_libs
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0

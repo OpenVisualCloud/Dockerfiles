@@ -132,7 +132,7 @@ RUN wget -O - ${OPEN_MODEL_ZOO_REPO} | tar xz && \
     mkdir -p /home/build/opt/intel/dldt/open_model_zoo && \
     cp -r open_model_zoo-${OPEN_MODEL_ZOO_VER}/* /home/build/opt/intel/dldt/open_model_zoo/. && \
     python3 -m pip install pyyaml 
-)dnl
+')dnl
 ENV PYTHONIOENCODING=UTF-8
 define(`INSTALL_MO',dnl
 ifelse(index(DOCKER_IMAGE,dev),-1,,
