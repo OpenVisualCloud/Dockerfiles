@@ -532,6 +532,7 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         echo "PAHO install disabled"; \
     fi
 
+
 # Build librdkafka
 ARG LIBRDKAFKA_VER=1.0.0
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
@@ -580,6 +581,7 @@ RUN mkdir -p /opt/intel/dl_streamer/python && \
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 
+
 # Build gstreamer python
 ARG GST_VER=1.16.0
 ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
@@ -589,6 +591,8 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
     make -j $(nproc) && \
     make install && \
     make install DESTDIR=/home/build
+
+
 
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 

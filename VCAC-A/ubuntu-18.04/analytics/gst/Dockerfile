@@ -494,14 +494,11 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     tar zvxf openvino_deploy_package.tar.gz -C openvino
 
 #Copy over directories to clean image
-RUN mkdir -p /home/build/usr/local/lib && \
-    mkdir -p /home/build/opt/intel && \
-    mkdir -p /home/build/usr/lib && \
-    cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
+RUN mkdir -p /home/build/opt/intel && \
     cp -rH /root/openvino /home/build/opt/intel/ && \
     cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && \
-    cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so /home/build/./opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so && \
-    cp -r /usr/lib/* /home/build/usr/lib
+    cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so /home/build//opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so && \
+    ls
 
 #Give all user exec permission
 RUN chmod -R 775 /opt/intel/ ;
@@ -552,6 +549,7 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         echo "PAHO install disabled"; \
     fi
 
+
 # Build librdkafka
 ARG LIBRDKAFKA_VER=1.0.0
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
@@ -600,6 +598,7 @@ RUN mkdir -p /opt/intel/dl_streamer/python && \
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 
+
 # Build gstreamer python
 ARG GST_VER=1.16.0
 ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
@@ -609,6 +608,8 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
     make -j $(nproc) && \
     make install && \
     make install DESTDIR=/home/build
+
+
 
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 
