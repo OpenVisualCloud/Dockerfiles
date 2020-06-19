@@ -19,9 +19,6 @@ if [[ $IMAGE == *analytics* ]] || [[ $IMAGE == *nginx* ]] || [[ $IMAGE == *owt* 
     HOST_NETWORK="--network=host $HOST_NETWORK"
 fi
 
-echo 'hi'
-echo $HOST_NETWORK
-
 if [[ $IMAGE == *vcaca* ]]; then
     docker run $DEVICE_DIR --rm $HOST_NETWORK --user root --privileged -v /var/tmp:/var/tmp -v "${TEST}:/mnt:ro" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/-e /') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG \([^=]*\)=.*/-e \1/') $DOCKER_IT "${DOCKER_PREFIX}/${IMAGE}" "${@:-/bin/bash}"
 else
