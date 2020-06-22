@@ -518,6 +518,7 @@ ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
+
 RUN cd dldt/model-optimizer && \
 if [ "x$PYTHON_TRUSTED_HOST" = "x" ] ; \
 then pip3 install -U pip && \
