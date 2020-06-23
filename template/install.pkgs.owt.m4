@@ -5,9 +5,9 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubun
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
     apt-get update && \
-    apt-get install rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \
+    apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \
     ifelse(index(DOCKER_IMAGE,xeon-),-1,
-        apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
+        apt-get install --no-install-recommends intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
     )dnl
     echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "service mongodb start &" >> /home/launch.sh && \
@@ -21,7 +21,7 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     echo "cd /home/owt" >> /home/launch.sh && \
     ifelse(index(DOCKER_IMAGE,xeon-),-1,
         echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
-    )
+    )dnl
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
@@ -46,7 +46,7 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     echo "cd /home/owt" >> /home/launch.sh && \
     ifelse(index(DOCKER_IMAGE,xeon-),-1,
         echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
-    )
+    )dnl
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \

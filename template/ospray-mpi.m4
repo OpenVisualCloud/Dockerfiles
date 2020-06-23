@@ -1,10 +1,14 @@
 #build ospray
 
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,dnl
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libglfw-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev libmpich-dev mpich openssh-server openssh-client
+RUN apt-get update && apt-get install -y -q --no-install-recommends libglfw-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev libmpich-dev mpich openssh-server openssh-client	&& \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,dnl
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libglfw3-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev libmpich-dev mpich openssh-server openssh-client
+RUN apt-get update && apt-get install -y -q --no-install-recommends libglfw3-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev libmpich-dev mpich openssh-server openssh-client	&& \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q glfw-devel mesa-dri-drivers mpich-devel openssh-server openssh-clients
@@ -22,6 +26,7 @@ RUN git clone ${OSPRAY_REPO}; \
     make -j 8
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ospray/build
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p /var/run/sshd; \
     sed -i 's/^#Port/Port/g' /etc/ssh/sshd_config; \
     sed -i 's/^Port 22/Port 2222/g' /etc/ssh/sshd_config; \

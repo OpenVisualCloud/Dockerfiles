@@ -23,7 +23,9 @@ ARG WEBRTC_COMMIT="c2aa290cfe4f63d5bfbb6540122a5e6bf2783187"
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 ARG FDKAAC_LIB=/home/build/usr/local/lib/x86_64-linux-gnu
-RUN apt-get update && apt-get install -y -q --no-install-recommends python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev
+RUN apt-get update && apt-get install -y -q --no-install-recommends python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev	&& \
+    apt-get clean 	&& \
+    rm -rf /var/lib/apt/lists/*
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 ARG FDKAAC_LIB=/home/build/usr/local/lib64
@@ -32,6 +34,8 @@ RUN yum install -y -q patch centos-release-scl devtoolset-7
 )dnl
 ENV PYTHONIOENCODING=UTF-8
 # Install 360scvp
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# hadolint ignore=SC1091
 RUN cd /home && \
     wget -O - ${SCVP_REPO} | tar xz && mv Immersive-Video-Sample-${SCVP_VER} Immersive-Video-Sample && \
     cd Immersive-Video-Sample/src/360SCVP && \
@@ -48,6 +52,8 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,`dnl
 # 1. Clone OWT server source code
 # 2. Clone licode source code and patch
 # 3. Clone webrtc source code and patch
+
+# hadolint ignore=SC1091
 RUN git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
 ifelse(index(DOCKER_IMAGE,centos),-1,,`dnl
     source /opt/rh/devtoolset-7/enable && \

@@ -9,7 +9,7 @@ RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19
 RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19.01.12103/intel-opencl_19.01.12103_amd64.deb
 
 RUN cd neo && \
-    dpkg -i *.deb && \
+    dpkg -i ./*.deb && \
     dpkg-deb -x intel-gmmlib_18.4.0.348_amd64.deb /home/build/ && \
     dpkg-deb -x intel-igc-core_18.50.1270_amd64.deb /home/build/ && \
     dpkg-deb -x intel-igc-opencl_18.50.1270_amd64.deb /home/build/ && \
@@ -27,7 +27,9 @@ RUN yum install -y ocl-icd libgomp
 #clinfo needs to be installed after build directory is copied over
 define(`INSTALL_OPENCL',dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
-RUN apt-get update && apt-get install -y clinfo
+RUN apt-get update && apt-get install -y --no-install-recommends clinfo && \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
 RUN yum install -y -q dnf dnf-plugins-core yum-plugin-copr

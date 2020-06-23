@@ -2,7 +2,9 @@
 ARG GST_PLUGIN_BASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${GST_VER}.tar.xz
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
-RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv-dev libvisual-0.4-dev libtheora-dev libglib2.0-dev libasound2-dev libcdparanoia-dev libgl1-mesa-dev libpango1.0-dev
+RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libxv-dev libvisual-0.4-dev libtheora-dev libglib2.0-dev libasound2-dev libcdparanoia-dev libgl1-mesa-dev libpango1.0-dev	&& \
+     apt-get clean	&& \
+     rm -rf /var/lib/apt/lists/*
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
 RUN  yum install -y -q libXv-devel libvisual-devel libtheora-devel glib2-devel alsa-lib-devel cdparanoia-devel mesa-libGL-devel pango-devel
@@ -11,10 +13,12 @@ RUN  yum install -y -q libXv-devel libvisual-devel libtheora-devel glib2-devel a
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,dnl
 RUN  yum install -y -q libXrandr-devel
 ,dnl
-RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev libegl1-mesa-dev autopoint bison flex libudev-dev
+RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-dev libegl1-mesa-dev autopoint bison flex libudev-dev	&& \
+     apt-get clean	&& \
+     rm -rf /var/lib/apt/lists/*
 )dnl
 
-
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
      export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
@@ -26,7 +30,7 @@ RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
         --enable-defn(`BUILD_LINKAGE') \
         --disable-examples ifelse(index(DOCKER_IMAGE,-dev),-1,--disable-debug) \
         --disable-gtk-doc && \
-     make -j $(nproc) && \
+     make -j "$(nproc)" && \
      make install DESTDIR=/home/build && \
      make install
 

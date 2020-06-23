@@ -2,7 +2,9 @@
 
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends unzip
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends unzip	&& \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q unzip

@@ -7,6 +7,7 @@ RUN yum install -y -q patch centos-release-scl && \
     yum install -y -q devtoolset-7
 
 )dnl
+# hadolint ignore=SC1091
 RUN git clone ${SVT_HEVC_REPO} && \
     cd SVT-HEVC/Build/linux && \
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \

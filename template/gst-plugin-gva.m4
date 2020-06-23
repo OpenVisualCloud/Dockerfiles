@@ -14,7 +14,7 @@ ARG PAHO_INSTALL=true
 include(paho.mqtt.c.m4)
 
 ifelse(RDKAFKA_INSTALLED,true,,dnl
-include(librdkafka.m4)
+`include(librdkafka.m4)'
 )
 
 #Install va gstreamer plugins from source
@@ -30,8 +30,8 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
     export CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" && \
     cmake \
-    -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
-    -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
     -DCMAKE_BUILD_TYPE=Release \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=ifelse(RDKAFKA_INSTALLED,true,1,0) \

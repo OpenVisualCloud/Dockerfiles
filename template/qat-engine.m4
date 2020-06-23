@@ -2,6 +2,7 @@
 ARG QAT_ENGINE_VER=v0.5.42
 ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/${QAT_ENGINE_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
     ./autogen.sh && \

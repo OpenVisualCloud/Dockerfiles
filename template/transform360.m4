@@ -3,11 +3,15 @@ ARG TRANSFORM360_VER=280ccf7
 ARG TRANSFORM360_REPO=https://github.com/facebook/transform360
 
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libopencv-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libopencv-dev	&& \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
-    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libopencv-dev
+    DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libopencv-dev	&& \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
 RUN yum install -y -q opencv-devel

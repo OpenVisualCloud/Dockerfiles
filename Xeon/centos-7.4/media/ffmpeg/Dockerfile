@@ -8,6 +8,7 @@ RUN yum install -y -q bzip2 make autoconf libtool git wget ca-certificates pkg-c
 # Install cmake
 ARG CMAKE_VER=3.13.1
 ARG CMAKE_REPO=https://cmake.org/files
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
     cd cmake-${CMAKE_VER} && \
     ./bootstrap --prefix="/usr/local" --system-curl && \
@@ -17,6 +18,7 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
 # Install automake, use version 1.14 on CentOS
 ARG AUTOMAKE_VER=1.14
 ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
     cd automake-${AUTOMAKE_VER} && \
     ./configure --prefix=/usr --libdir=/usr/local/lib64 --disable-doc && \ 
@@ -37,6 +39,7 @@ RUN  wget ${NASM_REPO} && \
 # Build YASM
 ARG YASM_VER=1.3.0
 ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${YASM_REPO} | tar xz && \
      cd yasm-${YASM_VER} && \
      sed -i "s/) ytasm.*/)/" Makefile.in && \
@@ -48,6 +51,7 @@ RUN  wget -O - ${YASM_REPO} | tar xz && \
 ARG OGG_VER=1.3.3
 ARG OGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-${OGG_VER}.tar.xz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OGG_REPO} | tar xJ && \
     cd libogg-${OGG_VER} && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
@@ -59,6 +63,7 @@ RUN wget -O - ${OGG_REPO} | tar xJ && \
 ARG VORBIS_VER=1.3.6
 ARG VORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VER}.tar.xz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${VORBIS_REPO} | tar xJ && \
     cd libvorbis-${VORBIS_VER} && \
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64 && \
@@ -71,6 +76,7 @@ RUN wget -O - ${VORBIS_REPO} | tar xJ && \
 ARG MP3LAME_VER=3.100
 ARG MP3LAME_REPO=https://sourceforge.net/projects/lame/files/lame/${MP3LAME_VER}/lame-${MP3LAME_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${MP3LAME_REPO} | tar xz && \
     cd lame-${MP3LAME_VER} && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared --enable-nasm && \
@@ -82,6 +88,7 @@ RUN wget -O - ${MP3LAME_REPO} | tar xz && \
 ARG FDK_AAC_VER=v0.1.6
 ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
     cd fdk-aac && \
     autoreconf -fiv && \
@@ -95,6 +102,7 @@ RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac &&
 ARG OPUS_VER=1.2.1
 ARG OPUS_REPO=https://archive.mozilla.org/pub/opus/opus-${OPUS_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OPUS_REPO} | tar xz && \
     cd opus-${OPUS_VER} && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
@@ -134,6 +142,7 @@ ARG X265_REPO=https://github.com/videolan/x265/archive/${X265_VER}.tar.gz
 
 RUN  yum install -y -q numactl-devel libpciaccess-devel
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      cd x265/build/linux && \
      cmake -DBUILD_SHARED_LIBS=ON -DENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib64 ../../source && \
@@ -174,6 +183,7 @@ ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 RUN yum install -y -q patch centos-release-scl && \
     yum install -y -q devtoolset-7
 
+# hadolint ignore=SC1091
 RUN git clone ${SVT_HEVC_REPO} && \
     cd SVT-HEVC/Build/linux && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -193,8 +203,11 @@ ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
 ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
 ARG SVT_AV1_PATCHES_PATH=/home/CDN-${SVT_AV1_PATCHES_RELEASE_VER}
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${SVT_AV1_PATCHES_RELEASE_URL} | tar xz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# hadolint ignore=SC1091
 RUN git clone ${SVT_AV1_REPO} && \
     cd SVT-AV1 && \
     git checkout ${SVT_AV1_VER} && \
@@ -215,6 +228,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 ARG SVT_VP9_VER=v0.2.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
+# hadolint ignore=SC1091
 RUN git clone ${SVT_VP9_REPO} && \
     cd SVT-VP9/Build/linux && \
     git checkout ${SVT_VP9_VER} && \
@@ -235,11 +249,13 @@ ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_PATCHES_RELEASE_VER=0.2
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
 
 RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg && \
     find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \

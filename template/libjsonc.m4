@@ -2,6 +2,7 @@
 ARG LIBJSONC_VER=0.13.1-20180305
 ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-${LIBJSONC_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${LIBJSONC_REPO} | tar xz && \
     cd json-c-json-c-${LIBJSONC_VER} && \
     sh autogen.sh && \

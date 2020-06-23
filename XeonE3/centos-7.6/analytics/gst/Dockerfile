@@ -8,6 +8,7 @@ RUN yum install -y -q bzip2 make autoconf libtool git wget ca-certificates pkg-c
 # Install cmake
 ARG CMAKE_VER=3.13.1
 ARG CMAKE_REPO=https://cmake.org/files
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
     cd cmake-${CMAKE_VER} && \
     ./bootstrap --prefix="/usr/local" --system-curl && \
@@ -17,6 +18,7 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
 # Install automake, use version 1.14 on CentOS
 ARG AUTOMAKE_VER=1.14
 ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
     cd automake-${AUTOMAKE_VER} && \
     ./configure --prefix=/usr --libdir=/usr/local/lib64 --disable-doc && \ 
@@ -37,6 +39,7 @@ RUN  wget ${NASM_REPO} && \
 # Build YASM
 ARG YASM_VER=1.3.0
 ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${YASM_REPO} | tar xz && \
      cd yasm-${YASM_VER} && \
      sed -i "s/) ytasm.*/)/" Makefile.in && \
@@ -48,6 +51,7 @@ RUN  wget -O - ${YASM_REPO} | tar xz && \
 ARG OGG_VER=1.3.3
 ARG OGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-${OGG_VER}.tar.xz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OGG_REPO} | tar xJ && \
     cd libogg-${OGG_VER} && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
@@ -59,6 +63,7 @@ RUN wget -O - ${OGG_REPO} | tar xJ && \
 ARG VORBIS_VER=1.3.6
 ARG VORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VER}.tar.xz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${VORBIS_REPO} | tar xJ && \
     cd libvorbis-${VORBIS_VER} && \
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64 && \
@@ -71,6 +76,7 @@ RUN wget -O - ${VORBIS_REPO} | tar xJ && \
 ARG MP3LAME_VER=3.100
 ARG MP3LAME_REPO=https://sourceforge.net/projects/lame/files/lame/${MP3LAME_VER}/lame-${MP3LAME_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${MP3LAME_REPO} | tar xz && \
     cd lame-${MP3LAME_VER} && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared --enable-nasm && \
@@ -82,6 +88,7 @@ RUN wget -O - ${MP3LAME_REPO} | tar xz && \
 ARG FDK_AAC_VER=v0.1.6
 ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
     cd fdk-aac && \
     autoreconf -fiv && \
@@ -95,6 +102,7 @@ RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac &&
 ARG OPUS_VER=1.2.1
 ARG OPUS_REPO=https://archive.mozilla.org/pub/opus/opus-${OPUS_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OPUS_REPO} | tar xz && \
     cd opus-${OPUS_VER} && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
@@ -147,6 +155,7 @@ ARG X265_REPO=https://github.com/videolan/x265/archive/${X265_VER}.tar.gz
 
 RUN  yum install -y -q numactl-devel libpciaccess-devel
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      cd x265/build/linux && \
      cmake -DBUILD_SHARED_LIBS=ON -DENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib64 ../../source && \
@@ -187,6 +196,7 @@ ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 RUN yum install -y -q patch centos-release-scl && \
     yum install -y -q devtoolset-7
 
+# hadolint ignore=SC1091
 RUN git clone ${SVT_HEVC_REPO} && \
     cd SVT-HEVC/Build/linux && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -206,8 +216,11 @@ ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
 ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
 ARG SVT_AV1_PATCHES_PATH=/home/CDN-${SVT_AV1_PATCHES_RELEASE_VER}
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${SVT_AV1_PATCHES_RELEASE_URL} | tar xz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# hadolint ignore=SC1091
 RUN git clone ${SVT_AV1_REPO} && \
     cd SVT-AV1 && \
     git checkout ${SVT_AV1_VER} && \
@@ -228,6 +241,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 ARG SVT_VP9_VER=v0.2.0
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
+# hadolint ignore=SC1091
 RUN git clone ${SVT_VP9_REPO} && \
     cd SVT-VP9/Build/linux && \
     git checkout ${SVT_VP9_VER} && \
@@ -246,6 +260,7 @@ ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
 
 RUN yum install -y -q libX11-devel mesa-libGL-devel which libdrm-devel
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${LIBVA_REPO} | tar xz && \
     cd libva-${LIBVA_VER} && \
     ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
@@ -258,6 +273,7 @@ RUN wget -O - ${LIBVA_REPO} | tar xz && \
 ARG LIBVA_UTILS_VER=2.4.0
 ARG LIBVA_UTILS_REPO=https://github.com/intel/libva-utils/archive/${LIBVA_UTILS_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${LIBVA_UTILS_REPO} | tar xz; \
     cd libva-utils-${LIBVA_UTILS_VER}; \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig"; \
@@ -271,6 +287,7 @@ RUN wget -O - ${LIBVA_UTILS_REPO} | tar xz; \
 ARG GMMLIB_VER=intel-gmmlib-18.3.0
 ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/${GMMLIB_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
 
 
@@ -280,6 +297,7 @@ ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVE
 
 RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-devel
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver && \
     mkdir -p media-driver/build && \
     cd media-driver/build && \
@@ -295,6 +313,7 @@ RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VE
 ARG MSDK_VER=MSS-KBL-2019-R1-HF1
 ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/${MSDK_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
     mkdir -p MediaSDK/build && \
     cd MediaSDK/build && \
@@ -324,6 +343,8 @@ ARG GST_VER=1.16.0
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
 RUN  yum install -y -q glib2-devel-2.56.1 gettext-devel gobject-introspection gobject-introspection-devel python-gobject-base
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_REPO} | tar xJ && \
      cd gstreamer-${GST_VER} && \
      ./autogen.sh \
@@ -336,7 +357,7 @@ RUN  wget -O - ${GST_REPO} | tar xJ && \
         --disable-debug \
         --disable-benchmarks \
         --disable-gtk-doc && \
-     make -j $(nproc) && \
+     make -j "$(nproc)" && \
      make install DESTDIR=/home/build && \
      make install;
 
@@ -344,6 +365,7 @@ RUN  wget -O - ${GST_REPO} | tar xJ && \
 ARG GST_ORC_VER=0.4.28
 ARG GST_ORC_REPO=https://gstreamer.freedesktop.org/src/orc/orc-${GST_ORC_VER}.tar.xz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_ORC_REPO} | tar xJ && \
      cd orc-${GST_ORC_VER} && \
      ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 \
@@ -351,7 +373,7 @@ RUN  wget -O - ${GST_ORC_REPO} | tar xJ && \
                 --enable-shared \
                 --disable-examples --disable-debug \
                 --disable-gtk-doc && \
-     make -j $(nproc) && \
+     make -j "$(nproc)" && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -362,7 +384,7 @@ RUN  yum install -y -q libXv-devel libvisual-devel libtheora-devel glib2-devel a
 
 RUN  yum install -y -q libXrandr-devel
 
-
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
      export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -374,7 +396,7 @@ RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
         --enable-shared \
         --disable-examples --disable-debug \
         --disable-gtk-doc && \
-     make -j $(nproc) && \
+     make -j "$(nproc)" && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -384,6 +406,7 @@ ARG GST_PLUGIN_GOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/
 
 RUN  yum install -y -q libsoup-devel libjpeg-devel
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
      cd gst-plugins-good-${GST_VER} && \
      export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -394,7 +417,7 @@ RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
         --enable-shared \
         --disable-examples --disable-debug \
         --disable-gtk-doc && \
-     make -j $(nproc) && \
+     make -j "$(nproc)" && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -403,10 +426,12 @@ RUN  wget -O - ${GST_PLUGIN_GOOD_REPO} | tar xJ && \
 ARG GST_PLUGIN_BAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${GST_VER}.tar.xz
 ARG GST_PATCHES_RELEASE_VER=v0.1
 ARG GST_PATCHES_RELEASE_URL=https://github.com/VCDP/gstreamer-patch/archive/${GST_PATCHES_RELEASE_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${GST_PATCHES_RELEASE_URL} | tar xz
 
 RUN  yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && yum install -y -q openssl-devel librtmp-devel && yum remove -y rpmfusion-free-release
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
      cd gst-plugins-bad-${GST_VER} && \
      export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -420,13 +445,14 @@ RUN  wget -O - ${GST_PLUGIN_BAD_REPO} | tar xJ && \
         --disable-gtk-doc \ 
         --disable-shm \
         --disable-mxf && \
-     make -j $(nproc) && \
+     make -j "$(nproc)" && \
      make install DESTDIR=/home/build && \
      make install
 
 # Build the gstremaer plugin ugly set
 ARG GST_PLUGIN_UGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-${GST_VER}.tar.xz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ; \
      cd gst-plugins-ugly-${GST_VER}; \
      export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig"; \
@@ -437,7 +463,7 @@ RUN  wget -O - ${GST_PLUGIN_UGLY_REPO} | tar xJ; \
         --enable-shared \
         --disable-examples --disable-debug \
         --disable-gtk-doc && \
-     make -j $(nproc) && \
+     make -j "$(nproc)" && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -446,6 +472,7 @@ ARG GST_PLUGIN_LIBAV_REPO=https://gstreamer.freedesktop.org/src/gst-libav/gst-li
 
 RUN yum install -y -q zlib-devel openssl-devel
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
     cd gst-libav-${GST_VER} && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -455,7 +482,7 @@ RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
         --enable-shared \
         --enable-gpl \
         --disable-gtk-doc && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install DESTDIR=/home/build && \
     make install
 
@@ -492,6 +519,7 @@ ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/opencv/gst-video-an
 
 RUN  yum install -y -q libXrandr-devel
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      cd gstreamer-vaapi-${GST_VER} && \
      git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
@@ -507,7 +535,7 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
         --enable-shared \
         --disable-examples \
         --disable-gtk-doc --disable-debug && \
-     make -j $(nproc) && \
+     make -j "$(nproc)" && \
      make install DESTDIR=/home/build && \
      make install
 
@@ -517,13 +545,13 @@ ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
 RUN yum install -y -q eigen3-devel
 
-RUN wget ${OPENCV_REPO} && \
+RUN wget "${OPENCV_REPO}" && \
     tar -zxvf ${OPENCV_VER}.tar.gz && \
     cd opencv-${OPENCV_VER} && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_GENERATE_PKGCONFIG=ON -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF .. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install DESTDIR=/home/build && \
     make install
 
@@ -540,7 +568,7 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
     mkdir build && \
     cd build && \
     cmake  -DCMAKE_INSTALL_PREFIX=/opt/intel/dldt -DLIB_INSTALL_PATH=/opt/intel/dldt -DENABLE_MKL_DNN=ON -DENABLE_CLDNN=ON -DENABLE_SAMPLES=OFF -DENABLE_OPENCV=OFF -DENABLE_TESTS=OFF -DENABLE_GNA=OFF -DENABLE_PROFILING_ITT=OFF -DENABLE_SAMPLES_CORE=OFF -DENABLE_SEGMENTATION_TESTS=OFF -DENABLE_OBJECT_DETECTION_TESTS=OFF -DBUILD_TESTS=OFF -DNGRAPH_UNIT_TEST_ENABLE=OFF -DNGRAPH_TEST_UTIL_ENABLE=OFF .. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     rm -rf ../bin/intel64/Release/lib/libgtest* && \
     rm -rf ../bin/intel64/Release/lib/libgmock* && \
     rm -rf ../bin/intel64/Release/lib/libmock* && \
@@ -606,6 +634,7 @@ RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel python3 python36-
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
 ARG PAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         wget -O - ${PAHO_REPO} | tar -xz && \
         cd paho.mqtt.c-${PAHO_VER} && \
@@ -648,6 +677,7 @@ ARG LIBRDKAFKA_VER=1.0.0
 ARG FILE_NAME=v${LIBRDKAFKA_VER}
 ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
     cd librdkafka-${LIBRDKAFKA_VER} && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 && \
@@ -670,8 +700,8 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
     export CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" && \
     cmake \
-    -DVERSION_PATCH=$(echo "$(git rev-list --count --first-parent HEAD)") \
-    -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
     -DCMAKE_BUILD_TYPE=Release \
     -DENABLE_PAHO_INSTALLATION=1 \
     -DENABLE_RDKAFKA_INSTALLATION=1 \
@@ -695,10 +725,11 @@ ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 # Build gstreamer python
 ARG GST_VER=1.16.0
 ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
     cd gst-python-${GST_VER} && \
     ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 --with-pygi-overrides-dir=/usr/lib64/python3.6/site-packages/gi/overrides --disable-dependency-tracking --disable-silent-rules --with-libpython-dir="/usr/lib64/" PYTHON=/usr/bin/python3 && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install && \
     make install DESTDIR=/home/build
 

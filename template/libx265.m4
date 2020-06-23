@@ -10,6 +10,7 @@ RUN  yum install -y -q numactl-devel libpciaccess-devel
 )dnl
 
 define(`FFMPEG_CONFIG_X265',--enable-libx265 )dnl
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      cd x265/build/linux && \
      cmake -DBUILD_SHARED_LIBS=ifelse(BUILD_LINKAGE,shared,ON,OFF) -DENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) ../../source && \

@@ -8,6 +8,7 @@ RUN yum install -y -q bzip2 make autoconf libtool git wget ca-certificates pkg-c
 # Install cmake
 ARG CMAKE_VER=3.13.1
 ARG CMAKE_REPO=https://cmake.org/files
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
     cd cmake-${CMAKE_VER} && \
     ./bootstrap --prefix="/usr/local" --system-curl && \
@@ -17,6 +18,7 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
 # Install automake, use version 1.14 on CentOS
 ARG AUTOMAKE_VER=1.14
 ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
     cd automake-${AUTOMAKE_VER} && \
     ./configure --prefix=/usr --libdir=/usr/local/lib64 --disable-doc && \ 
@@ -31,8 +33,10 @@ ARG NGINX_HTTP_FLV_REPO=https://github.com/winshining/nginx-http-flv-module.git
 ARG NGINX_HTTP_FLV_PATCHES_RELEASE_VER=0.2
 ARG NGINX_HTTP_FLV_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${NGINX_HTTP_FLV_PATCHES_RELEASE_VER}.tar.gz
 ARG NGINX_HTTP_FLV_PATCHES_PATH=/home/CDN-${NGINX_HTTP_FLV_PATCHES_RELEASE_VER}
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${NGINX_HTTP_FLV_PATCHES_RELEASE_URL} | tar xz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN git clone ${NGINX_HTTP_FLV_REPO} && \
     cd nginx-http-flv-module && \
     git checkout ${NGINX_HTTP_FLV_VER} && \
@@ -44,6 +48,7 @@ RUN git clone ${NGINX_HTTP_FLV_REPO} && \
 ARG NGINX_UPLOAD_VER=2.3.0
 ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/${NGINX_UPLOAD_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
 # load qat
@@ -55,6 +60,7 @@ RUN mkdir -p /opt/intel /home/build/opt/intel && \
 ARG QATZIP_VER=v1.0.1
 ARG QATZIP_REPO=https://github.com/intel/QATzip/archive/${QATZIP_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${QATZIP_REPO} | tar xz && \
     cd QATzip* && \
     /bin/bash ./configure LDFLAGS="-Wl,-rpath=/opt/intel/QAT/build" --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/QATzip && \
@@ -67,9 +73,10 @@ RUN wget -O - ${QATZIP_REPO} | tar xz && \
 ARG QAT_OPENSSL_VER=OpenSSL_1_1_1c
 ARG QAT_OPENSSL_REPO=https://github.com/openssl/openssl/archive/${QAT_OPENSSL_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${QAT_OPENSSL_REPO} | tar xz && mv openssl-${QAT_OPENSSL_VER} openssl && \
     cd openssl && \
-    ./config --prefix=/opt/openssl --openssldir=/opt/openssl -Wl,-rpath,\${LIBRPATH} && \
+    ./config --prefix=/opt/openssl --openssldir=/opt/openssl -Wl,-rpath,"\${LIBRPATH}" && \
     make -j8 && \
     make install && \
     echo
@@ -78,6 +85,7 @@ RUN wget -O - ${QAT_OPENSSL_REPO} | tar xz && mv openssl-${QAT_OPENSSL_VER} open
 ARG QAT_ENGINE_VER=v0.5.42
 ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/${QAT_ENGINE_VER}.tar.gz
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
     ./autogen.sh && \
@@ -94,6 +102,7 @@ ARG NGINX_QAT_REPO=https://github.com/intel/asynch_mode_nginx/archive/${NGINX_QA
 
 RUN yum install -y -q pcre-devel zlib-devel libxslt-devel
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${NGINX_QAT_REPO} | tar xz && cd asynch_mode_nginx* && \
     ./configure --with-ld-opt="-Wl,-rpath=/opt/openssl/lib,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib64,-rpath=/opt/intel/QAT/build -L/opt/openssl/lib -L/opt/intel/QATzip/lib64 -lqatzip -lz" --with-cc-opt="-DNGX_SECURE_MEM -I/opt/openssl/include -I/opt/intel/QATzip/include -Wno-error=deprecated-declarations" --add-dynamic-module=modules/nginx_qatzip_module --add-dynamic-module=modules/nginx_qat_module --prefix=/var/www --sbin-path=/usr/local/sbin/nginx --modules-path=/var/www/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/www/log/error.log --pid-path=/var/www/nginx.pid --lock-path=/var/www/nginx.lock --http-log-path=/var/www/log/access.log --http-client-body-temp-path=/var/www/tmp/client_body --http-proxy-temp-path=/var/www/tmp/proxy --http-fastcgi-temp-path=/var/www/tmp/fastcgi --http-uwsgi-temp-path=/var/www/tmp/uwsgi --http-scgi-temp-path=/var/www/tmp/scgi --user=nobody --group=nobody --with-select_module --with-poll_module --with-threads --with-file-aio --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_auth_request_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=../nginx-http-flv-module --add-module=../nginx-upload-module-${NGINX_UPLOAD_VER}  && \
     make -j8 && \
@@ -115,8 +124,9 @@ RUN mkdir -p /home/build/var/www/tmp/client_body && \
 
 
 # Generate a self-certificate for testing purpose
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p /home/build/etc/nginx && \
-    printf "US\nOR\nPortland\nOregon\nData Center Group\nIntel Corporation\n$(hostname)\nnobody@intel.com\n" | /opt/openssl/bin/openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout /home/build/etc/nginx/cert.key -out /home/build/etc/nginx/cert.crt && \
+    printf "US\nOR\nPortland\nOregon\nData Center Group\nIntel Corporation\n%s\nnobody@intel.com\n" "$(hostname)" | /opt/openssl/bin/openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout /home/build/etc/nginx/cert.key -out /home/build/etc/nginx/cert.crt && \
     chmod 640 /home/build/etc/nginx/cert.key && \
     chmod 644 /home/build/etc/nginx/cert.crt
 

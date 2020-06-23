@@ -1,7 +1,9 @@
 # Install required packges
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,dnl
 RUN yum install -y ninja-build python36-setuptools,dnl
-RUN apt-get update -y && apt-get install -y python3-pip ninja-build;dnl
+RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools&& \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*;
 )
 
 # Build Meson
