@@ -111,14 +111,10 @@ RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
 
 ifelse(index(DOCKER_IMAGE,-hddldaemon),-1,
 #Copy over directories to clean image
-RUN mkdir -p /home/build/usr/local/lib && \
-    mkdir -p /home/build/opt/intel && \
-    mkdir -p /home/build/usr/lib && \
-    cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
-    ifelse(index(DOCKER_IMAGE,-dev),-1,cp -rH /root/openvino /home/build/opt/intel/,cp -rH /opt/intel/openvino /home/build/opt/intel/) && \
-    ifelse(index(DOCKER_IMAGE,-dev),-1,cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && )\
-    ifelse(index(DOCKER_IMAGE,-dev),-1,cp defn(`IE_C_API_PATH') /home/build/.defn(`IE_C_API_PATH') && )\
-    cp -r /usr/lib/* /home/build/usr/lib
+RUN mkdir -p /home/build/opt/intel && \
+    ifelse(index(DOCKER_IMAGE,-dev),-1,cp -rH /root/openvino /home/build/opt/intel/ && \
+    cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && \
+    cp defn(`IE_C_API_PATH') /home/build/defn(`IE_C_API_PATH'),cp -rH /opt/intel/openvino /home/build/opt/intel/)
 ,)dnl
 
 #Give all user exec permission

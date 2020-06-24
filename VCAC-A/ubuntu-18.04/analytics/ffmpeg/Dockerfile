@@ -375,14 +375,10 @@ RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
     tar zvxf openvino_deploy_package.tar.gz -C openvino
 
 #Copy over directories to clean image
-RUN mkdir -p /home/build/usr/local/lib && \
-    mkdir -p /home/build/opt/intel && \
-    mkdir -p /home/build/usr/lib && \
-    cp -r /usr/local/lib/* /home/build/usr/local/lib/ && \
+RUN mkdir -p /home/build/opt/intel && \
     cp -rH /root/openvino /home/build/opt/intel/ && \
     cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && \
-    cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so /home/build/./opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so && \
-    cp -r /usr/lib/* /home/build/usr/lib
+    cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so /home/build//opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so
 
 #Give all user exec permission
 RUN chmod -R 775 /opt/intel/ ;
