@@ -513,10 +513,7 @@ RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/opt/intel && \
-    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
-    \
-    \
-    ls
+    cp -rH /opt/intel/openvino /home/build/opt/intel/
 
 #Give all user exec permission
 RUN chmod -R 775 /opt/intel/ ;
