@@ -387,7 +387,7 @@ RUN cd Python-3.6.3							&& \
 
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    python3.6 ./deployment_manager.py --targets hddl vpu cpu            && \
+    python3.6 ./deployment_manager.py --targets hddl 		        && \
     cd /root/ && ls -lh && mkdir -p openvino                            && \
     tar zvxf openvino_deploy_package.tar.gz -C openvino
 

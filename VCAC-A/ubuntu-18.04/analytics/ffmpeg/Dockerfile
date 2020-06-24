@@ -370,7 +370,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph
 
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    ./deployment_manager.py --targets hddl vpu cpu                      && \
+    ./deployment_manager.py --targets hddl 	                        && \
     cd /root/ && ls -lh && mkdir -p openvino                            && \
     tar zvxf openvino_deploy_package.tar.gz -C openvino
 
