@@ -208,7 +208,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.3
+ARG SVT_AV1_VER=v0.8.4
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
