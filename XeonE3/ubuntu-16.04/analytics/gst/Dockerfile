@@ -592,6 +592,8 @@ RUN wget "${OPENCV_REPO}" && \
     make install
 
 
+ENV CPATH=/usr/local/include/opencv4/:$CPATH
+
 # Build DLDT-Inference Engine
 ARG DLDT_VER=2020.2
 ARG DLDT_REPO=https://github.com/opencv/dldt.git

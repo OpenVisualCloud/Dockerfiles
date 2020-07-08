@@ -29,3 +29,6 @@ RUN cd opencv-${OPENCV_VER}/build && \
     make -j "$(nproc)" && \
     cp -f ../../lib/libopencv_videoio.so.${OPENCV_VER} /home/build/usr/local/lib
 ')dnl
+
+define(`FFMPEG_CONFIG_OPENCV',--enable-libopencv )dnl
+ENV CPATH=/usr/local/include/opencv4/:$CPATH
