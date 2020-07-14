@@ -224,7 +224,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN git clone ${SVT_AV1_REPO} && \
     cd SVT-AV1 && \
     git checkout ${SVT_AV1_VER} && \
-    find ${SVT_AV1_PATCHES_PATH}/SVT-AV1_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
     cd Build/linux && \
     mkdir -p ../../Bin/Release && \
     ( source /opt/rh/devtoolset-7/enable && \
@@ -252,6 +251,13 @@ RUN git clone ${SVT_VP9_REPO} && \
     make install DESTDIR=/home/build && \
     make install )
 
+#define(`FFMPEG_SOURCE_SVT_VP9',dnl
+# Patch FFmpeg source for SVT-VP9
+#RUN cd /home/FFmpeg; \
+#    git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9-with-hevc-av1.patch;
+
+#)dnl
+#define(`FFMPEG_CONFIG_SVT_VP9',--enable-libsvtvp9 )dnl
 
 # Fetch gmmlib
 ARG GMMLIB_VER=intel-gmmlib-18.3.0
@@ -825,16 +831,12 @@ RUN cd /home/FFmpeg && \
 
 # Patch FFmpeg source for SVT-AV1
 RUN cd /home/FFmpeg; \
-    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
-
-# Patch FFmpeg source for SVT-VP9
-RUN cd /home/FFmpeg; \
-    git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9-with-hevc-av1.patch;
+    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch;
 
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
-    ./configure --prefix="/usr/local" --extra-cflags="-I/opt/intel/dldt/inference-engine/include " --extra-ldflags="-L/opt/intel/dldt/inference-engine/lib/intel64 " --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libsvthevc --enable-libsvtav1 --enable-libsvtvp9 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
+    ./configure --prefix="/usr/local" --extra-cflags="-I/opt/intel/dldt/inference-engine/include " --extra-ldflags="-L/opt/intel/dldt/inference-engine/lib/intel64 " --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libsvthevc --enable-libsvtav1 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c  && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
