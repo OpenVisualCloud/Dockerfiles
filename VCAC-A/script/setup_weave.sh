@@ -35,6 +35,7 @@ Before=kubelet.service
 
 [Service]
 EnvironmentFile=/etc/weave.conf
+Environment="CHECKPOINT_DISABLE=1"
 ExecStartPre=/usr/local/bin/weave reset --force
 ExecStartPre=/usr/local/bin/weave launch --no-restart --name $mac --ipalloc-range=\${IP_RANGE} \$PEERS
 ExecStartPre=/bin/sh -c 'echo KUBELET_EXTRA_ARGS=\\\\\"--node-ip=\$\$(/usr/local/bin/weave expose)\\\\\" > /etc/default/kubelet'
