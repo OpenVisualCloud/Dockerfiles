@@ -1,9 +1,11 @@
 
-FROM centos:7.6.1810 AS build
+FROM ubuntu:18.04 AS build
 WORKDIR /home
 
 # COMMON BUILD TOOLS
-RUN yum install -y -q bzip2 make autoconf libtool git wget ca-certificates pkg-config gcc gcc-c++ bison flex patch epel-release yum-devel libcurl-devel zlib-devel;
+ENV DEBIAN_FRONTEND=noninteractive
+# hadolint ignore=DL3009
+RUN apt-get update && apt-get install -y -q --no-install-recommends build-essential autoconf make git wget pciutils cpio libtool lsb-release ca-certificates pkg-config bison flex libcurl4-gnutls-dev zlib1g-dev
 
 # Install cmake
 ARG CMAKE_VER=3.13.1
@@ -18,12 +20,9 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
 # Install automake, use version 1.14 on CentOS
 ARG AUTOMAKE_VER=1.14
 ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
-    cd automake-${AUTOMAKE_VER} && \
-    ./configure --prefix=/usr --libdir=/usr/local/lib64 --disable-doc && \ 
-    make -j8 && \
-    make install
+    RUN apt-get install -y -q --no-install-recommends automake	&& \
+        apt-get clean	&& \
+        rm -rf /var/lib/apt/lists/*
 
 # Build NASM
 ARG NASM_VER=2.13.03
@@ -32,7 +31,7 @@ RUN  wget ${NASM_REPO} && \
      tar -xaf nasm* && \
      cd nasm-${NASM_VER} && \
      ./autogen.sh && \
-     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
      make -j8 && \
      make install
 
@@ -43,7 +42,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${YASM_REPO} | tar xz && \
      cd yasm-${YASM_VER} && \
      sed -i "s/) ytasm.*/)/" Makefile.in && \
-     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
      make -j8 && \
      make install
 
@@ -53,7 +52,9 @@ ARG NICE_REPO=http://nice.freedesktop.org/releases/libnice-${NICE_VER}.tar.gz
 ARG LIBNICE_PATCH_VER="4.3.1"
 ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v${LIBNICE_PATCH_VER}.tar.gz
 
-RUN yum install -y -q glib2-devel
+RUN apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${NICE_REPO} | tar xz && \
@@ -65,9 +66,9 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-keepalive.patch && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-startcheck.patch && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-closelock.patch && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
     make -s V= && \
-    make install
+    make install DESTDIR="/home/build" && make install
 
 
 # Build open ssl
@@ -81,7 +82,7 @@ RUN wget -O - ${OPENSSL_REPO} | tar xz && \
     ./config no-ssl3 --prefix="/usr/local" -fPIC && \
     make depend && \
     make -s V=0  && \
-    make install
+    make install && ./config no-ssl3 --prefix="/home/build/usr/local" -fPIC && make depend && make -s V=0  && make install
 
 # Build libre
 ARG LIBRE_VER="v0.4.16"
@@ -91,7 +92,9 @@ RUN git clone ${LIBRE_REPO} && \
     cd re && \
     git checkout ${LIBRE_VER} && \
     make SYSROOT_ALT="/usr" RELEASE=1 && \
-    make install SYSROOT_ALT="/usr" RELEASE=1 PREFIX="/usr"
+    make install SYSROOT_ALT="/usr" RELEASE=1 PREFIX="/usr" && \
+    make SYSROOT_ALT="/home/build/usr" RELEASE=1 && \
+    make install SYSROOT_ALT="/home/build/usr" RELEASE=1 PREFIX="/home/build/usr"
 
 # Build usrsctp
 
@@ -100,45 +103,30 @@ ARG USRSCTP_FILE="${USRSCTP_VERSION}.tar.gz"
 ARG USRSCTP_EXTRACT="usrsctp-${USRSCTP_VERSION}"
 ARG USRSCTP_URL="https://github.com/sctplab/usrsctp/archive/${USRSCTP_FILE}"
 
-RUN yum install -y -q which
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${USRSCTP_URL} | tar xz && \
     mv ${USRSCTP_EXTRACT} usrsctp && \
     cd usrsctp && \
     ./bootstrap && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
     make && \
-    make install
+    make install DESTDIR="/home/build" && make install
 
 # Build libsrtp2
 ARG SRTP2_VER="2.1.0"
 ARG SRTP2_REPO=https://codeload.github.com/cisco/libsrtp/tar.gz/v${SRTP2_VER}
 
-RUN yum install -y -q curl
+RUN apt-get update && apt-get install -y -q --no-install-recommends curl
 
 RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     tar xzf libsrtp-${SRTP2_VER}.tar.gz && \
     cd libsrtp-${SRTP2_VER} && \
-    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     export CFLAGS="-fPIC" && \
     ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/usr/local" && \
     make -s V=0  && \
-    make install
-
-# Build fdk-aac
-ARG FDK_AAC_VER=v0.1.6
-ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
-    cd fdk-aac && \
-    autoreconf -fiv && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install
-
+    make install DESTDIR="/home/build" && make install
 
 # Fetch FFmpeg source
 ARG FFMPEG_VER=n4.1
@@ -153,7 +141,9 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
 
-RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libass-dev libfreetype6-dev libsdl2-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev texinfo zlib1g-dev libssl-dev	&& \
+    apt-get clean	&& \
+    rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
@@ -161,8 +151,8 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
 
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
-    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
-    ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac  --enable-nonfree && \
+    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
+    ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype  --enable-nonfree && \
 
     make -j8 && \
     make install && make install DESTDIR="/home/build"
@@ -172,31 +162,29 @@ RUN cd /home/FFmpeg && \
 ARG NODE_VER=v8.15.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
-RUN yum install -y -q ca-certificates wget xz-utils
+RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/local -rf && \
-    rm -rf node-*
+    npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && rm -rf node-*
 
 # Fetch SVT-HEVC
 ARG SVT_HEVC_VER=v1.3.0
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
-RUN yum install -y -q patch centos-release-scl && \
-    yum install -y -q devtoolset-7
-
 # hadolint ignore=SC1091
 RUN git clone ${SVT_HEVC_REPO} && \
     cd SVT-HEVC/Build/linux && \
-    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     git checkout ${SVT_HEVC_VER} && \
     mkdir -p ../../Bin/Release && \
-    ( source /opt/rh/devtoolset-7/enable && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
-    make install )
+    make install 
 
 
 # Build OWT specific modules
@@ -215,24 +203,24 @@ ARG LICODE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/tree/mas
 ARG WEBRTC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-webrtc.git
 ARG SVT_VER=v1.3.0
 ARG SVT_REPO=https://github.com/intel/SVT-HEVC.git
-ARG SERVER_PATH=/home/owt-server
-ARG SOURCE_DIR=/home
+ARG SERVER_PATH=/home/build/home/owt-server
+ARG SOURCE_DIR=/home/build/home
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 ARG OWT_BRANCH=4.3.x
 ARG DOWNLOAD_JSON_LINK="https://github.com/nlohmann/json/releases/download/v3.6.1/json.hpp"
 
-ARG FDKAAC_LIB=/home/build/usr/local/lib64
-RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
+ARG FDKAAC_LIB=/home/build/usr/local/lib/x86_64-linux-gnu
+RUN apt-get update && apt-get install -y -q --no-install-recommends python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev 
 
 # 1. Clone OWT server source code 
 # 2. Clone licode source code and patch
 # 3. Clone webrtc source code and patch
 RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name" && \
-     cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
+    mkdir ${SOURCE_DIR} && cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
 
     # Get json hpp file
-    wget -P /usr/include ${DOWNLOAD_JSON_LINK}  && \
+    wget -P /usr/include ${DOWNLOAD_JSON_LINK} && cp /usr/include/json.hpp /home/build/usr/include/ && \
 
     # Install node modules for owt
     npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
@@ -268,13 +256,11 @@ RUN git config --global user.email "you@example.com" && \
     # Get js client sdk for owt
     cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
-    export LD_LIBRARY_PATH=/usr/local/lib64 && \
-    cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
-    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig && ./scripts/build.js -t mcu -r -c && \
-    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
+    export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu && \
+    cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz 
 
-FROM centos:7.6.1810
-LABEL Description="This is the image for owt development on CentOS 7.6"
+FROM ubuntu:18.04 
+LABEL Description="This is the image for owt development on Ubuntu 18.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
@@ -283,33 +269,24 @@ WORKDIR /home
 ARG NODE_VER=v8.15.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
-RUN yum install -y -q ca-certificates wget xz-utils
+RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/local -rf && \
-    rm -rf node-*
+    npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && rm -rf node-*
 
-COPY --from=build /home/owt-server/dist /home/owt
+
 COPY --from=build /home/build /
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64
-RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
-    yum install rabbitmq-server mongodb mongodb-server -y && \
-    yum remove -y -q epel-release && \
-        echo "#!/bin/bash -e" >> /home/launch.sh && \
-    echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
-    echo "rabbitmq-server &" >> /home/launch.sh && \
-    echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
-    echo "do" >> /home/launch.sh && \
-    echo "  sleep 1" >> /home/launch.sh && \
-    echo "done" >> /home/launch.sh && \
-    echo "echo mongodb connected successfully" >> /home/launch.sh && \
-    echo "cd /home/owt" >> /home/launch.sh && \
-        echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
-    chmod +x /home/launch.sh && \
-    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
-    rm -rf /var/cache/yum/*;
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu
+RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
+    apt-get update && \
+    apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \ 
+    apt-get install --no-install-recommends git pkg-config libglib2.0-dev g++ -y && \        
+    rm -rf /var/lib/apt/lists/*;
 
 

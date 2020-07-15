@@ -52,8 +52,8 @@ ARG NICE_REPO=http://nice.freedesktop.org/releases/libnice-${NICE_VER}.tar.gz
 ARG LIBNICE_PATCH_VER="4.3.1"
 ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v${LIBNICE_PATCH_VER}.tar.gz
 
-RUN apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev	&& \
-    apt-get clean	&& \
+RUN apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -72,8 +72,9 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
 
 
 # Build open ssl
+ARG OPENSSL_BASE_VER="1.0.2"
 ARG OPENSSL_VER="1.0.2t"
-ARG OPENSSL_REPO=http://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz
+ARG OPENSSL_REPO=http://www.openssl.org/source/old/${OPENSSL_BASE_VER}/openssl-${OPENSSL_VER}.tar.gz
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OPENSSL_REPO} | tar xz && \
@@ -158,7 +159,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
-    cd FFmpeg  ;
+    cd FFmpeg ;
+
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
@@ -172,13 +174,14 @@ RUN cd /home/FFmpeg && \
 ARG NODE_VER=v8.15.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
-RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils	&& \
-    apt-get clean	&& \
+RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/local -rf && rm -rf node-*
+    cp node-*/* /usr/local -rf && \
+    rm -rf node-*
 
 # Fetch SVT-HEVC
 ARG SVT_HEVC_VER=v1.3.0
@@ -206,26 +209,30 @@ ARG OPENH264_SOURCENAME=v${OPENH264_MAJOR}.${OPENH264_MINOR}.0.tar.gz
 ARG OPENH264_SOURCE=https://github.com/cisco/openh264/archive/v${OPENH264_MAJOR}.${OPENH264_MINOR}.0.tar.gz
 ARG OPENH264_BINARYNAME=libopenh264-${OPENH264_MAJOR}.${OPENH264_MINOR}.0-linux64.${OPENH264_SOVER}.so
 ARG OPENH264_BINARY=https://github.com/cisco/openh264/releases/download/v${OPENH264_MAJOR}.${OPENH264_MINOR}.0/${OPENH264_BINARYNAME}.bz2
-ARG LICODE_COMMIT="4c92ddb42ad8bd2eab4dfb39bbb49f985b454fc9"
-ARG LICODE_CHERRY_PICK="71b38f9bf1d582d5afb1dca8f390c281dbe8ae43"
+ARG LICODE_COMMIT="8b4692c88f1fc24dedad66b4f40b1f3d804b50ca"
 ARG LICODE_REPO=https://github.com/lynckia/licode.git
 ARG LICODE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/tree/master/scripts/patches/licode/
 ARG WEBRTC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-webrtc.git
 ARG SVT_VER=v1.3.0
 ARG SVT_REPO=https://github.com/intel/SVT-HEVC.git
 ARG SERVER_PATH=/home/owt-server
+ARG SOURCE_DIR=/home
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
-ARG OWT_BRANCH=4.2.x
+ARG OWT_BRANCH=4.3.x
+ARG DOWNLOAD_JSON_LINK="https://github.com/nlohmann/json/releases/download/v3.6.1/json.hpp"
 
 ARG FDKAAC_LIB=/home/build/usr/local/lib/x86_64-linux-gnu
-RUN apt-get update && apt-get install -y -q --no-install-recommends python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev
+RUN apt-get update && apt-get install -y -q --no-install-recommends python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev 
 
 # 1. Clone OWT server source code 
 # 2. Clone licode source code and patch
 # 3. Clone webrtc source code and patch
 RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name" && \
-    git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
+     cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
+
+    # Get json hpp file
+    wget -P /usr/include ${DOWNLOAD_JSON_LINK}  && \
 
     # Install node modules for owt
     npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
@@ -259,11 +266,10 @@ RUN git config --global user.email "you@example.com" && \
     ./src/tools-woogeen/build.sh && \
 
     # Get js client sdk for owt
-    cd /home && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
+    cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
     export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
-    #Build and pack owt
     cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig && ./scripts/build.js -t mcu -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
@@ -277,37 +283,37 @@ WORKDIR /home
 ARG NODE_VER=v8.15.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
-RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils	&& \
-    apt-get clean	&& \
+RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/local -rf && rm -rf node-*
+    cp node-*/* /usr/local -rf && \
+    rm -rf node-*
 
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu
 RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
     apt-get update && \
-    apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \
-        echo "#!/bin/bash -e" >> /home/launch.sh && \
+    apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \ 
+            echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "service mongodb start &" >> /home/launch.sh && \
     echo "service rabbitmq-server start &" >> /home/launch.sh && \
     echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
     echo "do" >> /home/launch.sh && \
     echo "  echo mongod not launch" >> /home/launch.sh && \
     echo "  sleep 1" >> /home/launch.sh && \
-    echo "done" >> /home/launch.sh && \ 
+    echo "done" >> /home/launch.sh && \
     echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
         echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
+    
     rm -rf /var/lib/apt/lists/*;
-
-
-
 
 
