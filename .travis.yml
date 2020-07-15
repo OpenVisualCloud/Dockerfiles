@@ -17,7 +17,7 @@ env:
   - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt-immersive DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt360 DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=ffmpeg DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=gst DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx DOCKER_PREFIX=ovccache
