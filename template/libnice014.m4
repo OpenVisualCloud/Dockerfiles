@@ -5,8 +5,8 @@ ARG LIBNICE_PATCH_VER="4.3.1"
 ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v${LIBNICE_PATCH_VER}.tar.gz
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-RUN apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev	&& \
-    apt-get clean	&& \
+RUN apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
@@ -25,5 +25,5 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
     patch -p1 < owt-server-${LIBNICE_PATCH_VER}/scripts/patches/libnice014-closelock.patch && \
     ./configure --prefix="/usr/local" --libdir=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/local/lib64,/usr/local/lib/x86_64-linux-gnu) && \
     make -s V= && \
-    make install
+    ifelse(BUILD_DEV,enabled,make install DESTDIR="/home/build" && make install,make install)
 
