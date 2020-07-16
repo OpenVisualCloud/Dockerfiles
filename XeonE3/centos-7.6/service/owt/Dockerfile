@@ -71,8 +71,9 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
 
 
 # Build open ssl
+ARG OPENSSL_BASE_VER="1.0.2"
 ARG OPENSSL_VER="1.0.2t"
-ARG OPENSSL_REPO=http://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz
+ARG OPENSSL_REPO=http://www.openssl.org/source/old/${OPENSSL_BASE_VER}/openssl-${OPENSSL_VER}.tar.gz
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OPENSSL_REPO} | tar xz && \
@@ -156,7 +157,8 @@ RUN yum install -y -q libass-devel freetype-devel SDL2-devel libxcb-devel libvdp
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
-    cd FFmpeg  ;
+    cd FFmpeg ;
+
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -174,7 +176,8 @@ RUN yum install -y -q ca-certificates wget xz-utils
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/local -rf && rm -rf node-*
+    cp node-*/* /usr/local -rf && \
+    rm -rf node-*
 
 # Fetch gmmlib
 ARG GMMLIB_VER=intel-gmmlib-18.3.0
@@ -235,6 +238,26 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
     rm -rf /home/build/usr/local/plugins && \
     make install;
 
+# Fetch SVT-HEVC
+ARG SVT_HEVC_VER=v1.3.0
+ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
+
+RUN yum install -y -q patch centos-release-scl && \
+    yum install -y -q devtoolset-7
+
+# hadolint ignore=SC1091
+RUN git clone ${SVT_HEVC_REPO} && \
+    cd SVT-HEVC/Build/linux && \
+    export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
+    git checkout ${SVT_HEVC_VER} && \
+    mkdir -p ../../Bin/Release && \
+    ( source /opt/rh/devtoolset-7/enable && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install )
+
+
 # Build OWT specific modules
 
 ARG OWTSERVER_REPO=https://github.com/open-webrtc-toolkit/owt-server.git
@@ -245,16 +268,17 @@ ARG OPENH264_SOURCENAME=v${OPENH264_MAJOR}.${OPENH264_MINOR}.0.tar.gz
 ARG OPENH264_SOURCE=https://github.com/cisco/openh264/archive/v${OPENH264_MAJOR}.${OPENH264_MINOR}.0.tar.gz
 ARG OPENH264_BINARYNAME=libopenh264-${OPENH264_MAJOR}.${OPENH264_MINOR}.0-linux64.${OPENH264_SOVER}.so
 ARG OPENH264_BINARY=https://github.com/cisco/openh264/releases/download/v${OPENH264_MAJOR}.${OPENH264_MINOR}.0/${OPENH264_BINARYNAME}.bz2
-ARG LICODE_COMMIT="4c92ddb42ad8bd2eab4dfb39bbb49f985b454fc9"
-ARG LICODE_CHERRY_PICK="71b38f9bf1d582d5afb1dca8f390c281dbe8ae43"
+ARG LICODE_COMMIT="8b4692c88f1fc24dedad66b4f40b1f3d804b50ca"
 ARG LICODE_REPO=https://github.com/lynckia/licode.git
 ARG LICODE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/tree/master/scripts/patches/licode/
 ARG WEBRTC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-webrtc.git
 ARG SVT_VER=v1.3.0
 ARG SVT_REPO=https://github.com/intel/SVT-HEVC.git
 ARG SERVER_PATH=/home/owt-server
+ARG SOURCE_DIR=/home
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
-ARG OWT_BRANCH=4.2.x
+ARG OWT_BRANCH=4.3.x
+ARG DOWNLOAD_JSON_LINK="https://github.com/nlohmann/json/releases/download/v3.6.1/json.hpp"
 
 ARG FDKAAC_LIB=/home/build/usr/local/lib64
 RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
@@ -264,7 +288,10 @@ RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
 # 3. Clone webrtc source code and patch
 RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name" && \
-    git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
+     cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
+
+    # Get json hpp file
+    wget -P /usr/include ${DOWNLOAD_JSON_LINK}  && \
 
     # Install node modules for owt
     npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
@@ -298,11 +325,10 @@ RUN git config --global user.email "you@example.com" && \
     ./src/tools-woogeen/build.sh && \
 
     # Get js client sdk for owt
-    cd /home && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
+    cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
     export LD_LIBRARY_PATH=/usr/local/lib64 && \
     cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
-    #Build and pack owt
     cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
@@ -320,11 +346,13 @@ RUN yum install -y -q ca-certificates wget xz-utils
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/local -rf && rm -rf node-*
+    cp node-*/* /usr/local -rf && \
+    rm -rf node-*
 
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64
 RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
     yum install rabbitmq-server mongodb mongodb-server -y && \
@@ -344,8 +372,6 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     rm -rf /var/cache/yum/*;
-
 ENV LIBVA_DRIVER_NAME=iHD
-
 
 

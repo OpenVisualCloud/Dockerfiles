@@ -6,4 +6,6 @@ RUN git clone ${LIBRE_REPO} && \
     cd re && \
     git checkout ${LIBRE_VER} && \
     make SYSROOT_ALT="/usr" RELEASE=1 && \
-    make install SYSROOT_ALT="/usr" RELEASE=1 PREFIX="/usr"
+    ifelse(BUILD_DEV,enabled,make install SYSROOT_ALT="/usr" RELEASE=1 PREFIX="/usr" && \
+    make SYSROOT_ALT="/home/build/usr" RELEASE=1 && \
+    make install SYSROOT_ALT="/home/build/usr" RELEASE=1 PREFIX="/home/build/usr",make install SYSROOT_ALT="/usr" RELEASE=1 PREFIX="/usr")

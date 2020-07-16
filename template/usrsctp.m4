@@ -16,4 +16,4 @@ RUN wget -O - ${USRSCTP_URL} | tar xz && \
     ./bootstrap && \
     ./configure --prefix="/usr/local" --libdir=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/local/lib64,/usr/local/lib/x86_64-linux-gnu) && \
     make && \
-    make install
+    ifelse(BUILD_DEV,enabled,make install DESTDIR="/home/build" && make install,make install)
