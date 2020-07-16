@@ -1,5 +1,5 @@
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.3
+ARG SVT_AV1_VER=v0.8.4
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
@@ -13,7 +13,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN git clone ${SVT_AV1_REPO} && \
     cd SVT-AV1 && \
     git checkout ${SVT_AV1_VER} && \
-    find ${SVT_AV1_PATCHES_PATH}/SVT-AV1_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
     cd Build/linux && \
     mkdir -p ../../Bin/Release && \
 ifelse(index(DOCKER_IMAGE,centos),-1,,`dnl
@@ -30,7 +29,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 define(`FFMPEG_SOURCE_SVT_AV1',dnl
 # Patch FFmpeg source for SVT-AV1
 RUN cd /home/FFmpeg; \
-    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
+    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch;
 
 )dnl
 define(`FFMPEG_CONFIG_SVT_AV1',--enable-libsvtav1 )dnl

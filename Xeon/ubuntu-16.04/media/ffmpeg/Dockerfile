@@ -195,7 +195,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.3
+ARG SVT_AV1_VER=v0.8.4
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
@@ -209,7 +209,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN git clone ${SVT_AV1_REPO} && \
     cd SVT-AV1 && \
     git checkout ${SVT_AV1_VER} && \
-    find ${SVT_AV1_PATCHES_PATH}/SVT-AV1_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
     cd Build/linux && \
     mkdir -p ../../Bin/Release && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
@@ -222,7 +221,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=v0.2.0
+ARG SVT_VP9_VER=v0.2.1
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 # hadolint ignore=SC1091
@@ -262,11 +261,11 @@ RUN cd /home/FFmpeg && \
 
 # Patch FFmpeg source for SVT-AV1
 RUN cd /home/FFmpeg; \
-    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
+    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch;
 
 # Patch FFmpeg source for SVT-VP9
 RUN cd /home/FFmpeg; \
-    git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9-with-hevc-av1.patch;
+    git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch;
 
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
