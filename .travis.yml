@@ -35,7 +35,7 @@ before_script:
   - docker pull $DOCKER_PREFIX/xeon-$(echo $buildOS | tr -d - | tr -d .)-$usage-$imageName:latest || true
 script:
   - mkdir build && cd build && cmake -DBUILD_MP3LAME=OFF -DBUILD_FDKAAC=OFF -DDOCKER_PREFIX=${DOCKER_PREFIX} ..
-  - "${TRAVIS_BUILD_DIR}/script/travis_build.sh" "${CPU}/${buildOS}/${usage}/${imageName}"
+  - ${TRAVIS_BUILD_DIR}/script/travis_build.sh ${CPU}/${buildOS}/${usage}/${imageName}
 after_success: |
    if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
         docker login -u ovckey -p $REGISTRY_PASS
