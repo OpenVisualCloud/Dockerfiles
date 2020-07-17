@@ -25,7 +25,6 @@ env:
   - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=dev DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=ffmpeg DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=gst DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=ubuntu-18.04 usage=service imageName=owt DOCKER_PREFIX=ovccache
 
 before_install:
