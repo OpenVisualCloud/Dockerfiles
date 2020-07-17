@@ -556,13 +556,13 @@ RUN wget "${OPENCV_REPO}" && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.2
-ARG DLDT_REPO=https://github.com/opencv/dldt.git
+ARG DLDT_VER=2020.4
+ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
-    cd dldt && \
+    cd openvino && \
     git submodule update --init --recursive && \
     mkdir build && \
     cd build && \
@@ -576,28 +576,28 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
     mkdir -p ${libdir} && \
-    cp -r dldt/bin/intel64/Release/lib/* ${libdir} && \
+    cp -r openvino/bin/intel64/Release/lib/* ${libdir} && \
     mkdir -p /opt/intel/dldt/inference-engine/src && \
-    cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
+    cp -r openvino/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
     mkdir -p /opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/build/share/* /opt/intel/dldt/inference-engine/share/ && \
+    cp -r openvino/build/share/* /opt/intel/dldt/inference-engine/share/ && \
     mkdir -p /opt/intel/dldt/inference-engine/external/ && \
-    cp -r dldt/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
+    cp -r openvino/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
     mkdir -p build${libdir} && \
-    cp -r dldt/bin/intel64/Release/lib/* build${libdir} && \
+    cp -r openvino/bin/intel64/Release/lib/* build${libdir} && \
     mkdir -p build/opt/intel/dldt/inference-engine/src && \
-    cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
+    cp -r openvino/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
+    cp -r openvino/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/external/ && \
-    cp -r dldt/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
+    cp -r openvino/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
 
 RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
         pkgconfiglibdir="$p/lib64" && \

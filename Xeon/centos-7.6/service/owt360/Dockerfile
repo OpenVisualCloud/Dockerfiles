@@ -72,8 +72,9 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
 
 
 # Build open ssl
+ARG OPENSSL_BASE_VER="1.0.2"
 ARG OPENSSL_VER="1.0.2t"
-ARG OPENSSL_REPO=http://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz
+ARG OPENSSL_REPO=http://www.openssl.org/source/old/${OPENSSL_BASE_VER}/openssl-${OPENSSL_VER}.tar.gz
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OPENSSL_REPO} | tar xz && \
@@ -157,7 +158,8 @@ RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
-    cd FFmpeg  ;
+    cd FFmpeg ;
+
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -175,7 +177,8 @@ RUN yum install -y -q ca-certificates wget xz-utils
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/local -rf && rm -rf node-*
+    cp node-*/* /usr/local -rf && \
+    rm -rf node-*
 
 # Fetch SVT-HEVC
 ARG SVT_HEVC_VER=v1.4.3
@@ -303,11 +306,13 @@ RUN yum install -y -q ca-certificates wget xz-utils
 
 RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
-    cp node-*/* /usr/local -rf && rm -rf node-*
+    cp node-*/* /usr/local -rf && \
+    rm -rf node-*
 
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64
 RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
     yum install rabbitmq-server mongodb mongodb-server -y && \
@@ -325,7 +330,5 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     rm -rf /var/cache/yum/*;
-
-
 
 
