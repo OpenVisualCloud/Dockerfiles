@@ -615,14 +615,14 @@ RUN wget "${OPENCV_REPO}" && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.2
-ARG DLDT_REPO=https://github.com/opencv/dldt.git
+ARG DLDT_VER=2020.4
+ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
 RUN apt-get update && apt-get -y --no-install-recommends install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
     
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
-    cd dldt && \
+    cd openvino && \
     git submodule update --init --recursive && \
     mkdir build && \
     cd build && \
@@ -636,28 +636,28 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
     mkdir -p ${libdir} && \
-    cp -r dldt/bin/intel64/Release/lib/* ${libdir} && \
+    cp -r openvino/bin/intel64/Release/lib/* ${libdir} && \
     mkdir -p /opt/intel/dldt/inference-engine/src && \
-    cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
+    cp -r openvino/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
     mkdir -p /opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/build/share/* /opt/intel/dldt/inference-engine/share/ && \
+    cp -r openvino/build/share/* /opt/intel/dldt/inference-engine/share/ && \
     mkdir -p /opt/intel/dldt/inference-engine/external/ && \
-    cp -r dldt/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
+    cp -r openvino/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
     mkdir -p build${libdir} && \
-    cp -r dldt/bin/intel64/Release/lib/* build${libdir} && \
+    cp -r openvino/bin/intel64/Release/lib/* build${libdir} && \
     mkdir -p build/opt/intel/dldt/inference-engine/src && \
-    cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
+    cp -r openvino/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
+    cp -r openvino/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/external/ && \
-    cp -r dldt/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
+    cp -r openvino/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
 
 RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
         pkgconfiglibdir="$p/lib/x86_64-linux-gnu" && \
@@ -687,7 +687,7 @@ ARG PYTHON_TRUSTED_INDEX_URL
 
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
 RUN apt-get install -y python3-dev
-RUN cd dldt/model-optimizer && \
+RUN cd openvino/model-optimizer && \
 if [ "x$PYTHON_TRUSTED_HOST" = "x" ] ; \
 then pip3 install --target=/home/build/mo_libs -r requirements.txt && \
 pip3 install -r requirements.txt; \
@@ -696,17 +696,17 @@ pip3 install -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PY
 fi
 
 #Copy over Model Optimizer to same directory as Inference Engine
-RUN cp -r dldt/model-optimizer /opt/intel/dldt/model-optimizer
-RUN cp -r dldt/model-optimizer /home/build/opt/intel/dldt/model-optimizer
+RUN cp -r openvino/model-optimizer /opt/intel/dldt/model-optimizer
+RUN cp -r openvino/model-optimizer /home/build/opt/intel/dldt/model-optimizer
 
 
 #install OpenVINO tools in the DLDT for Dev
-RUN cd dldt/tools && \
+RUN cd openvino/tools && \
     python3 -m pip install -r benchmark/requirements.txt
 
 #Copy over Openvino tools to same directory as Inference Engine
-RUN cp -r dldt/tools /opt/intel/dldt/tools
-RUN cp -r dldt/tools /home/build/opt/intel/dldt/tools
+RUN cp -r openvino/tools /opt/intel/dldt/tools
+RUN cp -r openvino/tools /home/build/opt/intel/dldt/tools
 
 #install model downloader for dev images
 ARG OPEN_MODEL_ZOO_VER=2020.1
