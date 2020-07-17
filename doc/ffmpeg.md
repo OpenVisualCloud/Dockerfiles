@@ -103,6 +103,16 @@ ffmpeg -flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_dev
 -i $STREAM -vf "detect=model=$DETECTION_MODEL:device=$DEVICE" -an -f null - \
 ```
 
+- Face detection, classification with display:
+
+```bash
+ffplay $SOURCE -sync video -vf \
+  "detect=model=$DETECT_MODEL_PATH:device=$DEVICE, \
+   classify=model=$CLASS_MODEL_PATH:model_proc=$MODEL_PROC:device=$DEVICE,   \
+   classify=model=$CLASS_MODEL_PATH1:model_proc=$MODEL1_PROC:device=$DEVICE, \
+   ocv_overlay"
+```
+
 ### See Also
 
 - [FFmpeg Video Analytics Plugin](https://github.com/VCDP/FFmpeg-patch)
