@@ -496,12 +496,10 @@ RUN wget "${OPENCV_REPO}" && \
     make install
 
 
-ENV CPATH=/usr/local/include/opencv4/:$CPATH
-
 # OpenVINO verion
-# 2020.2 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.2.120
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/l_openvino_toolkit_p_2020.2.120.tgz
+# 2020.4 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.4.287
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz
 
 
 #Download and unpack OpenVino

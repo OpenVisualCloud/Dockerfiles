@@ -210,7 +210,7 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.3
+ARG SVT_AV1_VER=v0.8.4
 ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
 
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
@@ -224,7 +224,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN git clone ${SVT_AV1_REPO} && \
     cd SVT-AV1 && \
     git checkout ${SVT_AV1_VER} && \
-    find ${SVT_AV1_PATCHES_PATH}/SVT-AV1_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i && \
     cd Build/linux && \
     mkdir -p ../../Bin/Release && \
     ( source /opt/rh/devtoolset-7/enable && \
@@ -238,7 +237,7 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 
 # Fetch SVT-VP9
-ARG SVT_VP9_VER=v0.2.0
+ARG SVT_VP9_VER=v0.2.1
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 
 # hadolint ignore=SC1091
@@ -465,16 +464,14 @@ RUN wget "${OPENCV_REPO}" && \
     make install
 
 
-ENV CPATH=/usr/local/include/opencv4/:$CPATH
-
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.2
-ARG DLDT_REPO=https://github.com/opencv/dldt.git
+ARG DLDT_VER=2020.4
+ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
 
 RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
-    cd dldt && \
+    cd openvino && \
     git submodule update --init --recursive && \
     mkdir build && \
     cd build && \
@@ -488,28 +485,28 @@ RUN git clone -b ${DLDT_VER} ${DLDT_REPO} && \
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 
 RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/include/* /opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/ie_bridges/c/include/* /opt/intel/dldt/inference-engine/include && \
     mkdir -p ${libdir} && \
-    cp -r dldt/bin/intel64/Release/lib/* ${libdir} && \
+    cp -r openvino/bin/intel64/Release/lib/* ${libdir} && \
     mkdir -p /opt/intel/dldt/inference-engine/src && \
-    cp -r dldt/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
+    cp -r openvino/inference-engine/src/* /opt/intel/dldt/inference-engine/src/ && \
     mkdir -p /opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/build/share/* /opt/intel/dldt/inference-engine/share/ && \
+    cp -r openvino/build/share/* /opt/intel/dldt/inference-engine/share/ && \
     mkdir -p /opt/intel/dldt/inference-engine/external/ && \
-    cp -r dldt/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
+    cp -r openvino/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
 
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
-    cp -r dldt/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
+    cp -r openvino/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
     mkdir -p build${libdir} && \
-    cp -r dldt/bin/intel64/Release/lib/* build${libdir} && \
+    cp -r openvino/bin/intel64/Release/lib/* build${libdir} && \
     mkdir -p build/opt/intel/dldt/inference-engine/src && \
-    cp -r dldt/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
+    cp -r openvino/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/share && \
-    cp -r dldt/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
+    cp -r openvino/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/external/ && \
-    cp -r dldt/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
+    cp -r openvino/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
 
 RUN for p in /usr /home/build/usr /opt/intel/dldt/inference-engine /home/build/opt/intel/dldt/inference-engine; do \
         pkgconfiglibdir="$p/lib64" && \
@@ -539,7 +536,7 @@ ARG PYTHON_TRUSTED_INDEX_URL
 
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
 RUN yum install -y python3-devel
-RUN cd dldt/model-optimizer && \
+RUN cd openvino/model-optimizer && \
 if [ "x$PYTHON_TRUSTED_HOST" = "x" ] ; \
 then pip3 install --target=/home/build/mo_libs -r requirements.txt && \
 pip3 install -r requirements.txt; \
@@ -548,17 +545,17 @@ pip3 install -r requirements.txt -i $PYTHON_TRUSTED_INDEX_URL --trusted-host $PY
 fi
 
 #Copy over Model Optimizer to same directory as Inference Engine
-RUN cp -r dldt/model-optimizer /opt/intel/dldt/model-optimizer
-RUN cp -r dldt/model-optimizer /home/build/opt/intel/dldt/model-optimizer
+RUN cp -r openvino/model-optimizer /opt/intel/dldt/model-optimizer
+RUN cp -r openvino/model-optimizer /home/build/opt/intel/dldt/model-optimizer
 
 
 #install OpenVINO tools in the DLDT for Dev
-RUN cd dldt/tools && \
+RUN cd openvino/tools && \
     python3 -m pip install -r benchmark/requirements.txt
 
 #Copy over Openvino tools to same directory as Inference Engine
-RUN cp -r dldt/tools /opt/intel/dldt/tools
-RUN cp -r dldt/tools /home/build/opt/intel/dldt/tools
+RUN cp -r openvino/tools /opt/intel/dldt/tools
+RUN cp -r openvino/tools /home/build/opt/intel/dldt/tools
 
 #install model downloader for dev images
 ARG OPEN_MODEL_ZOO_VER=2020.1
@@ -672,7 +669,7 @@ ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/l
 
 
 # Fetch FFmpeg source
-ARG FFMPEG_VER=n4.2
+ARG FFMPEG_VER=n4.2.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 
@@ -705,16 +702,16 @@ RUN cd /home/FFmpeg && \
 
 # Patch FFmpeg source for SVT-AV1
 RUN cd /home/FFmpeg; \
-    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch;
+    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch;
 
 # Patch FFmpeg source for SVT-VP9
 RUN cd /home/FFmpeg; \
-    git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9-with-hevc-av1.patch;
+    git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch;
 
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
-    ./configure --prefix="/usr/local" --extra-cflags="-I/opt/intel/dldt/inference-engine/include " --extra-ldflags="-L/opt/intel/dldt/inference-engine/lib/intel64 " --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libsvthevc --enable-libsvtav1 --enable-libsvtvp9 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c --enable-libopencv  && \
+    ./configure --prefix="/usr/local" --extra-cflags="-I/opt/intel/dldt/inference-engine/include -I/usr/local/include/opencv4 " --extra-ldflags="-L/opt/intel/dldt/inference-engine/lib/intel64 " --libdir=/usr/local/lib64 --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --disable-vaapi --disable-hwaccels  --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libsvthevc --enable-libsvtav1 --enable-libsvtvp9 --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c --enable-libopencv  && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 

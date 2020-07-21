@@ -333,12 +333,10 @@ RUN wget "${OPENCV_REPO}" && \
     make install
 
 
-ENV CPATH=/usr/local/include/opencv4/:$CPATH
-
 # OpenVINO verion
-# 2020.2 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.2.120
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/l_openvino_toolkit_p_2020.2.120.tgz
+# 2020.4 and deployment manager script
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.4.287
+ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz
 
 #Install OpenVino dependencies
 RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends cpio joe nano sudo unzip wget less \
@@ -410,7 +408,7 @@ RUN chmod -R 775 /opt/intel/ ;
 
 
 # Fetch FFmpeg source
-ARG FFMPEG_VER=n4.2
+ARG FFMPEG_VER=n4.2.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 
@@ -440,7 +438,7 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
 # Compile FFmpeg
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
-    ./configure --prefix="/usr/local" --extra-cflags="-I/opt/intel/openvino/deployment_tools/inference_engine/include " --extra-ldflags="-L/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64 " --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c --enable-libopencv  && \
+    ./configure --prefix="/usr/local" --extra-cflags="-I/opt/intel/openvino/deployment_tools/inference_engine/include -I/usr/local/include/opencv4 " --extra-ldflags="-L/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64 " --libdir=/usr/local/lib/x86_64-linux-gnu --extra-libs="-lpthread -lm" --enable-shared --enable-gpl --enable-libass --enable-libfreetype  --enable-openssl --enable-nonfree --enable-libdrm --enable-libmfx --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libdav1d --enable-libinference_engine_c_api --enable-librdkafka --enable-libjson_c --enable-libopencv  && \
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
