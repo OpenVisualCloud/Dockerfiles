@@ -1,5 +1,5 @@
 # Build the gstreamer core
-ARG GST_VER=1.16.0
+ARG GST_VER=1.16.2
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,

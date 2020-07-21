@@ -1,6 +1,6 @@
 
 # Build gstreamer python
-ARG GST_VER=1.16.0
+ARG GST_VER=1.16.2
 ARG GST_PYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-${GST_VER}.tar.xz
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
