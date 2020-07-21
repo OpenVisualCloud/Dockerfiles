@@ -670,7 +670,7 @@ ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/l
 
 
 # Fetch FFmpeg source
-ARG FFMPEG_VER=n4.2
+ARG FFMPEG_VER=n4.2.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 

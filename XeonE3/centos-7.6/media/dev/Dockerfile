@@ -510,7 +510,7 @@ RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
 
 
 # Fetch FFmpeg source
-ARG FFMPEG_VER=n4.2
+ARG FFMPEG_VER=n4.2.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 
