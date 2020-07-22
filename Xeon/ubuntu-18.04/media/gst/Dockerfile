@@ -249,7 +249,7 @@ RUN git clone ${SVT_VP9_REPO} && \
 
 
 # Build the gstreamer core
-ARG GST_VER=1.16.0
+ARG GST_VER=1.16.2
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
 RUN  ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
