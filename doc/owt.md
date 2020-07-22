@@ -78,3 +78,14 @@ Different module tries to connect to RabbitMQ server running on the same system.
 ```bash
 export no_proxy=localhost
 ```
+### OWT server and client document:
+
+For more documents on OWT server and SDK, please refer to following links:
+
+[OWT server](https://github.com/open-webrtc-toolkit/owt-server/blob/4.3.x/doc/servermd/Server.md): OWT server installation and deployment guide.
+
+[OWT RESTAPI](https://github.com/open-webrtc-toolkit/owt-server/blob/4.3.x/doc/servermd/RESTAPI.md): OWT RESTful API guide.
+
+[JS SDK API](https://github.com/open-webrtc-toolkit/owt-client-javascript/tree/4.3.x/docs): OWT javascript SDK API guide.
+
+You can also go to [Intel WebRTC](https://software.intel.com/content/www/us/en/develop/tools/webrtc-sdk.html#developer-guides-references) to download all the released documents.
