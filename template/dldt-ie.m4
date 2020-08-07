@@ -81,7 +81,8 @@ ARG PYTHON_TRUSTED_INDEX_URL
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
 ifelse(index(DOCKER_IMAGE,centos),-1,
 ifelse(index(DOCKER_IMAGE,1804),-1,,dnl
-RUN apt-get install -y python3-dev)
+RUN apt-get install -y python3-dev
+RUN pip3 install wheel)
 ,dnl
 RUN yum install -y python3-devel
 )dnl
