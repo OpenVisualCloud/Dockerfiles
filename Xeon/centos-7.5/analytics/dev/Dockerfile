@@ -427,7 +427,7 @@ RUN cd SVT-AV1/gstreamer-plugin && \
     make install DESTDIR=/home/build && \
     make install
 
-ARG OPENCV_VER=4.3.0
+ARG OPENCV_VER=4.4.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
 RUN yum install -y -q eigen3-devel

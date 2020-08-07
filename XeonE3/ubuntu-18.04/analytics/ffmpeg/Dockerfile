@@ -356,7 +356,7 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
     make install DESTDIR=/home/build && \
     make install;
 
-ARG OPENCV_VER=4.3.0
+ARG OPENCV_VER=4.4.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libeigen3-dev
