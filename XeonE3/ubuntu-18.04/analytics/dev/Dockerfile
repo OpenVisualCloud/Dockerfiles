@@ -371,19 +371,6 @@ RUN wget -O - ${LIBJSONC_REPO} | tar xz && \
     make install DESTDIR="/home/build" && \
     make install;
 
-# Build librdkafka
-ARG LIBRDKAFKA_VER=1.0.0
-ARG FILE_NAME=v${LIBRDKAFKA_VER}
-ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
-    cd librdkafka-${LIBRDKAFKA_VER} && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
-    make -j8 && \
-    make install DESTDIR=/home/build && \
-    make install;
-
 # Build the gstreamer core
 ARG GST_VER=1.16.2
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
@@ -765,6 +752,19 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         echo "PAHO install disabled"; \
     fi
 
+
+# Build librdkafka
+ARG LIBRDKAFKA_VER=1.0.0
+ARG FILE_NAME=v${LIBRDKAFKA_VER}
+ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/${FILE_NAME}.tar.gz
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
+    cd librdkafka-${LIBRDKAFKA_VER} && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
+    make -j8 && \
+    make install DESTDIR=/home/build && \
+    make install;
 
 
 
