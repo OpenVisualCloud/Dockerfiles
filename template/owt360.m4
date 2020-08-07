@@ -34,7 +34,6 @@ RUN yum install -y -q patch centos-release-scl devtoolset-7
 )dnl
 ENV PYTHONIOENCODING=UTF-8
 # Install 360scvp
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # hadolint ignore=SC1091
 RUN cd /home && \
     wget -O - ${SCVP_REPO} | tar xz && mv Immersive-Video-Sample-${SCVP_VER} Immersive-Video-Sample && \
