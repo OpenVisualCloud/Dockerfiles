@@ -1,7 +1,6 @@
 ifelse(BUILD_DEV,enabled,,COPY --from=build /home/owt-server/dist /home/owt)
 COPY --from=build /home/build /
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \

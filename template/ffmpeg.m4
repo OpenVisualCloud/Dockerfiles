@@ -6,7 +6,6 @@ ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_PATCHES_RELEASE_VER=0.2
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
 define(`FFMPEG_MA_PATCHES',``
@@ -32,7 +31,6 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,
 RUN yum install -y -q libass-devel freetype-devel ifelse(FFMPEG_X11,ON,SDL2-devel libxcb-devel )ifelse(index(DOCKER_IMAGE,xeon-),-1,libvdpau-devel )ifelse(index(DOCKER_IMAGE,-dev),-1,,texinfo )zlib-devel openssl-devel
 )dnl
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg ifelse(index(DOCKER_IMAGE,owt),-1,&& \
     find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i) ifelse(index(DOCKER_IMAGE,dev),-1, ifelse(index(DOCKER_IMAGE,analytics),-1, && \

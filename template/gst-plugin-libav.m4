@@ -10,7 +10,6 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,
 RUN yum install -y -q zlib-devel openssl-devel
 )dnl
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${GST_PLUGIN_LIBAV_REPO} | tar xJ && \
     cd gst-libav-${GST_VER} && \
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \

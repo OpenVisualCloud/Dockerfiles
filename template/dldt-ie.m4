@@ -129,7 +129,6 @@ RUN cp -r openvino/tools /home/build/opt/intel/dldt/tools
 #install model downloader for dev images
 ARG OPEN_MODEL_ZOO_VER=2020.1
 ARG OPEN_MODEL_ZOO_REPO=https://github.com/opencv/open_model_zoo/archive/${OPEN_MODEL_ZOO_VER}.tar.gz
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OPEN_MODEL_ZOO_REPO} | tar xz && \
     mkdir -p /opt/intel/dldt/open_model_zoo && \
     cp -r open_model_zoo-${OPEN_MODEL_ZOO_VER}/* /opt/intel/dldt/open_model_zoo/. && \

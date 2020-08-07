@@ -13,7 +13,6 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q glib2-devel
 )dnl
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${NICE_REPO} | tar xz && \
     cd libnice-${NICE_VER} && \
     wget -O - ${LIBNICE_PATCH_REPO} | tar xz  && \
