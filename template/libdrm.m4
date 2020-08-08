@@ -11,7 +11,6 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q libpciaccess-devel
 )dnl
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${LIBDRM_REPO} | tar xz && \
     cd libdrm-${LIBDRM_VER} && \
     ./configure --prefix=/usr/local --libdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) && \

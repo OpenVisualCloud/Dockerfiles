@@ -13,7 +13,6 @@ RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-d
      rm -rf /var/lib/apt/lists/*
 )dnl
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_PLUGIN_VAAPI_REPO} | tar xJ && \
      cd gstreamer-vaapi-${GST_VER} && \
      git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
