@@ -537,6 +537,7 @@ RUN cp -r openvino/model-optimizer /home/build/opt/intel/dldt/model-optimizer
 
 #install OpenVINO tools in the DLDT for Dev
 RUN cd openvino/tools && \
+    pip3 install scikit-build && \
     python3 -m pip install -r benchmark/requirements.txt
 
 #Copy over Openvino tools to same directory as Inference Engine
