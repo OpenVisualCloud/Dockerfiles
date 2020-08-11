@@ -20,7 +20,7 @@ spec:
         command: ["/bin/sh"]
 # run "init" image with privileged and this will quit soon
 # run "hddl" image with non-privileged
-        args: ["-c", "docker stop ov_hddl;/usr/local/bin/docker run --rm --privileged -v /usr/src:/usr/src -v /lib/modules:/lib/modules -v /etc/modules-load.d:/etc/modules-load.d openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:1.0 /usr/local/bin/init_hddl.sh; /usr/local/bin/docker run --name ov_hddl --rm --device-cgroup-rule='c 10:* rmw' --device-cgroup-rule='c 89:* rmw' --device-cgroup-rule='c 189:* rmw' --device-cgroup-rule='c 180:* rmw' -v /dev:/dev -v /var/tmp:/var/tmp openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:1.0 /usr/local/bin/run_hddl.sh"]
+        args: ["-c", "docker stop ov_hddl;/usr/local/bin/docker run --rm --privileged -v /usr/src:/usr/src -v /lib/modules:/lib/modules -v /etc/modules-load.d:/etc/modules-load.d openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:20.7 /usr/local/bin/init_hddl.sh; /usr/local/bin/docker run --name ov_hddl --rm --device-cgroup-rule='c 10:* rmw' --device-cgroup-rule='c 89:* rmw' --device-cgroup-rule='c 189:* rmw' --device-cgroup-rule='c 180:* rmw' -v /dev:/dev -v /var/tmp:/var/tmp openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:20.7 /usr/local/bin/run_hddl.sh"]
         imagePullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: false
