@@ -54,7 +54,7 @@ included_subs = {
                 "nginx" : ["[NGINX](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/nginx.md)"],
                 "svt" : ["[SVT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/svt.md)"],
                 "owt" : ["[OWT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt.md)"],
-                "owt-immersive" : ["[OWT-Immersive](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt-immersive.md)"],
+                "owt360" : ["[OWT360](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt360.md)"],
                 "ospray" : ["[OSPRay](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ospray.md)"],
                 "ospray-mpi" : ["[OSPRay-MPI](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ospray-mpi.md)"],
                 "ffmpeg" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)"],
@@ -79,7 +79,7 @@ license_subs = {
                 "gst-plugin-svt" : ["|gst plugin svt|GNU Lesser General Public License v2.1 or later|"],
                 "gst-plugin-ugly" : ["|gst plugin ugly|GNU Lesser General Public License v2.1 or later|"],
                 "gst-plugin-vaapi" : ["|gst plugin vaapi|GNU Lesser General Public License v2.1 or later|"],
-                "gstreamer-videoanalytics" : ["|gst video analytics|MIT License|"],
+                "gst-plugin-gva" : ["|gst plugin gva|MIT License|"],
                 "ispc" : ["|ispc|BSD 3-clause License|"],
                 "libaom" : ["|Aomedia AV1 Codec Library|BSD 2-clause \"Simplified\" License|"],
                 "libdrm" : ["|libdrm|MIT license|"],
@@ -109,7 +109,7 @@ license_subs = {
                 "openvino.binary" : ["|OpenVINO|End User License Agreement for the Intel(R) Software Development Products|"],
                 "ospray" : ["|ospray|Apache License v2.0|"],
                 "ospray-mpi" : ["|ospray|Apache License v2.0|"],
-                "owt-immersive" : ["|owt-server|Apache License v2.0|","|owt-sdk|Apache License v2.0|","|owt-deps-webrtc|BSD 3-clause License|"],
+                "owt360" : ["|owt-server|Apache License v2.0|","|owt-sdk|Apache License v2.0|","|owt-deps-webrtc|BSD 3-clause License|"],
                 "owt" : ["|owt-server|Apache License v2.0|","|owt-sdk|Apache License v2.0|","|owt-deps-webrtc|BSD 3-clause License|"],
                 "qat-engine" : ["|qat-engine|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "qat-openssl" : ["|openssl|Apache License 2.0|"],
@@ -287,7 +287,7 @@ def create_readme(path, path_components):
         my_file.write("Optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). ")
         if image_name=="owt":
             my_file.write("Optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. ")
-        if image_name=="owt-immersive":
+        if image_name=="owt360":
             my_file.write("Docker image optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. ")
         if image_os=="XeonE3":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")

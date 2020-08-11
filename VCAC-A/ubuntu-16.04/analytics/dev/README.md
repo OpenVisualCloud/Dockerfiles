@@ -46,6 +46,7 @@ This docker installs third party components licensed under various open source l
 |Intel media-driver | MIT License|
 |Intel media SDK|MIT License|
 |intel-opencl | MIT License|
+|json-c|MIT License|
 |gstreamer|GNU Lesser General Public License v2.1 or later|
 |gst orc|GNU Lesser General Public License v2.1 or later|
 |gst plugin base|GNU Lesser General Public License v2.1 or later|
@@ -56,7 +57,7 @@ This docker installs third party components licensed under various open source l
 |gst plugin vaapi|GNU Lesser General Public License v2.1 or later|
 |opencv|BSD 3-clause "New" or "Revised" License|
 |OpenVINO|End User License Agreement for the Intel(R) Software Development Products|
-|gst video analytics|MIT License|
+|gst plugin gva|MIT License|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 
