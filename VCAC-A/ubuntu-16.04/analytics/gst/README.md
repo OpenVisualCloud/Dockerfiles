@@ -56,7 +56,7 @@ This docker installs third party components licensed under various open source l
 |gst plugin vaapi|GNU Lesser General Public License v2.1 or later|
 |opencv|BSD 3-clause "New" or "Revised" License|
 |OpenVINO|End User License Agreement for the Intel(R) Software Development Products|
-|gst video analytics|MIT License|
+|gst plugin gva|MIT License|
 
 
 More license information can be found in [components source package](https://github.com/OpenVisualCloud/Dockerfiles-Resources).   

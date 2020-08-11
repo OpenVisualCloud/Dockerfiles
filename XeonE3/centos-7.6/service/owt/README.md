@@ -43,6 +43,7 @@ This docker installs third party components licensed under various open source l
 |Intel libva| MIT License
 |Intel media-driver | MIT License|
 |Intel media SDK|MIT License|
+|Intel SVT-HEVC|BSD-2-Clause Plus Patent License|
 |owt-server|Apache License v2.0|
 |owt-sdk|Apache License v2.0|
 |owt-deps-webrtc|BSD 3-clause License|

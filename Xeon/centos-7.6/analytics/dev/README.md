@@ -55,7 +55,7 @@ This docker installs third party components licensed under various open source l
 |gst plugin svt|GNU Lesser General Public License v2.1 or later|
 |opencv|BSD 3-clause "New" or "Revised" License|
 |DLDT|Apache License v2.0|
-|gst video analytics|MIT License|
+|gst plugin gva|MIT License|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 
