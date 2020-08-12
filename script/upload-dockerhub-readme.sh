@@ -11,7 +11,7 @@ README_FILEPATH="$2"
 IMAGE=$(echo $README_FILEPATH | awk -F"Dockerfiles/" '{print $2}' | awk -F"/README.md" '{print $1}' | sed 's/[-.]//g'| sed 's/\//-/g' | tr 'A-Z' 'a-z')
 DOCKERHUB_TOKEN=~/.dockerhub_token
 REPO_URL="https://hub.docker.com/v2/repositories/${DOCKER_PREFIX}/${IMAGE}/"
-IGNORE_LIST=("graphics" "immersive")
+IGNORE_LIST=("graphics" "owt360")
 IGNORE_FLAG=-1
 
 
