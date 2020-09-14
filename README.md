@@ -49,6 +49,7 @@ The development images enable C++ application compilation, debugging (with the d
 | :-----: | :----- |
 | media | <p>Docker images for FFmpeg or GStreamer C++ application development. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-dev)<br>docker pull [openvisualcloud/xeon-centos76-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-dev)|
 | analytics | <p>Docker images for FFmpeg or GStreamer C++ application development, with Intel OpenVINO inference engine and the model optimizer. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-dev)<br>docker pull [openvisualcloud/xeon-centos76-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-analytics-dev)|
+| service | <p>Docker images for Open WebRTC Toolkit (OWT) C++ application development.. See [`doc/owt.md`](doc/owt.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-service-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-service-dev)<br>|
 | graphics | <p>Docker image for Intel OSPRay C++ application development. See [`doc/ospray-mpi.md`](doc/ospray-mpi.md) for additional details.</p>|
 
 ### Service Images:
@@ -58,7 +59,7 @@ The service images provides ready to use services. See their image descriptions 
 | Image | Description |
 | :-----: | :----- | 
 | [owt](doc/owt.md)| <p>Docker images optimized for video conferencing services, based on the WebRTC technology and the Open WebRTC Toolkit. Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [`doc/owt.md`](doc/owt.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-service-owt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-service-owt)<br>docker pull [openvisualcloud/xeon-centos76-service-owt](https://hub.docker.com/r/openvisualcloud/xeon-centos76-service-owt)|
-| [owt-immersive](doc/owt-immersive.md)| <p>Docker images optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. see [`doc/owt-immersive.md`](doc/owt-immersive.md) for additional details.</p>|
+| [owt360](doc/owt360.md)| <p>Docker images optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. see [`doc/owt-immersive.md`](doc/owt-immersive.md) for additional details.</p>|
 
 ### Support Matrix:
 
