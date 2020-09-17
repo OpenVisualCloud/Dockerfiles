@@ -6,7 +6,7 @@ SVT Images get built with following SVT transcoders
 
 |Module|Version|Comment
 |------|------|------|
-|SVT-HEVC|v1.4.3|HEVC-compliant encoder library core that achieves excellent density-quality tradeoffs|
+|SVT-HEVC|v1.5.0|HEVC-compliant encoder library core that achieves excellent density-quality tradeoffs|
 |SVT-AV1|v0.8.4|AV1 Compliant encoder library for VOD and Live encoding / transcoding video applications|
 |SVT-VP9|v0.2.1|VP9 Compliant encoder library for VOD and Live encoding / transcoding video applications|
 

@@ -181,7 +181,7 @@ RUN  git clone ${LIBDAV1D_REPO}; \
 
 
 # Fetch SVT-HEVC
-ARG SVT_HEVC_VER=v1.4.3
+ARG SVT_HEVC_VER=v1.5.0
 ARG SVT_HEVC_REPO=https://github.com/intel/SVT-HEVC
 
 RUN yum install -y -q patch centos-release-scl && \
