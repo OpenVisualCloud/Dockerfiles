@@ -51,3 +51,7 @@ matrix:
     - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx DOCKER_PREFIX=ovccache
     - name: xeon-ubuntu-18.04-name-nginx
     - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+    - name: xeon-centos7.6-analytics-dev
+    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
+    - name: xeon-ubuntu-18.04-analytics-dev
+    - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
