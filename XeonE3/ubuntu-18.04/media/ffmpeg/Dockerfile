@@ -187,8 +187,8 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.4
-ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
+ARG SVT_AV1_VER=v0.8.5
+ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
 
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
 ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
@@ -307,8 +307,11 @@ RUN cd /home/FFmpeg && \
     patch -p1 < ../SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch;
 
 # Patch FFmpeg source for SVT-AV1
+ARG SVT_AV1_FFMPEG_PLUGIN_VER=0.8.4
+ARG SVT_AV1_FFMPEG_PLUGIN_REPO=https://github.com/AOMediaCodec/SVT-AV1/archive/v${SVT_AV1_FFMPEG_PLUGIN_VER}.tar.gz
 RUN cd /home/FFmpeg; \
-    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch;
+    wget -O - ${SVT_AV1_FFMPEG_PLUGIN_REPO} | tar xz -C /home; \
+    patch -p1 < ../SVT-AV1-${SVT_AV1_FFMPEG_PLUGIN_VER}/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch;
 
 # Patch FFmpeg source for SVT-VP9
 RUN cd /home/FFmpeg; \

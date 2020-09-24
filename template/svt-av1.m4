@@ -1,6 +1,6 @@
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.4
-ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
+ARG SVT_AV1_VER=v0.8.5
+ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
 
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
 ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
@@ -26,8 +26,11 @@ RUN if [ -d "build/home/" ]; then rm -rf build/home/; fi
 
 define(`FFMPEG_SOURCE_SVT_AV1',dnl
 # Patch FFmpeg source for SVT-AV1
+ARG SVT_AV1_FFMPEG_PLUGIN_VER=0.8.4
+ARG SVT_AV1_FFMPEG_PLUGIN_REPO=https://github.com/AOMediaCodec/SVT-AV1/archive/v${SVT_AV1_FFMPEG_PLUGIN_VER}.tar.gz
 RUN cd /home/FFmpeg; \
-    patch -p1 < ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch;
+    wget -O - ${SVT_AV1_FFMPEG_PLUGIN_REPO} | tar xz -C /home; \
+    patch -p1 < ../SVT-AV1-${SVT_AV1_FFMPEG_PLUGIN_VER}/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch;
 
 )dnl
 define(`FFMPEG_CONFIG_SVT_AV1',--enable-libsvtav1 )dnl

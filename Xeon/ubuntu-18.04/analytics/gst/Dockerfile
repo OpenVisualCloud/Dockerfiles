@@ -200,8 +200,8 @@ RUN git clone ${SVT_HEVC_REPO} && \
 
 
 # Fetch SVT-AV1
-ARG SVT_AV1_VER=v0.8.4
-ARG SVT_AV1_REPO=https://github.com/OpenVisualCloud/SVT-AV1
+ARG SVT_AV1_VER=v0.8.5
+ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
 
 ARG SVT_AV1_PATCHES_RELEASE_VER=0.4
 ARG SVT_AV1_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${SVT_AV1_PATCHES_RELEASE_VER}.tar.gz
