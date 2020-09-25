@@ -493,9 +493,9 @@ ENV PYTHONIOENCODING=UTF-8
 
 
 
-RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel python3 python36-gobject-devel python3-devel
+RUN yum install -y -q glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel
 
-RUN yum install -y -q binutils uuid-devel
+RUN yum install -y -q binutils 
 
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
@@ -620,7 +620,7 @@ WORKDIR /home
 # Prerequisites
 RUN yum install -y epel-release;  \
     yum localinstall -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm; \
-    yum install -y -q numactl openssl glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial uuid python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base boost-regex \
+    yum install -y -q numactl openssl glib2-2.56.1 pango gobject-introspection libpng12 libXv libvisual mesa-libGL pango glib2 alsa-lib cdparanoia libtheora openblas-serial python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base boost-regex \
 libsoup libjpeg-turbo librtmp ; \
     yum remove -y -q epel-release; \
     yum remove -y -q rpmfusion-free-release; \
