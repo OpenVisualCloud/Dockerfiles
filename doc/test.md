@@ -18,7 +18,8 @@
 | graphics-ospray-mpi | V | V | V | V | V |
 | graphics-dev | V | V | V | V | V |
 | service-owt | - | V | - | - | V |
-| service-owt-immersive | - | - | - | - | V |
+| service-owt360 | - | - | - | - | V |
+| service-dev | - | C | - | - | - |
 
 | Platform: XeonE3 (GPU) | Ubuntu 16.04 LTS | Ubuntu 18.04 LTS | CentOS-7.4 | CentOS-7.5 | CentOS-7.6 |
 |-----|:---:|:---:|:---:|:---:|:---:|

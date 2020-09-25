@@ -8,7 +8,6 @@ RUN yum install -y -q bzip2 make autoconf libtool git wget ca-certificates pkg-c
 # Install cmake
 ARG CMAKE_VER=3.13.1
 ARG CMAKE_REPO=https://cmake.org/files
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz && \
     cd cmake-${CMAKE_VER} && \
     ./bootstrap --prefix="/usr/local" --system-curl && \
@@ -18,7 +17,6 @@ RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER%.*}/cmake-${CMAKE_VER}.tar.gz | tar xz 
 # Install automake, use version 1.14 on CentOS
 ARG AUTOMAKE_VER=1.14
 ARG AUTOMAKE_REPO=https://ftp.gnu.org/pub/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${AUTOMAKE_REPO} | tar xJ && \
     cd automake-${AUTOMAKE_VER} && \
     ./configure --prefix=/usr --libdir=/usr/local/lib64 --disable-doc && \ 
@@ -39,7 +37,6 @@ RUN  wget ${NASM_REPO} && \
 # Build YASM
 ARG YASM_VER=1.3.0
 ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.tar.gz
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${YASM_REPO} | tar xz && \
      cd yasm-${YASM_VER} && \
      sed -i "s/) ytasm.*/)/" Makefile.in && \
@@ -55,7 +52,6 @@ ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive
 
 RUN yum install -y -q glib2-devel
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${NICE_REPO} | tar xz && \
     cd libnice-${NICE_VER} && \
     wget -O - ${LIBNICE_PATCH_REPO} | tar xz  && \
@@ -75,7 +71,6 @@ ARG OPENSSL_BASE_VER="1.0.2"
 ARG OPENSSL_VER="1.0.2t"
 ARG OPENSSL_REPO=http://www.openssl.org/source/old/${OPENSSL_BASE_VER}/openssl-${OPENSSL_VER}.tar.gz
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${OPENSSL_REPO} | tar xz && \
     cd openssl-${OPENSSL_VER} && \
     ./config no-ssl3 --prefix="/usr/local" -fPIC && \
@@ -102,7 +97,6 @@ ARG USRSCTP_URL="https://github.com/sctplab/usrsctp/archive/${USRSCTP_FILE}"
 
 RUN yum install -y -q which
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${USRSCTP_URL} | tar xz && \
     mv ${USRSCTP_EXTRACT} usrsctp && \
     cd usrsctp && \
@@ -130,7 +124,6 @@ RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
 ARG FDK_AAC_VER=v0.1.6
 ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
     cd fdk-aac && \
     autoreconf -fiv && \
@@ -149,13 +142,11 @@ ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 ARG FFMPEG_PATCHES_RELEASE_VER=0.1
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
 
 RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg ;
 
@@ -293,7 +284,6 @@ RUN wget ${NODE_REPO} && \
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64
 RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
     yum install rabbitmq-server mongodb mongodb-server -y && \

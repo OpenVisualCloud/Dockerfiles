@@ -26,7 +26,6 @@ RUN git clone ${OSPRAY_REPO}; \
     make -j 8
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ospray/build
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p /var/run/sshd; \
     sed -i 's/^#Port/Port/g' /etc/ssh/sshd_config; \
     sed -i 's/^Port 22/Port 2222/g' /etc/ssh/sshd_config; \

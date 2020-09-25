@@ -9,7 +9,6 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-devel
 )dnl
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver && \
     mkdir -p media-driver/build && \
     cd media-driver/build && \

@@ -3,11 +3,11 @@ ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
 )dnl
 
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-    RUN yum install -y -q glib2-devel gtk-dock openblas uuid-devel python3 python36-gobject-devel python3-devel
+    RUN yum install -y -q glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel
 )dnl
 
 ifelse(index(DOCKER_IMAGE,centos74),-1,,
-    RUN yum install -y -q binutils uuid-devel
+    RUN yum install -y -q binutils 
 )dnl
 
 ARG PAHO_INSTALL=true
@@ -60,13 +60,13 @@ ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/gireposit
 
 define(`INSTALL_PKGS_VA_GST_PLUGINS',
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-    libgtk2.0 libdrm2 libxv1 uuid python3-numpy python3-gi python3-gi-cairo python3-dev \
+    libgtk2.0 libdrm2 libxv1 python3-numpy python3-gi python3-gi-cairo python3-dev \
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
-    libgtk2.0 libdrm2 libxv1 libpugixml1v5 uuid python3-numpy python3-gi python3-gi-cairo python3-dev \
+    libgtk2.0 libdrm2 libxv1 libpugixml1v5 python3-numpy python3-gi python3-gi-cairo python3-dev \
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
-    openblas-serial uuid python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base boost-regex \
+    openblas-serial python3 python36-gobject python3-devel python36-gobject-devel python36-gobject-base boost-regex \
 )dnl
 )dnl
 

@@ -18,7 +18,6 @@ RUN  apt-get update && apt-get install -y -q --no-install-recommends libxrandr-d
      rm -rf /var/lib/apt/lists/*
 )dnl
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_PLUGIN_BASE_REPO} | tar xJ && \
      cd gst-plugins-base-${GST_VER} && \
      export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \

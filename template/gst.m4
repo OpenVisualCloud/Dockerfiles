@@ -18,7 +18,6 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,
 RUN  yum install -y -q glib2-devel-2.56.1 gettext-devel gobject-introspection gobject-introspection-devel python-gobject-base
 )dnl
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN  wget -O - ${GST_REPO} | tar xJ && \
      cd gstreamer-${GST_VER} && \
      ./autogen.sh \
