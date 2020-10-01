@@ -48,7 +48,8 @@ case "$0" in
             ssh $NODEUSER@$nodeip "date -s \"$(date)\""
             scp "$0" $NODEUSER@$nodeip:/root/install-access.sh
             ssh $NODEUSER@$nodeip /root/install-access.sh "$http_proxy" "$https_proxy" "$no_proxy"
-            ssh $NODEUSER@$nodeip "apt-get update && apt-get install -y dbus tzdata && timedatectl set-timezone \"$(timedatectl | awk '/Time zone:/{print$3}')\""
+            ssh $NODEUSER@$nodeip "if [ \$(dpkg-query --show | grep '^\(dbus\|tzdata\)' | wc -l) != '2' ]; then apt-get update && apt-get install -y dbus tzdata; fi"
+            ssh $NODEUSER@$nodeip "timedatectl set-timezone \"$(timedatectl | awk '/Time zone:/{print$3}')\""
 
         done
         ;;
