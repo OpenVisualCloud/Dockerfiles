@@ -63,8 +63,19 @@ RUN chmod -R 775 /opt/intel/ ;
 FROM ubuntu:18.04
 
 # BUILD TOOLS for HDDLDAEMON run layer image
-RUN apt-get update && apt-get install -y --no-install-recommends sudo libboost-filesystem1.65-dev nasm libboost-thread1.65-dev libboost-program-options1.65-dev libjson-c-dev libusb-1.0-0 autoconf automake make libtool kmod libelf-dev lsb-release && \
+RUN apt-get update && apt-get install -y --no-install-recommends sudo libboost-filesystem1.65-dev libboost-thread1.65-dev libboost-program-options1.65-dev libjson-c-dev libusb-1.0-0 autoconf automake make libtool kmod libelf-dev lsb-release wget ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+# Build NASM
+ARG NASM_VER=2.13.03
+ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.bz2
+RUN  wget ${NASM_REPO} && \
+     tar -xaf nasm* && \
+     cd nasm-${NASM_VER} && \
+     ./autogen.sh && \
+     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu && \
+     make -j8 && \
+     make install
+
 
 COPY --from=builder /lib/x86_64-linux-gnu/libusb-1.0.so.0 /lib/x86_64-linux-gnu/libusb-1.0.so.0
 COPY --from=builder /home/opt/intel /opt/intel
