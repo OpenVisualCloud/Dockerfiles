@@ -413,7 +413,7 @@ WORKDIR /home
 
 # Prerequisites
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y -q --no-install-recommends  libxcb-shm0 libxcb-shape0 libxcb-xfixes0  libnuma1 libass5 libssl1.0.0   && \
+RUN apt-get update && apt-get install -y -q --no-install-recommends  libxcb-shm0 libxcb-shape0 libxcb-xfixes0  libnuma1 libass5 libssl1.0.0    && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*
 

@@ -451,7 +451,7 @@ WORKDIR /home
 
 # Prerequisites
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y -q --no-install-recommends libxv1 libsdl2-2.0-0 libasound2 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libvdpau1 libnuma1 libass5 libssl1.0.0   libdrm2 libjson-c2 libboost-thread1.58.0 libboost-filesystem1.58.0 libboost-system1.58.0 libusb-1.0-0-dev  && \
+RUN apt-get update && apt-get install -y -q --no-install-recommends libxv1 libsdl2-2.0-0 libasound2 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libvdpau1 libnuma1 libass5 libssl1.0.0   libdrm2 libjson-c2 libboost-thread1.58.0 libboost-filesystem1.58.0 libboost-system1.58.0 libusb-1.0-0-dev   && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*
 
