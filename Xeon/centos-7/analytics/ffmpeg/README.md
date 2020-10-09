@@ -1,11 +1,11 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-centos-76-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7.6/analytics/ffmpeg/Dockerfile)
+ - [xeon-centos-7-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7/analytics/ffmpeg/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
-Intel&reg; Xeon&reg; platform, CentOS-7.6.1810
+Intel&reg; Xeon&reg; platform, CentOS-7
 
 - #### Included components:
 [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	

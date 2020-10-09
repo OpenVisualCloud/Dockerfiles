@@ -1,11 +1,11 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Optimized for NGINX web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-centos-76-media-nginx](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7.6/media/nginx/Dockerfile)
+ - [xeon-centos-7-media-nginx](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7/media/nginx/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
-Intel&reg; Xeon&reg; platform, CentOS-7.6.1810
+Intel&reg; Xeon&reg; platform, CentOS-7
 
 - #### Included components:
 [NGINX](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/nginx.md)	

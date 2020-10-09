@@ -1,11 +1,11 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery GStreamer image, inferencing engine and video analytics plugins. Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-centos-76-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/centos-7.6/analytics/gst/Dockerfile)
+ - [xeone3-centos-7-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/centos-7/analytics/gst/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
-Intel&reg; Xeon&reg; E3 platform, CentOS-7.6.1810
+Intel&reg; Xeon&reg; E3 platform, CentOS-7
 
 - #### Included components:
 [GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)	

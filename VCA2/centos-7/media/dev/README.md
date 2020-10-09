@@ -1,11 +1,11 @@
 This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Included what are in FFmpeg or GStreamer media creation and delivery images . Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [vca2-centos-76-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/VCA2/centos-7.6/media/dev/Dockerfile)
+ - [vca2-centos-7-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/VCA2/centos-7/media/dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
-Intel&reg; VCA2 platform, CentOS-7.6.1810
+Intel&reg; VCA2 platform, CentOS-7
 
 - #### Included components:
 [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)	

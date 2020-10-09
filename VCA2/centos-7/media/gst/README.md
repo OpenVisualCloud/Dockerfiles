@@ -1,11 +1,11 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [vca2-centos-76-media-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/VCA2/centos-7.6/media/gst/Dockerfile)
+ - [vca2-centos-7-media-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/VCA2/centos-7/media/gst/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
-Intel&reg; VCA2 platform, CentOS-7.6.1810
+Intel&reg; VCA2 platform, CentOS-7
 
 - #### Included components:
 [GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)	

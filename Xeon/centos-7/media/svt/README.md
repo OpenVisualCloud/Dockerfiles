@@ -1,11 +1,11 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-centos-76-media-svt](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7.6/media/svt/Dockerfile)
+ - [xeon-centos-7-media-svt](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7/media/svt/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
-Intel&reg; Xeon&reg; platform, CentOS-7.6.1810
+Intel&reg; Xeon&reg; platform, CentOS-7
 
 - #### Included components:
 [SVT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/svt.md)	

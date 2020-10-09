@@ -40,7 +40,7 @@ path_subs = {
                 "vca2-ubuntu1804-media-ffmpeg" : "VCA2/ubuntu-18.04/media/ffmpeg/",
                 "vca2-ubuntu1604-media-ffmpeg" : "VCA2/ubuntu-16.04/media/ffmpeg/",
                 "vca2-centos74-media-ffmpeg" : "VCA2/centos-7.4/media/ffmpeg/",
-                "vca2-centos76-media-ffmpeg" : "VCA2/centos-7.6/media/ffmpeg/"
+                "vca2-centos76-media-ffmpeg" : "VCA2/centos-7.6/media/ffmpeg/",
                 "vca2-centos7-media-ffmpeg" : "VCA2/centos-7/media/ffmpeg/"
                 }
 
