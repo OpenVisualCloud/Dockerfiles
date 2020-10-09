@@ -8,16 +8,16 @@ addons:
       - docker-ce
     update: true
 env:
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=ffmpeg DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=gst DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=svt DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=media imageName=dev DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=ffmpeg DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=gst DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt DOCKER_PREFIX=ovccache
-  - CPU=Xeon buildOS=centos-7.6 usage=service imageName=owt360 DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=media imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=media imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=media imageName=svt DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=media imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=analytics imageName=ffmpeg DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=analytics imageName=gst DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=service imageName=owt DOCKER_PREFIX=ovccache
+  - CPU=Xeon buildOS=centos-7 usage=service imageName=owt360 DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=ffmpeg DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=gst DOCKER_PREFIX=ovccache
   - CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx DOCKER_PREFIX=ovccache
@@ -47,11 +47,11 @@ after_success: |
 matrix:
   fast_finish: true
   allow_failures: # test cases run not stable.
-    - name: xeon-centos7.6-media-nginx
-    - env: CPU=Xeon buildOS=centos-7.6 usage=media imageName=nginx DOCKER_PREFIX=ovccache
+    - name: xeon-centos7-media-nginx
+    - env: CPU=Xeon buildOS=centos-7 usage=media imageName=nginx DOCKER_PREFIX=ovccache
     - name: xeon-ubuntu-18.04-name-nginx
     - env: CPU=Xeon buildOS=ubuntu-18.04 usage=media imageName=nginx DOCKER_PREFIX=ovccache
-    - name: xeon-centos7.6-analytics-dev
-    - env: CPU=Xeon buildOS=centos-7.6 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
+    - name: xeon-centos7-analytics-dev
+    - env: CPU=Xeon buildOS=centos-7 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
     - name: xeon-ubuntu-18.04-analytics-dev
     - env: CPU=Xeon buildOS=ubuntu-18.04 usage=analytics imageName=dev DOCKER_PREFIX=ovccache
