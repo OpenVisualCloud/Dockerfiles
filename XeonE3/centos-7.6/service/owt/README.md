@@ -5,24 +5,17 @@ This docker image is part of Open Visual Cloud software stacks. Optimized for vi
 
 ## Quick reference
 - #### Supported platform and OS
-Intel&reg; Xeon&reg; E3 platform, CentOS-7.6.1810
+  Intel&reg; Xeon&reg; E3 platform, CentOS-7.6.1810
 
-- #### Included components:
-[OWT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt.md)	
+- #### Usage instructions:
+  [OWT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt.md)	
 
 
-- #### Where to get help:
-- [Open Visual Cloud Dockerfiles Github](https://github.com/OpenVisualCloud/Dockerfiles)
-- [Getting Started With Open Visual Cloud Docker Files](https://01.org/openvisualcloud/documents/get-started-docker)
-- [the Docker Community Forums](https://forums.docker.com)
-- [the Docker Community Slack](https://www.docker.com/docker-community)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/docker)
+- #### Getting started with Dockerfiles:
+  [OpenVisualCloud Dockerfiles Wiki](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
--  #### Where to file issues:
-[OpenVisualCloud Dockerfiles Issues](https://github.com/OpenVisualCloud/Dockerfiles/issues)
-
-- #### Maintained by:
-[OpenVisualCloud Dockerfiles Community](https://github.com/OpenVisualCloud/Dockerfiles/graphs/contributors)
+- #### File issues:
+  [OpenVisualCloud Dockerfiles Issues](https://github.com/OpenVisualCloud/Dockerfiles/issues)
 
 
 ## License
