@@ -147,7 +147,7 @@ def url_generator(local_path, image_name, image_type, image_os, image_platform):
 def included_components(image_name):
     included_holder = ''
     if image_name in included_subs:
-        included_holder += "- #### Included components:\n"
+        included_holder += "- #### Usage instructions:\n  "
         for comp in included_subs[image_name]:
             included_holder += comp
             included_holder += '\t'
@@ -158,22 +158,15 @@ def included_components(image_name):
 def quick_reference(local_path, image_name, image_type, image_os, image_platform):
     text_holder = "## Quick reference\n"
     text_holder += "- #### Supported platform and OS\n"
-    text_holder += "Intel&reg; "+platform_subs[image_platform]+", "+os_subs[image_os]
+    text_holder += "  Intel&reg; "+platform_subs[image_platform]+", "+os_subs[image_os]
     text_holder += "\n\n"
     text_holder += included_components(image_name)
     text_holder +="""
-- #### Where to get help:
-- [Open Visual Cloud Dockerfiles Github](https://github.com/OpenVisualCloud/Dockerfiles)
-- [Getting Started With Open Visual Cloud Docker Files](https://01.org/openvisualcloud/documents/get-started-docker)
-- [the Docker Community Forums](https://forums.docker.com)
-- [the Docker Community Slack](https://www.docker.com/docker-community)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/docker)
+- #### Getting started with Dockerfiles:
+  [OpenVisualCloud Dockerfiles Wiki](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
--  #### Where to file issues:
-[OpenVisualCloud Dockerfiles Issues](https://github.com/OpenVisualCloud/Dockerfiles/issues)
-
-- #### Maintained by:
-[OpenVisualCloud Dockerfiles Community](https://github.com/OpenVisualCloud/Dockerfiles/graphs/contributors)
+- #### File issues:
+  [OpenVisualCloud Dockerfiles Issues](https://github.com/OpenVisualCloud/Dockerfiles/issues)
 """
     text_holder += "\n\n"
     return text_holder
