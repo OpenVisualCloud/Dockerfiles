@@ -1,4 +1,4 @@
-ARG OPENCV_VER=4.4.0
+ARG OPENCV_VER=4.5.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
