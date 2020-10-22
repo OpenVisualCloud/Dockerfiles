@@ -12,6 +12,8 @@ This repository hosts docker build files of software stacks and services, design
 
 Validated docker images are available on [**Docker Hub**](https://hub.docker.com/u/openvisualcloud).
 
+Explore more container solutions on the [Intel® oneContainer Portal](software.intel.com/containers).
+
 ---
 
 ### Software Stack Images:
@@ -59,7 +61,7 @@ The service images provides ready to use services. See their image descriptions 
 | Image | Description |
 | :-----: | :----- | 
 | [owt](doc/owt.md)| <p>Docker images optimized for video conferencing services, based on the WebRTC technology and the Open WebRTC Toolkit. Included conferencing modes: 1:N, N:N with video and audio processing nodes. see [`doc/owt.md`](doc/owt.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-service-owt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-service-owt)<br>docker pull [openvisualcloud/xeon-centos76-service-owt](https://hub.docker.com/r/openvisualcloud/xeon-centos76-service-owt)|
-| [owt360](doc/owt360.md)| <p>Docker images optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. see [`doc/owt-immersive.md`](doc/owt-immersive.md) for additional details.</p>|
+| [owt360](doc/owt360.md)| <p>Docker images optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. see [`doc/owt360.md`](doc/owt360.md) for additional details.</p>|
 
 ### Support Matrix:
 

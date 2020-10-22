@@ -76,7 +76,7 @@ WORKDIR /home
 # Prerequisites
 ENV DEBIAN_FRONTEND=noninteractive
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
-    apt-get update && apt-get install -y -q --no-install-recommends && \
+    apt-get update && apt-get install -y -q --no-install-recommends  && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*
 

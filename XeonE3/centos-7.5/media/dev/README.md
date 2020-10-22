@@ -5,24 +5,17 @@ This docker image is part of Open Visual Cloud software stacks. This is developm
 
 ## Quick reference
 - #### Supported platform and OS
-Intel&reg; Xeon&reg; E3 platform, CentOS-7.5.1804
+  Intel&reg; Xeon&reg; E3 platform, CentOS-7.5.1804
 
-- #### Included components:
-[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)	
+- #### Usage instructions:
+  [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)	
 
 
-- #### Where to get help:
-- [Open Visual Cloud Dockerfiles Github](https://github.com/OpenVisualCloud/Dockerfiles)
-- [Getting Started With Open Visual Cloud Docker Files](https://01.org/openvisualcloud/documents/get-started-docker)
-- [the Docker Community Forums](https://forums.docker.com)
-- [the Docker Community Slack](https://www.docker.com/docker-community)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/docker)
+- #### Getting started with Dockerfiles:
+  [OpenVisualCloud Dockerfiles Wiki](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
--  #### Where to file issues:
-[OpenVisualCloud Dockerfiles Issues](https://github.com/OpenVisualCloud/Dockerfiles/issues)
-
-- #### Maintained by:
-[OpenVisualCloud Dockerfiles Community](https://github.com/OpenVisualCloud/Dockerfiles/graphs/contributors)
+- #### File issues:
+  [OpenVisualCloud Dockerfiles Issues](https://github.com/OpenVisualCloud/Dockerfiles/issues)
 
 
 ## License

@@ -142,7 +142,7 @@ WORKDIR /home
 
 # Prerequisites
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y -q --no-install-recommends libxml2 libssl1.0.0 libpcre3 zlib1g libxslt1.1 && \
+RUN apt-get update && apt-get install -y -q --no-install-recommends libxml2 libssl1.0.0 libpcre3 zlib1g libxslt1.1  && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*
 # Install
