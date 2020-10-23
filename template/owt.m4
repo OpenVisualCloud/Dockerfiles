@@ -19,6 +19,7 @@ ARG SOURCE_DIR=ifelse(BUILD_DEV,enabled,/home/build/home,/home)
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 ARG OWT_BRANCH=4.3.x
 ARG DOWNLOAD_JSON_LINK="https://github.com/nlohmann/json/releases/download/v3.6.1/json.hpp"
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu):ifelse(index(DOCKER_IMAGE,xeon-),-1,/opt/intel/mediasdk/lib64,,)
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 ARG FDKAAC_LIB=/home/build/usr/local/lib/x86_64-linux-gnu
@@ -37,7 +38,7 @@ RUN git config --global user.email "you@example.com" && \
     ifelse(BUILD_DEV,enabled,mkdir ${SOURCE_DIR} &&,) cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
 
     # Get json hpp file
-    wget -P /usr/include ${DOWNLOAD_JSON_LINK} ifelse(BUILD_DEV,enabled,&& cp /usr/include/json.hpp /home/build/usr/include/,) && \
+    wget --no-check-certificate -P /usr/include ${DOWNLOAD_JSON_LINK} ifelse(BUILD_DEV,enabled,&& cp /usr/include/json.hpp /home/build/usr/include/,) && \
 
     # Install node modules for owt
     npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
@@ -46,8 +47,8 @@ RUN git config --global user.email "you@example.com" && \
     # Get openh264 for owt
     cd third_party && \
     mkdir openh264 && cd openh264 && \
-    wget ${OPENH264_SOURCE} && \
-    wget ${OPENH264_BINARY} && \
+    wget --no-check-certificate ${OPENH264_SOURCE} && \
+    wget --no-check-certificate ${OPENH264_BINARY} && \
     tar xzf ${OPENH264_SOURCENAME} openh264-${OPENH264_MAJOR}.${OPENH264_MINOR}.0/codec/api && \
     ln -s -v openh264-${OPENH264_MAJOR}.${OPENH264_MINOR}.0/codec codec && \
     bzip2 -d ${OPENH264_BINARYNAME}.bz2 && \
@@ -60,20 +61,20 @@ RUN git config --global user.email "you@example.com" && \
     cd ${SERVER_PATH}/third_party && git clone ${LICODE_REPO} && \
     cd licode && \
     git reset --hard ${LICODE_COMMIT} && \
-    wget -r -nH --cut-dirs=5 --no-parent ${LICODE_PATCH_REPO} && \
+    wget --no-check-certificate -r -nH --cut-dirs=5 --no-parent ${LICODE_PATCH_REPO} && \
     git am ${SERVER_PATH}/scripts/patches/licode/*.patch && \
 
     # Install webrtc for owt
     cd ${SERVER_PATH}/third_party && mkdir webrtc  && cd webrtc &&\
     export GIT_SSL_NO_VERIFY=1 && \
     git clone -b 59-server ${WEBRTC_REPO} src && \
+    sed -i "s/wget /wget --no-check-certificate /g" ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/build.sh && \
 
     # Get js client sdk for owt
     cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
-    export LD_LIBRARY_PATH=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) && \
-    cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz ifelse(BUILD_DEV,enabled,, && \
+    ifelse(index(DOCKER_IMAGE,xeon-),-1,ifelse(index(DOCKER_IMAGE,ubuntu),-1,,ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 &&),) cd ${SERVER_PATH}/third_party/quic-lib && wget --no-check-certificate https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz ifelse(BUILD_DEV,enabled,, && \
     cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig && ifelse(index(DOCKER_IMAGE,xeon-),-1,./scripts/build.js -t mcu-all -r -c && \,./scripts/build.js -t mcu -r -c && \)
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference)

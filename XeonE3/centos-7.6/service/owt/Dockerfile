@@ -67,9 +67,8 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
 
 
 # Build open ssl
-ARG OPENSSL_BASE_VER="1.0.2"
-ARG OPENSSL_VER="1.0.2t"
-ARG OPENSSL_REPO=http://www.openssl.org/source/old/${OPENSSL_BASE_VER}/openssl-${OPENSSL_VER}.tar.gz
+ARG OPENSSL_VER="1.1.1h"
+ARG OPENSSL_REPO=http://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz
 
 RUN wget -O - ${OPENSSL_REPO} | tar xz && \
     cd openssl-${OPENSSL_VER} && \
@@ -79,7 +78,7 @@ RUN wget -O - ${OPENSSL_REPO} | tar xz && \
     make install
 
 # Build libre
-ARG LIBRE_VER="v0.4.16"
+ARG LIBRE_VER="v0.5.0"
 ARG LIBRE_REPO=https://github.com/creytiv/re.git
 
 RUN git clone ${LIBRE_REPO} && \
@@ -124,7 +123,7 @@ RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
 ARG FDK_AAC_VER=v0.1.6
 ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
 
-RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
+RUN wget --no-check-certificate -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
     cd fdk-aac && \
     autoreconf -fiv && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
@@ -134,7 +133,7 @@ RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac &&
 
 
 # Fetch FFmpeg source
-ARG FFMPEG_VER=n4.1
+ARG FFMPEG_VER=n4.1.3
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
@@ -142,12 +141,12 @@ ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 ARG FFMPEG_PATCHES_RELEASE_VER=0.1
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
-RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
+RUN wget --no-check-certificate -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
 
 RUN yum install -y -q libass-devel freetype-devel SDL2-devel libxcb-devel libvdpau-devel zlib-devel openssl-devel
 
-RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
+RUN wget --no-check-certificate -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg ;
 
 # Compile FFmpeg
@@ -160,12 +159,12 @@ RUN cd /home/FFmpeg && \
 
 
 # Install node
-ARG NODE_VER=v8.15.0
+ARG NODE_VER=v10.21.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
 RUN yum install -y -q ca-certificates wget xz-utils
 
-RUN wget ${NODE_REPO} && \
+RUN wget --no-check-certificate ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/local -rf && \
     rm -rf node-*
@@ -174,7 +173,7 @@ RUN wget ${NODE_REPO} && \
 ARG GMMLIB_VER=intel-gmmlib-18.3.0
 ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/${GMMLIB_VER}.tar.gz
 
-RUN wget -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
+RUN wget --no-check-certificate -O - ${GMMLIB_REPO} | tar xz && mv gmmlib-${GMMLIB_VER} gmmlib;
 
 
 # Build libva
@@ -183,7 +182,7 @@ ARG LIBVA_REPO=https://github.com/intel/libva/archive/${LIBVA_VER}.tar.gz
 
 RUN yum install -y -q libX11-devel mesa-libGL-devel which libdrm-devel
 
-RUN wget -O - ${LIBVA_REPO} | tar xz && \
+RUN wget --no-check-certificate -O - ${LIBVA_REPO} | tar xz && \
     cd libva-${LIBVA_VER} && \
     ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
     make -j8 && \
@@ -195,7 +194,7 @@ RUN wget -O - ${LIBVA_REPO} | tar xz && \
 ARG LIBVA_UTILS_VER=2.4.0
 ARG LIBVA_UTILS_REPO=https://github.com/intel/libva-utils/archive/${LIBVA_UTILS_VER}.tar.gz
 
-RUN wget -O - ${LIBVA_UTILS_REPO} | tar xz; \
+RUN wget --no-check-certificate -O - ${LIBVA_UTILS_REPO} | tar xz; \
     cd libva-utils-${LIBVA_UTILS_VER}; \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig"; \
     ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64; \
@@ -210,7 +209,7 @@ ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/${MEDIA_DRIVE
 
 RUN yum install -y -q libX11-devel mesa-libGL-devel libpciaccess-devel libXext-devel
 
-RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver && \
+RUN wget --no-check-certificate -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VER} media-driver && \
     mkdir -p media-driver/build && \
     cd media-driver/build && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
@@ -225,11 +224,12 @@ RUN wget -O - ${MEDIA_DRIVER_REPO} | tar xz && mv media-driver-${MEDIA_DRIVER_VE
 ARG MSDK_VER=MSS-KBL-2019-R1-HF1
 ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/${MSDK_VER}.tar.gz
 
-RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
+
+RUN wget --no-check-certificate -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
     mkdir -p MediaSDK/build && \
     cd MediaSDK/build && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
+    cmake -DCMAKE_INSTALL_PREFIX=/opt/intel/mediasdk -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     rm -rf /home/build/usr/samples && \
@@ -279,6 +279,7 @@ ARG SOURCE_DIR=/home
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 ARG OWT_BRANCH=4.3.x
 ARG DOWNLOAD_JSON_LINK="https://github.com/nlohmann/json/releases/download/v3.6.1/json.hpp"
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64:/opt/intel/mediasdk/lib64
 
 ARG FDKAAC_LIB=/home/build/usr/local/lib64
 RUN yum install -y -q python-devel glib2-devel boost-devel log4cxx-devel
@@ -291,7 +292,7 @@ RUN git config --global user.email "you@example.com" && \
      cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
 
     # Get json hpp file
-    wget -P /usr/include ${DOWNLOAD_JSON_LINK}  && \
+    wget --no-check-certificate -P /usr/include ${DOWNLOAD_JSON_LINK}  && \
 
     # Install node modules for owt
     npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
@@ -300,8 +301,8 @@ RUN git config --global user.email "you@example.com" && \
     # Get openh264 for owt
     cd third_party && \
     mkdir openh264 && cd openh264 && \
-    wget ${OPENH264_SOURCE} && \
-    wget ${OPENH264_BINARY} && \
+    wget --no-check-certificate ${OPENH264_SOURCE} && \
+    wget --no-check-certificate ${OPENH264_BINARY} && \
     tar xzf ${OPENH264_SOURCENAME} openh264-${OPENH264_MAJOR}.${OPENH264_MINOR}.0/codec/api && \
     ln -s -v openh264-${OPENH264_MAJOR}.${OPENH264_MINOR}.0/codec codec && \
     bzip2 -d ${OPENH264_BINARYNAME}.bz2 && \
@@ -314,21 +315,21 @@ RUN git config --global user.email "you@example.com" && \
     cd ${SERVER_PATH}/third_party && git clone ${LICODE_REPO} && \
     cd licode && \
     git reset --hard ${LICODE_COMMIT} && \
-    wget -r -nH --cut-dirs=5 --no-parent ${LICODE_PATCH_REPO} && \
+    wget --no-check-certificate -r -nH --cut-dirs=5 --no-parent ${LICODE_PATCH_REPO} && \
     git am ${SERVER_PATH}/scripts/patches/licode/*.patch && \
 
     # Install webrtc for owt
     cd ${SERVER_PATH}/third_party && mkdir webrtc  && cd webrtc &&\
     export GIT_SSL_NO_VERIFY=1 && \
     git clone -b 59-server ${WEBRTC_REPO} src && \
+    sed -i "s/wget /wget --no-check-certificate /g" ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/build.sh && \
 
     # Get js client sdk for owt
     cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
-    export LD_LIBRARY_PATH=/usr/local/lib64 && \
-    cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
+     cd ${SERVER_PATH}/third_party/quic-lib && wget --no-check-certificate https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
     cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
@@ -339,12 +340,12 @@ WORKDIR /home
 
 # Prerequisites
 # Install node
-ARG NODE_VER=v8.15.0
+ARG NODE_VER=v10.21.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
 RUN yum install -y -q ca-certificates wget xz-utils
 
-RUN wget ${NODE_REPO} && \
+RUN wget --no-check-certificate ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/local -rf && \
     rm -rf node-*
@@ -352,7 +353,7 @@ RUN wget ${NODE_REPO} && \
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64:/opt/intel/mediasdk/lib64
 RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
     yum install rabbitmq-server mongodb mongodb-server -y && \
     yum remove -y -q epel-release && \

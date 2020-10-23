@@ -13,7 +13,7 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q libX11-devel mesa-libGL-devel which libdrm-devel
 )dnl
 
-RUN wget -O - ${LIBVA_REPO} | tar xz && \
+RUN wget --no-check-certificate -O - ${LIBVA_REPO} | tar xz && \
     cd libva-${LIBVA_VER} && \
     ./autogen.sh --prefix=/usr/local --libdir=/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu) && \
     make -j8 && \
