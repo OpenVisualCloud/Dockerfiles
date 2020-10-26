@@ -318,9 +318,9 @@ RUN wget "${OPENCV_REPO}" && \
 
 
 # OpenVINO verion
-# 2020.4 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.4.287
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz
+# 2021
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2021.1.110
+ARG OPENVINO_URL=https://registrationcenter-download.intel.com/akdlm/irc_nas/17062/l_openvino_toolkit_p_2021.1.110.tgz
 
 
 #Download and unpack OpenVino
@@ -344,6 +344,10 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
+
+#Creat symlink to assure compatibility with components
+RUN cd /opt/intel/      &&\
+    ln -s openvino_2021 openvino
 
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
