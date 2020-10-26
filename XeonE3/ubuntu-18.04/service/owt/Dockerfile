@@ -333,8 +333,8 @@ RUN git config --global user.email "you@example.com" && \
 
     # Get js client sdk for owt
     cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
-    mkdir ${SERVER_PATH}/third_party/quic-lib 
-RUN ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 && cd ${SERVER_PATH}/third_party/quic-lib && wget --no-check-certificate https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
+    mkdir ${SERVER_PATH}/third_party/quic-lib && \
+    ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 && cd ${SERVER_PATH}/third_party/quic-lib && wget --no-check-certificate https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
     cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
