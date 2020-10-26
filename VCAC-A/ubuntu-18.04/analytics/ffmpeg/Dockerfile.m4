@@ -23,7 +23,7 @@ include(opencl.m4)
 include(libjsonc.m4)
 include(librdkafka.m4)
 include(opencv.m4)
-include(openvino.binary.m4)
+include(openvino.binary.smtc.m4)
 include(ffmpeg.m4)
 OPENCV_REMAKE_VIDEOIO()
 include(cleanup.m4)dnl
