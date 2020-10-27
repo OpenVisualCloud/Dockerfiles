@@ -115,7 +115,7 @@ RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     cd libsrtp-${SRTP2_VER} && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     export CFLAGS="-fPIC" && \
-    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/opt/openssl" && \
+    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/usr/local" && \
     make -s V=0  && \
     make install
 
