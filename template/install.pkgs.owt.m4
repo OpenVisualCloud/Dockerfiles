@@ -31,8 +31,14 @@ RUN ifelse(index(DOCKER_IMAGE,xeon-),-1,ln -s /opt/intel/mediasdk/lib /opt/intel
     rm -rf /var/lib/apt/lists/*;
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
-RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
-    yum install rabbitmq-server mongodb mongodb-server -y && \
+RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "name=MongoDB Repository" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.6/x86_64/" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "gpgcheck=1" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "enabled=1" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \
+    yum install rabbitmq-server mongodb-org -y && \
     yum remove -y -q epel-release && \
     ifelse(index(DOCKER_IMAGE,xeon-),-1,
         yum install intel-gpu-tools mesa-libGL-devel libvdpau -y && \

@@ -115,7 +115,7 @@ RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     cd libsrtp-${SRTP2_VER} && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     export CFLAGS="-fPIC" && \
-    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/usr/local" && \
+    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/opt/openssl" && \
     make -s V=0  && \
     make install
 
@@ -285,8 +285,14 @@ COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64:
-RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \	
-    yum install rabbitmq-server mongodb mongodb-server -y && \
+RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "name=MongoDB Repository" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.6/x86_64/" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "gpgcheck=1" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "enabled=1" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \
+    yum install rabbitmq-server mongodb-org -y && \
     yum remove -y -q epel-release && \
         echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
