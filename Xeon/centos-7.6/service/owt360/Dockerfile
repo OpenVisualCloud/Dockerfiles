@@ -70,10 +70,12 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
 # Build open ssl
 ARG OPENSSL_VER="1.1.1h"
 ARG OPENSSL_REPO=http://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz
+ARG BUILD_PREFIX=/usr/local/ssl
+ARG BUILD_DESTDIR=/home/build
 
 RUN wget -O - ${OPENSSL_REPO} | tar xz && \
     cd openssl-${OPENSSL_VER} && \
-    ./config no-ssl3 --prefix="/usr/local" -fPIC && \
+    ./config no-ssl3 --prefix=${BUILD_PREFIX} --openssldir=${BUILD_PREFIX} -Wl,-rpath=${BUILD_PREFIX}/lib -fPIC && \
     make depend && \
     make -s V=0  && \
     make install
@@ -116,7 +118,7 @@ RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     cd libsrtp-${SRTP2_VER} && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     export CFLAGS="-fPIC" && \
-    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/usr/local" && \
+    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/usr/local/ssl/" && \
     make -s V=0  && \
     make install
 
@@ -124,7 +126,7 @@ RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
 ARG FDK_AAC_VER=v0.1.6
 ARG FDK_AAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/${FDK_AAC_VER}.tar.gz
 
-RUN wget --no-check-certificate -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
+RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac && \
     cd fdk-aac && \
     autoreconf -fiv && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib64 --enable-shared && \
@@ -142,12 +144,12 @@ ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
 ARG FFMPEG_PATCHES_RELEASE_VER=0.1
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
 ARG FFMPEG_PATCHES_PATH=/home/CDN-${FFMPEG_PATCHES_RELEASE_VER}
-RUN wget --no-check-certificate -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
+RUN wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz
 
 
 RUN yum install -y -q libass-devel freetype-devel zlib-devel openssl-devel
 
-RUN wget --no-check-certificate -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
+RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
     cd FFmpeg ;
 
 # Compile FFmpeg
@@ -165,7 +167,7 @@ ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar
 
 RUN yum install -y -q ca-certificates wget xz-utils
 
-RUN wget --no-check-certificate ${NODE_REPO} && \
+RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/local -rf && \
     rm -rf node-*
@@ -294,7 +296,7 @@ ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar
 
 RUN yum install -y -q ca-certificates wget xz-utils
 
-RUN wget --no-check-certificate ${NODE_REPO} && \
+RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/local -rf && \
     rm -rf node-*

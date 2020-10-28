@@ -11,7 +11,7 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
 RUN yum install -y -q ca-certificates wget xz-utils
 )dnl
 
-RUN wget --no-check-certificate ${NODE_REPO} && \
+RUN wget ${NODE_REPO} && \
     tar xf node-${NODE_VER}-linux-x64.tar.xz && \
     cp node-*/* /usr/local -rf && \
     ifelse(BUILD_DEV,enabled,npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && rm -rf node-*, rm -rf node-*)

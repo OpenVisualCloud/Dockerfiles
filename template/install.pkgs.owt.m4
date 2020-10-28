@@ -1,7 +1,7 @@
 ifelse(BUILD_DEV,enabled,,COPY --from=build /home/owt-server/dist /home/owt)
 COPY --from=build /home/build /
 
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu):ifelse(index(DOCKER_IMAGE,xeon-),-1,/opt/intel/mediasdk/lib64,,)
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu):ifelse(index(DOCKER_IMAGE,xeon-),-1,/opt/intel/mediasdk/lib64,)
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
 RUN ifelse(index(DOCKER_IMAGE,xeon-),-1,ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 &&,) echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
     apt-get update && \
