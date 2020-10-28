@@ -1,5 +1,5 @@
 # Install node
-ARG NODE_VER=v8.15.0
+ARG NODE_VER=v10.21.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl

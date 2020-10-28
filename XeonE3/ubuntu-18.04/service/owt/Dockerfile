@@ -69,19 +69,20 @@ RUN wget -O - ${NICE_REPO} | tar xz && \
 
 
 # Build open ssl
-ARG OPENSSL_BASE_VER="1.0.2"
-ARG OPENSSL_VER="1.0.2t"
-ARG OPENSSL_REPO=http://www.openssl.org/source/old/${OPENSSL_BASE_VER}/openssl-${OPENSSL_VER}.tar.gz
+ARG OPENSSL_VER="1.1.1h"
+ARG OPENSSL_REPO=http://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz
+ARG BUILD_PREFIX=/usr/local/ssl
+ARG BUILD_DESTDIR=/home/build
 
 RUN wget -O - ${OPENSSL_REPO} | tar xz && \
     cd openssl-${OPENSSL_VER} && \
-    ./config no-ssl3 --prefix="/usr/local" -fPIC && \
+    ./config no-ssl3 --prefix=${BUILD_PREFIX} --openssldir=${BUILD_PREFIX} -Wl,-rpath=${BUILD_PREFIX}/lib -fPIC && \
     make depend && \
     make -s V=0  && \
     make install
 
 # Build libre
-ARG LIBRE_VER="v0.4.16"
+ARG LIBRE_VER="v0.5.0"
 ARG LIBRE_REPO=https://github.com/creytiv/re.git
 
 RUN git clone ${LIBRE_REPO} && \
@@ -117,7 +118,7 @@ RUN curl -o libsrtp-${SRTP2_VER}.tar.gz ${SRTP2_REPO} && \
     cd libsrtp-${SRTP2_VER} && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     export CFLAGS="-fPIC" && \
-    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/usr/local" && \
+    ./configure --enable-openssl --prefix="/usr/local" --with-openssl-dir="/usr/local/ssl/" && \
     make -s V=0  && \
     make install
 
@@ -135,7 +136,7 @@ RUN wget -O - ${FDK_AAC_REPO} | tar xz && mv fdk-aac-${FDK_AAC_VER#v} fdk-aac &&
 
 
 # Fetch FFmpeg source
-ARG FFMPEG_VER=n4.1
+ARG FFMPEG_VER=n4.1.3
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
@@ -157,13 +158,12 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype --enable-libfdk-aac  --enable-nonfree && \
-
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
 
 # Install node
-ARG NODE_VER=v8.15.0
+ARG NODE_VER=v10.21.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
 RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils && \
@@ -254,7 +254,7 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
     mkdir -p MediaSDK/build && \
     cd MediaSDK/build && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
+    cmake -DCMAKE_INSTALL_PREFIX=/opt/intel/mediasdk -DCMAKE_INSTALL_INCLUDEDIR=include -DBUILD_SAMPLES=OFF -DENABLE_OPENCL=OFF -Wno-dev .. && \
     make -j8 && \
     make install DESTDIR=/home/build && \
     rm -rf /home/build/usr/samples && \
@@ -294,14 +294,11 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends python libgl
 RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name" && \
      cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
-
     # Get json hpp file
     wget -P /usr/include ${DOWNLOAD_JSON_LINK}  && \
-
     # Install node modules for owt
     npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
     cd owt-server && npm install nan && \
-
     # Get openh264 for owt
     cd third_party && \
     mkdir openh264 && cd openh264 && \
@@ -314,27 +311,23 @@ RUN git config --global user.email "you@example.com" && \
     ln -s -v libopenh264.so.${OPENH264_SOVER} libopenh264.so && \
     echo 'const char* stub() {return "this is a stub lib";}' > pseudo-openh264.cpp && \
     gcc pseudo-openh264.cpp -fPIC -shared -o pseudo-openh264.so && \ 
-
     # Get licode for owt
     cd ${SERVER_PATH}/third_party && git clone ${LICODE_REPO} && \
     cd licode && \
     git reset --hard ${LICODE_COMMIT} && \
     wget -r -nH --cut-dirs=5 --no-parent ${LICODE_PATCH_REPO} && \
     git am ${SERVER_PATH}/scripts/patches/licode/*.patch && \
-
     # Install webrtc for owt
     cd ${SERVER_PATH}/third_party && mkdir webrtc  && cd webrtc &&\
     export GIT_SSL_NO_VERIFY=1 && \
     git clone -b 59-server ${WEBRTC_REPO} src && \
     ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/build.sh && \
-
     # Get js client sdk for owt
     cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
-    export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu && \
-    cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
-    cd ${SERVER_PATH} && export PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
+    ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 && cd ${SERVER_PATH}/third_party/quic-lib && wget https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz && tar xzf dist.tgz && \
+    cd ${SERVER_PATH} && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ssl/lib:/usr/local/lib/x86_64-linux-gnu:/opt/intel/mediasdk/lib64 &&  export PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig && ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /home/owt-client-javascript/dist/samples/conference
 
 
@@ -345,7 +338,7 @@ WORKDIR /home
 
 # Prerequisites
 # Install node
-ARG NODE_VER=v8.15.0
+ARG NODE_VER=v10.21.0
 ARG NODE_REPO=https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.xz
 
 RUN apt-get update && apt-get install -y -q --no-install-recommends ca-certificates wget xz-utils && \
@@ -360,12 +353,17 @@ RUN wget ${NODE_REPO} && \
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu
-RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
-    apt-get update && \
+
+
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu:/opt/intel/mediasdk/lib64
+RUN ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 && echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
+    touch /home/test && \
+    sed -i "/lssl/i\'\-L\/usr\/local\/ssl\/lib\'," /home/test && \
+    rm /home/test && apt-get update && \
     apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \ 
-        apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
-        echo "#!/bin/bash -e" >> /home/launch.sh && \
+    
+    apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
+    echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "service mongodb start &" >> /home/launch.sh && \
     echo "service rabbitmq-server start &" >> /home/launch.sh && \
     echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
@@ -376,10 +374,9 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
     echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
-        echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
+    echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
-    
     rm -rf /var/lib/apt/lists/*;
 ENV LIBVA_DRIVER_NAME=iHD
 
