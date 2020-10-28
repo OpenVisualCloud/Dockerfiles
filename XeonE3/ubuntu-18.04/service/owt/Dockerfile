@@ -361,8 +361,9 @@ RUN ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 && echo -e "\x1b[32m
     sed -i "/lssl/i\'\-L\/usr\/local\/ssl\/lib\'," /home/test && \
     rm /home/test && apt-get update && \
     apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \ 
-        apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
-        echo "#!/bin/bash -e" >> /home/launch.sh && \
+    
+    apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
+    echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "service mongodb start &" >> /home/launch.sh && \
     echo "service rabbitmq-server start &" >> /home/launch.sh && \
     echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
@@ -373,10 +374,10 @@ RUN ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 && echo -e "\x1b[32m
     echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
     echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
-        echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
+    echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
-        rm -rf /var/lib/apt/lists/*;
+    rm -rf /var/lib/apt/lists/*;
 ENV LIBVA_DRIVER_NAME=iHD
 
 

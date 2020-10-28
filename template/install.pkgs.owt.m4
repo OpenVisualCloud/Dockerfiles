@@ -10,11 +10,9 @@ RUN ifelse(index(DOCKER_IMAGE,xeon-),-1,ln -s /opt/intel/mediasdk/lib /opt/intel
     sed -i "/lssl/i\'\-L\/usr\/local\/ssl\/lib\'`,'" ifelse(BUILD_DEV,enabled,/home/owt-server/source/agent/webrtc/webrtcLib/binding.gyp && \,/home/test && \)
     rm /home/test && apt-get update && \
     apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \ 
-    ifelse(BUILD_DEV,enabled,apt-get install --no-install-recommends git pkg-config libglib2.0-dev g++ -y && \,)dnl
-    ifelse(index(DOCKER_IMAGE,xeon-),-1,
-    apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
-    )dnl
-    ifelse(BUILD_DEV,enabled,,echo "#!/bin/bash -e" >> /home/launch.sh && \
+    ifelse(index(DOCKER_IMAGE,-dev),-1,,apt-get install --no-install-recommends git pkg-config libglib2.0-dev g++ -y && \)
+    ifelse(index(DOCKER_IMAGE,xeon-),-1,apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \)
+    ifelse(index(DOCKER_IMAGE,-dev),-1,echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "service mongodb start &" >> /home/launch.sh && \
     echo "service rabbitmq-server start &" >> /home/launch.sh && \
     echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
@@ -24,13 +22,10 @@ RUN ifelse(index(DOCKER_IMAGE,xeon-),-1,ln -s /opt/intel/mediasdk/lib /opt/intel
     echo "done" >> /home/launch.sh && \
     echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
-    ifelse(index(DOCKER_IMAGE,xeon-),-1,
-        echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \
-    )dnl
+    ifelse(index(DOCKER_IMAGE,xeon-),-1,echo "./video_agent/init.sh --hardware" >> /home/launch.sh && \)
     echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
-    export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
-    )dnl
+    export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \,)
     rm -rf /var/lib/apt/lists/*;
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
