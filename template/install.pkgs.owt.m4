@@ -1,7 +1,7 @@
-ifelse(BUILD_DEV,enabled,,COPY --from=build /home/owt-server/dist /home/owt)
+ifelse(index(DOCKER_IMAGE,-dev),-1,COPY --from=build /home/owt-server/dist /home/owt,)
 COPY --from=build /home/build /
 
-ifelse(BUILD_DEV,enabled,ENV LD_LIBRARY_PATH=/usr/local/ssl/lib,)
+ifelse(index(DOCKER_IMAGE,-dev),-1,,ENV LD_LIBRARY_PATH=/usr/local/ssl/lib)
 
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu):ifelse(index(DOCKER_IMAGE,xeon-),-1,/opt/intel/mediasdk/lib64,)
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
