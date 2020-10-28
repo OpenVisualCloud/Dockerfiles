@@ -373,7 +373,7 @@ RUN wget "${OPENCV_REPO}" && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.4
+ARG DLDT_VER=2021.1
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
 RUN apt-get update && apt-get -y --no-install-recommends install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
