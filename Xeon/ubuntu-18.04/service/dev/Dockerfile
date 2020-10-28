@@ -274,9 +274,13 @@ RUN wget ${NODE_REPO} && \
 
 COPY --from=build /home/build /
 
+ENV LD_LIBRARY_PATH=/usr/local/ssl/lib
+
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu:
 RUN  echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
-    apt-get update && \
+    touch /home/test && \
+    sed -i "/lssl/i\'\-L\/usr\/local\/ssl\/lib\'," /home/owt-server/source/agent/webrtc/webrtcLib/binding.gyp && \
+    rm /home/test && apt-get update && \
     apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \ 
     apt-get install --no-install-recommends git pkg-config libglib2.0-dev g++ -y && \        
     rm -rf /var/lib/apt/lists/*;

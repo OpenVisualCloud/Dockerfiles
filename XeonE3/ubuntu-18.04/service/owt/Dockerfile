@@ -361,9 +361,13 @@ RUN wget ${NODE_REPO} && \
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
 
+
+
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu:/opt/intel/mediasdk/lib64
 RUN ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 && echo -e "\x1b[32mInstalling dependent components and libraries via apt-get...\x1b[0m" && \
-    apt-get update && \
+    touch /home/test && \
+    sed -i "/lssl/i\'\-L\/usr\/local\/ssl\/lib\'," /home/test && \
+    rm /home/test && apt-get update && \
     apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \ 
         apt-get install intel-gpu-tools libgl1-mesa-dev libvdpau-dev -y && \
         echo "#!/bin/bash -e" >> /home/launch.sh && \
