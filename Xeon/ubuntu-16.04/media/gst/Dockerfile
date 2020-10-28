@@ -422,4 +422,4 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends libnuma1 lib
 # Install
 COPY --from=build /home/build /
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu
-
+ONBUILD RUN apt-get update && apt-get install -y –-only-upgrade gobject-introspection

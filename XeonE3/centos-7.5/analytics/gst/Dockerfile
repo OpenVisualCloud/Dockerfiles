@@ -709,6 +709,7 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 
 
+
 # Clean up after build
 RUN rm -rf /home/build/usr/include && \
     rm -rf /home/build/usr/share/doc && \
@@ -760,4 +761,5 @@ ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 RUN python3 -m pip install numpy
+
 

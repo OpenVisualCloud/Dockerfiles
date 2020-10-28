@@ -382,5 +382,6 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     
     rm -rf /var/lib/apt/lists/*;
 ENV LIBVA_DRIVER_NAME=iHD
+ONBUILD RUN apt-get update && apt-get install -y –only-upgrade mongodb
 
 

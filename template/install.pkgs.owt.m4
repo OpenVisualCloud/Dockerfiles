@@ -54,6 +54,9 @@ RUN yum install epel-release boost-system boost-thread log4cxx glib2 freetype-de
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
     rm -rf /var/cache/yum/*;
 )dnl
-ifelse(index(DOCKER_IMAGE,xeon-),-1,
-    ENV LIBVA_DRIVER_NAME=iHD
-)
+ifelse(index(DOCKER_IMAGE,xeon-),-1,dnl
+ENV LIBVA_DRIVER_NAME=iHD
+)dnl
+ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
+ONBUILD RUN apt-get update && apt-get install -y –only-upgrade mongodb
+)dnl

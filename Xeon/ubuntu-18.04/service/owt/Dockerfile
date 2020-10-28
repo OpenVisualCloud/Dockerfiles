@@ -306,5 +306,6 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     
     rm -rf /var/lib/apt/lists/*;
+ONBUILD RUN apt-get update && apt-get install -y –only-upgrade mongodb
 
 

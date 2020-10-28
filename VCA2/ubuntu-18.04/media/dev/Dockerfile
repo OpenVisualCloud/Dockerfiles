@@ -553,4 +553,4 @@ ENV LIBVA_DRIVERS_PATH=/usr/local/lib/x86_64-linux-gnu/dri
 ENV LIBVA_DRIVER_NAME=iHD
 ENV GST_VAAPI_ALL_DRIVERS=1
 ENV DISPLAY=:0.0
-
+ONBUILD RUN apt-get update && apt-get install -y –-only-upgrade gobject-introspection
