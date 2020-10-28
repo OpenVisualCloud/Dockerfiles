@@ -4,7 +4,7 @@ WORKDIR /home
 
 include(build-tools-hddl.m4)
 include(libusb.m4)
-include(openvino.binary.m4)
+include(openvino.binary.smtc.m4)
 
 FROM ubuntu:18.04
 
