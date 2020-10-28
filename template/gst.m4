@@ -37,4 +37,4 @@ define(`INSTALL_PKGS_GST',dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,glib2-2.56.1 pango gobject-introspection ))dnl
 define(`ONBUILD_GST',ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-ONBUILD RUN apt-get update && apt-get install -y –-only-upgrade gobject-introspection))dnl
+ONBUILD RUN apt-get update && apt-get --only-upgrade install -y gobject-introspection))dnl

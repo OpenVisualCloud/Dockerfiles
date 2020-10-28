@@ -58,5 +58,5 @@ ifelse(index(DOCKER_IMAGE,xeon-),-1,dnl
 ENV LIBVA_DRIVER_NAME=iHD
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
-ONBUILD RUN apt-get update && apt-get install -y –only-upgrade mongodb
+ONBUILD RUN apt-get update && apt-get --only-upgrade install -y mongodb
 )dnl

@@ -280,6 +280,6 @@ RUN echo -e "\x1b[32mInstalling dependent components and libraries via apt-get..
     apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \ 
     apt-get install --no-install-recommends git pkg-config libglib2.0-dev g++ -y && \        
     rm -rf /var/lib/apt/lists/*;
-ONBUILD RUN apt-get update && apt-get install -y –only-upgrade mongodb
+ONBUILD RUN apt-get update && apt-get --only-upgrade install -y mongodb
 
 
