@@ -31,7 +31,6 @@ RUN ifelse(index(DOCKER_IMAGE,xeon-),-1,ln -s /opt/intel/mediasdk/lib /opt/intel
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
     )dnl
-
     rm -rf /var/lib/apt/lists/*;
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl

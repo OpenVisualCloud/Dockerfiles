@@ -147,7 +147,6 @@ RUN wget -O - ${FFMPEG_REPO} | tar xz && mv FFmpeg-${FFMPEG_VER} FFmpeg && \
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     ./configure --prefix="/usr/local" --libdir=/usr/local/lib/x86_64-linux-gnu --enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype  --enable-nonfree && \
-
     make -j8 && \
     make install && make install DESTDIR="/home/build"
 
@@ -212,14 +211,11 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends python libgl
 RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name" && \
     mkdir ${SOURCE_DIR} && cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWTSERVER_REPO} && \
-
     # Get json hpp file
     wget -P /usr/include ${DOWNLOAD_JSON_LINK} && cp /usr/include/json.hpp /home/build/usr/include/ && \
-
     # Install node modules for owt
     npm install -g --loglevel error node-gyp@v6.1.0 grunt-cli underscore jsdoc && \
     cd owt-server && npm install nan && \
-
     # Get openh264 for owt
     cd third_party && \
     mkdir openh264 && cd openh264 && \
@@ -232,21 +228,18 @@ RUN git config --global user.email "you@example.com" && \
     ln -s -v libopenh264.so.${OPENH264_SOVER} libopenh264.so && \
     echo 'const char* stub() {return "this is a stub lib";}' > pseudo-openh264.cpp && \
     gcc pseudo-openh264.cpp -fPIC -shared -o pseudo-openh264.so && \ 
-
     # Get licode for owt
     cd ${SERVER_PATH}/third_party && git clone ${LICODE_REPO} && \
     cd licode && \
     git reset --hard ${LICODE_COMMIT} && \
     wget -r -nH --cut-dirs=5 --no-parent ${LICODE_PATCH_REPO} && \
     git am ${SERVER_PATH}/scripts/patches/licode/*.patch && \
-
     # Install webrtc for owt
     cd ${SERVER_PATH}/third_party && mkdir webrtc  && cd webrtc &&\
     export GIT_SSL_NO_VERIFY=1 && \
     git clone -b 59-server ${WEBRTC_REPO} src && \
     ./src/tools-woogeen/install.sh && \
     ./src/tools-woogeen/build.sh && \
-
     # Get js client sdk for owt
     cd ${SOURCE_DIR} && git clone -b ${OWT_BRANCH} ${OWT_SDK_REPO} && cd owt-client-javascript/scripts && npm install && grunt  && \
     mkdir ${SERVER_PATH}/third_party/quic-lib && \
@@ -282,7 +275,6 @@ RUN  echo -e "\x1b[32mInstalling dependent components and libraries via apt-get.
     sed -i "/lssl/i\'\-L\/usr\/local\/ssl\/lib\'," /home/owt-server/source/agent/webrtc/webrtcLib/binding.gyp && \
     rm /home/test && apt-get update && \
     apt-get install --no-install-recommends rabbitmq-server mongodb libboost-system-dev libboost-thread-dev liblog4cxx-dev libglib2.0-0 libfreetype6-dev curl -y && \ 
-    apt-get install --no-install-recommends git pkg-config libglib2.0-dev g++ -y && \        
-    rm -rf /var/lib/apt/lists/*;
+    apt-get install --no-install-recommends git pkg-config libglib2.0-dev g++ -y && \            rm -rf /var/lib/apt/lists/*;
 
 
