@@ -1,7 +1,14 @@
-# OpenVINO verion
-# 2020.4 and deployment manager script
+ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,
+# OpenVINO version
+# 2020.4
 ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.4.287
 ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz
+,dnl
+# OpenVINO version
+# 2021
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2021.1.110
+ARG OPENVINO_URL=https://registrationcenter-download.intel.com/akdlm/irc_nas/17062/l_openvino_toolkit_p_2021.1.110.tgz
+)dnl
 
 ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
 #Install OpenVino dependencies
@@ -39,6 +46,12 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
+ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
+#Creat symlink to assure compatibility with components
+RUN cd /opt/intel/      &&\
+    ln -s openvino_2021 openvino
+)dnl
+
 ifelse(index(DOCKER_IMAGE,-hddldaemon),-1,
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
@@ -63,29 +76,23 @@ RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz       && \
     ./configure                                                         && \
     make -j "$(nproc)"                                                  && \
     apt-get install -y --no-install-recommends checkinstall apt-utils   && \
-    checkinstall --install=no --nodoc -y --pkgname=python36-from-source	
+    checkinstall --install=no --nodoc -y --pkgname=python36-from-source
 
-RUN cd Python-3.6.3							&& \ 
+RUN cd Python-3.6.3                                                     && \
     dpkg -i python36-from-source_3.6.3-1_amd64.deb
 
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    python3.6 ./deployment_manager.py --targets hddl 		        && \
+    python3.6 ./deployment_manager.py --targets hddl                    && \
     cd /root/ && ls -lh && mkdir -p openvino                            && \
     tar zvxf openvino_deploy_package.tar.gz -C openvino
 
 #Remove python3.6
-RUN cd Python-3.6.3							&& \
+RUN cd Python-3.6.3                                                     && \
     dpkg -r python36-from-source
 )dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
-ifelse(index(DOCKER_IMAGE,hddldaemon),-1,
-#Deploy small package using deployment manager
-RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    ./deployment_manager.py --targets hddl 	                        && \
-    cd /root/ && ls -lh && mkdir -p openvino                            && \
-    tar zvxf openvino_deploy_package.tar.gz -C openvino
-,dnl
+ifelse(index(DOCKER_IMAGE,hddldaemon),-1,,
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager && \
     python3 deployment_manager.py --targets=hddl --output_dir=/home --archive_name=hddl && \
     mkdir -p /home/opt/intel/openvino && \
@@ -112,7 +119,7 @@ RUN rm -rf ${CV_BASE_DIR}/uninstall* && \
 ifelse(index(DOCKER_IMAGE,-hddldaemon),-1,
 #Copy over directories to clean image
 RUN mkdir -p /home/build/opt/intel && \
-    ifelse(index(DOCKER_IMAGE,-dev),-1,cp -rH /root/openvino /home/build/opt/intel/ && \
+    ifelse(index(DOCKER_IMAGE,-dev),-1,cp -rH ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,/root/openvino,/opt/intel/openvino) /home/build/opt/intel/ && \
     cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && \
     cp defn(`IE_C_API_PATH') /home/build/defn(`IE_C_API_PATH'),cp -rH /opt/intel/openvino /home/build/opt/intel/)
 ,)dnl
