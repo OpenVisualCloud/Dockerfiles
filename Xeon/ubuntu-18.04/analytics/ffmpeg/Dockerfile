@@ -142,7 +142,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Install required packges
-RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools&& \
+RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*;
 
@@ -267,7 +267,7 @@ RUN wget "${OPENCV_REPO}" && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.4
+ARG DLDT_VER=2021.1
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
 RUN apt-get update && apt-get -y --no-install-recommends install libusb-1.0.0-dev python python-pip python-setuptools python-yaml

@@ -444,7 +444,7 @@ RUN wget "${OPENCV_REPO}" && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.4
+ARG DLDT_VER=2021.1
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;
@@ -513,6 +513,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 
+RUN pip3 install --upgrade pip
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
 RUN yum install -y python3-devel
 RUN cd openvino/model-optimizer && \
@@ -549,9 +550,7 @@ RUN wget -O - ${OPEN_MODEL_ZOO_REPO} | tar xz && \
 ENV PYTHONIOENCODING=UTF-8
 
 
-
 RUN yum install -y -q glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel
-
 
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
@@ -594,9 +593,7 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
 
 
 
-
-#Install va gstreamer plugins from source
-ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1 
+ARG VA_GSTREAMER_PLUGINS_VER=v1.2.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
@@ -616,6 +613,8 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     -DHAVE_VAAPI=OFF  \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j4
+
+
 RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
 RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
@@ -643,6 +642,7 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
 
 
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
+
 
 
 # Fetch FFmpeg source
@@ -737,4 +737,5 @@ ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 RUN python3 -m pip install numpy
+
 

@@ -155,7 +155,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Install required packges
-RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools&& \
+RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*;
 
@@ -460,4 +460,4 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends libxv1 libsd
 # Install
 COPY --from=build /home/build /
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu
-
+ONBUILD RUN apt-get update && apt-get --only-upgrade install -y gobject-introspection

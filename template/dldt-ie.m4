@@ -1,5 +1,7 @@
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.4
+ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,dnl
+ARG DLDT_VER=2021.1,
+ARG DLDT_VER=2020.4)
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
@@ -78,6 +80,7 @@ ifelse(index(DOCKER_IMAGE,-dev),-1,,
 ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 
+ifelse(index(DOCKER_IMAGE,1604),-1,RUN pip3 install --upgrade pip)
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
 ifelse(index(DOCKER_IMAGE,centos),-1,
 ifelse(index(DOCKER_IMAGE,1804),-1,,dnl
