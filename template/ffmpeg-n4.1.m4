@@ -1,5 +1,5 @@
 # Fetch FFmpeg source
-ARG FFMPEG_VER=n4.1
+ARG FFMPEG_VER=n4.1.3
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
 ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
 ARG FFMPEG_THREAD_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11035/raw
@@ -31,7 +31,6 @@ defn(`FFMPEG_SOURCE_SVT_HEVC',`FFMPEG_SOURCE_SVT_AV1',`FFMPEG_SOURCE_SVT_VP9',`F
 RUN cd /home/FFmpeg && \
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
     ./configure --prefix="/usr/local" --libdir=ifelse(index(DOCKER_IMAGE,ubuntu),-1,/usr/local/lib64,/usr/local/lib/x86_64-linux-gnu) ifelse(index(DOCKER_IMAGE,service),-1,--extra-libs="-lpthread -lm" --enable-defn(`BUILD_LINKAGE') --enable-gpl --enable-libass --enable-libfreetype ifelse(FFMPEG_X11,OFF,--disable-xlib --disable-sdl2) --enable-openssl --enable-nonfree ifelse(index(DOCKER_IMAGE,xeon-),-1,--enable-libdrm --enable-libmfx,--disable-vaapi --disable-hwaccels) ifelse(index(DOCKER_IMAGE,-dev),-1,--disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages) defn(`FFMPEG_CONFIG_FDKAAC',`FFMPEG_CONFIG_MP3LAME',`FFMPEG_CONFIG_OPUS',`FFMPEG_CONFIG_VORBIS',`FFMPEG_CONFIG_VPX',`FFMPEG_CONFIG_X264',`FFMPEG_CONFIG_X265',`FFMPEG_CONFIG_SVT_HEVC',`FFMPEG_CONFIG_SVT_AV1',`FFMPEG_CONFIG_SVT_VP9',`FFMPEG_CONFIG_TRANSFORM360',`FFMPEG_CONFIG_DLDT_IE',`FFMPEG_CONFIG_LIBRDKAFKA',`FFMPEG_CONFIG_LIBJSON_C'),--enable-shared --disable-static --disable-libvpx --disable-vaapi --enable-libfreetype defn(`FFMPEG_CONFIG_FDKAAC') --enable-nonfree) && \
-
     make -j8 && \
     ifelse(index(DOCKER_IMAGE,service),-1,,make install && )make install DESTDIR="/home/build"
 

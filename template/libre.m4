@@ -1,5 +1,5 @@
 # Build libre
-ARG LIBRE_VER="v0.4.16"
+ARG LIBRE_VER="v0.5.0"
 ARG LIBRE_REPO=https://github.com/creytiv/re.git
 
 RUN git clone ${LIBRE_REPO} && \
