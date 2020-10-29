@@ -276,9 +276,6 @@ RUN wget ${NODE_REPO} && \
 
 COPY --from=build /home/owt-server/dist /home/owt
 COPY --from=build /home/build /
-
-
-
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64:
 RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
     echo "name=MongoDB Repository" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
@@ -289,7 +286,8 @@ RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
     yum install epel-release boost-system boost-thread log4cxx glib2 freetype-devel -y && \
     yum install rabbitmq-server mongodb-org -y && \
     yum remove -y -q epel-release && \
-        echo "#!/bin/bash -e" >> /home/launch.sh && \
+    
+    echo "#!/bin/bash -e" >> /home/launch.sh && \
     echo "mongod --config /etc/mongod.conf &" >> /home/launch.sh && \
     echo "rabbitmq-server &" >> /home/launch.sh && \
     echo "while ! mongo --quiet --eval \"db.adminCommand('listDatabases')\"" >> /home/launch.sh && \
@@ -298,7 +296,8 @@ RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
     echo "done" >> /home/launch.sh && \
     echo "echo mongodb connected successfully" >> /home/launch.sh && \
     echo "cd /home/owt" >> /home/launch.sh && \
-        echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
+    
+    echo "./management_api/init.sh && ./bin/start-all.sh " >> /home/launch.sh && \
     chmod +x /home/launch.sh && \
     export PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     rm -rf /var/cache/yum/*;
