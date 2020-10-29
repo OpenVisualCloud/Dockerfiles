@@ -442,7 +442,7 @@ RUN wget "${OPENCV_REPO}" && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.4
+ARG DLDT_VER=2021.1
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
 RUN apt-get update && apt-get -y --no-install-recommends install libusb-1.0.0-dev python python-pip python-setuptools python-yaml
@@ -512,6 +512,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 
+RUN pip3 install --upgrade pip
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
 RUN apt-get install -y python3-dev
 RUN pip3 install wheel
@@ -608,7 +609,7 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 
 
 #Install va gstreamer plugins from source
-ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1 
+ARG VA_GSTREAMER_PLUGINS_VER=v1.2.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \

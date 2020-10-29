@@ -644,6 +644,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 ARG PYTHON_TRUSTED_HOST
 ARG PYTHON_TRUSTED_INDEX_URL
 
+
 #installing dependency libs to mo_libs directory to avoid issues with updates to Python version
 
 RUN cd openvino/model-optimizer && \
@@ -749,7 +750,7 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 
 
 #Install va gstreamer plugins from source
-ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1 
+ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \

@@ -270,7 +270,7 @@ RUN wget "${OPENCV_REPO}" && \
 
 
 # Build DLDT-Inference Engine
-ARG DLDT_VER=2020.4
+ARG DLDT_VER=2021.1
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
 RUN yum install -y -q boost-devel glibc-static glibc-devel libstdc++-static libstdc++-devel libstdc++ libgcc libusbx-devel openblas-devel;

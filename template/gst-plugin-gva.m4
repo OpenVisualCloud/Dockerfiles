@@ -18,7 +18,7 @@ ifelse(RDKAFKA_INSTALLED,true,,dnl
 )
 
 #Install va gstreamer plugins from source
-ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1 
+ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,ARG VA_GSTREAMER_PLUGINS_VER=v1.2.1,ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1)
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
