@@ -81,5 +81,5 @@ ifelse(index(DOCKER_IMAGE,centos),-1,,
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0/:/usr/local/lib64/girepository-1.0/
 RUN python3 -m pip install numpy)
 ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/)dnl
-)dnl
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/)
+)

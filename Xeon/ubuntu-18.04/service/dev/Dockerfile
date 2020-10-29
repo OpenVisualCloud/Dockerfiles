@@ -279,5 +279,6 @@ RUN  echo -e "\x1b[32mInstalling dependent components and libraries via apt-get.
     
     
     rm -rf /var/lib/apt/lists/*;
+ONBUILD RUN apt-get update && apt-get --only-upgrade install -y mongodb
 
 

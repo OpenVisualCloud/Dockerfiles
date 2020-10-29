@@ -155,7 +155,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Install required packges
-RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools&& \
+RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*;
 
@@ -550,4 +550,4 @@ ENV LIBVA_DRIVERS_PATH=/usr/local/lib/x86_64-linux-gnu/dri
 ENV LIBVA_DRIVER_NAME=iHD
 ENV GST_VAAPI_ALL_DRIVERS=1
 ENV DISPLAY=:0.0
-
+ONBUILD RUN apt-get update && apt-get --only-upgrade install -y gobject-introspection

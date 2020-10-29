@@ -58,6 +58,9 @@ RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
     export PKG_CONFIG_PATH="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/pkgconfig" && \
     rm -rf /var/cache/yum/*;
 )dnl
-ifelse(index(DOCKER_IMAGE,xeon-),-1,
-    ENV LIBVA_DRIVER_NAME=iHD
+ifelse(index(DOCKER_IMAGE,xeon-),-1,dnl
+ENV LIBVA_DRIVER_NAME=iHD
+)dnl
+ifelse(index(DOCKER_IMAGE,ubuntu),-1,,dnl
+ONBUILD RUN apt-get update && apt-get --only-upgrade install -y mongodb
 )dnl

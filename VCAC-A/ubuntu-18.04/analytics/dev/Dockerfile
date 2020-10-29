@@ -155,7 +155,7 @@ RUN  wget -O - ${X265_REPO} | tar xz && mv x265-${X265_VER} x265 && \
      make install
 
 # Install required packges
-RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools&& \
+RUN apt-get update -y && apt-get install -y --no-install-recommends python3-pip ninja-build python3-setuptools && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*;
 
@@ -665,6 +665,7 @@ RUN wget -O - ${GST_PYTHON_REPO} | tar xJ && \
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
 
 
+
 # Fetch FFmpeg source
 ARG FFMPEG_VER=n4.2.2
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/${FFMPEG_VER}.tar.gz
@@ -744,3 +745,4 @@ ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/
+ONBUILD RUN apt-get update && apt-get --only-upgrade install -y gobject-introspection

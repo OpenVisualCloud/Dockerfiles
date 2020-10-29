@@ -379,5 +379,6 @@ RUN ln -s /opt/intel/mediasdk/lib /opt/intel/mediasdk/lib64 && echo -e "\x1b[32m
     export PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig" && \
     rm -rf /var/lib/apt/lists/*;
 ENV LIBVA_DRIVER_NAME=iHD
+ONBUILD RUN apt-get update && apt-get --only-upgrade install -y mongodb
 
 
