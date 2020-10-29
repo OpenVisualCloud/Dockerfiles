@@ -20,7 +20,7 @@ gen_Dockercomposefile()
 version: '2.4'
 services:
   ov_hddl_init:
-      image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:${1:-1.0}
+      image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:${1:-20.10}
       command: [ "/bin/bash", "-c", "/usr/local/bin/init_hddl.sh;while true; do sleep 36000000;done" ]
       container_name: ov_hddl_init
       volumes:
@@ -30,7 +30,7 @@ services:
       restart: unless-stopped
       privileged: true
   ov_hddl_run:
-      image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:${1:-1.0}
+      image: openvisualcloud/vcaca-ubuntu1804-analytics-hddldaemon:${1:-20.10}
       command: [ "/usr/local/bin/run_hddl.sh" ]
       container_name: ov_hddl_run
       device_cgroup_rules:
