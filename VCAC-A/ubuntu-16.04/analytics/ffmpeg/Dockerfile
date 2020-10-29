@@ -317,8 +317,8 @@ RUN wget "${OPENCV_REPO}" && \
     make install
 
 
-# OpenVINO verion
-# 2020.4 and deployment manager script
+# OpenVINO version
+# 2020.4
 ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.4.287
 ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz
 
@@ -350,6 +350,7 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
+
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
 ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
@@ -364,19 +365,19 @@ RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz       && \
     ./configure                                                         && \
     make -j "$(nproc)"                                                  && \
     apt-get install -y --no-install-recommends checkinstall apt-utils   && \
-    checkinstall --install=no --nodoc -y --pkgname=python36-from-source	
+    checkinstall --install=no --nodoc -y --pkgname=python36-from-source
 
-RUN cd Python-3.6.3							&& \ 
+RUN cd Python-3.6.3                                                     && \
     dpkg -i python36-from-source_3.6.3-1_amd64.deb
 
 #Deploy small package using deployment manager
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    python3.6 ./deployment_manager.py --targets hddl 		        && \
+    python3.6 ./deployment_manager.py --targets hddl                    && \
     cd /root/ && ls -lh && mkdir -p openvino                            && \
     tar zvxf openvino_deploy_package.tar.gz -C openvino
 
 #Remove python3.6
-RUN cd Python-3.6.3							&& \
+RUN cd Python-3.6.3                                                     && \
     dpkg -r python36-from-source
 
 #Copy over directories to clean image

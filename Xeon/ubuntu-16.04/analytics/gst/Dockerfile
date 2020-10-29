@@ -502,8 +502,6 @@ ENV PYTHONIOENCODING=UTF-8
 
 RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin
 
-
-
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
 ARG PAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
@@ -559,7 +557,7 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 
 
 #Install va gstreamer plugins from source
-ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1 
+ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
@@ -579,6 +577,7 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     -DHAVE_VAAPI=OFF  \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j4
+
 RUN mkdir -p build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 RUN mkdir -p /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \

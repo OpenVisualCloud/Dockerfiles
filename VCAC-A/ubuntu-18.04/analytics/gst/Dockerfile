@@ -474,10 +474,10 @@ RUN wget "${OPENCV_REPO}" && \
     make install
 
 
-# OpenVINO verion
-# 2020.4 and deployment manager script
-ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2020.4.287
-ARG OPENVINO_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz
+# OpenVINO version
+# 2021
+ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2021.1.110
+ARG OPENVINO_URL=https://registrationcenter-download.intel.com/akdlm/irc_nas/17062/l_openvino_toolkit_p_2021.1.110.tgz
 
 
 #Download and unpack OpenVino
@@ -502,6 +502,10 @@ RUN echo "ACCEPT_EULA=accept" > /tmp2/silent.cfg                        && \
 #Install OpenVino
 RUN /tmp2/${OPENVINO_BUNDLE}/install.sh --ignore-signature --cli-mode -s /tmp2/silent.cfg && rm -rf /tmp2
 
+#Creat symlink to assure compatibility with components
+RUN cd /opt/intel/      &&\
+    ln -s openvino_2021 openvino
+
 ENV IE_PLUGINS_PATH=/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/hddl
 ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
@@ -509,15 +513,10 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/sh
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 
-#Deploy small package using deployment manager
-RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    ./deployment_manager.py --targets hddl 	                        && \
-    cd /root/ && ls -lh && mkdir -p openvino                            && \
-    tar zvxf openvino_deploy_package.tar.gz -C openvino
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/opt/intel && \
-    cp -rH /root/openvino /home/build/opt/intel/ && \
+    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
     cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && \
     cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so /home/build//opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so
 
@@ -528,8 +527,6 @@ RUN chmod -R 775 /opt/intel/ ;
 
 
 RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin
-
-
 
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
@@ -585,37 +582,17 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
 
 
 
-#Install va gstreamer plugins from source
-ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1 
-ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
-RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
-    cd gst-video-analytics && \
-    git checkout ${VA_GSTREAMER_PLUGINS_VER} && \
-    git submodule init && git submodule update && \
-    mkdir build && \
-    cd build && \
-    export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
-    export CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" && \
-    cmake \
-    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DENABLE_PAHO_INSTALLATION=1 \
-    -DENABLE_RDKAFKA_INSTALLATION=1 \
-    -DHAVE_VAAPI=ON -DENABLE_AVX2=ON -DENABLE_SSE42=ON \
-    -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
-    make -j4
 RUN mkdir -p build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
-    cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
+    cp -r /opt/intel/openvino/data_processing/dl_streamer/lib/* build/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 RUN mkdir -p /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && \
-    cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
+    cp -r /opt/intel/openvino/data_processing/dl_streamer/lib/* /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 
 RUN mkdir -p build/opt/intel/dl_streamer/python && \
-    cp -r gst-video-analytics/python/* build/opt/intel/dl_streamer/python
+    cp -r /opt/intel/openvino/data_processing/dl_streamer/python/* build/opt/intel/dl_streamer/python
 RUN mkdir -p /opt/intel/dl_streamer/python && \
-    cp -r gst-video-analytics/python/* /opt/intel/dl_streamer/python
+    cp -r /opt/intel/openvino/data_processing/dl_streamer/python/* /opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 
