@@ -317,7 +317,7 @@ RUN wget "${OPENCV_REPO}" && \
     make install
 
 
-# OpenVINO verion
+# OpenVINO version
 # 2021
 ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2021.1.110
 ARG OPENVINO_URL=https://registrationcenter-download.intel.com/akdlm/irc_nas/17062/l_openvino_toolkit_p_2021.1.110.tgz
@@ -356,15 +356,10 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/sh
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/gna/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/omp/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 
-#Deploy small package using deployment manager
-RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    ./deployment_manager.py --targets hddl 	                        && \
-    cd /root/ && ls -lh && mkdir -p openvino                            && \
-    tar zvxf openvino_deploy_package.tar.gz -C openvino
 
 #Copy over directories to clean image
 RUN mkdir -p /home/build/opt/intel && \
-    cp -rH /root/openvino /home/build/opt/intel/ && \
+    cp -rH /opt/intel/openvino /home/build/opt/intel/ && \
     cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so /home/build/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_preproc.so && \
     cp /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so /home/build//opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libinference_engine_c_api.so
 

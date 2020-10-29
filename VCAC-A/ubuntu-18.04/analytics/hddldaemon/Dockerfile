@@ -16,7 +16,7 @@ RUN wget -O - ${LIBUSB_REPO} | tar xz && \
     make -j "$(nproc)" && \
     cp ./libusb/.libs/libusb-1.0.so /lib/x86_64-linux-gnu/libusb-1.0.so.0
 
-# OpenVINO verion
+# OpenVINO version
 # 2021
 ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2021.1.110
 ARG OPENVINO_URL=https://registrationcenter-download.intel.com/akdlm/irc_nas/17062/l_openvino_toolkit_p_2021.1.110.tgz
