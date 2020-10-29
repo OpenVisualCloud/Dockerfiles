@@ -492,9 +492,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/i
 ENV PYTHONIOENCODING=UTF-8
 
 
-
 RUN yum install -y -q glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel
-
 
 ARG PAHO_INSTALL=true
 ARG PAHO_VER=1.3.0
@@ -549,8 +547,6 @@ RUN wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
     make install;
 
 
-
-#Install va gstreamer plugins from source
 ARG VA_GSTREAMER_PLUGINS_VER=v1.2.1
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics
 
@@ -571,6 +567,8 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     -DHAVE_VAAPI=OFF  \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j4
+
+
 RUN mkdir -p build/usr/local/lib64/gstreamer-1.0 && \
     cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/local/lib64/gstreamer-1.0
 RUN mkdir -p /usr/local/lib64/gstreamer-1.0 && \
