@@ -694,30 +694,30 @@ ENV PYTHONIOENCODING=UTF-8
 RUN apt-get install -y -q --no-install-recommends gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin
 
 ARG PAHO_INSTALL=true
-ARG PAHO_VER=1.3.0
+ARG PAHO_VER=1.3.6
 ARG PAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
 RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
         wget -O - ${PAHO_REPO} | tar -xz && \
         cd paho.mqtt.c-${PAHO_VER} && \
         make && \
         make install && \
-        cp build/output/libpaho-mqtt3c.so.1.0 /home/build/usr/local/lib/x86_64-linux-gnu/ && \
-        cp build/output/libpaho-mqtt3cs.so.1.0 /home/build/usr/local/lib/x86_64-linux-gnu/ && \
-        cp build/output/libpaho-mqtt3a.so.1.0 /home/build/usr/local/lib/x86_64-linux-gnu/ && \
-        cp build/output/libpaho-mqtt3as.so.1.0 /home/build/usr/local/lib/x86_64-linux-gnu/ && \
+        cp build/output/libpaho-mqtt3c.so.1.3 /home/build/usr/local/lib/x86_64-linux-gnu/ && \
+        cp build/output/libpaho-mqtt3cs.so.1.3 /home/build/usr/local/lib/x86_64-linux-gnu/ && \
+        cp build/output/libpaho-mqtt3a.so.1.3 /home/build/usr/local/lib/x86_64-linux-gnu/ && \
+        cp build/output/libpaho-mqtt3as.so.1.3 /home/build/usr/local/lib/x86_64-linux-gnu/ && \
         cp build/output/paho_c_version /home/build/usr/local/bin/ && \
         cp build/output/samples/paho_c_pub /home/build/usr/local/bin/ && \
         cp build/output/samples/paho_c_sub /home/build/usr/local/bin/ && \
         cp build/output/samples/paho_cs_pub /home/build/usr/local/bin/ && \
         cp build/output/samples/paho_cs_sub /home/build/usr/local/bin/ && \
-        chmod 644 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1.0 && \
-        chmod 644 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1.0 && \
-        chmod 644 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1.0 && \
-        chmod 644 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1.0 && \
-        ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1.0 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1 && \
-        ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1.0 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1 && \
-        ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1.0 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1 && \
-        ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1.0 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1 && \
+        chmod 644 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1.3 && \
+        chmod 644 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1.3 && \
+        chmod 644 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1.3 && \
+        chmod 644 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1.3 && \
+        ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1.3 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1 && \
+        ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1.3 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1 && \
+        ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1.3 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1 && \
+        ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1.3 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3as.so.1 && \
         ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3c.so.1 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3c.so && \
         ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so.1 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3cs.so && \
         ln /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3a.so.1 /home/build/usr/local/lib/x86_64-linux-gnu/libpaho-mqtt3a.so && \
