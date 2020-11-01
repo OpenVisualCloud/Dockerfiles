@@ -24,17 +24,17 @@ The software stack images provide ready to use software stacks for application d
 
 | Image | Description |
 | :-----: | ----- | 
-| [ffmpeg](doc/ffmpeg.md) | <p>Docker images optimized for media creation and delivery based on the FFmpeg framework. Included the AAC, MP3, OPUS, OGG, Vorbis, X264, X265, VP8/9, AV1 and SVT-HEVC codecs. The GPU images are accelerated with VAAPI and QSV. See [`doc/ffmpeg.md`](doc/ffmpeg.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-ffmpeg)<br>docker pull [openvisualcloud/xeon-centos76-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-ffmpeg)|
-| [gst](doc/gst.md) | <p>Docker images optimized for media creation and delivery based on the GStreamer framework. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with VAAPI. See [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-gst](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-gst)<br>docker pull [openvisualcloud/xeon-centos76-media-gst](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-gst)|
-| [nginx](doc/nginx.md) | <p>Docker images optimized for web hosting and caching. Included FFmpeg, NGINX the web server, and FLV the RTMP and DASH/HLS streaming module. See [`doc/nginx.md`](doc/nginx.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-nginx](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-nginx)<br>docker pull [openvisualcloud/xeon-centos76-media-nginx](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-nginx)|
-| [svt](doc/svt.md) | <p>Docker images for the SVT (Scalable Video Technology) encoders and decoders. Easiest way to try SVT AV1, HEVC, and VP9 apps. See [`doc/svt.md`](doc/svt.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-svt)<br>docker pull [openvisualcloud/xeon-centos76-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-svt)|
+| [ffmpeg](doc/ffmpeg.md) | <p>Docker images optimized for media creation and delivery based on the FFmpeg framework. Included the AAC, MP3, OPUS, OGG, Vorbis, X264, X265, VP8/9, AV1 and SVT-HEVC codecs. The GPU images are accelerated with VAAPI and QSV. See [`doc/ffmpeg.md`](doc/ffmpeg.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-ffmpeg)<br>docker pull [openvisualcloud/xeon-centos7-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-centos7-media-ffmpeg)|
+| [gst](doc/gst.md) | <p>Docker images optimized for media creation and delivery based on the GStreamer framework. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with VAAPI. See [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-gst](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-gst)<br>docker pull [openvisualcloud/xeon-centos7-media-gst](https://hub.docker.com/r/openvisualcloud/xeon-centos7-media-gst)|
+| [nginx](doc/nginx.md) | <p>Docker images optimized for web hosting and caching. Included FFmpeg, NGINX the web server, and FLV the RTMP and DASH/HLS streaming module. See [`doc/nginx.md`](doc/nginx.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-nginx](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-nginx)<br>docker pull [openvisualcloud/xeon-centos7-media-nginx](https://hub.docker.com/r/openvisualcloud/xeon-centos7-media-nginx)|
+| [svt](doc/svt.md) | <p>Docker images for the SVT (Scalable Video Technology) encoders and decoders. Easiest way to try SVT AV1, HEVC, and VP9 apps. See [`doc/svt.md`](doc/svt.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-svt)<br>docker pull [openvisualcloud/xeon-centos7-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-centos7-media-svt)|
 
 - **Media Analytics**   
 
 | Image | Description |
 | :-----: | :----- | 
-| [ffmpeg](doc/ffmpeg.md) | <p>Docker images optimized for media analytics based on the FFmpeg framework. Included plugins that utilized the Intel<sup>&reg;</sup> OpenVINO<sup>&trade;</sup> inference engine. See [`doc/ffmpeg.md`](doc/ffmpeg.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg)<br>docker pull [openvisualcloud/xeon-centos76-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-centos76-analytics-ffmpeg)|
-| [gst](doc/gst.md) | <p>Docker images optimized for media analytics based on the GStreamer framework. Included plugins that utilized the Intel OpenVINO inference engine. See [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-gst](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-gst)<br>docker pull [openvisualcloud/xeon-centos76-analytics-gst](https://hub.docker.com/r/openvisualcloud/xeon-centos76-analytics-gst)|
+| [ffmpeg](doc/ffmpeg.md) | <p>Docker images optimized for media analytics based on the FFmpeg framework. Included plugins that utilized the Intel<sup>&reg;</sup> OpenVINO<sup>&trade;</sup> inference engine. See [`doc/ffmpeg.md`](doc/ffmpeg.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg)<br>docker pull [openvisualcloud/xeon-centos7-analytics-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-centos7-analytics-ffmpeg)|
+| [gst](doc/gst.md) | <p>Docker images optimized for media analytics based on the GStreamer framework. Included plugins that utilized the Intel OpenVINO inference engine. See [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-gst](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-gst)<br>docker pull [openvisualcloud/xeon-centos7-analytics-gst](https://hub.docker.com/r/openvisualcloud/xeon-centos7-analytics-gst)|
 
 - **Cloud Gaming and Graphics**
 
@@ -49,8 +49,8 @@ The development images enable C++ application compilation, debugging (with the d
 
 | Image | Description |
 | :-----: | :----- |
-| media | <p>Docker images for FFmpeg or GStreamer C++ application development. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-dev)<br>docker pull [openvisualcloud/xeon-centos76-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-media-dev)|
-| analytics | <p>Docker images for FFmpeg or GStreamer C++ application development, with Intel OpenVINO inference engine and the model optimizer. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-dev)<br>docker pull [openvisualcloud/xeon-centos76-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos76-analytics-dev)|
+| media | <p>Docker images for FFmpeg or GStreamer C++ application development. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-dev)<br>docker pull [openvisualcloud/xeon-centos7-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos7-media-dev)|
+| analytics | <p>Docker images for FFmpeg or GStreamer C++ application development, with Intel OpenVINO inference engine and the model optimizer. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-dev)<br>docker pull [openvisualcloud/xeon-centos7-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos7-analytics-dev)|
 | service | <p>Docker images for Open WebRTC Toolkit (OWT) C++ application development.. See [`doc/owt.md`](doc/owt.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-service-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-service-dev)<br>|
 | graphics | <p>Docker image for Intel OSPRay C++ application development. See [`doc/ospray-mpi.md`](doc/ospray-mpi.md) for additional details.</p>|
 
@@ -69,11 +69,11 @@ The project supports the following platforms and OS'es:
 
 | Supported Platforms | Supported OS'es |
 | :---: | :--- |
-| [Xeon](Xeon) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
-| [Xeon E3](XeonE3) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
-| [VCA2](VCA2) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
+| [Xeon](Xeon) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7/7.6 |
+| [Xeon E3](XeonE3) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7/7.6 |
+| [VCA2](VCA2) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7 |
 | [VCAC-A](VCAC-A) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS |
-| [QAT](QAT) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7.4-7.6 |
+| [QAT](QAT) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7 |
 
 Please see [Development and Test Report](doc/test.md) for the latest development statuses.    
 
