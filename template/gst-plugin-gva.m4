@@ -21,6 +21,8 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     cd gst-video-analytics && \
     git checkout ${VA_GSTREAMER_PLUGINS_VER} && \
     git submodule init && git submodule update && \
+ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,`    sed -i ```"195s/) {/||g_strrstr(name, \"image\")) {/"''' gst/elements/gvapython/python_callback.cpp && \
+')dnl
     mkdir build && \
     cd build && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
