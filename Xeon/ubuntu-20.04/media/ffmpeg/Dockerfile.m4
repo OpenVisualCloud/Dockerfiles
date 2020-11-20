@@ -1,6 +1,6 @@
 divert(-1)
 define(`OS_NAME',ubuntu)
-define(`OS_VERSION',18.04)
+define(`OS_VERSION',20.04)
 
 include(libogg.m4)
 include(libvorbis.m4)
@@ -22,7 +22,7 @@ FROM OS_NAME:OS_VERSION AS build
 BUILD_ALL()dnl
 
 FROM OS_NAME:OS_VERSION
-LABEL Description="This is the base image for FFMPEG Ubuntu 18.04"
+LABEL Description="This is the base image for FFMPEG Ubuntu 20.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
