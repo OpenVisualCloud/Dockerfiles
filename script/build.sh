@@ -19,7 +19,7 @@ fi
 
 for m4file in "${DIR}"/*.m4; do
     if [[ -f $m4file ]]; then
-        m4 "-I${SCRIPT_ROOT}/../template/" -DDOCKER_IMAGE=${IMAGE} -DBUILD_MP3LAME=${BUILD_MP3LAME} -DBUILD_FDKAAC=${BUILD_FDKAAC} "${m4file}" > "${m4file%\.m4}"
+        m4 -I "${SCRIPT_ROOT}/../template/system" -I "${SCRIPT_ROOT}/../template/components" -DBUILD_MP3LAME=${BUILD_MP3LAME} -DBUILD_FDKAAC=${BUILD_FDKAAC} "${m4file}" > "${m4file%\.m4}"
     fi
 done || true
 

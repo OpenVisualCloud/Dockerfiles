@@ -1,6 +1,6 @@
 divert(-1)
 define(`OS_NAME',centos)
-define(`OS_VERSION',centos7)
+define(`OS_VERSION',8)
 
 include(centos-repo.m4)
 include(libogg.m4)
@@ -21,6 +21,9 @@ PREAMBLE
 FROM OS_NAME:OS_VERSION AS build
 
 INSTALL_CENTOS_REPO(epel-release)
+ENABLE_CENTOS_REPO(PowerTools)
+INSTALL_CENTOS_RPMFUSION_REPO(OS_VERSION)
+INSTALL_CENTOS_OKEY_REPO(OS_VERSION)
 
 BUILD_ALL()dnl
 
@@ -30,6 +33,9 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 INSTALL_CENTOS_REPO(epel-release)
+ENABLE_CENTOS_REPO(PowerTools)
+INSTALL_CENTOS_RPMFUSION_REPO(OS_VERSION)
+INSTALL_CENTOS_OKEY_REPO(OS_VERSION)
 
 # Install
 INSTALL_ALL(runtime,build)
