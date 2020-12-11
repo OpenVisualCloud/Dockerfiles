@@ -463,15 +463,8 @@ RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     mkdir -p /opt/intel/dldt/inference-engine/external/ && \
     cp -r openvino/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
 
-RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
-    cp -r openvino/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
-    cp -r openvino/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
-    mkdir -p build${libdir} && \
+RUN mkdir -p build${libdir} && \
     cp -r openvino/bin/intel64/Release/lib/* build${libdir} && \
-    mkdir -p build/opt/intel/dldt/inference-engine/src && \
-    cp -r openvino/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
-    mkdir -p build/opt/intel/dldt/inference-engine/share && \
-    cp -r openvino/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/external/ && \
     cp -r openvino/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
 
@@ -641,7 +634,7 @@ ARG local_lib_path="/usr/local/lib"
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
-ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+
 ENV PYTHONIOENCODING=UTF-8
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib/x86_64-linux-gnu/pkgconfig

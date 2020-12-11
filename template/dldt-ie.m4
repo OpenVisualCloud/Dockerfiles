@@ -38,6 +38,10 @@ RUN mkdir -p /opt/intel/dldt/inference-engine/include && \
     mkdir -p /opt/intel/dldt/inference-engine/external/ && \
     cp -r openvino/inference-engine/temp/tbb /opt/intel/dldt/inference-engine/external/
 
+ifelse(index(DOCKER_IMAGE,-dev),-1,dnl
+RUN mkdir -p build${libdir} && \
+    cp -r openvino/bin/intel64/Release/lib/* build${libdir} && \
+,dnl
 RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r openvino/inference-engine/include/* build/opt/intel/dldt/inference-engine/include && \
     cp -r openvino/inference-engine/ie_bridges/c/include/* build/opt/intel/dldt/inference-engine/include && \
@@ -47,6 +51,7 @@ RUN mkdir -p build/opt/intel/dldt/inference-engine/include && \
     cp -r openvino/inference-engine/src/* build/opt/intel/dldt/inference-engine/src/ && \
     mkdir -p build/opt/intel/dldt/inference-engine/share && \
     cp -r openvino/build/share/* build/opt/intel/dldt/inference-engine/share/ && \
+)dnl
     mkdir -p build/opt/intel/dldt/inference-engine/external/ && \
     cp -r openvino/inference-engine/temp/tbb build/opt/intel/dldt/inference-engine/external/
 
@@ -152,7 +157,7 @@ ARG local_lib_path="/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib)"
 ARG libdir=/opt/intel/dldt/inference-engine/lib/intel64
 ENV PKG_CONFIG_PATH=${local_lib_path}/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/dldt/inference-engine/lib:/opt/intel/dldt/inference-engine/external/tbb/lib:${libdir}
-ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share
+ifelse(index(DOCKER_IMAGE,-dev),-1,,ENV InferenceEngine_DIR=/opt/intel/dldt/inference-engine/share)
 ENV PYTHONIOENCODING=UTF-8
 ifelse(index(DOCKER_IMAGE,-dev),-1,,dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,dnl
