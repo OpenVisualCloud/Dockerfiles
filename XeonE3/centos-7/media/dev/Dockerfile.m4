@@ -6,7 +6,6 @@ define(`BUILD_LINKAGE',shared)dnl
 include(build-tools.m4)
 include(libogg.m4)
 include(libvorbis.m4)
-ifelse(defn(`BUILD_MP3LAME'),`ON',`include(libmp3lame.m4)')
 ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')
 include(libopus.m4)
 include(libvpx.m4)
