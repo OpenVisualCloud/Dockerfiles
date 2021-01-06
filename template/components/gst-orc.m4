@@ -30,29 +30,31 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-include(nasm.m4)
+DECLARE(`GST_ORC_VER',0.4.32)
 
-DECLARE(`LIBVPX_VER',1.8.2)
+ifelse(OS_NAME,ubuntu,dnl
+`define(`GSTORC_BUILD_DEPS',`ca-certificates tar g++ wget meson')'
+`define(`GSTORC_INSTALL_DEPS',`')'
+)
 
-ifelse(OS_NAME,ubuntu,`
-define(`LIBVPX_BUILD_DEPS',git cmake make autoconf)
-')
+ifelse(OS_NAME,centos,dnl
+`define(`GSTORC_BUILD_DEPS',` wget tar gcc-c++ meson')'
+`define(`GSTORC_INSTALL_DEPS',`')'
+)
 
-ifelse(OS_NAME,centos,`
-define(`LIBVPX_BUILD_DEPS',git cmake make autoconf diffutils)
-')
-
-define(`BUILD_LIBVPX',`
-ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
+define(`BUILD_GSTORC',
+ARG GSTORC_REPO=https://github.com/GStreamer/orc/archive/GST_ORC_VER.tar.gz
 RUN cd BUILD_HOME && \
-    git clone ${LIBVPX_REPO} -b v`'LIBVPX_VER --depth 1 && \
-    cd libvpx && \
-    ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
-    make -j$(nproc) && \
-    make install DESTDIR=BUILD_DESTDIR && \
-    make install
-')
+    wget -O - ${GSTORC_REPO} | tar xz
+RUN cd BUILD_HOME/orc-GST_ORC_VER && \
+    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
+    --prefix=BUILD_PREFIX --buildtype=plain \
+    -Dgtk_doc=disabled && \
+    cd build && \
+    ninja install && \
+    DESTDIR=BUILD_DESTDIR ninja install
+)
 
-REG(LIBVPX)
+REG(GSTORC)
 
 include(end.m4)dnl

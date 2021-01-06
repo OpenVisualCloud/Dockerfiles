@@ -27,32 +27,5 @@ dnl SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 dnl CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 dnl OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-dnl
-include(begin.m4)
 
-include(nasm.m4)
-
-DECLARE(`LIBVPX_VER',1.8.2)
-
-ifelse(OS_NAME,ubuntu,`
-define(`LIBVPX_BUILD_DEPS',git cmake make autoconf)
-')
-
-ifelse(OS_NAME,centos,`
-define(`LIBVPX_BUILD_DEPS',git cmake make autoconf diffutils)
-')
-
-define(`BUILD_LIBVPX',`
-ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
-RUN cd BUILD_HOME && \
-    git clone ${LIBVPX_REPO} -b v`'LIBVPX_VER --depth 1 && \
-    cd libvpx && \
-    ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
-    make -j$(nproc) && \
-    make install DESTDIR=BUILD_DESTDIR && \
-    make install
-')
-
-REG(LIBVPX)
-
-include(end.m4)dnl
+divert(_n)popdef(`_n')dnl

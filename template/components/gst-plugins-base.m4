@@ -1,6 +1,36 @@
-include(envs.m4)
+dnl BSD 3-Clause License
+dnl
+dnl Copyright (c) 2020, Intel Corporation
+dnl All rights reserved.
+dnl
+dnl Redistribution and use in source and binary forms, with or without
+dnl modification, are permitted provided that the following conditions are met:
+dnl
+dnl * Redistributions of source code must retain the above copyright notice, this
+dnl   list of conditions and the following disclaimer.
+dnl
+dnl * Redistributions in binary form must reproduce the above copyright notice,
+dnl   this list of conditions and the following disclaimer in the documentation
+dnl   and/or other materials provided with the distribution.
+dnl
+dnl * Neither the name of the copyright holder nor the names of its
+dnl   contributors may be used to endorse or promote products derived from
+dnl   this software without specific prior written permission.
+dnl
+dnl THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+dnl AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+dnl IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+dnl DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+dnl FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+dnl DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+dnl SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+dnl CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+dnl OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+dnl
+include(begin.m4)
+
 include(gst-core.m4)
-HIDE
 
 dnl Optional libraries can set ON or OFF different plugins inside this base gst plugin.
 dnl Default option is ON (true value), to disable it use the m4 feature "define" by setting `-D GST_*=false` value.
@@ -40,7 +70,7 @@ OS_NAME,centos,pango-devel)'))dnl
 
 define(`GST_PANGO_INSTALL',dnl
 ifelse(GST_PANGO,true,`ifelse(
-OS_NAME,ubuntu,libpango-1.0-0,
+OS_NAME,ubuntu,libpangocairo-1.0-0 libcairo-gobject2,
 OS_NAME,centos,pango)'))dnl
 
 define(`GST_THEORA_BUILD',dnl
@@ -80,7 +110,7 @@ ifelse(OS_NAME,ubuntu,dnl
 
 ifelse(OS_NAME,centos,dnl
 `define(`GSTBASE_BUILD_DEPS',`meson wget tar gcc-c++ glib2-devel bison flex GST_XLIB_BUILD GST_ALSA_BUILD GST_PANGO_BUILD GST_THEORA_BUILD GST_LIBVISUAL_BUILD GST_OPENGL_BUILD')'
-`define(`GSTBASE_INSTALL_DEPS',`glib2 GST_XLIB_INSTALL GST_ALSA_INSTALL GST_PANGO_INSTALL GST_THEORA_INSTALL GST_LIBVISUAL_INSTALL GST_OPENGL_INSTALL')'
+`define(`GSTBASE_INSTALL_DEPS',`glib2  mesa-libEGL GST_XLIB_INSTALL GST_ALSA_INSTALL GST_PANGO_INSTALL GST_THEORA_INSTALL GST_LIBVISUAL_INSTALL GST_OPENGL_INSTALL')'
 )
 
 define(`BUILD_GSTBASE',
@@ -96,9 +126,6 @@ RUN cd BUILD_HOME/gst-plugins-base-GSTCORE_VER && \
     DESTDIR=BUILD_DESTDIR ninja install
 )
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTBASE_BUILD_PROVIDES',`gstreamer1.0-plugins-base')')
-
 REG(GSTBASE)
 
-UNHIDE
+include(end.m4)dnl
