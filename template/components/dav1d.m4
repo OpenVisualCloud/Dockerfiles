@@ -29,30 +29,29 @@ dnl OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE US
 dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
-
 include(nasm.m4)
 
-DECLARE(`LIBVPX_VER',1.8.2)
+DECLARE(`DAV1D_VER',0.7.1)
 
-ifelse(OS_NAME,ubuntu,`
-define(`LIBVPX_BUILD_DEPS',git cmake make autoconf)
-')
+ifelse(OS_NAME,ubuntu,dnl
+`define(`DAV1D_BUILD_DEPS',`ca-certificates meson tar g++ wget pkg-config')'
+)
 
-ifelse(OS_NAME,centos,`
-define(`LIBVPX_BUILD_DEPS',git cmake make autoconf diffutils)
-')
+ifelse(OS_NAME,centos,dnl
+`define(`DAV1D_BUILD_DEPS',`meson wget tar gcc-c++')'
+)
 
-define(`BUILD_LIBVPX',`
-ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
+define(`BUILD_DAV1D',dnl
+ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/DAV1D_VER/dav1d-DAV1D_VER.tar.gz
 RUN cd BUILD_HOME && \
-    git clone ${LIBVPX_REPO} -b v`'LIBVPX_VER --depth 1 && \
-    cd libvpx && \
-    ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
-    make -j$(nproc) && \
-    make install DESTDIR=BUILD_DESTDIR && \
-    make install
-')
+  wget -O - ${DAV1D_REPO} | tar xz
+RUN cd BUILD_HOME/dav1d-DAV1D_VER && \
+  meson build --prefix=BUILD_PREFIX --libdir BUILD_LIBDIR --buildtype=plain && \
+  cd build && \
+  ninja install && \
+  DESTDIR=BUILD_DESTDIR ninja install
+)
 
-REG(LIBVPX)
+REG(DAV1D)
 
 include(end.m4)dnl

@@ -30,29 +30,22 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-include(nasm.m4)
-
-DECLARE(`LIBVPX_VER',1.8.2)
+DECLARE(`NGINX_UPLOAD_VER',2.3.0)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBVPX_BUILD_DEPS',git cmake make autoconf)
+define(`NGINX_UPLOAD_DEPS',`ca-certificates wget')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBVPX_BUILD_DEPS',git cmake make autoconf diffutils)
+define(`NGINX_UPLOAD_DEPS',`wget')
 ')
 
-define(`BUILD_LIBVPX',`
-ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
+define(`BUILD_NGINX_UPLOAD',`
+ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/NGINX_UPLOAD_VER.tar.gz
 RUN cd BUILD_HOME && \
-    git clone ${LIBVPX_REPO} -b v`'LIBVPX_VER --depth 1 && \
-    cd libvpx && \
-    ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
-    make -j$(nproc) && \
-    make install DESTDIR=BUILD_DESTDIR && \
-    make install
+    wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 ')
 
-REG(LIBVPX)
+REG(NGINX_UPLOAD)
 
 include(end.m4)dnl
