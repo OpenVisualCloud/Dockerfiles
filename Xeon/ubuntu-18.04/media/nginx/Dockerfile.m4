@@ -1,20 +1,22 @@
 
-FROM ubuntu:18.04 AS build
-WORKDIR /home
-define(`BUILD_LINKAGE',shared)dnl
-define(`BUILD_TOOLS_NO_ASM')dnl
-
-include(build-tools.m4)
-include(nginx-http-flv.m4)
+include(begin.m4)
+include(ubuntu.m4)
+include(nginx-flv.m4)
 include(nginx-upload.m4)
-include(nginx.m4)dnl
+include(nginx.m4)
+include(end.m4)dnl
+
+PREAMBLE
+FROM OS_NAME:OS_VERSION AS build
+
+BUILD_ALL()dnl
+CLEANUP()dnl
 
 FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:latest
-LABEL Description="This is the base image for a NGINX+RTMP service"
+LABEL Description="This is the base image for NGINX+RTMP OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
-# Prerequisites
-include(install.pkgs.m4)
 # Install
-include(install.m4)
+INSTALL_ALL(runtime,build)
+
