@@ -41,7 +41,9 @@ ifelse(OS_NAME,centos,dnl
 )
 
 define(`BUILD_YASM',
-ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
+dnl ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
+dnl temparorily use ovc resource repo as offiical yasm repo cannot be connected 
+ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd BUILD_HOME/yasm-YASM_VER && \

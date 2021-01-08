@@ -104,11 +104,11 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
 ')
 
 ifelse(OS_NAME,ubuntu,`
-define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass9 )ifelse(FFMPEG_LIBFREETYPE,true,libfreetype6 ))
+define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass9 )ifelse(FFMPEG_LIBFREETYPE,true,libfreetype6 )ifelse(FFMPEG_ENABLE_V4L2,true,FFMPEG_V4L2_INSTALL ))
 ')
 
 ifelse(OS_NAME,centos,`
-define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass )ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,freetype )ifelse(OS_VERSION,7,glibc ))
+define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass )ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,freetype )ifelse(OS_VERSION,7,glibc )ifelse(FFMPEG_ENABLE_V4L2,true,FFMPEG_V4L2_INSTALL ))
 ')
 
 REG(FFMPEG)
