@@ -275,7 +275,7 @@ RUN echo "Start cleanup" && \
     echo "Cleanup done"
 
 FROM centos:centos7
-LABEL Description="This is the base image for Gstreamer CentOS 7"
+LABEL Description="This is the base image for Gstreamer centos centos7"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 

@@ -214,7 +214,7 @@ RUN echo "Start cleanup" && \
     echo "Cleanup done"
 
 FROM ubuntu:20.04
-LABEL Description="This is the base image for FFMPEG Ubuntu 20.04"
+LABEL Description="This is the base image for FFMPEG OS_NAME1 20.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 

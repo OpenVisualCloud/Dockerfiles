@@ -178,7 +178,7 @@ RUN echo "Start cleanup" && \
     echo "Cleanup done"
 
 FROM centos:centos7
-LABEL Description="This is the base image for FFMPEG CentOS 7"
+LABEL Description="This is the base image for FFMPEG centos centos7"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 

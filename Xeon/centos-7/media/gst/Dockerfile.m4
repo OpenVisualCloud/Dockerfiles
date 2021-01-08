@@ -31,7 +31,7 @@ BUILD_ALL()dnl
 CLEANUP()dnl
 
 FROM OS_NAME:OS_VERSION
-LABEL Description="This is the base image for Gstreamer CentOS 7"
+LABEL Description="This is the base image for Gstreamer OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 

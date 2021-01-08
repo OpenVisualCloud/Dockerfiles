@@ -335,7 +335,7 @@ RUN echo "Start cleanup" && \
     echo "Cleanup done"
 
 FROM ubuntu:20.04
-LABEL Description="This is the base image for Gstreamer Ubuntu 20.04"
+LABEL Description="This is the base image for Gstreamer ubuntu 20.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 

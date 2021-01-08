@@ -282,7 +282,7 @@ RUN echo "Start cleanup" && \
     echo "Cleanup done"
 
 FROM centos:8
-LABEL Description="This is the base image for Gstreamer CentOS 8"
+LABEL Description="This is the base image for Gstreamer centos 8"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
