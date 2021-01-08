@@ -1,5 +1,5 @@
-divert(-1)
 
+include(begin.m4)
 include(centos-repo.m4)
 include(libogg.m4)
 include(libvorbis.m4)
@@ -8,18 +8,20 @@ include(libopus.m4)
 include(libvpx.m4)
 include(libx264.m4)
 include(libx265.m4)
-#include(dav1d.m4)
+include(dav1d.m4)
 include(svt-hevc.m4)
 include(svt-av1.m4)
 #include(svt-vp9.m4)
 include(ffmpeg.m4)
-divert(0)
+include(end.m4)dnl
+
 PREAMBLE
 FROM OS_NAME:OS_VERSION AS build
 
 INSTALL_CENTOS_REPO(epel-release)
 
 BUILD_ALL()dnl
+CLEANUP()dnl
 
 FROM OS_NAME:OS_VERSION
 LABEL Description="This is the base image for FFMPEG CentOS 7"
