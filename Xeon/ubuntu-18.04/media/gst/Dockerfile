@@ -322,7 +322,7 @@ RUN echo "Start cleanup" && \
     echo "Cleanup done"
 
 FROM ubuntu:18.04
-LABEL Description="This is the base image for Gstreamer Ubuntu 18.04"
+LABEL Description="This is the base image for Gstreamer ubuntu 18.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
