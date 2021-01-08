@@ -21,8 +21,7 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     cd gst-video-analytics && \
     git checkout ${VA_GSTREAMER_PLUGINS_VER} && \
     git submodule init && git submodule update && \
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,`    sed -i ```"195s/) {/||g_strrstr(name, \"image\")) {/"''' gst/elements/gvapython/python_callback.cpp && \
-')dnl
+    sed -i ``"195s/) {/||g_strrstr(name, \"image\")) {/"'' gst/elements/gvapython/python_callback.cpp && \
     mkdir build && \
     cd build && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
@@ -37,7 +36,6 @@ ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,`    sed -i ```"195s/) {/||g_strrstr(na
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j4
 )dnl
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,
 ARG VA_GSTREAMER_PLUGINS_VER=v1.2.1
 defn(`BUILD_GSTGVA')
@@ -46,10 +44,6 @@ ifelse(index(DOCKER_IMAGE,vcaca),-1,
 ARG VA_GSTREAMER_PLUGINS_VER=v1.2.1
 defn(`BUILD_GSTGVA')
 ))dnl
-,dnl
-ARG VA_GSTREAMER_PLUGINS_VER=v1.0.1
-defn(`BUILD_GSTGVA')
-)dnl
 
 RUN mkdir -p build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0 && \
     cp -r ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,gst-video-analytics/build/intel64/Release/lib/*,ifelse(index(DOCKER_IMAGE,vcaca),-1,gst-video-analytics/build/intel64/Release/lib/*,/opt/intel/openvino/data_processing/dl_streamer/lib/*)) build/usr/local/ifelse(index(DOCKER_IMAGE,ubuntu),-1,lib64,lib/x86_64-linux-gnu)/gstreamer-1.0
@@ -72,9 +66,6 @@ ifelse(index(DOCKER_IMAGE,ubuntu),-1,,
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/x86_64-linux-gnu/girepository-1.0/)dnl
 
 define(`INSTALL_PKGS_VA_GST_PLUGINS',
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-    libgtk2.0 libdrm2 libxv1 python3-numpy python3-gi python3-gi-cairo python3-dev \
-)dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
     libgtk2.0 libdrm2 libxv1 libpugixml1v5 python3-numpy python3-gi python3-gi-cairo python3-dev \
 )dnl

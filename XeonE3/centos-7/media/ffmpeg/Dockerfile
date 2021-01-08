@@ -343,7 +343,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN yum install -y epel-release;  \
-    yum install -y -q   libxcb SDL2 libass numactl libvdpau  libpciaccess libX11 mesa-dri-drivers mesa-libGL libdrm  ; \
+    yum install -y -q  libxcb SDL2 libass numactl libvdpau  libpciaccess libX11 mesa-dri-drivers mesa-libGL libdrm  ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
 

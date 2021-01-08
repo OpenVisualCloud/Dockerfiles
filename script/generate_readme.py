@@ -18,39 +18,18 @@ platform_subs = {
 
 #When image is based on another OVC image, this is used to find path of inherited image
 path_subs = {
-                "xeone3-centos75-media-ffmpeg" : "XeonE3/centos-7.5/media/ffmpeg/",
                 "xeone3-ubuntu1804-media-ffmpeg" : "XeonE3/ubuntu-18.04/media/ffmpeg/",
-                "xeone3-ubuntu1604-media-ffmpeg" : "XeonE3/ubuntu-16.04/media/ffmpeg/",
-                "xeone3-centos74-media-ffmpeg" : "XeonE3/centos-7.4/media/ffmpeg/",
-                "xeone3-centos76-media-ffmpeg" : "XeonE3/centos-7.6/media/ffmpeg/",
                 "xeone3-centos7-media-ffmpeg" : "XeonE3/centos-7/media/ffmpeg/",
-                "xeon-centos75-media-ffmpeg" : "Xeon/centos-7.5/media/ffmpeg/",
-                "xeon-centos75-media-dev" : "Xeon/centos-7.5/media/dev/",
                 "xeon-ubuntu1804-media-ffmpeg" : "Xeon/ubuntu-18.04/media/ffmpeg/",
                 "xeon-ubuntu1804-media-dev" : "Xeon/ubuntu-18.04/media/dev/",
-                "xeon-ubuntu1604-media-ffmpeg" : "Xeon/ubuntu-16.04/media/ffmpeg/",
-                "xeon-ubuntu1604-media-dev" : "Xeon/ubuntu-16.04/media/dev/",
-                "xeon-centos74-media-ffmpeg" : "Xeon/centos-7.4/media/ffmpeg/",
-                "xeon-centos74-media-dev" : "Xeon/centos-7.4/media/dev/",
-                "xeon-centos76-media-ffmpeg" : "Xeon/centos-7.6/media/ffmpeg/",
                 "xeon-centos7-media-ffmpeg" : "Xeon/centos-7/media/ffmpeg/",
-                "xeon-centos76-media-dev" : "Xeon/centos-7.6/media/dev/",
                 "xeon-centos7-media-dev" : "Xeon/centos-7/media/dev/",
-                "vca2-centos75-media-ffmpeg" : "VCA2/centos-7.5/media/ffmpeg/",
-                "vca2-ubuntu1804-media-ffmpeg" : "VCA2/ubuntu-18.04/media/ffmpeg/",
-                "vca2-ubuntu1604-media-ffmpeg" : "VCA2/ubuntu-16.04/media/ffmpeg/",
-                "vca2-centos74-media-ffmpeg" : "VCA2/centos-7.4/media/ffmpeg/",
-                "vca2-centos76-media-ffmpeg" : "VCA2/centos-7.6/media/ffmpeg/",
-                "vca2-centos7-media-ffmpeg" : "VCA2/centos-7/media/ffmpeg/"
                 }
 
 #OS subs to their version detail 
 os_subs = {
                 "centos-7" : "CentOS-7",
-                "centos-7.4" : "CentOS-7.4.1708",
-                "centos-7.5" : "CentOS-7.5.1804",
                 "centos-7.6" : "CentOS-7.6.1810",
-                "ubuntu-16.04" : "Ubuntu 16.04",
                 "ubuntu-18.04" : "Ubuntu 18.04"
           }
 
