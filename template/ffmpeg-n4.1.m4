@@ -35,7 +35,6 @@ RUN cd /home/FFmpeg && \
     ifelse(index(DOCKER_IMAGE,service),-1,,make install && )make install DESTDIR="/home/build"
 
 define(`INSTALL_PKGS_FFMPEG',dnl
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,ifelse(FFMPEG_X11,ON,libxv1 libsdl2-2.0-0 libasound2) libxcb-shm0 libxcb-shape0 libxcb-xfixes0 ifelse(index(DOCKER_IMAGE,xeon-),-1,libvdpau1) libnuma1 libass5 libssl1.0.0) dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,ifelse(FFMPEG_X11,ON,libxv1 libxcb-shm0 libxcb-shape0 libxcb-xfixes0 libsdl2-2.0-0 libasound2) ifelse(index(DOCKER_IMAGE,xeon-),-1,libvdpau1) libnuma1 libass9 libssl1.1 libpciaccess0 ) dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,ifelse(FFMPEG_X11,ON,libxcb SDL2) libass numactl ifelse(index(DOCKER_IMAGE,xeon-),-1,libvdpau) ) dnl
 )dnl

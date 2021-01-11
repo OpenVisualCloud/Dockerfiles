@@ -1,9 +1,6 @@
 ARG OPENCV_VER=4.5.0
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz
 
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgtk2.0-dev pkg-config libeigen3-dev
-)dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libeigen3-dev
 )dnl

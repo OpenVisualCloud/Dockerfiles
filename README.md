@@ -69,11 +69,10 @@ The project supports the following platforms and OS'es:
 
 | Supported Platforms | Supported OS'es |
 | :---: | :--- |
-| [Xeon](Xeon) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7/7.6 |
-| [Xeon E3](XeonE3) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7/7.6 |
-| [VCA2](VCA2) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7 |
-| [VCAC-A](VCAC-A) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS |
-| [QAT](QAT) | Ubuntu 16.04 LTS, Ubuntu 18.04 LTS, CentOS 7 |
+| [Xeon](Xeon) | Ubuntu 18.04 LTS, CentOS 7/7.6 |
+| [Xeon E3](XeonE3) | Ubuntu 18.04 LTS, CentOS 7/7.6 |
+| [VCAC-A](VCAC-A) | Ubuntu 18.04 LTS |
+| [QAT](QAT) | Ubuntu 18.04 LTS, CentOS 7 |
 
 Please see [Development and Test Report](doc/test.md) for the latest development statuses.    
 
@@ -99,7 +98,7 @@ The docker images are published on [Docker Hub](https://hub.docker.com/u/openvis
 
 ```bash
 docker search openvisualcloud --limit=100 | grep analytics-ffmpeg #list media analytics ffmpeg images 
-docker pull openvisualcloud/xeon-ubuntu1604-analytics-ffmpeg
+docker pull openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg
 ```
 
 ### Build Image: 
@@ -109,7 +108,7 @@ mkdir build
 cd build     
 cmake ..     
 # Please build your specific platform image. A full build takes a long time.
-cd Xeon/ubuntu-16.04/media/ffmpeg     
+cd Xeon/ubuntu-18.04/media/ffmpeg     
 # Build on the target platform for optimal performance.
 make    
 ctest   
@@ -119,13 +118,13 @@ See Also: [Build Options](doc/cmake.md)
 ### Run Image Shell:
 
 ```bash
-Xeon/ubuntu-16.04/media/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_usage_>/<_image_>
+Xeon/ubuntu-18.04/media/ffmpeg/shell.sh #<_platform_>/<_OS_>/<_usage_>/<_image_>
 ```
 
 ### Customize Image:
 
 - You can modify any ```Dockerfile.m4``` template for customization.     
-For example, uncomment ```#include(transform360.m4)``` in [Xeon/ubuntu-16.04/media/ffmpeg/Dockerfile.m4](Xeon/ubuntu-16.04/media/ffmpeg/Dockerfile.m4) to add essential 360 video transformation in the FFmpeg build.    
+For example, uncomment ```#include(transform360.m4)``` in [Xeon/ubuntu-18.04/media/ffmpeg/Dockerfile.m4](Xeon/ubuntu-18.04/media/ffmpeg/Dockerfile.m4) to add essential 360 video transformation in the FFmpeg build.    
 
 After modification, please rerun cmake and make.     
 

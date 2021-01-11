@@ -408,7 +408,7 @@ WORKDIR /home
 
 # Prerequisites
 RUN yum install -y epel-release;  \
-    yum install -y -q    libass numactl   ; \
+    yum install -y -q   libass numactl   ; \
     yum remove -y -q epel-release; \
     rm -rf /var/cache/yum/*;
 

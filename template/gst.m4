@@ -2,11 +2,6 @@
 ARG GST_VER=1.16.2
 ARG GST_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${GST_VER}.tar.xz
 
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-RUN  apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev gobject-introspection libgirepository1.0-dev libpango-1.0-0 libpangocairo-1.0-0 autopoint libcurl3-gnutls	&& \
-     apt-get clean 		   && \
-     rm -rf /var/lib/apt/lists/*
-)dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
 RUN  ln -sf /usr/share/zoneinfo/UTC /etc/localtime; \
      apt-get update && apt-get install -y -q --no-install-recommends libglib2.0-dev gobject-introspection libgirepository1.0-dev libpango-1.0-0 libpangocairo-1.0-0 autopoint libcurl3-gnutls	&& \
