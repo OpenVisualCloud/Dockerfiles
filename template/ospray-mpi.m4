@@ -1,10 +1,5 @@
 #build ospray
 
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,dnl
-RUN apt-get update && apt-get install -y -q --no-install-recommends libglfw-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev libmpich-dev mpich openssh-server openssh-client	&& \
-    apt-get clean	&& \
-    rm -rf /var/lib/apt/lists/*
-)dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,dnl
 RUN apt-get update && apt-get install -y -q --no-install-recommends libglfw3-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev libmpich-dev mpich openssh-server openssh-client	&& \
     apt-get clean	&& \

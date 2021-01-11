@@ -10,13 +10,6 @@ ARG OPENVINO_BUNDLE=l_openvino_toolkit_p_2021.1.110
 ARG OPENVINO_URL=https://registrationcenter-download.intel.com/akdlm/irc_nas/17062/l_openvino_toolkit_p_2021.1.110.tgz
 )dnl
 
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-#Install OpenVino dependencies
-RUN  DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends cpio joe nano sudo unzip wget less \
-libpng12-dev libcairo2-dev libpango1.0-dev \
-libglib2.0-dev libgtk2.0-dev libswscale-dev libavcodec-dev libavformat-dev build-essential \
-cmake libusb-1.0-0-dev
-)dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
 )dnl
 ifelse(index(DOCKER_IMAGE,centos),-1,,
@@ -68,29 +61,6 @@ define(`IE_C_API_PATH',/opt/intel/openvino/deployment_tools/inference_engine/lib
 ,)dnl
 
 ifelse(index(DOCKER_IMAGE,-dev),-1,
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,
-# Install python3.6 fpr deployment manager on ubuntu1604
-RUN wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz       && \
-    tar -xvf Python-3.6.3.tgz                                           && \
-    cd Python-3.6.3                                                     && \
-    ./configure                                                         && \
-    make -j "$(nproc)"                                                  && \
-    apt-get install -y --no-install-recommends checkinstall apt-utils   && \
-    checkinstall --install=no --nodoc -y --pkgname=python36-from-source
-
-RUN cd Python-3.6.3                                                     && \
-    dpkg -i python36-from-source_3.6.3-1_amd64.deb
-
-#Deploy small package using deployment manager
-RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager/   && \
-    python3.6 ./deployment_manager.py --targets hddl                    && \
-    cd /root/ && ls -lh && mkdir -p openvino                            && \
-    tar zvxf openvino_deploy_package.tar.gz -C openvino
-
-#Remove python3.6
-RUN cd Python-3.6.3                                                     && \
-    dpkg -r python36-from-source
-)dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,
 ifelse(index(DOCKER_IMAGE,hddldaemon),-1,,
 RUN cd /opt/intel/openvino/deployment_tools/tools/deployment_manager && \
@@ -137,7 +107,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph
 )dnl
 
 define(`INSTALL_PKGS_OPENVINO',dnl
-ifelse(index(DOCKER_IMAGE,ubuntu1604),-1,,libjson-c2 libboost-thread1.58.0 libboost-filesystem1.58.0 libboost-system1.58.0 libusb-1.0-0-dev) dnl
 ifelse(index(DOCKER_IMAGE,ubuntu1804),-1,,libjson-c3 libboost-filesystem1.65.1 libboost-system1.65.1 libusb-1.0-0-dev libboost-program-options1.65.1) dnl
 )dnl
 
