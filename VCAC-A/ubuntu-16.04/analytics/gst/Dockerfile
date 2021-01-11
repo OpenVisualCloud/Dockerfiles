@@ -275,17 +275,17 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
 
 RUN mkdir neo
 
-RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19.01.12103/intel-gmmlib_18.4.0.348_amd64.deb
-RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19.01.12103/intel-igc-core_18.50.1270_amd64.deb
-RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19.01.12103/intel-igc-opencl_18.50.1270_amd64.deb
-RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19.01.12103/intel-opencl_19.01.12103_amd64.deb
+RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/20.52.18783/intel-gmmlib_20.3.2_amd64.deb
+RUN cd neo && wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.5884/intel-igc-core_1.0.5884_amd64.deb
+RUN cd neo && wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.5884/intel-igc-opencl_1.0.5884_amd64.deb
+RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/20.52.18783/intel-opencl_20.52.18783_amd64.deb
 
 RUN cd neo && \
     dpkg -i ./*.deb && \
-    dpkg-deb -x intel-gmmlib_18.4.0.348_amd64.deb /home/build/ && \
-    dpkg-deb -x intel-igc-core_18.50.1270_amd64.deb /home/build/ && \
-    dpkg-deb -x intel-igc-opencl_18.50.1270_amd64.deb /home/build/ && \
-    dpkg-deb -x intel-opencl_19.01.12103_amd64.deb /home/build/
+    dpkg-deb -x intel-gmmlib_20.3.2_amd64.deb /home/build/ && \
+    dpkg-deb -x intel-igc-core_1.0.5884_amd64.deb /home/build/ && \
+    dpkg-deb -x intel-igc-opencl_1.0.5884_amd64.deb /home/build/ && \
+    dpkg-deb -x intel-opencl_20.52.18783_amd64.deb /home/build/
 
 
 #clinfo needs to be installed after build directory is copied over
