@@ -8,7 +8,7 @@
 
 ---
 
-## <b>Join Hackathon [Open Your Mind to Endless Possibilities](https://software.seek.intel.com/OpenVisualCloudHackathon-contest)<br>Registration: Jan 11 - March 12, 2021</b>   
+### <b>Join Hackathon [Open Your Mind to Endless Possibilities](https://software.seek.intel.com/OpenVisualCloudHackathon-contest)<br>Registration: Jan 11 - March 12, 2021</b>   
 
 ---
 
