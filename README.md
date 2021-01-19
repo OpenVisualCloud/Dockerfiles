@@ -6,15 +6,19 @@
 
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
 
+---
+
+## <b>Join Hackathon [Open Your Mind to Endless Possibilities](https://software.seek.intel.com/OpenVisualCloudHackathon-contest)<br>Registration: Jan 11 - March 12, 2021</b>   
+
+---
+
+
 This repository hosts docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.
 
----
 
-Validated docker images are available on [**Docker Hub**](https://hub.docker.com/u/openvisualcloud).
+Validated docker images are available on [**Docker Hub**](https://hub.docker.com/u/openvisualcloud).   
+Explore more container solutions on the [Intel® oneContainer Portal](https://software.intel.com/content/www/us/en/develop/tools/containers.html).   
 
-Explore more container solutions on the [Intel® oneContainer Portal](https://software.intel.com/content/www/us/en/develop/tools/containers.html).
-
----
 
 ### Software Stack Images:
 
