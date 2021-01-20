@@ -46,7 +46,6 @@ RUN cd /opt/build && \
         --research=off \
         --cherrypy=off \
         --utest=off \
-        --nasm=off \
         --srt=off \
         --rtc=on \
         --gb28181=on \

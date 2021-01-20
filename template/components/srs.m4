@@ -32,14 +32,13 @@ include(begin.m4)
 
 DECLARE(`SRS_VER',v4.0.62)
 DECLARE(`SRS_ENABLE_HDS',on)
-DECLARE(`SRS_ENABLE_LIBRTMP',on)
 
 ifelse(OS_NAME,ubuntu,`
-define(`SRS_BUILD_DEPS',`git ca-certificates g++ make unzip patch pkg-config ifelse(defn(`SRS_ENABLE_LIBRTMP'),on,librtmp-dev )ifdef(BUILD_OPENSSL,,libssl-dev )')
+define(`SRS_BUILD_DEPS',`git ca-certificates g++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-dev )')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`SRS_BUILD_DEPS',`git gcc-c++ make unzip patch pkg-config ifelse(defn(`SRS_ENABLE_LIBRTMP'),on,librtmp-devel )ifdef(BUILD_OPENSSL,,libssl-devel )')
+define(`SRS_BUILD_DEPS',`git gcc-c++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-devel )')
 ')
 
 define(`BUILD_SRS',`
@@ -48,16 +47,15 @@ RUN cd BUILD_HOME && \
     git clone -b SRS_VER --depth 1 ${SRS_REPO} && \
     cd srs/trunk && \
     sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=patsubst(defn(`BUILD_PREFIX'),/,\\/)\/ssl\/lib /" configure && \
-    cat configure | grep SrsLinkOptions && \
     ./configure --prefix=BUILD_PREFIX/srs \
         --hds=defn(`SRS_ENABLE_HDS') \
         --ssl=on --https=on --sys-ssl=on \
         --stream-caster=on \
-        --librtmp=defn(`SRS_ENABLE_LIBRTMP') \
         --ffmpeg-fit=off \
         --research=off \
         --cherrypy=off \
         --utest=off \
+        --nasm=ifdef(BUILD_NASM,on,off) \
         --srt=ifdef(BUILD_LIBSRT,on,off) \
         --rtc=on \
         --gb28181=on \
@@ -71,11 +69,11 @@ RUN ls BUILD_DESTDIR
 ')
 
 ifelse(OS_NAME,ubuntu,`
-define(`SRS_INSTALL_DEPS',`ifelse(defn(`SRS_ENABLE_RTMP'),on,librtmp1 )ifdef(`BUILD_OPENSSL',,openssl)')
+define(`SRS_INSTALL_DEPS',`bash ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`SRS_INSTALL_DEPS',`ifelse(defn(`SRS_ENABLE_RTMP'),on,librtmp )ifdef(`BUILD_OPENSSL',,openssl)')
+define(`SRS_INSTALL_DEPS',`bash ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
 REG(SRS)
