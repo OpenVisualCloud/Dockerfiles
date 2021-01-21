@@ -1,27 +1,26 @@
-# ![logo][]  Software Stack Dockerfiles
-[![HOMEPAGE](https://img.shields.io/badge/Homepage-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
-[![Dockerhub](https://img.shields.io/badge/Images-Dockerhub-blue.svg)](https://hub.docker.com/u/openvisualcloud)
-[![Stable release](https://img.shields.io/badge/Release-Latest-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/latest)
-[![Contributions](https://img.shields.io/badge/Contributions-Welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
-
-[logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
-
 ---
 
 ### <b>Join Hackathon [Open Your Mind to Endless Possibilities](https://software.seek.intel.com/OpenVisualCloudHackathon-contest)<br>Registration: Jan 11 - March 12, 2021</b>   
 
 ---
 
+# ![logo][]  Software Stack Dockerfiles
+[![HOMEPAGE](https://img.shields.io/badge/Homepage-01.org-brightblue.svg)](https://01.org/OpenVisualCloud)
+[![Dockerhub](https://img.shields.io/badge/Images-Dockerhub-blue.svg)](https://hub.docker.com/u/openvisualcloud)
+[![S
+table release](https://img.shields.io/badge/Release-Latest-green.svg)](https://github.com/OpenVisualCloud/Dockerfiles/releases/latest)
+[![Contributions](https://img.shields.io/badge/Contributions-Welcome-orange.svg)](https://github.com/OpenVisualCloud/Dockerfiles/wiki)
 
-This repository hosts docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.
+[logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
+
+This repository hosts docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.  
 
 
 Validated docker images are available on [**Docker Hub**](https://hub.docker.com/u/openvisualcloud).   
-Explore more container solutions on the [Intel® oneContainer Portal](https://software.intel.com/content/www/us/en/develop/tools/containers.html).   
+Explore more container solutions at the [Intel® oneContaineratortal](https://software.intel.com/content/www/us/en/develop/tools/containers.html).   
 
 
 ### Software Stack Images:
-
 The software stack images provide ready to use software stacks for application deployment. You can call the software executables or link with the software libraries.   
 
 - **Media Delivery**
