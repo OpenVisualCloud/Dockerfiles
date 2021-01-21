@@ -17,7 +17,7 @@ This repository hosts docker build files of software stacks and services, design
 
 
 Validated docker images are available on [**Docker Hub**](https://hub.docker.com/u/openvisualcloud).   
-Explore more container solutions at the [Intel® oneContaineratortal](https://software.intel.com/content/www/us/en/develop/tools/containers.html).   
+Explore more container solutions at the [oneContainer Portal](https://software.intel.com/content/www/us/en/develop/tools/containers.html).   
 
 
 ### Software Stack Images:
