@@ -28,7 +28,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ca-certificates g++ make unzip patch pkg-config librtmp-dev  && \
+    git ca-certificates g++ make unzip patch pkg-config  && \
   rm -rf /var/lib/apt/lists/*
 
 ARG SRS_REPO=https://github.com/ossrs/srs.git
@@ -36,12 +36,10 @@ RUN cd /opt/build && \
     git clone -b v4.0.62 --depth 1 ${SRS_REPO} && \
     cd srs/trunk && \
     sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=\/usr\/local\/ssl\/lib /" configure && \
-    cat configure | grep SrsLinkOptions && \
     ./configure --prefix=/usr/local/srs \
         --hds=on \
         --ssl=on --https=on --sys-ssl=on \
         --stream-caster=on \
-        --librtmp=on \
         --ffmpeg-fit=off \
         --research=off \
         --cherrypy=off \
@@ -74,7 +72,7 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-     && \
+    bash  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
