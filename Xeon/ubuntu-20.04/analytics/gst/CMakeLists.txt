@@ -1,4 +1,4 @@
-set(image "xeon_analytics_gst_centos7")
+set(image "xeon_analytics_gst_ubuntu2004")
 include(image)
 include(gst-tests)
 include(dldt-gst-tests)
