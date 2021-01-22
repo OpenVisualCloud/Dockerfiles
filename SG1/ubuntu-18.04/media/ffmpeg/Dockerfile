@@ -200,7 +200,26 @@ ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/intel-media-s
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
 RUN cd /opt/build/media-driver-intel-media-sg1-pv1.1 && mkdir build && cd build && \
-  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
+  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DENABLE_PRODUCTION_KMD=ON .. && \
+  make -j$(nproc) && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates gcc g++ make cmake pkg-config wget && \
+  rm -rf /var/lib/apt/lists/*
+ARG MSDK_REPO=https://github.com/VCDP/MediaSDK/archive/intel-media-sg1-pv1.1.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${MSDK_REPO} | tar xz
+RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.1 && \
+  mkdir -p build && cd build && \
+  cmake \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_LIBDIR=/usr/local/lib \
+    -DBUILD_SAMPLES=no \
+    -DBUILD_TUTORIALS=OFF \
+    .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
   make install
@@ -227,7 +246,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             && make -j$(nproc) && \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 

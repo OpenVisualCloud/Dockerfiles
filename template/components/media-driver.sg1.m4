@@ -49,7 +49,7 @@ ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/MEDIA_DRIVER_
 RUN cd BUILD_HOME && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
 RUN cd BUILD_HOME/media-driver-MEDIA_DRIVER_VER && mkdir build && cd build && \
-  cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR .. && \
+  cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DENABLE_PRODUCTION_KMD=ON .. && \
   make -j$(nproc) && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install

@@ -182,7 +182,7 @@ ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/intel-media-s
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
 RUN cd /opt/build/media-driver-intel-media-sg1-pv1.1 && mkdir build && cd build && \
-  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 .. && \
+  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DENABLE_PRODUCTION_KMD=ON .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
   make install
