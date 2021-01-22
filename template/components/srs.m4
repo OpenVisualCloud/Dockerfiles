@@ -30,30 +30,52 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENSSL_VER',1_1_1h)
+DECLARE(`SRS_VER',v4.0.62)
+DECLARE(`SRS_ENABLE_HDS',on)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OPENSSL_BUILD_DEPS',ca-certificates wget tar g++ make libtool autoconf)
+define(`SRS_BUILD_DEPS',`git ca-certificates g++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-dev )')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OPENSSL_BUILD_DEPS',wget tar gcc-c++ make libtool autoconf)
+define(`SRS_BUILD_DEPS',`git gcc-c++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-devel )')
 ')
 
-define(`BUILD_OPENSSL',`
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_`'OPENSSL_VER.tar.gz
+define(`BUILD_SRS',`
+ARG SRS_REPO=https://github.com/ossrs/srs.git
 RUN cd BUILD_HOME && \
-    wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_`'OPENSSL_VER && \
-    ./config no-ssl3 shared --prefix=BUILD_PREFIX/ssl --openssldir=BUILD_PREFIX/ssl -fPIC -Wl,-rpath=BUILD_PREFIX/ssl/lib && \
-    make depend && \
-    make -s V=0 && \
-    make install DESTDIR=BUILD_DESTDIR && \
-    (cd BUILD_DESTDIR`'BUILD_PREFIX && mkdir -p ifelse(OS_NAME,ubuntu,lib,lib64)/pkgconfig && mv ssl/lib/pkgconfig/*.pc ifelse(OS_NAME,ubuntu,lib,lib64)/pkgconfig) && \
-    make install && \
-    (cd BUILD_PREFIX && mkdir -p ifelse(OS_NAME,ubuntu,lib,lib64)/pkgconfig && mv ssl/lib/pkgconfig/*.pc ifelse(OS_NAME,ubuntu,lib,lib64)/pkgconfig)
+    git clone -b SRS_VER --depth 1 ${SRS_REPO} && \
+    cd srs/trunk && \
+    sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=patsubst(defn(`BUILD_PREFIX'),/,\\/)\/ssl\/lib /" configure && \
+    ./configure --prefix=BUILD_PREFIX/srs \
+        --hds=defn(`SRS_ENABLE_HDS') \
+        --ssl=on --https=on --sys-ssl=on \
+        --stream-caster=on \
+        --ffmpeg-fit=off \
+        --research=off \
+        --cherrypy=off \
+        --utest=off \
+        --nasm=ifdef(BUILD_NASM,on,off) \
+        --srt=ifdef(BUILD_LIBSRT,on,off) \
+        --rtc=on \
+        --gb28181=on \
+        --extra-flags=$(pkg-config --cflags openssl) \
+        --jobs=$(nproc) && \
+    make -j$(nproc) && touch research/api-server/static-dir/crossdomain.xml && \
+    make install DESTDIR=BUILD_DESTDIR
+
+RUN echo BUILD_DESTDIR
+RUN ls BUILD_DESTDIR
 ')
 
-REG(OPENSSL)
+ifelse(OS_NAME,ubuntu,`
+define(`SRS_INSTALL_DEPS',`bash ifdef(`BUILD_OPENSSL',,openssl)')
+')
+
+ifelse(OS_NAME,centos,`
+define(`SRS_INSTALL_DEPS',`bash ifdef(`BUILD_OPENSSL',,openssl)')
+')
+
+REG(SRS)
 
 include(end.m4)dnl
