@@ -15,7 +15,7 @@ include(svt-av1.m4)
 include(gmmlib.sg1.m4)
 include(libva2.sg1.m4)
 include(media-driver.sg1.m4)
-include(msdk.m4.sg1)
+include(msdk.sg1.m4)
 include(ffmpeg.m4)
 include(end.m4)dnl
 
