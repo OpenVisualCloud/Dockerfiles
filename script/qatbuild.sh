@@ -6,14 +6,13 @@ if [[ -z $DIR ]]; then
 fi
 
 if [[ $1 == -n ]]; then
-    BUILD_MP3LAME="${2:-ON}"
-    BUILD_FDKAAC="${3:-ON}"
-    DOCKER_PREFIX="${4:-openvisualcloud}"
+    BUILD_FDKAAC="${2:-ON}"
+    DOCKER_PREFIX="${3:-openvisualcloud}"
     SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/"
 
     for m4file in "${DIR}"/*.m4; do
         if [[ -f $m4file ]]; then
-            m4 "-I${SCRIPT_ROOT}/../template/" -DDOCKER_IMAGE=${IMAGE} -DBUILD_MP3LAME=${BUILD_MP3LAME} -DBUILD_FDKAAC=${BUILD_FDKAAC} "${m4file}" > "${m4file%\.m4}"
+            m4 "-I${SCRIPT_ROOT}/../template/" -DDOCKER_IMAGE=${IMAGE} -DBUILD_FDKAAC=${BUILD_FDKAAC} "${m4file}" > "${m4file%\.m4}"
         fi
     done || true
     exit 0
