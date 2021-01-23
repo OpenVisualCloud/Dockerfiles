@@ -4,19 +4,18 @@
 You can use the following build options to customize the build process:
 - **BUILD_VERSION**: Specify the build version string.  
 - **DOCKER_PREFIX**: Specify the docker image prefix string.  
-- **BUILD_MP3LAME**: Set to ```ON``` (default) to build the ```libmp3lame``` in the docker images, or ```OFF``` to disable including ```libmp3lame``` in the docker images.
 - **BUILD_FDKAAC**: Set to ```ON``` (default) to build the ```libfdk_aac``` in the docker images, or ```OFF``` to disable including ```libfdk_aac``` in the docker images.
 
 Build examples:   
 
 ```bash
 cd build
-cmake -DBUILD_MP3LAME=ON ..
+cmake -DBUILD_FDKAAC=ON ..
 ```
 
 ```bash
 cd build
-cmake -DBUILD_FDKAAC=ON -DBUILD_MP3LAME=OFF ..
+cmake -DBUILD_VERSION=21.3 -DBUILD_FDKAAC=OFF ..
 ```
 
 ### Command Make Targets
