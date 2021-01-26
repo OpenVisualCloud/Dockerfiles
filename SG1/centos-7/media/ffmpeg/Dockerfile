@@ -12,7 +12,16 @@ RUN mkdir -p /opt/build && mkdir -p /opt/dist
 
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
-RUN yum install -y wget make autoconf diffutils automake gcc-c++
+RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
+ARG CMAKE_VER_1=3.13.1
+ARG CMAKE_REPO=https://cmake.org/files
+RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER_1%.*}/cmake-${CMAKE_VER_1}.tar.gz | tar xz && \
+    cd cmake-${CMAKE_VER_1} && \
+    ./bootstrap --prefix=/usr/local --system-curl && \
+    make -j$(nproc) && \
+    make install
+
+RUN yum install -y wget make autoconf diffutils automake gcc-c++ epel-release
 
 ARG LIBOGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.gz
 
@@ -31,18 +40,6 @@ ARG LIBVORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.ta
 RUN cd /opt/build && \
     wget -O - ${LIBVORBIS_REPO} | tar xz && \
     cd libvorbis-1.3.7 && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
-    make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
-RUN yum install -y wget gcc-c++ autoconf libtool make automake
-
-ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${LIBFDKAAC_REPO} | tar xz && \
-    cd fdk-aac-0.1.6 && \
-    ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -166,22 +163,26 @@ RUN cd /opt/build/libva-intel-media-sg1-pv1.1 && \
   make install DESTDIR=/opt/dist && \
   make install
 
-RUN yum install -y cmake gcc-c++ libpciaccess-devel make pkg-config wget
+RUN yum install -y cmake gcc-c++ libpciaccess-devel make pkg-config wget centos-release-scl
 ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/intel-media-sg1-pv1.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
 RUN cd /opt/build/media-driver-intel-media-sg1-pv1.1 && mkdir build && cd build && \
+  ( yum install -y devtoolset-9-gcc-c++ && \
+    source /opt/rh/devtoolset-9/enable && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DENABLE_PRODUCTION_KMD=ON .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
-  make install
+  make install )
 
-RUN yum install -y cmake gcc gcc-c++ make pkg-config wget
+RUN yum install -y cmake gcc gcc-c++ make pkg-config wget centos-release-scl
 ARG MSDK_REPO=https://github.com/VCDP/MediaSDK/archive/intel-media-sg1-pv1.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${MSDK_REPO} | tar xz
 RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.1 && \
   mkdir -p build && cd build && \
+  ( yum install -y devtoolset-9-gcc-c++ && \
+    source /opt/rh/devtoolset-9/enable && \
   cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 \
@@ -190,7 +191,7 @@ RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.1 && \
     .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
-  make install
+  make install )
 
 RUN yum install -y wget patch libv4l-devel libass-devel freetype-devel 
 
@@ -211,7 +212,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc         --enable-libdav1d     && make -j$(nproc) && \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2             --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
