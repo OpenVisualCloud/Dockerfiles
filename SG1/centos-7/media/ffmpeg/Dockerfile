@@ -45,6 +45,18 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN yum install -y wget gcc-c++ autoconf libtool make automake
+
+ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${LIBFDKAAC_REPO} | tar xz && \
+    cd fdk-aac-0.1.6 && \
+    ./autogen.sh && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
+    make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
 RUN yum install -y wget autoconf libtool make
 
 ARG LIBOPUS_REPO=https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz
@@ -212,7 +224,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2             --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc         --enable-libdav1d     && make -j$(nproc) && \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
