@@ -1,6 +1,7 @@
 
 include(begin.m4)
 include(centos-repo.m4)
+include(cmake.m4)
 include(libogg.m4)
 include(libvorbis.m4)
 ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')

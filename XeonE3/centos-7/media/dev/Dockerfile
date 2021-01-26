@@ -12,7 +12,16 @@ RUN mkdir -p /opt/build && mkdir -p /opt/dist
 
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
-RUN yum install -y wget make autoconf diffutils automake gcc-c++
+RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
+ARG CMAKE_VER_1=3.13.1
+ARG CMAKE_REPO=https://cmake.org/files
+RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER_1%.*}/cmake-${CMAKE_VER_1}.tar.gz | tar xz && \
+    cd cmake-${CMAKE_VER_1} && \
+    ./bootstrap --prefix=/usr/local --system-curl && \
+    make -j$(nproc) && \
+    make install
+
+RUN yum install -y wget make autoconf diffutils automake gcc-c++ epel-release
 
 ARG LIBOGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.gz
 
@@ -187,12 +196,14 @@ RUN cd /opt/build/media-driver-intel-media-20.2.0 && mkdir build && cd build && 
   make install DESTDIR=/opt/dist && \
   make install
 
-RUN yum install -y cmake gcc gcc-c++ make pkg-config wget
+RUN yum install -y cmake gcc gcc-c++ make pkg-config wget centos-release-scl
 ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-20.2.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${MSDK_REPO} | tar xz
 RUN cd /opt/build/MediaSDK-intel-mediasdk-20.2.1 && \
   mkdir -p build && cd build && \
+  ( yum install -y devtoolset-9-gcc-c++ && \
+    source /opt/rh/devtoolset-9/enable && \
   cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 \
@@ -201,7 +212,7 @@ RUN cd /opt/build/MediaSDK-intel-mediasdk-20.2.1 && \
     .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
-  make install
+  make install )
 
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex 
 ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.16.2.tar.gz
