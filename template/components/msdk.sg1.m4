@@ -40,7 +40,7 @@ ifelse(OS_NAME,ubuntu,dnl
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`MSDK_BUILD_DEPS',`cmake gcc gcc-c++ make pkg-config wget')'
+`define(`MSDK_BUILD_DEPS',`cmake gcc gcc-c++ make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')'
 )
 
 define(`BUILD_MSDK',dnl
@@ -49,6 +49,10 @@ RUN cd BUILD_HOME && \
   wget -O - ${MSDK_REPO} | tar xz
 RUN cd BUILD_HOME/MediaSDK-MSDK_VER && \
   mkdir -p build && cd build && \
+ifelse(index(OS_VERSION,7),-1,,`dnl
+  ( yum install -y devtoolset-9-gcc-c++ && \
+    source /opt/rh/devtoolset-9/enable && \
+')dnl
   cmake \
     -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
     -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR \
@@ -57,7 +61,7 @@ RUN cd BUILD_HOME/MediaSDK-MSDK_VER && \
     .. && \
   make -j$(nproc) && \
   make install DESTDIR=BUILD_DESTDIR && \
-  make install
+  make install ifelse(index(OS_VERSION,7),-1,,`)')
 )
 
 REG(MSDK)

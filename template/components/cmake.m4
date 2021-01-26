@@ -30,35 +30,26 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-include(libva2.sg1.m4)
-include(gmmlib.sg1.m4)
-
-DECLARE(`MEDIA_DRIVER_VER',intel-media-sg1-pv1.1)
+DECLARE(`CMAKE_VER',3.13.1)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`MEDIA_DRIVER_BUILD_DEPS',`ca-certificates cmake g++ libpciaccess-dev make pkg-config wget')'
-`define(`MEDIA_DRIVER_INSTALL_DEPS',`libpciaccess0')'
+`define(`CMAKE_BUILD_DEPS',`g++ wget make libcurl4-gnutls-dev zlib1g-dev')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`MEDIA_DRIVER_BUILD_DEPS',`cmake gcc-c++ libpciaccess-devel make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')'
+`define(`CMAKE_BUILD_DEPS',`wget gcc-c++ make libcurl-devel zlib-devel')'
 )
 
-define(`BUILD_MEDIA_DRIVER',
-ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/MEDIA_DRIVER_VER.tar.gz
-RUN cd BUILD_HOME && \
-  wget -O - ${MEDIA_DRIVER_REPO} | tar xz
-RUN cd BUILD_HOME/media-driver-MEDIA_DRIVER_VER && mkdir build && cd build && \
-ifelse(index(OS_VERSION,7),-1,,`dnl
-  ( yum install -y devtoolset-9-gcc-c++ && \
-    source /opt/rh/devtoolset-9/enable && \
-')dnl
-  cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DENABLE_PRODUCTION_KMD=ON .. && \
-  make -j$(nproc) && \
-  make install DESTDIR=BUILD_DESTDIR && \
-  make install ifelse(index(OS_VERSION,7),-1,,`)')
+define(`BUILD_CMAKE',dnl
+ARG CMAKE_VER_1=CMAKE_VER
+ARG CMAKE_REPO=https://cmake.org/files
+RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER_1%.*}/cmake-${CMAKE_VER_1}.tar.gz | tar xz && \
+    cd cmake-${CMAKE_VER_1} && \
+    ./bootstrap --prefix=BUILD_PREFIX --system-curl && \
+    make -j$(nproc) && \
+    make install
 )
 
-REG(MEDIA_DRIVER)
+REG(CMAKE)
 
 include(end.m4)dnl
