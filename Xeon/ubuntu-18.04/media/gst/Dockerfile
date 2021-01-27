@@ -182,6 +182,16 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    python3-setuptools && \
+  rm -rf /var/lib/apt/lists/*
+ARG MESON_REPO=https://github.com/mesonbuild/meson
+RUN git clone ${MESON_REPO}; \
+    cd meson; \
+    git checkout 0.53.1; \
+    python3 setup.py install;
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison  && \
   rm -rf /var/lib/apt/lists/*
 ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.16.2.tar.gz

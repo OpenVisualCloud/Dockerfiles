@@ -236,7 +236,17 @@ RUN cd /opt/build/MediaSDK-intel-mediasdk-20.2.1 && \
     .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
-  make install
+  make install 
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    python3-setuptools && \
+  rm -rf /var/lib/apt/lists/*
+ARG MESON_REPO=https://github.com/mesonbuild/meson
+RUN git clone ${MESON_REPO}; \
+    cd meson; \
+    git checkout 0.53.1; \
+    python3 setup.py install;
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
