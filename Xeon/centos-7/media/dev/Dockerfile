@@ -12,7 +12,7 @@ RUN mkdir -p /opt/build && mkdir -p /opt/dist
 
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
-RUN yum install -y wget make autoconf diffutils automake gcc-c++
+RUN yum install -y wget make autoconf diffutils automake gcc-c++ epel-release
 
 ARG LIBOGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.gz
 
@@ -157,6 +157,25 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN yum install -y wget tar gcc-c++ make git cmake3 centos-release-scl
+ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
+RUN cd /opt/build && \
+    git clone ${SVT_VP9_REPO} -b v0.2.1 --depth 1 && \
+    cd SVT-VP9/Build/linux && \
+  ( yum install -y devtoolset-9-gcc-c++ && \
+    source /opt/rh/devtoolset-9/enable && \
+    cmake3 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j $(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install )
+
+
+ARG MESON_REPO=https://github.com/mesonbuild/meson
+RUN git clone ${MESON_REPO}; \
+    cd meson; \
+    git checkout 0.53.1; \
+    python3 setup.py install;
+
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex 
 ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
@@ -234,9 +253,12 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
     patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
+    patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
+
+RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libaom     --enable-libdav1d     && make -j$(nproc) && \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9     --enable-libaom     --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 

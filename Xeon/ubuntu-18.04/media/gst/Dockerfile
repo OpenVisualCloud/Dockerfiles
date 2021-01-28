@@ -182,6 +182,19 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make cmake git && \
+  rm -rf /var/lib/apt/lists/*
+ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
+RUN cd /opt/build && \
+    git clone ${SVT_VP9_REPO} -b v0.2.1 --depth 1 && \
+    cd SVT-VP9/Build/linux && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j $(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install 
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     python3-setuptools && \
   rm -rf /var/lib/apt/lists/*
 ARG MESON_REPO=https://github.com/mesonbuild/meson
@@ -285,9 +298,12 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
     patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
+    patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
+
+RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         && make -j$(nproc) && \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9     --enable-libaom         && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
