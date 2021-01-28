@@ -109,14 +109,14 @@ ifdef(`BUILD_OPENSSL',`dnl
 ')dnl
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
-    sed -i "1i#include<stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c && \
+    sed -i "1i#include <stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c && \
     npm install nan && \
     ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path BUILD_HOME/owt-client-javascript/dist/samples/conference
 ')
 
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1 )rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libglib2.0-0 libfreetype6 libsrtp2')
+define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1 )rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libglib2.0-0 libfreetype6 libsrtp2-1')
 ')
 
 ifelse(OS_NAME,centos,`

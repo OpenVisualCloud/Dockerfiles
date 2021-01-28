@@ -30,8 +30,6 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-include(nasm.m4)
-
 DECLARE(`LIBRE_VER',v0.5.0)
 
 ifelse(OS_NAME,ubuntu,`

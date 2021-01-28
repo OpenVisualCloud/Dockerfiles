@@ -34,22 +34,40 @@ DECLARE(`NODE_VER',v10.21.0)
 DECLARE(`NODE_INSTALL',`false')
 
 ifelse(OS_NAME,ubuntu,`
-define(`NODE_BUILD_DEPS',wget ca-certificates)
+define(`NODE_BUILD_DEPS',wget ca-certificates xz-utils)
 ')
 
 ifelse(OS_NAME,centos,`
-define(`NODE_BUILD_DEPS',wget)
+define(`NODE_BUILD_DEPS',wget xz-utils)
 ')
 
 define(`BUILD_NODE',`
 ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
 RUN cd BUILD_HOME && \
     wget -O - ${NODE_REPO} | tar xJ && \
-    cp node-*/* BUILD_PREFIX -rf && rm -rf node-*
+    cp node-NODE_VER-linux-x64/* BUILD_PREFIX -rf && \
+    rm -rf node-NODE_VER-linux-x64
 ')
 
+
 ifelse(NODE_INSTALL,`true',`
-define(`INSTALL_NODE',defn(`BUILD_NODE'))
+
+ifelse(OS_NAME,ubuntu,`
+define(`NODE_INSTALL_DEPS',ca-certificates wget xz-utils)
+')
+
+ifelse(OS_NAME,centos,`
+define(`NODE_INSTALL_DEPS',wget xz-utils)
+')
+
+define(`INSTALL_NODE',`
+ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
+RUN cd BUILD_PREFIX && \
+    wget -O - ${NODE_REPO} | tar xJ && \
+    cp -r node-NODE_VER-linux-x64/* . && \
+    rm -rf node-NODE_VER-linux-x64
+')
+
 ')
 
 REG(NODE)
