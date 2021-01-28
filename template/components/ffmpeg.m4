@@ -74,6 +74,7 @@ RUN cd BUILD_HOME && \
 
 ifdef(`BUILD_SVT_AV1',`FFMPEG_PATCH_SVT_AV1(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
 RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-static --disable-doc --disable-htmlpages \
@@ -96,6 +97,7 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifdef(`BUILD_LIBX265',--enable-libx265 )dnl
     ifdef(`BUILD_SVT_AV1',--enable-libsvtav1 )dnl
     ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc )dnl
+    ifdef(`BUILD_SVT_VP9',--enable-libsvtvp9 )dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl
     && make -j$(nproc) && \
