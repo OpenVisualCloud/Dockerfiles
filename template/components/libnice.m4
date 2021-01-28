@@ -31,7 +31,6 @@ dnl
 include(begin.m4)
 
 DECLARE(`LIBNICE_VER',0.1.4)
-DECLARE(`LIBNICE_PATCH_VER',4.3.1)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBNICE_BUILD_DEPS',ca-certificates wget cmake make gcc libglib2.0-dev patch)
@@ -46,7 +45,7 @@ ARG LIBNICE_REPO=http://nice.freedesktop.org/releases/libnice-LIBNICE_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${LIBNICE_REPO} | tar xz
 
-ifelse(defn(`LIBNICE_VER'),0.1.4,`
+ifdef(`LIBNICE_PATCH_VER',`
 ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v`'LIBNICE_PATCH_VER.tar.gz
 
 RUN cd BUILD_HOME/libnice-LIBNICE_VER && \

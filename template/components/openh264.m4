@@ -28,6 +28,36 @@ dnl CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY
 dnl OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
-define(`LIBRE_VER',v0.5.0)
-include(libre.m4)
+include(begin.m4)
 
+DECLARE(`OPENH264_VER',v1.7.4)
+
+ifelse(OS_NAME,ubuntu,`
+define(`OPENH264_BUILD_DEPS',`ca-certificates wget bzip2')
+')
+
+ifelse(OS_NAME,centos,`
+define(`OPENH264_BUILD_DEPS',`wget bzip2')
+')
+
+define(`BUILD_OPENH264',`
+# Get OpenH264
+ARG OPENH264_SRC_REPO=https://github.com/cisco/openh264/archive/patsubst(OPENH264_VER,`.[0-9]*$',`.0').tar.gz
+ARG OPENH264_BIN_REPO=https://github.com/cisco/openh264/releases/download/patsubst(OPENH264_VER,`.[0-9]*$',`.0')/libopenh264-patsubst(OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0')-linux64.regexp(OPENH264_VER,`\([0-9]*\)$',`\1').so.bz2
+RUN cd BUILD_HOME && \
+    wget -O - ${OPENH264_SRC_REPO} | tar xz openh264-patsubst(OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0')/codec/api && \
+    cd openh264-patsubst(OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0') && \
+    (mkdir -p BUILD_PREFIX/include/openh264 && cp -r codec BUILD_PREFIX/include/openh264) && \
+    (mkdir -p defn(`BUILD_DESTDIR',`BUILD_PREFIX')/include/openh264 && cp -r codec defn(`BUILD_DESTDIR',`BUILD_PREFIX')/include/openh264)
+
+RUN cd BUILD_LIBDIR && \
+    wget -O - ${OPENH264_BIN_REPO} | bunzip2 > libopenh264.so.regexp(OPENH264_VER,`\([0-9]*\)$',`\1') && \
+    ln -s -v libopenh264.so.regexp(OPENH264_VER,`\([0-9]*\)$',`\1') libopenh264.so && \
+    cd defn(`BUILD_DESTDIR',`BUILD_LIBDIR') && \
+    cp -r BUILD_LIBDIR/libopenh264.so.regexp(OPENH264_VER,`\([0-9]*\)$',`\1') . && \
+    ln -s -v libopenh264.so.regexp(OPENH264_VER,`\([0-9]*\)$',`\1') libopenh264.so
+')
+
+REG(OPENH264)
+
+include(end.m4)dnl

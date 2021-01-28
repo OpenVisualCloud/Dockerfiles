@@ -31,18 +31,31 @@ dnl
 include(begin.m4)
 
 DECLARE(`OWT_VER',)
-DECLARE(`OWT_OPENH264_VER',v1.7.4)
 DECLARE(`OWT_LICODE_VER',8b4692c88f1fc24dedad66b4f40b1f3d804b50ca)
 DECLARE(`OWT_WEBRTC_VER',59-server)
 DECLARE(`OWT_SDK_VER',master)
 DECLARE(`OWT_QUIC_VER',v0.1)
 
+define(`OPENH264_VER',v1.7.4)
+include(openh264.m4)
+define(`LIBRE_VER',v0.5.0)
+include(libre.m4)
+define(`LIBNICE_VER',0.1.4)
+define(`LIBNICE_PATCH_VER',4.3.1)
+include(libnice.m4)
+define(`USRSCTP_VER',30d7f1bd0b58499e1e1f2415e84d76d951665dc8)
+include(usrsctp.m4)
+define(`JSONHPP_VER',v3.6.1)
+include(jsonhpp.m4)
+define(`NODE_INSTALL',true)
+include(node.m4)
+
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev )git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev bzip2 pkg-config libgstreamer-plugins-base1.0-dev')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev )git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config libgstreamer-plugins-base1.0-dev')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel )git gcc npm python bzip2')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel )git gcc npm python')
 ')
 
 define(`BUILD_OWT',`
@@ -54,15 +67,11 @@ ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd BUILD_HOME && \
     git clone --depth 1 ${OWT_REPO}
 
-# Get OpenH264
-ARG OWT_OPENH264_SRC_REPO=https://github.com/cisco/openh264/archive/patsubst(OWT_OPENH264_VER,`.[0-9]*$',`.0').tar.gz
-ARG OWT_OPENH264_BIN_REPO=https://github.com/cisco/openh264/releases/download/patsubst(OWT_OPENH264_VER,`.[0-9]*$',`.0')/libopenh264-patsubst(OWT_OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0')-linux64.regexp(OWT_OPENH264_VER,`\([0-9]*\)$',`\1').so.bz2
+# Prep OpenH264
 RUN mkdir -p BUILD_HOME/owt-server/third_party/openh264 && \
     cd BUILD_HOME/owt-server/third_party/openh264 && \
-    wget -O - ${OWT_OPENH264_SRC_REPO} | tar xz openh264-patsubst(OWT_OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0')/codec/api && \
-    ln -s -v openh264-patsubst(OWT_OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0')/codec codec && \
-    wget -O - ${OWT_OPENH264_BIN_REPO} | bunzip2 > libopenh264.so.regexp(OWT_OPENH264_VER,`\([0-9]*\)$',`\1') && \
-    ln -s -v libopenh264.so.regexp(OWT_OPENH264_VER,`\([0-9]*\)$',`\1') libopenh264.so && \
+    ln -s -v BUILD_PREFIX/include/openh264/codec . && \
+    ln -s -v BUILD_LIBDIR/libopenh264.so . && \
     echo "const char* stub() {return \"this is a stub lib\";}" > pseudo-openh264.cpp && \
     gcc pseudo-openh264.cpp -fPIC -shared -o pseudo-openh264.so
 
