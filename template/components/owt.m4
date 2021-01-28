@@ -121,7 +121,24 @@ ifdef(`BUILD_OPENSSL',`dnl
     sed -i "1i#include <stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c && \
     npm install nan && \
     ./scripts/build.js -t mcu-all -r -c && \
-    ./scripts/pack.js -t all --install-module --no-pseudo --app-path BUILD_HOME/owt-client-javascript/dist/samples/conference
+    ./scripts/pack.js -t all --install-module --no-pseudo --app-path BUILD_HOME/owt-client-javascript/dist/samples/conference && \
+    mkdir -p BUILD_DESTDIR/home && \
+    mv dist BUILD_DESTDIR/home/owt
+
+RUN cd BUILD_DESTDIR/home && \
+    echo "#!/bin/bash -e" >>launch.sh && \
+    echo "service mongodb start &" >>launch.sh && \
+    echo "service rabbitmq-server start &" >>launch.sh && \
+    echo "while ! mongo --quiet --eval \"db.adminCommand(\\\"listDatabases\\\")\"" >>launch.sh && \
+    echo "do" >>launch.sh && \
+    echo "  echo mongod not launch" >>launch.sh && \
+    echo "  sleep 1" >>launch.sh && \
+    echo "done" >>launch.sh && \
+    echo "echo mongodb connected successfully" >>launch.sh && \
+    echo "cd /home/owt" >>launch.sh && \
+    echo "./management_api/init.sh" >>launch.sh && \
+    echo "./bin/start-all.sh" >>launch.sh && \
+    chmod +x launch.sh
 ')
 
 ifelse(OS_NAME,ubuntu,`
