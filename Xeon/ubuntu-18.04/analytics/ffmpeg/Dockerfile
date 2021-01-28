@@ -3,16 +3,15 @@
 # To update, modify the template and regenerate.
 FROM ubuntu:18.04 AS build
 
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget make autoconf automake g++ g++ libtool autotools-dev tar g++ bzip2 git cmake g++ libnuma-dev g++ g++ cmake gcc g++ wget patch libass-dev  && \
-  rm -rf /var/lib/apt/lists/*
-
 
 RUN mkdir -p /opt/build && mkdir -p /opt/dist
 
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget make autoconf automake g++ && \
+  rm -rf /var/lib/apt/lists/*
 
 ARG LIBOGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.gz
 
@@ -24,6 +23,10 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget make autoconf automake && \
+  rm -rf /var/lib/apt/lists/*
 
 ARG LIBVORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.gz
 
@@ -35,6 +38,10 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget g++ autoconf libtool autotools-dev automake make && \
+  rm -rf /var/lib/apt/lists/*
 
 ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz
 RUN cd /opt/build && \
@@ -46,6 +53,10 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget autoconf libtool make && \
+  rm -rf /var/lib/apt/lists/*
 
 ARG LIBOPUS_REPO=https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz
 RUN cd /opt/build && \
@@ -56,6 +67,10 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make bzip2 && \
+  rm -rf /var/lib/apt/lists/*
 
 ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
@@ -66,6 +81,10 @@ RUN cd /opt/build && \
      make -j$(nproc) && \
      make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git cmake make autoconf && \
+  rm -rf /var/lib/apt/lists/*
 
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd /opt/build && \
@@ -76,6 +95,10 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git cmake make autoconf && \
+  rm -rf /var/lib/apt/lists/*
 
 ARG LIBX264_REPO=https://github.com/mirror/x264
 RUN cd /opt/build && \
@@ -86,7 +109,11 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make && \
+  rm -rf /var/lib/apt/lists/*
+ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd /opt/build/yasm-1.3.0 && \
@@ -96,6 +123,10 @@ RUN cd /opt/build/yasm-1.3.0 && \
     make -j $(nproc) && \
     make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    libnuma-dev cmake make && \
+  rm -rf /var/lib/apt/lists/*
 
 ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.3.tar.gz
 RUN cd /opt/build && \
@@ -106,6 +137,33 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    python3-setuptools && \
+  rm -rf /var/lib/apt/lists/*
+ARG MESON_REPO=https://github.com/mesonbuild/meson
+RUN git clone ${MESON_REPO}; \
+    cd meson; \
+    git checkout 0.53.1; \
+    python3 setup.py install;
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates meson tar g++ wget pkg-config && \
+  rm -rf /var/lib/apt/lists/*
+ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.7.1/dav1d-0.7.1.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${DAV1D_REPO} | tar xz
+RUN cd /opt/build/dav1d-0.7.1 && \
+  meson build --prefix=/usr/local --libdir /usr/local/lib --buildtype=plain && \
+  cd build && \
+  ninja install && \
+  DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make cmake git && \
+  rm -rf /var/lib/apt/lists/*
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd /opt/build && \
     git clone ${SVT_HEVC_REPO}
@@ -116,6 +174,10 @@ RUN cd /opt/build/SVT-HEVC/Build/linux && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make cmake git && \
+  rm -rf /var/lib/apt/lists/*
 ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
 RUN cd /opt/build && \
     git clone ${SVT_AV1_REPO} -b v0.8.5 --depth 1 && \
@@ -126,6 +188,23 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make cmake git && \
+  rm -rf /var/lib/apt/lists/*
+ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
+RUN cd /opt/build && \
+    git clone ${SVT_VP9_REPO} -b v0.2.1 --depth 1 && \
+    cd SVT-VP9/Build/linux && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j $(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install 
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates cmake gcc g++ make wget && \
+  rm -rf /var/lib/apt/lists/*
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.4.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
@@ -145,6 +224,88 @@ RUN cd /opt/build/opencv-4.4.0 && mkdir build && cd build && \
   make install DESTDIR=/opt/dist && \
   make install
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates cmake gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils && \
+  rm -rf /var/lib/apt/lists/*
+ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
+
+RUN cd /opt/build && git clone -b 2021.1 ${DLDT_REPO} && \
+  cd openvino && \
+  git submodule update --init --recursive && \
+  sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
+  mkdir build && \
+  cd build && \
+  cmake \
+    -DCMAKE_INSTALL_PREFIX=PREFIX_BUILD/dldt \
+    -DENABLE_GNA=OFF \
+    -DENABLE_VPU=OFF \
+    -DENABLE_OPENCV=OFF \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
+    -DENABLE_MKL_DNN=ON \
+    -DENABLE_CLDNN=ON \
+    -DENABLE_TESTS=OFF \
+    -DBUILD_TESTS=OFF \
+    -DNGRAPH_UNIT_TEST_ENABLE=OFF \
+    -DNGRAPH_TEST_UTIL_ENABLE=OFF \
+    .. && \
+  make -j $(nproc) && \
+  rm -rf ../bin/intel64/Release/lib/libgtest* && \
+  rm -rf ../bin/intel64/Release/lib/libgmock* && \
+  rm -rf ../bin/intel64/Release/lib/libmock* && \
+  rm -rf ../bin/intel64/Release/lib/libtest*
+
+ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
+ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
+
+RUN cd /opt/build && \
+  mkdir -p ${CUSTOM_IE_DIR}/include && \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/include/* ${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/include/* /opt/dist/${CUSTOM_IE_DIR}/include && \
+  \
+  mkdir -p ${CUSTOM_IE_LIBDIR} && \
+  mkdir -p /opt/dist/${CUSTOM_IE_LIBDIR} && \
+  cp -r openvino/bin/intel64/Release/lib/* ${CUSTOM_IE_LIBDIR} && \
+  cp -r openvino/bin/intel64/Release/lib/* /opt/dist/${CUSTOM_IE_LIBDIR} && \
+  \
+  mkdir -p ${CUSTOM_IE_DIR}/src && \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/src && \
+  cp -r openvino/inference-engine/src/* ${CUSTOM_IE_DIR}/src/ && \
+  cp -r openvino/inference-engine/src/* /opt/dist/${CUSTOM_IE_DIR}/src/ && \
+  \
+  mkdir -p ${CUSTOM_IE_DIR}/share && \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/share && \
+  mkdir -p ${CUSTOM_IE_DIR}/external/ \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/external && \
+  cp -r openvino/build/share/* ${CUSTOM_IE_DIR}/share/ && \
+  cp -r openvino/build/share/* /opt/dist/${CUSTOM_IE_DIR}/share/ && \
+  cp -r openvino/inference-engine/temp/* ${CUSTOM_IE_DIR}/external/ && \
+  cp -r openvino/inference-engine/temp/* /opt/dist/${CUSTOM_IE_DIR}/external/ && \
+  \
+  mkdir -p "${CUSTOM_IE_LIBDIR}/pkgconfig"
+
+RUN { \
+  echo "prefix=${CUSTOM_IE_DIR}"; \
+  echo "libdir=${CUSTOM_IE_LIBDIR}"; \
+  echo "includedir=${CUSTOM_IE_DIR}/include"; \
+  echo ""; \
+  echo "Name: DLDT"; \
+  echo "Description: Intel Deep Learning Deployment Toolkit"; \
+  echo "Version: 5.0"; \
+  echo ""; \
+  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
+  echo "Cflags: -I\${includedir}"; \
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/dldt.pc
+
+RUN rm -rf openvino
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget patch libv4l-dev libass-dev  && \
+  rm -rf /var/lib/apt/lists/*
 
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.2.tar.gz
 RUN cd /opt/build && \
@@ -161,25 +322,43 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
     patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --enable-gpl --enable-libass --enable-libfreetype --disable-xlib --disable-sdl2 --enable-nonfree --disable-vaapi --disable-hwaccels --enable-libfdk-aac --enable-libopus --enable-libvpx --enable-libvorbis --enable-libx264 --enable-libx265 --enable-libsvtav1 --enable-libsvthevc  && \
-    make -j$(nproc) && \
+    patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
+
+RUN cd /opt/build/FFmpeg-n4.2.2 && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
+    --disable-manpages --disable-podpages --disable-txtpages \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN echo "Start cleanup" && \
+    rm -rf /opt/dist//usr/local/include && \
+    rm -rf /opt/dist//usr/local/share/doc && \
+    rm -rf /opt/dist//usr/local/share/gtk-doc && \
+    rm -rf /opt/dist//usr/local/share/man && \
+    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
+    echo "Cleanup done"
+
 FROM ubuntu:18.04
-LABEL Description="This is the image for DLDT and FFMPEG on Ubuntu 18.04"
+LABEL Description="This is the base image for FFMPEG ubuntu 18.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libnuma1 libass9  && \
+    libnuma1 libgtk-3-0 libass9 libv4l-0  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
-
-
+ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
+RUN { \
+   echo "${CUSTOM_IE_LIBDIR}"; \
+   echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
+   echo "${CUSTOM_IE_DIR}/external/opencv/lib"; \
+} > /etc/ld.so.conf.d/dldt.conf
+RUN ldconfig
 
