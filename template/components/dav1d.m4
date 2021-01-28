@@ -31,6 +31,10 @@ dnl
 include(begin.m4)
 include(nasm.m4)
 
+ifelse(`UBUNTU_CODENAME',bionic,dnl
+include(meson.m4)
+)
+
 DECLARE(`DAV1D_VER',0.7.1)
 
 ifelse(OS_NAME,ubuntu,dnl
