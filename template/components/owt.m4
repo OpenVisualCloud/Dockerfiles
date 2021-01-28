@@ -38,7 +38,7 @@ DECLARE(`OWT_SDK_VER',master)
 DECLARE(`OWT_QUIC_VER',v0.1)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev )git gcc npm python libglib2.0-dev rabbitmq-server mongodb libboost-thread-dev libboost-system-dev liblog4cxx-dev libre-dev libsrtp2-dev bzip2')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev )git gcc npm python libglib2.0-dev rabbitmq-server mongodb libboost-thread-dev libboost-system-dev liblog4cxx-dev libre-dev libsrtp2-dev bzip2 pkg-config')
 ')
 
 ifelse(OS_NAME,centos,`
@@ -47,7 +47,7 @@ define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel )git gcc npm pytho
 
 define(`BUILD_OWT',`
 # Install npm modules
-RUN npm install -g --loglevel error node-gyp@6.1.0 grunt-cli underscore jsdoc nan
+RUN npm install -g --loglevel error node-gyp@6.1.0 grunt-cli underscore jsdoc
 
 # Get owt-server Source
 ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
@@ -104,9 +104,13 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/quic-lib && \
 # Build and pack owt
 RUN cd BUILD_HOME/owt-server && \
 ifdef(`BUILD_OPENSSL',`dnl
-    sed -i "/lssl/i\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'\"\-L`'patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'" source/agent/webrtc/rtcConn/binding.gyp && \
-    sed -i "/lssl/i\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'\"\-L`'patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'" source/agent/webrtc/rtcFrame/binding.gyp && \
+    sed -i "/cflags_cc/s/\[/[\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
+    sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
+    cat source/agent/webrtc/rtcFrame/binding.gyp && \
 ')dnl
+    sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
+    sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
+    npm install nan && \
     ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path BUILD_HOME/owt-client-javascript/dist/samples/conference
 ')
