@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`USRSCTP_VER',30d7f1bd0b58499e1e1f2415e84d76d951665dc8)
+DECLARE(`USRSCTP_VER',0.9.5.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`USRSCTP_BUILD_DEPS',ca-certificates wget automake cmake make gcc)

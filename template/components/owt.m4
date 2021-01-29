@@ -36,6 +36,8 @@ DECLARE(`OWT_WEBRTC_VER',59-server)
 DECLARE(`OWT_SDK_VER',master)
 DECLARE(`OWT_QUIC_VER',v0.1)
 
+# required components for OWT
+include(openssl.m4)
 define(`OPENH264_VER',v1.7.4)
 include(openh264.m4)
 define(`LIBRE_VER',v0.5.0)
@@ -44,6 +46,7 @@ define(`LIBNICE_VER',0.1.4)
 define(`LIBNICE_PATCH_VER',4.3.1)
 include(libnice.m4)
 define(`USRSCTP_VER',30d7f1bd0b58499e1e1f2415e84d76d951665dc8)
+define(`USRSCTP_VER',0.9.5.0)
 include(usrsctp.m4)
 define(`JSONHPP_VER',v3.6.1)
 include(jsonhpp.m4)
@@ -118,8 +121,13 @@ ifdef(`BUILD_OPENSSL',`dnl
 ')dnl
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
-    sed -i "1i#include <stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c && \
-    npm install nan && \
+    sed -i "1i#include <stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c
+
+RUN cd BUILD_HOME/owt-server && \
+    echo {} > package.json && \
+    npm install nan
+
+RUN cd BUILD_HOME/owt-server && \
     ./scripts/build.js -t mcu-all -r -c && \
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path BUILD_HOME/owt-client-javascript/dist/samples/conference && \
     mkdir -p BUILD_DESTDIR/home && \
@@ -142,7 +150,7 @@ RUN cd BUILD_DESTDIR/home && \
 ')
 
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1 )rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libglib2.0-0 libfreetype6 libsrtp2-1')
+define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1 )rabbitmq-server mongodb ifelse(OS_VERSION,18.04,libboost-system1.65.1,libboost-system1.71.0) ifelse(OS_VERSION,18.04,libboost-thread1.65.1,libboost-thread1.71.0) liblog4cxx10v5 libglib2.0-0 libfreetype6 libsrtp2-1')
 ')
 
 ifelse(OS_NAME,centos,`

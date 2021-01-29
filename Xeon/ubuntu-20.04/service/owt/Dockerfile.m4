@@ -16,5 +16,5 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
-INSTALL_ALL(runtime,build)
+INSTALL_ALL(runtime,build)dnl
 
