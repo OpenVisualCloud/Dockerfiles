@@ -29,16 +29,16 @@ dnl OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE US
 dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
-include(nasm.m4)
 
-ifelse(`UBUNTU_CODENAME',bionic,`
+include(nasm.m4)
+ifelse(UBUNTU_CODENAME(OS_VERSION),bionic,`
 include(meson.m4)
 ')
 
 DECLARE(`DAV1D_VER',0.7.1)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`DAV1D_BUILD_DEPS',`ca-certificates meson tar g++ wget pkg-config')'
+`define(`DAV1D_BUILD_DEPS',`ca-certificates ifelse(UBUNTU_CODENAME,bionic,,meson )tar g++ wget pkg-config')'
 )
 
 ifelse(OS_NAME,centos,dnl
