@@ -37,7 +37,7 @@ define(`USRSCTP_BUILD_DEPS',ca-certificates wget automake cmake make gcc)
 ')
 
 ifelse(OS_NAME,centos,`
-define(`USRSCTP_BUILD_DEPS',wget cmake automake make gcc)
+define(`USRSCTP_BUILD_DEPS',wget cmake automake make gcc which)
 ')
 
 define(`BUILD_USRSCTP',`

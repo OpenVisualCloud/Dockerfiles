@@ -52,13 +52,17 @@ define(`JSONHPP_VER',v3.6.1)
 include(jsonhpp.m4)
 define(`NODE_INSTALL',true)
 include(node.m4)
+ifelse(OS_NAME,centos,`
+define(`LIBSRTP2_VER',v2.1.0)
+include(libsrtp2.m4)
+')
 
 ifelse(OS_NAME,ubuntu,`
 define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev )git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config libgstreamer-plugins-base1.0-dev')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel )git gcc npm python')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel )git gcc npm python glib2-devel boost-devel log4cxx-devel pkg-config gstreamer1-devel gstreamer1-plugins-base-devel centos-release-scl devtoolset-9')
 ')
 
 define(`BUILD_OWT',`
@@ -98,7 +102,7 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc && \
 RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc-m79 && \
     cd BUILD_HOME/owt-server/third_party/webrtc-m79 && \
     sed -i "s/git clone/git clone --depth 1/" ../../scripts/installWebrtc.sh && \
-    bash ../../scripts/installWebrtc.sh
+    ifelse(OS_NAME,centos,`(. /opt/rh/devtoolset-9/enable && ')bash ../../scripts/installWebrtc.sh`'ifelse(OS_NAME,centos,`)')
 
 # Get SDK
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
@@ -123,12 +127,14 @@ ifdef(`BUILD_OPENSSL',`dnl
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "1i#include <stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c
 
+# Install nan module
 RUN cd BUILD_HOME/owt-server && \
     echo {} > package.json && \
     npm install nan
 
+# Build and package
 RUN cd BUILD_HOME/owt-server && \
-    ./scripts/build.js -t mcu-all -r -c && \
+    ifelse(OS_NAME,centos,`(. /opt/rh/devtoolset-9/enable && ')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME,centos,`) ')&& \
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path BUILD_HOME/owt-client-javascript/dist/samples/conference && \
     mkdir -p BUILD_DESTDIR/home && \
     mv dist BUILD_DESTDIR/home/owt
@@ -154,7 +160,19 @@ define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1 )rabbitmq-server mon
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl )')
+
+define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11 )rabbitmq-server boost-system boost-thread log4cxx glib2 freetype')
+
+define(`INSTALL_OWT',`
+RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "name=MongoDB Repository" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.6/x86_64/" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "gpgcheck=1" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "enabled=1" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    echo "gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
+    yum install -y -q mongodb-org && rm -rf /var/cache/yum/*
+')
+
 ')
 
 REG(OWT)

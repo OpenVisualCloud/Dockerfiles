@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -29,33 +29,37 @@ dnl OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE US
 dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
-include(nasm.m4)
 
-ifelse(`UBUNTU_CODENAME',bionic,`
-include(meson.m4)
+DECLARE(`LIBSRTP2_VER',v2.3.0)
+
+ifelse(OS_NAME,ubuntu,
+define(`LIBSRTP2_BUILD_DEPS',`ca-certificates wget gcc make pkg-config ifdef(`BUILD_OPENSSL',,libssl-dev)')
+)
+
+ifelse(OS_NAME,centos,
+define(`LIBSRTP2_BUILD_DEPS',`wget gcc make pkg-config ifdef(`BUILD_OPENSSL',,openssl-dev)')
+)
+
+define(`BUILD_LIBSRTP2',`
+ARG LIBSRTP2_REPO=https://github.com/cisco/libsrtp/archive/LIBSRTP2_VER.tar.gz
+RUN cd BUILD_HOME && \
+    wget -O - ${LIBSRTP2_REPO} | tar xz && \
+    cd libsrtp-patsubst(LIBSRTP2_VER,v) && \
+    CFLAGS="-fPIC`'ifdef(`BUILD_OPENSSL',` -Wl`,'-rpath=BUILD_PREFIX/ssl/lib')" ./configure --enable-openssl --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --with-openssl-dir=BUILD_PREFIX/ssl && \
+    make -s V=0 -j $(nproc) && \
+    make install DESTDIR=BUILD_DESTDIR && \
+    make install
 ')
 
-DECLARE(`DAV1D_VER',0.7.1)
+ifelse(OS_NAME,ubuntu,`
+define(`LIBSRTP2_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1)')
+')
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`DAV1D_BUILD_DEPS',`ca-certificates meson tar g++ wget pkg-config')'
-)
+ifelse(OS_NAME,centos,`
+define(`LIBSRTP2_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11)')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`DAV1D_BUILD_DEPS',`meson wget tar gcc-c++')'
-)
+REG(LIBSRTP2)
 
-define(`BUILD_DAV1D',dnl
-ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/DAV1D_VER/dav1d-DAV1D_VER.tar.gz
-RUN cd BUILD_HOME && \
-  wget -O - ${DAV1D_REPO} | tar xz
-RUN cd BUILD_HOME/dav1d-DAV1D_VER && \
-  meson build --prefix=BUILD_PREFIX --libdir BUILD_LIBDIR --buildtype=plain && \
-  cd build && \
-  ninja install && \
-  DESTDIR=BUILD_DESTDIR ninja install
-)
+include(end.m4)
 
-REG(DAV1D)
-
-include(end.m4)dnl
