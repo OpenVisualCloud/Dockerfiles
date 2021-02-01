@@ -33,9 +33,8 @@ include(begin.m4)
 DECLARE(`MESON_VER',0.53.1)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`MESON_BUILD_DEPS',`python3-setuptools')'
+`define(`MESON_BUILD_DEPS',`python3-pip ninja-build python3-setuptools')'
 )
-dnl `define(`MESON_BUILD_DEPS',`python3-pip ninja-build python3-setuptools')'
 
 define(`BUILD_MESON',dnl
 ARG MESON_REPO=https://github.com/mesonbuild/meson
