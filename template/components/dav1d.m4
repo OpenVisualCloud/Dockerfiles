@@ -38,7 +38,7 @@ include(meson.m4)
 DECLARE(`DAV1D_VER',0.7.1)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`DAV1D_BUILD_DEPS',`ca-certificates ifelse(UBUNTU_CODENAME,bionic,,meson )tar g++ wget pkg-config')'
+`define(`DAV1D_BUILD_DEPS',`ca-certificates ifelse(UBUNTU_CODENAME(OS_VERSION),bionic,,meson) tar g++ wget pkg-config')'
 )
 
 ifelse(OS_NAME,centos,dnl
