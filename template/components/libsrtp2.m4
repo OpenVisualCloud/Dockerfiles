@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,39 +30,36 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GSTCORE_VER',1.16.2)
+DECLARE(`LIBSRTP2_VER',v2.3.0)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ')'
-`define(`GSTCORE_INSTALL_DEPS',`libglib2.0-0 ')'
+ifelse(OS_NAME,ubuntu,
+define(`LIBSRTP2_BUILD_DEPS',`ca-certificates wget gcc make pkg-config ifdef(`BUILD_OPENSSL',,libssl-dev)')
 )
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTCORE_BUILD_DEPS',`meson wget tar gcc-c++ glib2-devel bison flex ')'
-`define(`GSTCORE_INSTALL_DEPS',`glib2')'
+ifelse(OS_NAME,centos,
+define(`LIBSRTP2_BUILD_DEPS',`wget gcc make pkg-config ifdef(`BUILD_OPENSSL',,openssl-dev)')
 )
 
-define(`BUILD_GSTCORE',
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/GSTCORE_VER.tar.gz
+define(`BUILD_LIBSRTP2',`
+ARG LIBSRTP2_REPO=https://github.com/cisco/libsrtp/archive/LIBSRTP2_VER.tar.gz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTCORE_REPO} | tar xz
-RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
-    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dbenchmarks=disabled \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
-)
+    wget -O - ${LIBSRTP2_REPO} | tar xz && \
+    cd libsrtp-patsubst(LIBSRTP2_VER,v) && \
+    CFLAGS="-fPIC`'ifdef(`BUILD_OPENSSL',` -Wl`,'-rpath=BUILD_PREFIX/ssl/lib')" ./configure --enable-openssl --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --with-openssl-dir=BUILD_PREFIX/ssl && \
+    make -s V=0 -j $(nproc) && \
+    make install DESTDIR=BUILD_DESTDIR && \
+    make install
+')
 
-define(`ENV_VARS_GSTCORE',
-ENV GST_PLUGIN_PATH=BUILD_LIBDIR/gstreamer-1.0
-ENV GST_PLUGIN_SCANNER=BUILD_LIBDIR/gstreamer-1.0/gst-plugin-scanner
-)
+ifelse(OS_NAME,ubuntu,`
+define(`LIBSRTP2_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1)')
+')
 
-REG(GSTCORE)
+ifelse(OS_NAME,centos,`
+define(`LIBSRTP2_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11)')
+')
+
+REG(LIBSRTP2)
 
 include(end.m4)
+

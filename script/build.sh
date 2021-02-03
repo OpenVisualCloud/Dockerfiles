@@ -5,8 +5,8 @@ if [[ -z $DIR ]]; then
 fi
 
 BUILD_VERSION="${1:-1.0}"
-OS_NAME="${2}"
-OS_VERSION="${3}"
+OS_NAME="${2:-ubuntu}"
+OS_VERSION="${3:-18.04}"
 BUILD_FDKAAC="${4:-ON}"
 DOCKER_PREFIX="${5:-openvisualcloud}"
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/"

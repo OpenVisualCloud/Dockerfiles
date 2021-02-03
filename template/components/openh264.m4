@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,39 +30,34 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GSTCORE_VER',1.16.2)
+DECLARE(`OPENH264_VER',v1.7.4)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ')'
-`define(`GSTCORE_INSTALL_DEPS',`libglib2.0-0 ')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`OPENH264_BUILD_DEPS',`ca-certificates wget bzip2')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTCORE_BUILD_DEPS',`meson wget tar gcc-c++ glib2-devel bison flex ')'
-`define(`GSTCORE_INSTALL_DEPS',`glib2')'
-)
+ifelse(OS_NAME,centos,`
+define(`OPENH264_BUILD_DEPS',`wget bzip2')
+')
 
-define(`BUILD_GSTCORE',
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/GSTCORE_VER.tar.gz
+define(`BUILD_OPENH264',`
+# Get OpenH264
+ARG OPENH264_SRC_REPO=https://github.com/cisco/openh264/archive/patsubst(OPENH264_VER,`.[0-9]*$',`.0').tar.gz
+ARG OPENH264_BIN_REPO=https://github.com/cisco/openh264/releases/download/patsubst(OPENH264_VER,`.[0-9]*$',`.0')/libopenh264-patsubst(OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0')-linux64.regexp(OPENH264_VER,`\([0-9]*\)$',`\1').so.bz2
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTCORE_REPO} | tar xz
-RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
-    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dbenchmarks=disabled \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
-)
+    wget -O - ${OPENH264_SRC_REPO} | tar xz openh264-patsubst(OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0')/codec/api && \
+    cd openh264-patsubst(OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0') && \
+    (mkdir -p BUILD_PREFIX/include/openh264 && cp -r codec BUILD_PREFIX/include/openh264) && \
+    (mkdir -p defn(`BUILD_DESTDIR',`BUILD_PREFIX')/include/openh264 && cp -r codec defn(`BUILD_DESTDIR',`BUILD_PREFIX')/include/openh264)
 
-define(`ENV_VARS_GSTCORE',
-ENV GST_PLUGIN_PATH=BUILD_LIBDIR/gstreamer-1.0
-ENV GST_PLUGIN_SCANNER=BUILD_LIBDIR/gstreamer-1.0/gst-plugin-scanner
-)
+RUN cd BUILD_LIBDIR && \
+    wget -O - ${OPENH264_BIN_REPO} | bunzip2 > libopenh264.so.regexp(OPENH264_VER,`\([0-9]*\)$',`\1') && \
+    ln -s -v libopenh264.so.regexp(OPENH264_VER,`\([0-9]*\)$',`\1') libopenh264.so && \
+    cd defn(`BUILD_DESTDIR',`BUILD_LIBDIR') && \
+    cp -r BUILD_LIBDIR/libopenh264.so.regexp(OPENH264_VER,`\([0-9]*\)$',`\1') . && \
+    ln -s -v libopenh264.so.regexp(OPENH264_VER,`\([0-9]*\)$',`\1') libopenh264.so
+')
 
-REG(GSTCORE)
+REG(OPENH264)
 
-include(end.m4)
+include(end.m4)dnl

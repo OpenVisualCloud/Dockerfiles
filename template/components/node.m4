@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,39 +30,46 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GSTCORE_VER',1.16.2)
+DECLARE(`NODE_VER',v10.21.0)
+DECLARE(`NODE_INSTALL',`false')
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ')'
-`define(`GSTCORE_INSTALL_DEPS',`libglib2.0-0 ')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`NODE_BUILD_DEPS',wget ca-certificates xz-utils)
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTCORE_BUILD_DEPS',`meson wget tar gcc-c++ glib2-devel bison flex ')'
-`define(`GSTCORE_INSTALL_DEPS',`glib2')'
-)
+ifelse(OS_NAME,centos,`
+define(`NODE_BUILD_DEPS',wget xz-utils)
+')
 
-define(`BUILD_GSTCORE',
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/GSTCORE_VER.tar.gz
+define(`BUILD_NODE',`
+ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTCORE_REPO} | tar xz
-RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
-    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dbenchmarks=disabled \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
-)
+    wget -O - ${NODE_REPO} | tar xJ && \
+    cp node-NODE_VER-linux-x64/* BUILD_PREFIX -rf && \
+    rm -rf node-NODE_VER-linux-x64
+')
 
-define(`ENV_VARS_GSTCORE',
-ENV GST_PLUGIN_PATH=BUILD_LIBDIR/gstreamer-1.0
-ENV GST_PLUGIN_SCANNER=BUILD_LIBDIR/gstreamer-1.0/gst-plugin-scanner
-)
 
-REG(GSTCORE)
+ifelse(NODE_INSTALL,`true',`
 
-include(end.m4)
+ifelse(OS_NAME,ubuntu,`
+define(`NODE_INSTALL_DEPS',ca-certificates wget xz-utils)
+')
+
+ifelse(OS_NAME,centos,`
+define(`NODE_INSTALL_DEPS',wget xz-utils)
+')
+
+define(`INSTALL_NODE',`
+ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
+RUN cd BUILD_PREFIX && \
+    wget -O - ${NODE_REPO} | tar xJ && \
+    cp -r node-NODE_VER-linux-x64/* . && \
+    rm -rf node-NODE_VER-linux-x64
+')
+
+')
+
+REG(NODE)
+
+include(end.m4)dnl
