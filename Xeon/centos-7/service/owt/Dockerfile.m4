@@ -1,16 +1,19 @@
 
 
 include(begin.m4)
-include(ubuntu.m4)
 include(openssl.m4)
 include(svt-hevc.m4)
 ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')
 include(ffmpeg.m4)
+include(gst-core.m4)
+include(gst-plugins-base.m4)
 include(owt.m4)
 include(end.m4)dnl
 
 PREAMBLE
 FROM OS_NAME:OS_VERSION as build
+include(centos-repo.m4)
+INSTALL_CENTOS_REPO(epel-release centos-release-scl)
 
 BUILD_ALL()dnl
 CLEANUP()dnl

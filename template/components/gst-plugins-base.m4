@@ -116,16 +116,21 @@ ifelse(OS_NAME,centos,dnl
 define(`BUILD_GSTBASE',
 ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTBASE_REPO} | tar xz
+  wget -O - ${GSTBASE_REPO} | tar xz
 RUN cd BUILD_HOME/gst-plugins-base-GSTCORE_VER && \
-    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
+  meson build \
+    --prefix=BUILD_PREFIX \
+    --libdir=BUILD_LIBDIR \
+    --libexecdir=BUILD_LIBDIR \
+    --buildtype=plain \
+    -Dexamples=disabled \
+    -Dtests=disabled \
     -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
+  cd build && \
+  ninja install && \
+  DESTDIR=BUILD_DESTDIR ninja install
 )
 
 REG(GSTBASE)
 
-include(end.m4)dnl
+include(end.m4)

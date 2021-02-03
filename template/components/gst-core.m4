@@ -32,12 +32,8 @@ include(begin.m4)
 
 DECLARE(`GSTCORE_VER',1.16.2)
 
-ifelse(`UBUNTU_CODENAME',bionic,dnl
-include(meson.m4)
-)
-
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTCORE_BUILD_DEPS',`ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison ')'
+`define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ')'
 `define(`GSTCORE_INSTALL_DEPS',`libglib2.0-0 ')'
 )
 
@@ -53,6 +49,9 @@ RUN cd BUILD_HOME && \
 RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain \
+    -Dbenchmarks=disabled \
+    -Dexamples=disabled \
+    -Dtests=disabled \
     -Dgtk_doc=disabled && \
     cd build && \
     ninja install && \
@@ -66,4 +65,4 @@ ENV GST_PLUGIN_SCANNER=BUILD_LIBDIR/gstreamer-1.0/gst-plugin-scanner
 
 REG(GSTCORE)
 
-include(end.m4)dnl
+include(end.m4)

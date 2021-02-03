@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -97,7 +97,7 @@ OS_NAME,ubuntu,libde265-0,
 OS_NAME,centos,libde265)'))dnl
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTBAD_BUILD_DEPS',`ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison GST_CURLUSESSL_BUILD GST_RTMP_BUILD GST_MJPEG_BUILD GST_X265ENC_BUILD GST_LIBDE265DEC_BUILD')'
+`define(`GSTBAD_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison GST_CURLUSESSL_BUILD GST_RTMP_BUILD GST_MJPEG_BUILD GST_X265ENC_BUILD GST_LIBDE265DEC_BUILD')'
 `define(`GSTBAD_INSTALL_DEPS',`libglib2.0-0 GST_CURLUSESSL_INSTALL GST_RTMP_INSTALL GST_MJPEG_INSTALL GST_X265ENC_INSTALL GST_LIBDE265DEC_INSTALL')'
 )
 
