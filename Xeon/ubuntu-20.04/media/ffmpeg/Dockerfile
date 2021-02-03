@@ -140,16 +140,6 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    python3-setuptools && \
-  rm -rf /var/lib/apt/lists/*
-ARG MESON_REPO=https://github.com/mesonbuild/meson
-RUN git clone ${MESON_REPO}; \
-    cd meson; \
-    git checkout 0.53.1; \
-    python3 setup.py install;
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates meson tar g++ wget pkg-config && \
   rm -rf /var/lib/apt/lists/*
 ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.7.1/dav1d-0.7.1.tar.gz
