@@ -1,19 +1,24 @@
 
-FROM centos:centos7 AS build
-WORKDIR /home
-define(`BUILD_LINKAGE',shared)dnl
-
-include(build-tools.m4)
+include(begin.m4)
+include(centos-repo.m4)
 include(libaom.m4)
-include(cleanup.m4)dnl
+include(end.m4)dnl
 
-FROM openvisualcloud/xeon-centos7-media-ffmpeg:latest
-LABEL Description="This is the showcase image for SVT only features on CentOS 7.6"
+PREAMBLE
+FROM OS_NAME:OS_VERSION AS build
+
+INSTALL_CENTOS_REPO(epel-release)
+
+BUILD_ALL()dnl
+CLEANUP()dnl
+
+FROM OS_NAME:OS_VERSION
+LABEL Description="This is the showcase image for SVT OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
-# Prerequisites
-include(install.pkgs.m4)
+INSTALL_CENTOS_REPO(epel-release)
 
 # Install
-include(install.m4)
+INSTALL_ALL(runtime,build)
+

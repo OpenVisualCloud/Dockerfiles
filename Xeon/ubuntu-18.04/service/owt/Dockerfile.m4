@@ -1,26 +1,27 @@
 
-FROM ubuntu:18.04 AS build
-WORKDIR /home
-define(`BUILD_LINKAGE',shared)dnl
-
-include(build-tools.m4)
-include(libnice014.m4)
+include(begin.m4)
+include(ubuntu.m4)
 include(openssl.m4)
-include(libre.m4)
-include(usrsctp.m4)
-include(libsrtp2.m4)
+include(svt-hevc.m4)
 ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')
-include(ffmpeg-n4.1.m4)
-include(nodetools.m4)
-include(svt-hevc.1-3-0.m4)
-include(owt.m4)dnl
+include(ffmpeg.m4)
+include(meson.m4)
+include(gst-core.m4)
+include(gst-plugins-base.m4)
+include(owt.m4)
+include(end.m4)dnl
 
-FROM ubuntu:18.04 
-LABEL Description="This is the image for owt development on Ubuntu 18.04"
+PREAMBLE
+FROM OS_NAME:OS_VERSION as build
+
+BUILD_ALL()dnl
+CLEANUP()dnl
+
+FROM OS_NAME:OS_VERSION
+LABEL Description="This is the base image for the OWT service OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
-# Prerequisites
-include(nodetools.m4)
-include(install.pkgs.owt.m4)
+# Install
+INSTALL_ALL(runtime,build)
 

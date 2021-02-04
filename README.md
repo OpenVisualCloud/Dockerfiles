@@ -73,10 +73,10 @@ The project supports the following platforms and OS'es:
 
 | Supported Platforms | Supported OS'es |
 | :---: | :--- |
-| [Xeon](Xeon) | Ubuntu 18.04 LTS, CentOS 7/7.6 |
-| [Xeon E3](XeonE3) | Ubuntu 18.04 LTS, CentOS 7/7.6 |
-| [VCAC-A](VCAC-A) | Ubuntu 18.04 LTS |
-| [QAT](QAT) | Ubuntu 18.04 LTS, CentOS 7 |
+| [Xeon](Xeon) | Ubuntu 20.04 LTS, Ubuntu 18.04 LTS, CentOS 8/7/7.6 |
+| [Xeon E3](XeonE3) | Ubuntu 20.04 LTS, Ubuntu 18.04 LTS, CentOS 8/7/7.6 |
+| [VCAC-A](VCAC-A) | Ubuntu 20.04 LTS, Ubuntu 18.04 LTS |
+| [QAT](QAT) | Ubuntu 20.04 LTS, Ubuntu 18.04 LTS, CentOS 8/7 |
 
 Please see [Development and Test Report](doc/test.md) for the latest development statuses.    
 

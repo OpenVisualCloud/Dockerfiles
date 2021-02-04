@@ -5,9 +5,10 @@ if [[ -z $DIR ]]; then
 fi
 
 BUILD_VERSION="${1:-1.0}"
-BUILD_MP3LAME="${2:-ON}"
-BUILD_FDKAAC="${3:-ON}"
-DOCKER_PREFIX="${4:-openvisualcloud}"
+OS_NAME="${2:-ubuntu}"
+OS_VERSION="${3:-18.04}"
+BUILD_FDKAAC="${4:-ON}"
+DOCKER_PREFIX="${5:-openvisualcloud}"
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/"
 BUILD_CACHE=""
 FULL_CACHE=""
@@ -19,7 +20,7 @@ fi
 
 for m4file in "${DIR}"/*.m4; do
     if [[ -f $m4file ]]; then
-        m4 "-I${SCRIPT_ROOT}/../template/" -DDOCKER_IMAGE=${IMAGE} -DBUILD_MP3LAME=${BUILD_MP3LAME} -DBUILD_FDKAAC=${BUILD_FDKAAC} "${m4file}" > "${m4file%\.m4}"
+        m4 -I "${SCRIPT_ROOT}/../template/system" -I "${SCRIPT_ROOT}/../template/components" -DOS_NAME=${OS_NAME} -DOS_VERSION=${OS_VERSION} -DBUILD_FDKAAC=${BUILD_FDKAAC} "${m4file}" > "${m4file%\.m4}"
     fi
 done || true
 

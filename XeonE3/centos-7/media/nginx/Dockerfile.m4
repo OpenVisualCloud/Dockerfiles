@@ -1,20 +1,26 @@
 
-FROM centos:centos7 AS build
-WORKDIR /home
-define(`BUILD_LINKAGE',shared)dnl
-define(`BUILD_TOOLS_NO_ASM')dnl
-
-include(build-tools.m4)
-include(nginx-http-flv.m4)
+include(begin.m4)
+include(centos-repo.m4)
+include(nginx-flv.m4)
 include(nginx-upload.m4)
-include(nginx.m4)dnl
+include(nginx.m4)
+include(end.m4)dnl
 
-FROM openvisualcloud/xeone3-centos7-media-ffmpeg:latest
-LABEL Description="This is the base image for a NGINX+RTMP service"
+PREAMBLE
+FROM OS_NAME:OS_VERSION AS build
+
+INSTALL_CENTOS_REPO(epel-release)
+
+BUILD_ALL()dnl
+CLEANUP()dnl
+
+FROM openvisualcloud/xeon-centos7-media-ffmpeg:latest
+LABEL Description="This is the base image for NGINX+RTMP OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
-# Prerequisites
-include(install.pkgs.m4)
+INSTALL_CENTOS_REPO(epel-release)
+
 # Install
-include(install.m4)
+INSTALL_ALL(runtime,build)
+
