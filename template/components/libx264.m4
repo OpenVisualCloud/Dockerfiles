@@ -33,7 +33,7 @@ include(begin.m4)
 include(nasm.m4)
 
 DECLARE(`LIBX264_VER',stable)
-DECLARE(`LIBX264_GPL',false)
+DECLARE(`LIBX264_GPL',true)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBX264_BUILD_DEPS',git cmake make autoconf)

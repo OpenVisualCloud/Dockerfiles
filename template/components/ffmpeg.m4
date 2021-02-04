@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 
 DECLARE(`FFMPEG_VER',n4.2.2)
-DECLARE(`FFMPEG_ENABLE_GPL',false)
+DECLARE(`FFMPEG_ENABLE_GPL',true)
 DECLARE(`FFMPEG_ENABLE_LIBASS',true)
 DECLARE(`FFMPEG_ENABLE_LIBFREETYPE',true)
 DECLARE(`FFMPEG_ENABLE_X11',false)
@@ -40,8 +40,8 @@ DECLARE(`FFMPEG_ENABLE_V4L2',true)
 DECLARE(`FFMPEG_ENABLE_HWACCELS',true)
 DECLARE(`FFMPEG_ENABLE_LIBMFX',ifdef(`BUILD_MSDK',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_VAAPI',ifdef(`BUILD_LIBVA2',FFMPEG_ENABLE_HWACCELS,false))
-DECLARE(`FFMPEG_ENABLE_X265',false)
-DECLARE(`FFMPEG_ENABLE_X264',false)
+DECLARE(`FFMPEG_ENABLE_X265',true)
+DECLARE(`FFMPEG_ENABLE_X264',true)
 
 include(nasm.m4)
 
@@ -96,6 +96,7 @@ RUN cd BUILD_HOME && \
 
 ifdef(`BUILD_SVT_AV1',`FFMPEG_PATCH_SVT_AV1(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
 RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-static --disable-doc --disable-htmlpages \
@@ -118,6 +119,7 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifelse(FFMPEG_ENABLE_X265,true,--enable-libx265 )dnl
     ifdef(`BUILD_SVT_AV1',--enable-libsvtav1 )dnl
     ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc )dnl
+    ifdef(`BUILD_SVT_VP9',--enable-libsvtvp9 )dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl
     && make -j$(nproc) && \
@@ -126,11 +128,11 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
 ')
 
 ifelse(OS_NAME,ubuntu,`
-define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass9 )ifelse(FFMPEG_LIBFREETYPE,true,libfreetype6 ))
+define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass9 )ifelse(FFMPEG_LIBFREETYPE,true,libfreetype6 )ifelse(FFMPEG_ENABLE_V4L2,true,FFMPEG_V4L2_INSTALL ))
 ')
 
 ifelse(OS_NAME,centos,`
-define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass )ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,freetype )ifelse(OS_VERSION,7,glibc ))
+define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass )ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,freetype )ifelse(OS_VERSION,7,glibc )ifelse(FFMPEG_ENABLE_V4L2,true,FFMPEG_V4L2_INSTALL ))
 ')
 
 REG(FFMPEG)
