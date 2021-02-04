@@ -30,39 +30,51 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-include(libva2-utils.m4)
-include(msdk.m4)
-include(media-driver.m4)
+ifdef(`ENABLE_INTEL_GFX_REPO',`dnl
+pushdef(`LIBVA_DEV_BUILD_DEP',`ifelse(OS_NAME,ubuntu,libva-dev)')
+pushdef(`LIBVA_INSTALL_DEP',`ifelse(OS_NAME,ubuntu,libva2 libva-drm2 libva-x11-2 libva-wayland2)')
+',`dnl
+pushdef(`LIBVA_DEV_BUILD_DEP',)
+pushdef(`LIBVA_INSTALL_DEP',)
+include(libva2.m4)
+')
+
 include(gst-plugins-bad.m4)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTVAAPI_BUILD_DEPS',`ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison')'
-`define(`GSTVAAPI_INSTALL_DEPS',`libglib2.0-0 libpciaccess0 libgl1-mesa-glx')'
+`define(`GSTVAAPI_BUILD_DEPS',ca-certificates meson tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison LIBVA_DEV_BUILD_DEP)'
+`define(`GSTVAAPI_INSTALL_DEPS',libdrm2 libglib2.0-0 libpciaccess0 libgl1-mesa-glx LIBVA_INSTALL_DEP)'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GSTVAAPI_BUILD_DEPS',`meson wget tar gcc-c++ glib2-devel bison flex')'
-`define(`GSTVAAPI_INSTALL_DEPS',`glib2 libpciaccess')'
+`define(`GSTVAAPI_BUILD_DEPS',meson wget tar gcc-c++ glib2-devel libdrm-devel LIBVA_DEV_BUILD_DEP bison flex)'
+`define(`GSTVAAPI_INSTALL_DEPS',glib2 libdrm libpciaccess LIBVA_INSTALL_DEP)'
 )
+
+popdef(`LIBVA_DEV_BUILD_DEP')
 
 define(`BUILD_GSTVAAPI',
 ARG GSTVAAPI_REPO=https://github.com/GStreamer/gstreamer-vaapi/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTVAAPI_REPO} | tar xz
+  wget -O - ${GSTVAAPI_REPO} | tar xz
 RUN cd BUILD_HOME/gstreamer-vaapi-GSTCORE_VER && \
-    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
+  meson build \
+    --prefix=BUILD_PREFIX \
+    --libdir=BUILD_LIBDIR \
+    --libexecdir=BUILD_LIBDIR \
+    --buildtype=release \
+    -Dgtk_doc=disabled \
+    -Dexamples=disabled \
+    -Dtests=disabled && \
+  cd build && \
+  ninja install && \
+  DESTDIR=BUILD_DESTDIR ninja install
 )
 
 define(`ENV_VARS_GSTVAAPI',
 ENV GST_VAAPI_ALL_DRIVERS=1
-ENV DISPLAY=:0.0
 )
 
 REG(GSTVAAPI)
 
-include(end.m4)dnl
+include(end.m4)

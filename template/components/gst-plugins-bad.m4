@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2020, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -111,14 +111,20 @@ ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/GSTCORE_VER
 RUN cd BUILD_HOME && \
     wget -O - ${GSTBAD_REPO} | tar xz
 RUN cd BUILD_HOME/gst-plugins-bad-GSTCORE_VER && \
-    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
+  meson build \
+    --prefix=BUILD_PREFIX \
+    --libdir=BUILD_LIBDIR \
+    --libexecdir=BUILD_LIBDIR \
+    --buildtype=plain \
+    -Ddoc=disabled \
+    -Dexamples=disabled \
+    -Dgtk_doc=disabled \
+    -Dtests=disabled && \
+  cd build && \
+  ninja install && \
+  DESTDIR=BUILD_DESTDIR ninja install
 )
 
 REG(GSTBAD)
 
-include(end.m4)dnl
+include(end.m4)

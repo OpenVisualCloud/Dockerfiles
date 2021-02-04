@@ -33,6 +33,7 @@ include(begin.m4)
 include(nasm.m4)
 
 DECLARE(`LIBX264_VER',stable)
+DECLARE(`LIBX264_GPL',true)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBX264_BUILD_DEPS',git cmake make autoconf)
@@ -47,7 +48,9 @@ ARG LIBX264_REPO=https://github.com/mirror/x264
 RUN cd BUILD_HOME && \
     git clone ${LIBX264_REPO} -b LIBX264_VER --depth 1 && \
     cd x264 && \
-    ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared && \
+    ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR \
+    ifelse(LIBX264_GPL,true, ,--disable-gpl )dnl
+    --enable-shared && \
     make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
