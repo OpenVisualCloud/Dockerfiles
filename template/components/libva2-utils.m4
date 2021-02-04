@@ -30,15 +30,16 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
+include(libva2.m4)
+
 DECLARE(`LIBVA2_UTILS_VER',2.8.0)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`LIBVA2_UTILS_BUILD_DEPS',`automake ca-certificates gcc g++ libdrm-dev libtool libva-dev make pkg-config wget')'
+`define(`LIBVA2_UTILS_BUILD_DEPS',`automake ca-certificates gcc g++ libdrm-dev libtool make pkg-config wget')'
 )
 
 ifelse(OS_NAME,centos,dnl
 `define(`LIBVA2_UTILS_BUILD_DEPS',`automake gcc gcc-c++ libdrm-devel libtool make pkg-config wget which')'
-`ifdef(`BUILD_LIBVA2',,`include(libva2.m4)')'
 )
 
 define(`LIBVA2_UTILS_INSTALL_DEPS',`')

@@ -31,40 +31,53 @@ dnl
 include(begin.m4)
 include(opencv.m4)
 
-DECLARE(`DLDT_VER',2021.1)
+DECLARE(`DLDT_VER',2021.2)
 DECLARE(`DLDT_WARNING_AS_ERRORS',false)
 
-ifelse(OS_NAME,ubuntu,`dnl
+ifelse(OS_NAME,ubuntu,dnl
 define(`DLDT_BUILD_DEPS',`ca-certificates cmake gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils')
 define(`DLDT_INSTALL_DEPS',`libgtk-3-0')
-')
+)
 
 define(`BUILD_DLDT',
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
-RUN cd BUILD_HOME && git clone -b DLDT_VER ${DLDT_REPO} && \
-  cd openvino && \
-  git submodule update --init --recursive && \
+RUN git clone ${DLDT_REPO} BUILD_HOME/openvino && \
+  cd BUILD_HOME/openvino && \
+  git checkout DLDT_VER && \
+  git submodule update --init --recursive
+
+# TODO:
+# Perform make install of openvino instead of manually copying build artifacts.
+#
+# For now, only ngraph target is installed using make install (it auto-generates .cmake
+# files during install stage, so they can be later used by other projects).
+
+RUN cd BUILD_HOME/openvino && \
 ifelse(DLDT_WARNING_AS_ERRORS,false,`dnl
   sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
 ')dnl
-  mkdir build && \
-  cd build && \
+  mkdir build && cd build && \
   cmake \
-    -DCMAKE_INSTALL_PREFIX=PREFIX_BUILD/dldt \
+    -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX/dldt \
+    -DENABLE_CPPLINT=OFF \
     -DENABLE_GNA=OFF \
     -DENABLE_VPU=OFF \
     -DENABLE_OPENCV=OFF \
-    -DTREAT_WARNING_AS_ERROR=ifelse(DLDT_WARNING_AS_ERRORS,false,OFF,ON) \
-    -DNGRAPH_WARNINGS_AS_ERRORS=ifelse(DLDT_WARNING_AS_ERRORS,false,OFF,ON) \
     -DENABLE_MKL_DNN=ON \
     -DENABLE_CLDNN=ON \
+    -DENABLE_SAMPLES=OFF \
     -DENABLE_TESTS=OFF \
     -DBUILD_TESTS=OFF \
+    -DTREAT_WARNING_AS_ERROR=ifelse(DLDT_WARNING_AS_ERRORS,false,OFF,ON) \
+    -DNGRAPH_WARNINGS_AS_ERRORS=ifelse(DLDT_WARNING_AS_ERRORS,false,OFF,ON) \
+    -DNGRAPH_COMPONENT_PREFIX=inference-engine/ \
     -DNGRAPH_UNIT_TEST_ENABLE=OFF \
     -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
+  make -C ngraph install && \
+  make -C ngraph install DESTDIR=BUILD_DESTDIR && \
   rm -rf ../bin/intel64/Release/lib/libgtest* && \
   rm -rf ../bin/intel64/Release/lib/libgmock* && \
   rm -rf ../bin/intel64/Release/lib/libmock* && \
@@ -73,6 +86,10 @@ ifelse(DLDT_WARNING_AS_ERRORS,false,`dnl
 ARG CUSTOM_IE_DIR=BUILD_PREFIX/dldt/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
+
+ENV InferenceEngine_DIR=BUILD_PREFIX/dldt/inference-engine/share
+ENV TBB_DIR=BUILD_PREFIX/dldt/inference-engine/external/tbb/cmake
+ENV ngraph_DIR=BUILD_PREFIX/dldt/inference-engine/cmake
 
 RUN cd BUILD_HOME && \
   mkdir -p ${CUSTOM_IE_DIR}/include && \
@@ -96,8 +113,8 @@ RUN cd BUILD_HOME && \
   mkdir -p BUILD_DESTDIR/${CUSTOM_IE_DIR}/external && \
   cp -r openvino/build/share/* ${CUSTOM_IE_DIR}/share/ && \
   cp -r openvino/build/share/* BUILD_DESTDIR/${CUSTOM_IE_DIR}/share/ && \
-  cp -r openvino/inference-engine/temp/* ${CUSTOM_IE_DIR}/external/ && \
-  cp -r openvino/inference-engine/temp/* BUILD_DESTDIR/${CUSTOM_IE_DIR}/external/ && \
+  cp -r openvino/inference-engine/temp/tbb ${CUSTOM_IE_DIR}/external/ && \
+  cp -r openvino/inference-engine/temp/tbb BUILD_DESTDIR/${CUSTOM_IE_DIR}/external/ && \
   \
   mkdir -p "${CUSTOM_IE_LIBDIR}/pkgconfig"
 
@@ -114,7 +131,7 @@ RUN { \
   echo "Cflags: -I\${includedir}"; \
   } > ${CUSTOM_IE_LIBDIR}/pkgconfig/dldt.pc
 
-RUN rm -rf openvino
+RUN rm -rf BUILD_HOME/openvino
 )
 
 define(`INSTALL_DLDT',
@@ -123,7 +140,6 @@ ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN { \
    echo "${CUSTOM_IE_LIBDIR}"; \
    echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
-   echo "${CUSTOM_IE_DIR}/external/opencv/lib"; \
 } > /etc/ld.so.conf.d/dldt.conf
 RUN ldconfig
 )

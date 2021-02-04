@@ -74,7 +74,8 @@ ifdef(`BUILD_NGINX_UPLOAD',`dnl
         --add-module=../nginx-upload-module-NGINX_UPLOAD_VER \
 ')dnl
 ifdef(`BUILD_OPENSSL',`dnl
-        --with-ld-opt=-Wl`,'-rpath=BUILD_PREFIX/ssl/lib \
+        --with-cc-opt="-I/usr/local/ssl/include/" \
+        --with-ld-opt="-L/usr/local/ssl/lib/ -Wl`,'-rpath=BUILD_PREFIX/ssl/lib" \
 ')dnl
     && make -j$(nproc) \
     && make install DESTDIR=BUILD_DESTDIR

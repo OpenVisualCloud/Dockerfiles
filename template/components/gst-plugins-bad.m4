@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2020, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -97,7 +97,7 @@ OS_NAME,ubuntu,libde265-0,
 OS_NAME,centos,libde265)'))dnl
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTBAD_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison GST_CURLUSESSL_BUILD GST_RTMP_BUILD GST_MJPEG_BUILD GST_X265ENC_BUILD GST_LIBDE265DEC_BUILD')'
+`define(`GSTBAD_BUILD_DEPS',`ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison GST_CURLUSESSL_BUILD GST_RTMP_BUILD GST_MJPEG_BUILD GST_X265ENC_BUILD GST_LIBDE265DEC_BUILD')'
 `define(`GSTBAD_INSTALL_DEPS',`libglib2.0-0 GST_CURLUSESSL_INSTALL GST_RTMP_INSTALL GST_MJPEG_INSTALL GST_X265ENC_INSTALL GST_LIBDE265DEC_INSTALL')'
 )
 
@@ -111,14 +111,20 @@ ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/GSTCORE_VER
 RUN cd BUILD_HOME && \
     wget -O - ${GSTBAD_REPO} | tar xz
 RUN cd BUILD_HOME/gst-plugins-bad-GSTCORE_VER && \
-    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
+  meson build \
+    --prefix=BUILD_PREFIX \
+    --libdir=BUILD_LIBDIR \
+    --libexecdir=BUILD_LIBDIR \
+    --buildtype=plain \
+    -Ddoc=disabled \
+    -Dexamples=disabled \
+    -Dgtk_doc=disabled \
+    -Dtests=disabled && \
+  cd build && \
+  ninja install && \
+  DESTDIR=BUILD_DESTDIR ninja install
 )
 
 REG(GSTBAD)
 
-include(end.m4)dnl
+include(end.m4)
