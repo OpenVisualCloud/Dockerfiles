@@ -330,24 +330,20 @@ RUN cd /opt/dist/home && \
     chmod +x launch.sh
 
 # cleanup
-RUN rm -rf /opt/dist/usr/local/include && \
-    rm -rf /opt/dist/usr/local/lib/pkgconfig && \
-    find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
-RUN rm -rf /opt/dist/usr/local/ssl/include
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 
 FROM ubuntu:20.04
-LABEL Description="This is the base image for the OWT service ubuntu 20.04"
+LABEL Description="This is the development image for the OWT service ubuntu 20.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libass9 libv4l-0 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.71.0 libboost-thread1.71.0 liblog4cxx10v5 libfreetype6 libsrtp2-1  && \
+    libass9 libv4l-0 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.71.0 libboost-thread1.71.0 liblog4cxx10v5 libglib2.0-dev libfreetype6 libsrtp2-1 cmake make gcc g++ git pkg-config && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
