@@ -1,6 +1,5 @@
 
 include(begin.m4)
-include(ubuntu.m4)
 include(openssl.m4)
 include(svt-hevc.m4)
 ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')
@@ -13,15 +12,18 @@ include(end.m4)dnl
 
 PREAMBLE
 FROM OS_NAME:OS_VERSION as build
+include(centos-repo.m4)
+INSTALL_CENTOS_REPO(epel-release centos-release-scl)
 
 BUILD_ALL()dnl
+define(`CLEANUP_CC',no)dnl
 CLEANUP()dnl
 
 FROM OS_NAME:OS_VERSION
-LABEL Description="This is the base image for the OWT service OS_NAME OS_VERSION"
+LABEL Description="This is the development image for the OWT service OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
-INSTALL_ALL(runtime,build)dnl
+INSTALL_ALL(devel,build)
 

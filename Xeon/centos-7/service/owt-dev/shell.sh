@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="xeon-centos76-service-owt"
+IMAGE="xeon-centos7-service-owt-dev"
 DIR=$(dirname $(readlink -f "$0"))
 
 . "${DIR}/../../../../script/shell.sh"

@@ -1,14 +1,14 @@
-This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. The docker image can be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. Optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. The docker image can be used to compile OWT applications.      
 
 ## Supported tags and respective Dockerfile links
- - [xeon-ubuntu-1804-service-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/ubuntu-18.04/service/dev/Dockerfile)
+ - [xeon-ubuntu-1804-service-owt-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/ubuntu-18.04/service/owt-dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
   Intel&reg; Xeon&reg; platform, Ubuntu 18.04
 
 - #### Usage instructions:
-  [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)	
+  [OWT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt.md)	
 
 
 - #### Getting started with Dockerfiles:

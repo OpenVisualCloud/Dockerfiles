@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2020-2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,18 @@ RUN cd BUILD_HOME && \
     (cd BUILD_DESTDIR && mkdir -p .BUILD_LIBDIR/pkgconfig && mv .BUILD_PREFIX/ssl/lib/pkgconfig/*.pc .BUILD_LIBDIR/pkgconfig/) && \
     make install && \
     (mkdir -p BUILD_LIBDIR/pkgconfig && mv BUILD_PREFIX/ssl/lib/pkgconfig/*.pc BUILD_LIBDIR/pkgconfig/)
+')
+
+define(`CLEANUP_OPENSSL',`dnl
+ifelse(CLEANUP_CC,yes,`dnl
+RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/include
+')dnl
+ifelse(CLEANUP_MAN,yes,`dnl
+RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/man
+')dnl
+ifelse(CLEANUP_DOC,yes,`dnl
+RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/doc
+')dnl
 ')
 
 REG(OPENSSL)

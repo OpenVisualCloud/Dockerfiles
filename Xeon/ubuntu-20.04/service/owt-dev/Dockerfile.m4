@@ -15,13 +15,14 @@ PREAMBLE
 FROM OS_NAME:OS_VERSION as build
 
 BUILD_ALL()dnl
+define(`CLEANUP_CC',no)dnl
 CLEANUP()dnl
 
 FROM OS_NAME:OS_VERSION
-LABEL Description="This is the base image for the OWT service OS_NAME OS_VERSION"
+LABEL Description="This is the development image for the OWT service OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
-INSTALL_ALL(runtime,build)dnl
+INSTALL_ALL(devel,build)dnl
 
