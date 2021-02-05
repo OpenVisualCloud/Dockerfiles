@@ -148,15 +148,15 @@ RUN { \
 RUN ldconfig
 )
 
-define(`CLEANUP_DLDT',`
+define(`CLEANUP_DLDT',`dnl
 ifelse(CLEANUP_CC,yes,`dnl
 RUN cd defn(`BUILD_DESTDIR',`BUILD_PREFIX')/openvino/inference_engine && \
     rm -rf defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig/openvino.pc \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
-')
+')dnl
 ifelse(CLEANUP_DOC,yes,`dnl
 RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/openvino/inference_engine/external/tbb/doc
-')
+')dnl
 ')
 
 REG(DLDT)
