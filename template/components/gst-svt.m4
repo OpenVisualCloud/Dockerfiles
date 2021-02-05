@@ -5,11 +5,11 @@ include(svt-av1.m4)
 include(gst-plugins-base.m4)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTSVT_BUILD_DEPS',`ca-certificates tar g++ wget meson')'
+`define(`GSTSVT_BUILD_DEPS',`ca-certificates tar g++ wget ifdef(`BUILD_MESON',,meson)')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GSTSVT_BUILD_DEPS',`wget tar gcc-c++ meson')'
+`define(`GSTSVT_BUILD_DEPS',`wget tar gcc-c++ ifdef(`BUILD_MESON',,meson)')'
 )
 
 define(`BUILD_GSTSVT',`

@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`GMMLIB_VER',intel-media-sg1-pv1.1)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GMMLIB_BUILD_DEPS',`ca-certificates cmake g++ make wget')'
+`define(`GMMLIB_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ make wget')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GMMLIB_BUILD_DEPS',`cmake gcc-c++ make wget')'
+`define(`GMMLIB_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ make wget')'
 )
 
 define(`BUILD_GMMLIB',

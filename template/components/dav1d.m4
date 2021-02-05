@@ -31,18 +31,15 @@ dnl
 include(begin.m4)
 
 include(nasm.m4)
-ifelse(UBUNTU_CODENAME(OS_VERSION),bionic,`
-include(meson.m4)
-')
 
 DECLARE(`DAV1D_VER',0.7.1)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`DAV1D_BUILD_DEPS',`ca-certificates ifelse(UBUNTU_CODENAME(OS_VERSION),bionic,,meson) tar g++ wget pkg-config')'
+`define(`DAV1D_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`DAV1D_BUILD_DEPS',`meson wget tar gcc-c++')'
+`define(`DAV1D_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++')'
 )
 
 define(`BUILD_DAV1D',dnl

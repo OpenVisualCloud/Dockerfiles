@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,25 +30,35 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`CMAKE_VER',3.19.4)
+ifelse(OS_NAME,ubuntu,`
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`CMAKE_BUILD_DEPS',`g++ ca-certificates wget make libcurl4-gnutls-dev zlib1g-dev')'
-)
+define(`OPENCL_BUILD_DEPS',ca-certificates wget)
+define(`BUILD_OPENCL',`dnl
+ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/20.52.18783/intel-gmmlib_20.3.2_amd64.deb
+ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.5884/intel-igc-core_1.0.5884_amd64.deb
+ARG OPENCL_IGC_OCL_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.5884/intel-igc-opencl_1.0.5884_amd64.deb
+ARG OPENCL_INTEL_OCL_REPO=https://github.com/intel/compute-runtime/releases/download/20.52.18783/intel-opencl_20.52.18783_amd64.deb
 
-ifelse(OS_NAME,centos,dnl
-`define(`CMAKE_BUILD_DEPS',`wget gcc-c++ make libcurl-devel zlib-devel')'
-)
+RUN mkdir -p BUILD_HOME/opencl && \
+    cd BUILD_HOME/opencl && \
+    wget ${OPENCL_GMMLIB_REPO} ${OPENCL_IGC_CORE_REPO} ${OPENCL_IGC_OCL_REPO} ${OPENCL_INTEL_OCL_REPO} && \
+    dpkg -i ./*.deb && \
+    for x in *.deb; do dpkg-deb -x $x defn(`BUILD_DESTDIR',`BUILD_PREFIX'); done
+')
 
-define(`BUILD_CMAKE',dnl
-ARG CMAKE_REPO=https://cmake.org/files
-RUN wget -O - ${CMAKE_REPO}/v`'patsubst(CMAKE_VER,`.[0-9]$')/cmake-CMAKE_VER.tar.gz | tar xz && \
-    cd cmake-CMAKE_VER && \
-    ./bootstrap --prefix=BUILD_PREFIX --system-curl && \
-    make -j$(nproc) && \
-    make install
-)
+')
 
-REG(CMAKE)
+ifelse(OS_NAME,centos,`
+
+define(`OPENCL_BUILD_DEPS',yum-plugin-copr)
+define(`BUILD_OPENCL',`dnl
+RUN yum copr enable -y jdanecki/intel-opencl
+RUN yum install -y intel-opencl ocl-icd libgomp
+RUN ln -s /usr/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so
+')
+
+')
+
+REG(OPENCL)
 
 include(end.m4)dnl

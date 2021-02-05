@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`OPENCV_VER',4.4.0)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`OPENCV_BUILD_DEPS',`ca-certificates cmake gcc g++ make wget')'
+`define(`OPENCV_BUILD_DEPS',ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ make wget python3-numpy ccache)'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`OPENCV_BUILD_DEPS',`cmake gcc gcc-c++ make wget')'
+`define(`OPENCV_BUILD_DEPS',ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget python36-numpy ccache)'
 )
 
 define(`OPENCV_INSTALL_DEPS',`')
@@ -48,7 +48,7 @@ RUN cd BUILD_HOME && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
 RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
-  cmake \
+  ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
     -DCMAKE_INSTALL_LIBDIR=patsubst(BUILD_LIBDIR,BUILD_PREFIX/) \

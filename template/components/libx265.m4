@@ -35,11 +35,11 @@ include(yasm.m4)
 DECLARE(`LIBX265_VER',3.3)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBX265_BUILD_DEPS',libnuma-dev cmake make)
+define(`LIBX265_BUILD_DEPS',libnuma-dev ifdef(`BUILD_CMAKE',,cmake) make)
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBX265_BUILD_DEPS',cmake make numactl-devel libpciaccess-devel)
+define(`LIBX265_BUILD_DEPS',ifdef(`BUILD_CMAKE',,cmake) make numactl-devel libpciaccess-devel)
 ')
 
 define(`BUILD_LIBX265',`

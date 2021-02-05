@@ -53,13 +53,13 @@ OS_NAME,ubuntu,ifdef(`BUILD_LIBX264',,libx264-155),
 OS_NAME,centos,ifdef(`BUILD_LIBX264',,libx264-static))'))dnl
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTUGLY_BUILD_DEPS',`ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison GST_X264ENC_BUILD')'
-`define(`GSTUGLY_INSTALL_DEPS',`libglib2.0-0 GST_X264ENC_INSTALL')'
+`define(`GSTUGLY_BUILD_DEPS',ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison GST_X264ENC_BUILD)'
+`define(`GSTUGLY_INSTALL_DEPS',libglib2.0-0 GST_X264ENC_INSTALL)'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GSTUGLY_BUILD_DEPS',`meson wget tar gcc-c++ glib2-devel bison flex GST_X264ENC_BUILD')'
-`define(`GSTUGLY_INSTALL_DEPS',`glib2 GST_X264ENC_INSTALL')'
+`define(`GSTUGLY_BUILD_DEPS',ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex GST_X264ENC_BUILD)'
+`define(`GSTUGLY_INSTALL_DEPS',glib2 GST_X264ENC_INSTALL)'
 )
 
 define(`BUILD_GSTUGLY',

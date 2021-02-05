@@ -33,13 +33,11 @@ include(begin.m4)
 DECLARE(`GST_ORC_VER',0.4.32)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTORC_BUILD_DEPS',`ca-certificates tar g++ wget meson')'
-`define(`GSTORC_INSTALL_DEPS',`')'
+`define(`GSTORC_BUILD_DEPS',ca-certificates tar g++ wget ifdef(`BUILD_MESON',,meson))'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GSTORC_BUILD_DEPS',` wget tar gcc-c++ meson')'
-`define(`GSTORC_INSTALL_DEPS',`')'
+`define(`GSTORC_BUILD_DEPS',wget tar gcc-c++ ifdef(`BUILD_MESON',,meson))'
 )
 
 define(`BUILD_GSTORC',
