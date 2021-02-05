@@ -80,6 +80,17 @@ RUN cd /opt/build && \
      make -j$(nproc) && \
      make install
 
+RUN yum install -y git cmake make autoconf diffutils
+
+ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
+RUN cd /opt/build && \
+    git clone ${LIBVPX_REPO} -b v1.8.2 --depth 1 && \
+    cd libvpx && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
+    make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
 RUN yum install -y wget patch libass-devel freetype-devel 
 
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.2.tar.gz
@@ -93,7 +104,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --disable-libvpx                     --enable-libsvthevc                 && make -j$(nproc) && \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx                     --enable-libsvthevc                 && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -128,6 +139,170 @@ RUN cd /opt/build/gst-plugins-base-1.16.2 && \
   cd build && \
   ninja install && \
   DESTDIR=/opt/dist ninja install
+
+RUN yum install -y git meson wget tar gcc-c++ glib2-devel bison flex libX11-devel libXv-devel libXt-devel gdk-pixbuf2-devel libjpeg-turbo-devel libpng-devel zlib-devel libsoup-devel 
+ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.16.2.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${GSTGOOD_REPO} | tar xz
+RUN cd /opt/build/gst-plugins-good-1.16.2 && \
+    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
+    --prefix=/usr/local --buildtype=plain \
+    -Dgtk_doc=disabled && \
+    cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN yum install -y cmake3 gcc gcc-c++ make wget
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.4.0.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${OPENCV_REPO} | tar xz
+# TODO: file a bug against opencv since they do not accept full libdir
+RUN cd /opt/build/opencv-4.4.0 && mkdir build && cd build && \
+  cmake3 \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_LIBDIR=lib64 \
+    -DOPENCV_GENERATE_PKGCONFIG=ON \
+    -DBUILD_DOCS=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_PERF_TESTS=OFF \
+    -DBUILD_TESTS=OFF \
+    .. && \
+  make -j "$(nproc)" && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN yum install -y cmake3 gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz
+ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
+
+RUN git clone ${DLDT_REPO} /opt/build/openvino && \
+  cd /opt/build/openvino && \
+  git checkout 2021.2 && \
+  git submodule update --init --recursive
+
+# TODO:
+# Perform make install of openvino instead of manually copying build artifacts.
+#
+# For now, only ngraph target is installed using make install (it auto-generates .cmake
+# files during install stage, so they can be later used by other projects).
+
+RUN cd /opt/build/openvino && \
+  sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
+  mkdir build && cd build && \
+  cmake3 \
+    -DCMAKE_INSTALL_PREFIX=/usr/local/dldt \
+    -DENABLE_CPPLINT=OFF \
+    -DENABLE_GNA=OFF \
+    -DENABLE_VPU=OFF \
+    -DENABLE_OPENCV=OFF \
+    -DENABLE_MKL_DNN=ON \
+    -DENABLE_CLDNN=ON \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_TESTS=OFF \
+    -DBUILD_TESTS=OFF \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
+    -DNGRAPH_COMPONENT_PREFIX=inference-engine/ \
+    -DNGRAPH_UNIT_TEST_ENABLE=OFF \
+    -DNGRAPH_TEST_UTIL_ENABLE=OFF \
+    .. && \
+  make -j $(nproc) && \
+  make -C ngraph install && \
+  make -C ngraph install DESTDIR=/opt/dist && \
+  rm -rf ../bin/intel64/Release/lib/libgtest* && \
+  rm -rf ../bin/intel64/Release/lib/libgmock* && \
+  rm -rf ../bin/intel64/Release/lib/libmock* && \
+  rm -rf ../bin/intel64/Release/lib/libtest*
+
+ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
+ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
+
+ENV InferenceEngine_DIR=/usr/local/dldt/inference-engine/share
+ENV TBB_DIR=/usr/local/dldt/inference-engine/external/tbb/cmake
+ENV ngraph_DIR=/usr/local/dldt/inference-engine/cmake
+
+RUN cd /opt/build && \
+  mkdir -p ${CUSTOM_IE_DIR}/include && \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/include/* ${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/include/* /opt/dist/${CUSTOM_IE_DIR}/include && \
+  \
+  mkdir -p ${CUSTOM_IE_LIBDIR} && \
+  mkdir -p /opt/dist/${CUSTOM_IE_LIBDIR} && \
+  cp -r openvino/bin/intel64/Release/lib/* ${CUSTOM_IE_LIBDIR} && \
+  cp -r openvino/bin/intel64/Release/lib/* /opt/dist/${CUSTOM_IE_LIBDIR} && \
+  \
+  mkdir -p ${CUSTOM_IE_DIR}/src && \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/src && \
+  cp -r openvino/inference-engine/src/* ${CUSTOM_IE_DIR}/src/ && \
+  cp -r openvino/inference-engine/src/* /opt/dist/${CUSTOM_IE_DIR}/src/ && \
+  \
+  mkdir -p ${CUSTOM_IE_DIR}/share && \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/share && \
+  mkdir -p ${CUSTOM_IE_DIR}/external/ \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/external && \
+  cp -r openvino/build/share/* ${CUSTOM_IE_DIR}/share/ && \
+  cp -r openvino/build/share/* /opt/dist/${CUSTOM_IE_DIR}/share/ && \
+  cp -r openvino/inference-engine/temp/tbb ${CUSTOM_IE_DIR}/external/ && \
+  cp -r openvino/inference-engine/temp/tbb /opt/dist/${CUSTOM_IE_DIR}/external/ && \
+  \
+  mkdir -p "${CUSTOM_IE_LIBDIR}/pkgconfig"
+
+RUN { \
+  echo "prefix=${CUSTOM_IE_DIR}"; \
+  echo "libdir=${CUSTOM_IE_LIBDIR}"; \
+  echo "includedir=${CUSTOM_IE_DIR}/include"; \
+  echo ""; \
+  echo "Name: DLDT"; \
+  echo "Description: Intel Deep Learning Deployment Toolkit"; \
+  echo "Version: 5.0"; \
+  echo ""; \
+  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
+  echo "Cflags: -I\${includedir}"; \
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/dldt.pc
+
+RUN rm -rf /opt/build/openvino
+
+RUN yum install -y automake gcc libdrm-devel libtool make pkg-config wget which libX11-devel libXfixes-devel libXext-devel wayland-devel
+ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.8.0.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${LIBVA2_REPO} | tar xz
+RUN cd /opt/build/libva-2.8.0 && \
+  ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
+  make -j$(nproc) && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+
+# formerly https://github.com/opencv/gst-video-analytics
+ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
+RUN git clone $GVA_REPO /opt/build/gst-video-analytics && \
+    cd /opt/build/gst-video-analytics && \
+    git checkout v1.3 && \
+    git submodule update --init
+
+# TODO: This is a workaround for a bug in dlstreamer_gst
+ENV LIBRARY_PATH=/usr/local/lib64
+
+RUN mkdir -p /opt/build/gst-video-analytics/build && \
+    cd /opt/build/gst-video-analytics/build && \
+    cmake3 \
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DDISABLE_SAMPLES=ON \
+        -DENABLE_PAHO_INSTALLATION=OFF \
+        -DENABLE_RDKAFKA_INSTALLATION=OFF \
+        -DENABLE_VAAPI=ON \
+        -DENABLE_VAS_TRACKER=OFF \
+        -Dwith_drm=yes \
+        -Dwith_x11=no \
+        -Dwith_glx=no \
+        -Dwith_wayland=no \
+        -Dwith_egl=no \
+        .. \
+    && make -j $(nproc) \
+    && make install \
+    && make install DESTDIR=/opt/dist
 
 RUN yum install -y wget bzip2
 
@@ -324,13 +499,20 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
-RUN yum install -y libass freetype glibc glib2 mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL wget xz-utils rabbitmq-server boost-system boost-thread log4cxx 
+RUN yum install -y libass freetype glibc glib2 mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup gtk3 libdrm libXfixes libXext libwayland-client wget xz-utils rabbitmq-server boost-system boost-thread log4cxx 
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
 ENV GST_PLUGIN_PATH=/usr/local/lib64/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib64/gstreamer-1.0/gst-plugin-scanner
+ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
+RUN { \
+   echo "${CUSTOM_IE_LIBDIR}"; \
+   echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
+} > /etc/ld.so.conf.d/dldt.conf
+RUN ldconfig
 
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
 RUN cd /usr/local && \

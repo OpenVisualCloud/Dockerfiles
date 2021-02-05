@@ -34,17 +34,21 @@ include(opencv.m4)
 DECLARE(`DLDT_VER',2021.2)
 DECLARE(`DLDT_WARNING_AS_ERRORS',false)
 
-ifelse(OS_NAME,ubuntu,dnl
-define(`DLDT_BUILD_DEPS',`ca-certificates cmake gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils')
+ifelse(OS_NAME,ubuntu,`dnl
+define(`DLDT_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils')
 define(`DLDT_INSTALL_DEPS',`libgtk-3-0')
-)
+')
+
+ifelse(OS_NAME,centos,`dnl
+define(`DLDT_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz')
+define(`DLDT_INSTALL_DEPS',`gtk3')
+')
 
 define(`BUILD_DLDT',
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
-RUN git clone ${DLDT_REPO} BUILD_HOME/openvino && \
+RUN git clone -b DLDT_VER --depth 1 ${DLDT_REPO} BUILD_HOME/openvino && \
   cd BUILD_HOME/openvino && \
-  git checkout DLDT_VER && \
   git submodule update --init --recursive
 
 # TODO:
@@ -58,8 +62,8 @@ ifelse(DLDT_WARNING_AS_ERRORS,false,`dnl
   sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
 ')dnl
   mkdir build && cd build && \
-  cmake \
-    -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX/dldt \
+  ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
+    -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX/openvino \
     -DENABLE_CPPLINT=OFF \
     -DENABLE_GNA=OFF \
     -DENABLE_VPU=OFF \
@@ -83,13 +87,13 @@ ifelse(DLDT_WARNING_AS_ERRORS,false,`dnl
   rm -rf ../bin/intel64/Release/lib/libmock* && \
   rm -rf ../bin/intel64/Release/lib/libtest*
 
-ARG CUSTOM_IE_DIR=BUILD_PREFIX/dldt/inference-engine
+ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
 
-ENV InferenceEngine_DIR=BUILD_PREFIX/dldt/inference-engine/share
-ENV TBB_DIR=BUILD_PREFIX/dldt/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=BUILD_PREFIX/dldt/inference-engine/cmake
+ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
+ENV TBB_DIR=BUILD_PREFIX/openvino/inference-engine/external/tbb/cmake
+ENV ngraph_DIR=BUILD_PREFIX/openvino/inference-engine/cmake
 
 RUN cd BUILD_HOME && \
   mkdir -p ${CUSTOM_IE_DIR}/include && \
@@ -129,18 +133,18 @@ RUN { \
   echo ""; \
   echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
   echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/dldt.pc
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc
 
 RUN rm -rf BUILD_HOME/openvino
 )
 
 define(`INSTALL_DLDT',
-ARG CUSTOM_IE_DIR=BUILD_PREFIX/dldt/inference-engine
+ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN { \
    echo "${CUSTOM_IE_LIBDIR}"; \
    echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
-} > /etc/ld.so.conf.d/dldt.conf
+} > /etc/ld.so.conf.d/openvino.conf
 RUN ldconfig
 )
 

@@ -36,12 +36,12 @@ include(gmmlib.sg1.m4)
 DECLARE(`MEDIA_DRIVER_VER',intel-media-sg1-pv1.1)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`MEDIA_DRIVER_BUILD_DEPS',`ca-certificates cmake g++ libpciaccess-dev make pkg-config wget')'
+`define(`MEDIA_DRIVER_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ libpciaccess-dev make pkg-config wget')'
 `define(`MEDIA_DRIVER_INSTALL_DEPS',`libpciaccess0')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`MEDIA_DRIVER_BUILD_DEPS',`cmake gcc-c++ libpciaccess-devel make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')'
+`define(`MEDIA_DRIVER_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ libpciaccess-devel make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')'
 )
 
 define(`BUILD_MEDIA_DRIVER',

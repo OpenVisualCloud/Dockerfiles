@@ -38,7 +38,7 @@ ifelse(OS_NAME,ubuntu,dnl
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GSTCORE_BUILD_DEPS',`meson wget tar gcc-c++ glib2-devel bison flex ')'
+`define(`GSTCORE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex ')'
 `define(`GSTCORE_INSTALL_DEPS',`glib2')'
 )
 
