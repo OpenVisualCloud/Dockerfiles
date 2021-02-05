@@ -6,6 +6,7 @@ ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')
 include(ffmpeg.m4)
 include(gst-core.m4)
 include(gst-plugins-base.m4)
+include(gst-plugins-good.m4)
 include(owt.m4)
 include(end.m4)dnl
 

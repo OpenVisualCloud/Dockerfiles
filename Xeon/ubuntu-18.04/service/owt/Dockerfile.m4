@@ -8,6 +8,7 @@ include(ffmpeg.m4)
 include(meson.m4)
 include(gst-core.m4)
 include(gst-plugins-base.m4)
+include(gst-plugins-good.m4)
 include(owt.m4)
 include(end.m4)dnl
 

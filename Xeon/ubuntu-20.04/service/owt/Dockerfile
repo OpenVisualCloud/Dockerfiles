@@ -142,6 +142,21 @@ RUN cd /opt/build/gst-plugins-base-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev libvpx-dev && \
+  rm -rf /var/lib/apt/lists/*
+ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.16.2.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${GSTGOOD_REPO} | tar xz
+RUN cd /opt/build/gst-plugins-good-1.16.2 && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    --prefix=/usr/local --buildtype=plain \
+    -Dgtk_doc=disabled && \
+    cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget bzip2 && \
   rm -rf /var/lib/apt/lists/*
 
@@ -347,7 +362,7 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libass9 libv4l-0 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.71.0 libboost-thread1.71.0 liblog4cxx10v5 libfreetype6 libsrtp2-1  && \
+    libass9 libv4l-0 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libvpx6 ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.71.0 libboost-thread1.71.0 liblog4cxx10v5 libfreetype6 libsrtp2-1  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
