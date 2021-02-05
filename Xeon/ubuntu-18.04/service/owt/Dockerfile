@@ -22,9 +22,9 @@ RUN cd /opt/build && \
     make depend && \
     make -s V=0 && \
     make install DESTDIR=/opt/dist && \
-    (cd /opt/dist/usr/local && mkdir -p lib/pkgconfig && mv ssl/lib/pkgconfig/*.pc lib/pkgconfig) && \
+    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
     make install && \
-    (cd /usr/local && mkdir -p lib/pkgconfig && mv ssl/lib/pkgconfig/*.pc lib/pkgconfig)
+    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -84,7 +84,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget patch libv4l-dev libass-dev  && \
+    ca-certificates wget patch libx264-dev libx265-dev libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.2.tar.gz
@@ -98,7 +98,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --disable-libvpx                     --enable-libsvthevc                 && make -j$(nproc) && \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --disable-libvpx         --enable-libx264     --enable-libx265         --enable-libsvthevc                 && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -339,13 +339,15 @@ RUN cd /opt/dist/home && \
     echo "./bin/start-all.sh" >>launch.sh && \
     chmod +x launch.sh
 
-RUN echo "Start cleanup" && \
-    rm -rf /opt/dist//usr/local/include && \
-    rm -rf /opt/dist//usr/local/share/doc && \
-    rm -rf /opt/dist//usr/local/share/gtk-doc && \
-    rm -rf /opt/dist//usr/local/share/man && \
-    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
-    echo "Cleanup done"
+# cleanup
+RUN rm -rf /opt/dist/usr/local/include && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig && \
+    find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
+RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
+RUN rm -rf /opt/dist/usr/local/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/include
+RUN rm -rf /opt/dist/usr/local/ssl/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 
 FROM ubuntu:18.04
 LABEL Description="This is the base image for the OWT service ubuntu 18.04"
@@ -355,7 +357,7 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libass9 libv4l-0 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
+    libass9 libv4l-0 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /

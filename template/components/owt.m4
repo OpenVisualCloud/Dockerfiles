@@ -55,6 +55,11 @@ include(node.m4)
 ifelse(OS_NAME,centos,`
 define(`LIBSRTP2_VER',v2.1.0)
 include(libsrtp2.m4)
+define(`FFMPEG_ENABLE_LIBFREETYPE',true)
+define(`FFMPEG_ENABLE_V4L2',false)
+define(`FFMPEG_ENABLE_X265',false)
+define(`FFMPEG_ENABLE_X264',false)
+include(ffmpeg.m4)
 ')
 
 ifelse(OS_NAME,ubuntu,`
@@ -162,7 +167,7 @@ define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1 )rabbitmq-server mon
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11 )rabbitmq-server boost-system boost-thread log4cxx ifelse($1,devel,glib2-devel,glib2) freetype ifelse($1,devel,cmake make git gcc g++ pkg-config)')
+define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11 )rabbitmq-server boost-system boost-thread log4cxx ifelse($1,devel,glib2-devel,glib2) freetype ifelse($1,devel,cmake make git gcc gcc-c++ pkg-config)')
 
 define(`INSTALL_OWT',`
 RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
