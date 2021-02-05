@@ -133,9 +133,9 @@ RUN { \
   echo ""; \
   echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
   echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc
-
-RUN rm -rf BUILD_HOME/openvino
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
+  mkdir -p defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig && \
+  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig
 )
 
 define(`INSTALL_DLDT',
@@ -147,6 +147,17 @@ RUN { \
 } > /etc/ld.so.conf.d/openvino.conf
 RUN ldconfig
 )
+
+define(`CLEANUP_DLDT',`
+ifelse(CLEANUP_CC,yes,`dnl
+RUN cd defn(`BUILD_DESTDIR',`BUILD_PREFIX')/openvino/inference_engine && \
+    rm -rf defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig/openvino.pc \
+       include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
+')
+ifelse(CLEANUP_DOC,yes,`dnl
+RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/openvino/inference_engine/external/tbb/doc
+')
+')
 
 REG(DLDT)
 
