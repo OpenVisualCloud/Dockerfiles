@@ -18,7 +18,7 @@ PREAMBLE
 FROM OS_NAME:OS_VERSION as build
 
 BUILD_ALL()dnl
-CLEANUP(runtime)dnl
+CLEANUP()dnl
 
 FROM OS_NAME:OS_VERSION
 LABEL Description="This is the base image for the OWT service OS_NAME OS_VERSION"

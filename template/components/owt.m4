@@ -163,11 +163,11 @@ RUN cd BUILD_DESTDIR/home && \
 ')
 
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_INSTALL_DEPS',ifdef(`BUILD_OPENSSL',,libssl1.1) rabbitmq-server mongodb ifelse(OS_VERSION,18.04,libboost-system1.65.1,libboost-system1.71.0) ifelse(OS_VERSION,18.04,libboost-thread1.65.1,libboost-thread1.71.0) liblog4cxx10v5 libglib2.0-ifelse($1,devel,dev,0) libfreetype6 libsrtp2-1 ifelse($1,devel,cmake make gcc g++ git pkg-config))
+define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1) rabbitmq-server mongodb ifelse(OS_VERSION,18.04,libboost-system1.65.1,libboost-system1.71.0) ifelse(OS_VERSION,18.04,libboost-thread1.65.1,libboost-thread1.71.0) liblog4cxx10v5 libglib2.0-ifelse($1,devel,dev,0) libfreetype6 libsrtp2-1')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OWT_INSTALL_DEPS',ifdef(`BUILD_OPENSSL',,openssl11) rabbitmq-server boost-system boost-thread log4cxx ifelse($1,devel,glib2-devel,glib2) freetype ifelse($1,devel,cmake make git gcc gcc-c++ pkg-config))
+define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11) rabbitmq-server boost-system boost-thread log4cxx ifelse($1,devel,glib2-devel,glib2) freetype')
 
 define(`INSTALL_OWT',`
 RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
