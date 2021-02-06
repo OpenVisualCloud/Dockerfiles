@@ -257,7 +257,7 @@ pushdef(`_pkgs',PKGS(REMOVE_DUPLICATES(`_deps INSTALL_PKGS_LIST')))dnl
 INSTALL_PKGS(ARGS(_pkgs))
 popdef(`_pkgs')dnl
 popdef(`_deps')dnl
-ifdef(CLEANUP_CC,yes,,`dnl
+ifelse(CLEANUP_CC,yes,,`dnl
 ENV PKG_CONFIG_PATH=BUILD_LIBDIR/pkgconfig
 ')dnl
 
