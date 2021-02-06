@@ -131,7 +131,7 @@ RUN { \
   echo "Description: Intel Deep Learning Deployment Toolkit"; \
   echo "Version: 5.0"; \
   echo ""; \
-  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
+  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_api"; \
   echo "Cflags: -I\${includedir}"; \
   } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
   mkdir -p defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig && \
@@ -142,6 +142,7 @@ define(`INSTALL_DLDT',
 ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
+ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
 )
 
 define(`CLEANUP_DLDT',`dnl
