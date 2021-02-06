@@ -55,12 +55,12 @@ include(node.m4)
 ifelse(OS_NAME,centos,`
 define(`LIBSRTP2_VER',v2.1.0)
 include(libsrtp2.m4)
+')
 define(`FFMPEG_ENABLE_LIBFREETYPE',true)
 define(`FFMPEG_ENABLE_V4L2',false)
 define(`FFMPEG_ENABLE_X265',false)
 define(`FFMPEG_ENABLE_X264',false)
 include(ffmpeg.m4)
-')
 
 ifelse(OS_NAME,ubuntu,`
 define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev )git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config')
@@ -180,6 +180,12 @@ RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
 ')
 
 ')
+
+define(`CLEANUP_OWT',`dnl
+ifelse(CLEANUP_CC,yes,`dnl
+ifelse($1,devel,,`dnl
+RUN rm -rf BUILD_DESTDIR/home/owt/analytics_agent/plugins
+')')')
 
 REG(OWT)
 

@@ -284,13 +284,12 @@ popdef(`_tmp')')
 # If ``CLEANUP_$n`` macro was not defined, then rules expansion for this component is
 # ignored during cleanup.
 define(`CLEANUP_COMPONENTS',`dnl
-ifelse($#,0,,`ifdef(`CLEANUP_$1',`dnl
-indir(`CLEANUP_$1')')dnl
-ifelse($#,1,,`CLEANUP_COMPONENTS(shift($@))')')')
+ifelse($#,1,,`ifdef(`CLEANUP_$2',`dnl
+indir(`CLEANUP_$2')')dnl
+ifelse($#,2,,`CLEANUP_COMPONENTS($1,shift(shift($@)))')')')
 
 # Performs generic cleanup of the built packages. If packages install
-# $1 SKIP cleaning up include files, static libraries and pkg-config files
-# $2 SKIP cleaning up man pages and documentations
+# $1 runtime or devel
 define(`CLEANUP',`dnl
 ifelse(defn(`CLEANUP_DOC',`CLEANUP_CC',`CLEANUP_MAN'),`nonono',,`dnl
 # cleanup
@@ -306,5 +305,5 @@ RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/share/doc defn(`BUILD_DESTDIR',`
 ifelse(CLEANUP_MAN,yes,`dnl
 RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/share/man
 ')dnl
-CLEANUP_COMPONENTS(ARGS(COMPONENTS_LIST))dnl
+CLEANUP_COMPONENTS($1,ARGS(COMPONENTS_LIST))dnl
 ')
