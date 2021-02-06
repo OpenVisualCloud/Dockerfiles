@@ -303,9 +303,9 @@ RUN { \
   echo ""; \
   echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
   echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc
-
-RUN rm -rf /opt/build/openvino
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
+  mkdir -p /opt/dist/usr/local/lib/pkgconfig && \
+  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib/pkgconfig
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -551,6 +551,7 @@ RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
+RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
 
 FROM ubuntu:18.04
 LABEL Description="This is the development image for the OWT service ubuntu 18.04"
@@ -560,8 +561,9 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libass9 libv4l-0 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libgtk-3-0 libdrm2 libxext6 libxfixes3 libwayland-client0 ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libglib2.0-dev libfreetype6 libsrtp2-1 cmake make gcc g++ git pkg-config && \
+    libx264-155 libx265-179 libv4l-0 libass9 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libgtk-3-0 libdrm2 libxext6 libxfixes3 libwayland-client0 ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libglib2.0-dev libfreetype6 libsrtp2-1 cmake make gcc g++ git pkg-config && \
   rm -rf /var/lib/apt/lists/*
+ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
@@ -570,11 +572,7 @@ ENV GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib/gstreamer-1.0/gst-plugin-scanner
 ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-RUN { \
-   echo "${CUSTOM_IE_LIBDIR}"; \
-   echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
-} > /etc/ld.so.conf.d/openvino.conf
-RUN ldconfig
+RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
 RUN cd /usr/local && \

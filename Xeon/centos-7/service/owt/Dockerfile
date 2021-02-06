@@ -14,7 +14,7 @@ FROM centos:7 as build
 
 
 
-RUN yum install -y -q epel-release centos-release-scl
+RUN yum install -y -q epel-release centos-release-scl && rm -rf /var/yum/cache/*
 
 
 
@@ -91,7 +91,7 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget patch libass-devel freetype-devel 
+RUN yum install -y wget patch libass-devel freetype-devel
 
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.2.tar.gz
 RUN cd /opt/build && \
@@ -123,7 +123,7 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex libX11-devel libXv-devel libXt-devel alsa-lib-devel pango-devel libtheora libvisual mesa-libGL-devel
+RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex libX11-devel libXv-devel libXt-devel alsa-lib-devel pango-devel libtheora libvisual mesa-libGL-devel
 ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${GSTBASE_REPO} | tar xz
@@ -152,7 +152,7 @@ RUN cd /opt/build/gst-plugins-good-1.16.2 && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y cmake3 gcc gcc-c++ make wget
+RUN yum install -y cmake3 gcc gcc-c++ make wget python36-numpy ccache
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.4.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
@@ -175,9 +175,8 @@ RUN cd /opt/build/opencv-4.4.0 && mkdir build && cd build && \
 RUN yum install -y cmake3 gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
-RUN git clone ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2021.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
-  git checkout 2021.2 && \
   git submodule update --init --recursive
 
 # TODO:
@@ -190,7 +189,7 @@ RUN cd /opt/build/openvino && \
   sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
   mkdir build && cd build && \
   cmake3 \
-    -DCMAKE_INSTALL_PREFIX=/usr/local/dldt \
+    -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
     -DENABLE_CPPLINT=OFF \
     -DENABLE_GNA=OFF \
     -DENABLE_VPU=OFF \
@@ -214,13 +213,13 @@ RUN cd /opt/build/openvino && \
   rm -rf ../bin/intel64/Release/lib/libmock* && \
   rm -rf ../bin/intel64/Release/lib/libtest*
 
-ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
 
-ENV InferenceEngine_DIR=/usr/local/dldt/inference-engine/share
-ENV TBB_DIR=/usr/local/dldt/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=/usr/local/dldt/inference-engine/cmake
+ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
+ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
+ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
 
 RUN cd /opt/build && \
   mkdir -p ${CUSTOM_IE_DIR}/include && \
@@ -260,9 +259,9 @@ RUN { \
   echo ""; \
   echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
   echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/dldt.pc
-
-RUN rm -rf /opt/build/openvino
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
+  mkdir -p /opt/dist/usr/local/lib64/pkgconfig && \
+  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib64/pkgconfig
 
 RUN yum install -y automake gcc libdrm-devel libtool make pkg-config wget which libX11-devel libXfixes-devel libXext-devel wayland-devel
 ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.8.0.tar.gz
@@ -274,21 +273,23 @@ RUN cd /opt/build/libva-2.8.0 && \
   make install DESTDIR=/opt/dist && \
   make install
 
-
+RUN yum install -y cmake3 git ocl-icd-devel opencl-headers pkg-config 
 # formerly https://github.com/opencv/gst-video-analytics
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
-RUN git clone $GVA_REPO /opt/build/gst-video-analytics && \
-    cd /opt/build/gst-video-analytics && \
-    git checkout v1.3 && \
-    git submodule update --init
-
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=/usr/local/lib64
-
-RUN mkdir -p /opt/build/gst-video-analytics/build && \
-    cd /opt/build/gst-video-analytics/build && \
+RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+    cd /opt/build/gst-video-analytics && \
+    git submodule update --init && \
+    sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
+    mkdir -p build && cd build && \
+    CFLAGS="-std=gnu99 -Wno-missing-field-initializers" \
+    CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" \
     cmake3 \
+        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
         -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DCMAKE_BUILD_TYPE=Release \
         -DDISABLE_SAMPLES=ON \
         -DENABLE_PAHO_INSTALLATION=OFF \
         -DENABLE_RDKAFKA_INSTALLATION=OFF \
@@ -299,6 +300,8 @@ RUN mkdir -p /opt/build/gst-video-analytics/build && \
         -Dwith_glx=no \
         -Dwith_wayland=no \
         -Dwith_egl=no \
+        -DMQTT=0 \
+        -DKAFKA=0 \
         .. \
     && make -j $(nproc) \
     && make install \
@@ -492,6 +495,10 @@ RUN rm -rf /opt/dist/usr/local/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/include
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
+RUN cd /opt/dist/usr/local/openvino/inference-engine && \
+    rm -rf /opt/dist/usr/local/lib64/pkgconfig/openvino.pc \
+       include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
+RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
 
 FROM centos:7
 LABEL Description="This is the base image for the OWT service centos 7"
@@ -499,20 +506,18 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
-RUN yum install -y libass freetype glibc glib2 mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup gtk3 libdrm libXfixes libXext libwayland-client wget xz-utils rabbitmq-server boost-system boost-thread log4cxx 
+RUN yum install -y -q epel-release && rm -rf /var/yum/cache/*
+
+RUN yum install -y libass glib2 mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup gtk3 libdrm libXfixes libXext libwayland-client wget xz-utils rabbitmq-server boost-system boost-thread log4cxx freetype 
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
 ENV GST_PLUGIN_PATH=/usr/local/lib64/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib64/gstreamer-1.0/gst-plugin-scanner
-ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-RUN { \
-   echo "${CUSTOM_IE_LIBDIR}"; \
-   echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
-} > /etc/ld.so.conf.d/dldt.conf
-RUN ldconfig
+RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
 RUN cd /usr/local && \

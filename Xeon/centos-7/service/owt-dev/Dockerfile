@@ -13,7 +13,7 @@ FROM centos:7 as build
 
 
 
-RUN yum install -y -q epel-release centos-release-scl
+RUN yum install -y -q epel-release centos-release-scl && rm -rf /var/yum/cache/*
 
 
 
@@ -90,7 +90,7 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget patch libass-devel freetype-devel 
+RUN yum install -y wget patch libass-devel freetype-devel
 
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.2.tar.gz
 RUN cd /opt/build && \
@@ -258,9 +258,9 @@ RUN { \
   echo ""; \
   echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
   echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc
-
-RUN rm -rf /opt/build/openvino
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
+  mkdir -p /opt/dist/usr/local/lib64/pkgconfig && \
+  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib64/pkgconfig
 
 RUN yum install -y automake gcc libdrm-devel libtool make pkg-config wget which libX11-devel libXfixes-devel libXext-devel wayland-devel
 ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.8.0.tar.gz
@@ -490,6 +490,7 @@ RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
+RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
 
 FROM centos:7
 LABEL Description="This is the development image for the OWT service centos 7"
@@ -497,7 +498,10 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
-RUN yum install -y libass freetype glibc glib2 mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup gtk3 libdrm libXfixes libXext libwayland-client wget xz-utils rabbitmq-server boost-system boost-thread log4cxx glib2-devel cmake make git gcc gcc-c++ pkg-config
+RUN yum install -y -q epel-release && rm -rf /var/yum/cache/*
+
+RUN yum install -y libass glib2 mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup gtk3 libdrm libXfixes libXext libwayland-client wget xz-utils rabbitmq-server boost-system boost-thread log4cxx glib2-devel freetype cmake make git gcc gcc-c++ pkg-config
+ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
@@ -506,11 +510,7 @@ ENV GST_PLUGIN_PATH=/usr/local/lib64/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib64/gstreamer-1.0/gst-plugin-scanner
 ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-RUN { \
-   echo "${CUSTOM_IE_LIBDIR}"; \
-   echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
-} > /etc/ld.so.conf.d/openvino.conf
-RUN ldconfig
+RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
 RUN cd /usr/local && \
