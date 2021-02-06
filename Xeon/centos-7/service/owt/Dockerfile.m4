@@ -28,5 +28,6 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+INSTALL_CENTOS_REPO(epel-release)
 INSTALL_ALL(runtime,build)
 
