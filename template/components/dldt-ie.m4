@@ -141,11 +141,7 @@ RUN { \
 define(`INSTALL_DLDT',
 ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-RUN { \
-   echo "${CUSTOM_IE_LIBDIR}"; \
-   echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
-} > /etc/ld.so.conf.d/openvino.conf
-RUN ldconfig
+RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 )
 
 define(`CLEANUP_DLDT',`dnl
