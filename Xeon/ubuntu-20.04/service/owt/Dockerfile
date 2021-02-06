@@ -84,6 +84,20 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git cmake make autoconf && \
+  rm -rf /var/lib/apt/lists/*
+
+ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
+RUN cd /opt/build && \
+    git clone ${LIBVPX_REPO} -b v1.8.2 --depth 1 && \
+    cd libvpx && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
+    make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget patch libx264-dev libx265-dev libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
@@ -98,7 +112,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --disable-libvpx         --enable-libx264     --enable-libx265         --enable-libsvthevc                 && make -j$(nproc) && \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264     --enable-libx265         --enable-libsvthevc                 && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -122,7 +136,7 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev && \
+    ca-certificates meson tar g++ gobjc wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev && \
   rm -rf /var/lib/apt/lists/*
 ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
@@ -142,7 +156,7 @@ RUN cd /opt/build/gst-plugins-base-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev libvpx-dev && \
+    git ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev  && \
   rm -rf /var/lib/apt/lists/*
 ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
@@ -157,7 +171,7 @@ RUN cd /opt/build/gst-plugins-good-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates cmake gcc g++ make wget && \
+    ca-certificates cmake gcc g++ make wget python3-numpy ccache && \
   rm -rf /var/lib/apt/lists/*
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.4.0.tar.gz
 RUN cd /opt/build && \
@@ -184,9 +198,8 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
-RUN git clone ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2021.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
-  git checkout 2021.2 && \
   git submodule update --init --recursive
 
 # TODO:
@@ -199,7 +212,7 @@ RUN cd /opt/build/openvino && \
   sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
   mkdir build && cd build && \
   cmake \
-    -DCMAKE_INSTALL_PREFIX=/usr/local/dldt \
+    -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
     -DENABLE_CPPLINT=OFF \
     -DENABLE_GNA=OFF \
     -DENABLE_VPU=OFF \
@@ -223,13 +236,13 @@ RUN cd /opt/build/openvino && \
   rm -rf ../bin/intel64/Release/lib/libmock* && \
   rm -rf ../bin/intel64/Release/lib/libtest*
 
-ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
 
-ENV InferenceEngine_DIR=/usr/local/dldt/inference-engine/share
-ENV TBB_DIR=/usr/local/dldt/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=/usr/local/dldt/inference-engine/cmake
+ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
+ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
+ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
 
 RUN cd /opt/build && \
   mkdir -p ${CUSTOM_IE_DIR}/include && \
@@ -269,9 +282,9 @@ RUN { \
   echo ""; \
   echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
   echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/dldt.pc
-
-RUN rm -rf /opt/build/openvino
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
+  mkdir -p /opt/dist/usr/local/lib/pkgconfig && \
+  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib/pkgconfig
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -292,18 +305,20 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 # formerly https://github.com/opencv/gst-video-analytics
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
-RUN git clone $GVA_REPO /opt/build/gst-video-analytics && \
-    cd /opt/build/gst-video-analytics && \
-    git checkout v1.3 && \
-    git submodule update --init
-
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=/usr/local/lib
-
-RUN mkdir -p /opt/build/gst-video-analytics/build \
-    && cd /opt/build/gst-video-analytics/build \
-    && cmake \
+RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+    cd /opt/build/gst-video-analytics && \
+    git submodule update --init && \
+    sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
+    mkdir -p build && cd build && \
+    CFLAGS="-std=gnu99 -Wno-missing-field-initializers" \
+    CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" \
+    cmake \
+        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
         -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DCMAKE_BUILD_TYPE=Release \
         -DDISABLE_SAMPLES=ON \
         -DENABLE_PAHO_INSTALLATION=OFF \
         -DENABLE_RDKAFKA_INSTALLATION=OFF \
@@ -314,6 +329,8 @@ RUN mkdir -p /opt/build/gst-video-analytics/build \
         -Dwith_glx=no \
         -Dwith_wayland=no \
         -Dwith_egl=no \
+        -DMQTT=0 \
+        -DKAFKA=0 \
         .. \
     && make -j $(nproc) \
     && make install \
@@ -517,6 +534,10 @@ RUN rm -rf /opt/dist/usr/local/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/include
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
+RUN cd /opt/dist/usr/local/openvino/inference-engine && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig/openvino.pc \
+       include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
+RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
 
 FROM ubuntu:20.04
 LABEL Description="This is the base image for the OWT service ubuntu 20.04"
@@ -526,7 +547,7 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libass9 libv4l-0 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libvpx6 libgtk-3-0 libdrm2 libxext6 libxfixes3 libwayland-client0 ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.71.0 libboost-thread1.71.0 liblog4cxx10v5 libfreetype6 libsrtp2-1  && \
+    libx264-155 libx265-179 libv4l-0 libass9 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libgtk-3-0 libdrm2 libxext6 libxfixes3 libwayland-client0 ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.71.0 libboost-thread1.71.0 liblog4cxx10v5 libfreetype6 libsrtp2-1  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
@@ -534,13 +555,9 @@ RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
 ENV GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib/gstreamer-1.0/gst-plugin-scanner
-ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-RUN { \
-   echo "${CUSTOM_IE_LIBDIR}"; \
-   echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
-} > /etc/ld.so.conf.d/dldt.conf
-RUN ldconfig
+RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
 RUN cd /usr/local && \

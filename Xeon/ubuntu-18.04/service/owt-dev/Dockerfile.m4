@@ -19,7 +19,7 @@ FROM OS_NAME:OS_VERSION as build
 
 BUILD_ALL()dnl
 define(`CLEANUP_CC',no)dnl
-CLEANUP()dnl
+CLEANUP(devel)dnl
 
 FROM OS_NAME:OS_VERSION
 LABEL Description="This is the development image for the OWT service OS_NAME OS_VERSION"
