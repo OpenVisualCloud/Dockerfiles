@@ -63,7 +63,7 @@ ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/GSTCORE_VER
 RUN cd BUILD_HOME && \
     wget -O - ${GSTBAD_REPO} | tar xz && \
     cd gst-plugins-bad-GSTCORE_VER && \
-    ifelse(OS_NAME,centos,scl enable devtoolset-9 -- )meson build \
+    ifelse(OS_NAME,centos,`(. /opt/rh/devtoolset-9/enable && ')meson build \
       --prefix=BUILD_PREFIX \
       --libdir=BUILD_LIBDIR \
       --libexecdir=BUILD_LIBDIR \
@@ -74,7 +74,7 @@ RUN cd BUILD_HOME && \
       -Dtests=disabled && \
     cd build && \
     ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
+    DESTDIR=BUILD_DESTDIR ninja install ifelse(OS_NAME,centos,`)')
 )
 
 REG(GSTBAD)
