@@ -143,6 +143,8 @@ ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
+ENV TBB_DIR=BUILD_PREFIX/openvino/inference-engine/external/tbb/cmake
+ENV ngraph_DIR=BUILD_PREFIX/openvino/inference-engine/cmake
 )
 
 define(`CLEANUP_DLDT',`dnl
