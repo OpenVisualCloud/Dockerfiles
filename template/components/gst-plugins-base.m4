@@ -46,7 +46,7 @@ DECLARE(`GST_OPENGL',true)
 ifelse(OS_NAME,ubuntu,dnl
 `define(`GSTBASE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ gobjc wget pkg-config libglib2.0-dev flex bison ifelse(GST_XLIB,true,libx11-dev libxv-dev libxt-dev) ifelse(GST_ALSA,true,libasound2-dev) ifelse(GST_PANGO,true,libpango1.0-dev) ifelse(GST_THEORA,true,libtheora-dev) ifelse(GST_LIBVISUAL,true,libvisual-0.4-dev) ifelse(GST_OPENGL,true,libgl1-mesa-dev)')'
 
-`define(`GSTBASE_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1 libxt6) ifelse(GST_ALSA,true,libasound2) ifelse(GST_PANGO,true,libpangocairo-1.0-0 libcairo-gobject2) ifelse(GST_THEORA,true,libtheora0) ifelse(GST_LIBVISUAL,true,libvisual-0.4-0) ifelse(GST_OPENGL,true,mesa-libGL-devel)')'
+`define(`GSTBASE_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1 libxt6) ifelse(GST_ALSA,true,libasound2) ifelse(GST_PANGO,true,libpangocairo-1.0-0 libcairo-gobject2) ifelse(GST_THEORA,true,libtheora0) ifelse(GST_LIBVISUAL,true,libvisual-0.4-0) ifelse(GST_OPENGL,true,libgl1-mesa-dri)')'
 )
 
 ifelse(OS_NAME,centos,dnl

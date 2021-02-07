@@ -40,19 +40,19 @@ DECLARE(`GVA_WITH_EGL',no)
 
 DECLARE(`GVA_ENABLE_PAHO_INST',OFF)
 DECLARE(`GVA_ENABLE_RDKAFKA_INST',OFF)
+DECLARE(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',OFF)
 
 include(dldt-ie.m4)
 include(gst-plugins-base.m4)
-ifdef(`ENABLE_INTEL_GFX_REPO',,`include(libva2.m4)')
 
 ifelse(OS_NAME,ubuntu,`
-define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev)')
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config ifdef(`BUILD_LIBVA2',,libva-dev)')
 define(`GVA_INSTALL_DEPS',`ocl-icd-libopencl1 ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2))')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) git ocl-icd-devel opencl-headers pkg-config ifdef(`ENABLE_INTEL_GFX_REPO',libva-devel)')
-define(`GVA_INSTALL_DEPS',`ocl-icd ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2))')
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) git ocl-icd-devel opencl-headers pkg-config')
+define(`GVA_INSTALL_DEPS',`ocl-icd')
 ')
 
 define(`BUILD_GVA',
@@ -65,8 +65,6 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
     git submodule update --init && \
     sed -i ``"195s/) {/||g_strrstr(name, \"image\")) {/"'' gst/elements/gvapython/python_callback.cpp && \
     mkdir -p build && cd build && \
-    CFLAGS="-std=gnu99 -Wno-missing-field-initializers" \
-    CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" \
     ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
         -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
@@ -77,6 +75,7 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
         -DENABLE_RDKAFKA_INSTALLATION=GVA_ENABLE_RDKAFKA_INST \
         -DENABLE_VAAPI=ON \
         -DENABLE_VAS_TRACKER=OFF \
+        -DENABLE_AUDIO_INFERENCE_ELEMENTS=GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS \
         -Dwith_drm=GVA_WITH_DRM \
         -Dwith_x11=GVA_WITH_X11 \
         -Dwith_glx=GVA_WITH_GLX \
