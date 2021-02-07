@@ -42,24 +42,14 @@ dnl To manage this please refer to them by using the `BUILD_*` m4 definition in 
 
 DECLARE(`GST_X264ENC',true)
 
-define(`GST_X264ENC_BUILD',dnl
-ifelse(GST_X264ENC,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBX264',,libx264-dev),
-OS_NAME,centos,ifdef(`BUILD_LIBX264',,libx264-devel))'))dnl
-
-define(`GST_X264ENC_INSTALL',dnl
-ifelse(GST_X264ENC,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBX264',,libx264-155),
-OS_NAME,centos,ifdef(`BUILD_LIBX264',,libx264-static))'))dnl
-
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTUGLY_BUILD_DEPS',ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison GST_X264ENC_BUILD)'
-`define(`GSTUGLY_INSTALL_DEPS',libglib2.0-0 GST_X264ENC_INSTALL)'
+`define(`GSTUGLY_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_X264ENC,true,ifdef(`BUILD_LIBX264',,libx264-dev))')'
+`define(`GSTUGLY_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_X264ENC,true,ifdef(`BUILD_LIBX264',,libx264-155))')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GSTUGLY_BUILD_DEPS',ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex GST_X264ENC_BUILD)'
-`define(`GSTUGLY_INSTALL_DEPS',glib2 GST_X264ENC_INSTALL)'
+`define(`GSTUGLY_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex ifelse(GST_X264ENC,true,ifdef(`BUILD_LIBX264',,libx264-devel))')'
+`define(`GSTUGLY_INSTALL_DEPS',`glib2 ifelse(GST_X264ENC,true,ifdef(`BUILD_LIBX264',,libx264-static))')'
 )
 
 define(`BUILD_GSTUGLY',

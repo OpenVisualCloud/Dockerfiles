@@ -33,16 +33,14 @@ include(begin.m4)
 DECLARE(`OPENCV_VER',4.4.0)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`OPENCV_BUILD_DEPS',ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ make wget python3-numpy ccache)'
+`define(`OPENCV_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ make wget python3-numpy ccache libeigen3-dev')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`OPENCV_BUILD_DEPS',ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget python36-numpy ccache)'
+`define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget python36-numpy ccache eigen3-devel')'
 )
 
-define(`OPENCV_INSTALL_DEPS',`')
-
-define(`BUILD_OPENCV',
+define(`BUILD_OPENCV',`dnl
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/OPENCV_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${OPENCV_REPO} | tar xz
@@ -61,7 +59,7 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
   make -j "$(nproc)" && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
-)
+')
 
 REG(OPENCV)
 

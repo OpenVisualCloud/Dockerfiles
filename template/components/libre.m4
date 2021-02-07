@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`LIBRE_VER',v0.5.0)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBRE_BUILD_DEPS',git ifdef(`BUILD_CMAKE',,cmake) make autoconf gcc)
+define(`LIBRE_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf gcc')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBRE_BUILD_DEPS',git ifdef(`BUILD_CMAKE',,cmake) make autoconf gcc)
+define(`LIBRE_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf gcc')
 ')
 
 define(`BUILD_LIBRE',`

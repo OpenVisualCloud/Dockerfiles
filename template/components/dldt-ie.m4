@@ -35,13 +35,13 @@ DECLARE(`DLDT_VER',2021.2)
 DECLARE(`DLDT_WARNING_AS_ERRORS',false)
 
 ifelse(OS_NAME,ubuntu,`dnl
-define(`DLDT_BUILD_DEPS',ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils libnuma-dev ocl-icd-opencl-dev opencl-headers)
-define(`DLDT_INSTALL_DEPS',libgtk-3-0 libnuma1 ocl-icd-libopencl1)
+define(`DLDT_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils libnuma-dev ocl-icd-opencl-dev opencl-headers')
+define(`DLDT_INSTALL_DEPS',`libgtk-3-0 libnuma1 ocl-icd-libopencl1')
 ')
 
 ifelse(OS_NAME,centos,`dnl
-define(`DLDT_BUILD_DEPS',ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz numactl-devel ocl-icd-devel opencl-headers)
-define(`DLDT_INSTALL_DEPS',gtk3 numactl ocl-icd)
+define(`DLDT_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz numactl-devel ocl-icd-devel opencl-headers')
+define(`DLDT_INSTALL_DEPS',`gtk3 numactl ocl-icd')
 ')
 
 define(`BUILD_DLDT',

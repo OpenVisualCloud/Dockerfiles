@@ -92,6 +92,7 @@ ARG OWT_LICODE_REPO=https://github.com/lynckia/licode.git
 RUN cd BUILD_HOME/owt-server/third_party && \
     git clone ${OWT_LICODE_REPO} && \
     cd licode && \
+    git config user.name x && git config user.email x@y && \
     git reset --hard OWT_LICODE_VER && \
     git am BUILD_HOME/owt-server/scripts/patches/licode/*.patch
 

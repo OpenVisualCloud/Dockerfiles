@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`LIBOPUS_VER',1.3.1)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBOPUS_BUILD_DEPS',ca-certificates wget autoconf libtool make)
+define(`LIBOPUS_BUILD_DEPS',`ca-certificates wget autoconf libtool make')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBOPUS_BUILD_DEPS',wget autoconf libtool make)
+define(`LIBOPUS_BUILD_DEPS',`wget autoconf libtool make')
 ')
 
 define(`BUILD_LIBOPUS',`

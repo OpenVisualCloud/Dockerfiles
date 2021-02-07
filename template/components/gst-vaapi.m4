@@ -30,28 +30,24 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-ifdef(`ENABLE_INTEL_GFX_REPO',`dnl
-pushdef(`LIBVA_DEV_BUILD_DEP',`ifelse(OS_NAME,ubuntu,libva-dev)')
-pushdef(`LIBVA_INSTALL_DEP',`ifelse(OS_NAME,ubuntu,libva2 libva-drm2 libva-x11-2 libva-wayland2)')
-',`dnl
-pushdef(`LIBVA_DEV_BUILD_DEP',)
-pushdef(`LIBVA_INSTALL_DEP',)
+ifdef(`ENABLE_INTEL_GFX_REPO',,`dnl
+include(libva2.m4)
+')
+ifelse(OS_NAME,centos,`dnl
 include(libva2.m4)
 ')
 
 include(gst-plugins-bad.m4)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTVAAPI_BUILD_DEPS',ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison LIBVA_DEV_BUILD_DEP)'
-`define(`GSTVAAPI_INSTALL_DEPS',libdrm2 libglib2.0-0 libpciaccess0 libgl1-mesa-glx LIBVA_INSTALL_DEP)'
+`define(`GSTVAAPI_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev)')'
+`define(`GSTVAAPI_INSTALL_DEPS',`libdrm2 libglib2.0-0 libpciaccess0 libgl1-mesa-glx ifdef(`ENABLE_INTEL_GFX_REPO',libva2 libva-drm2 libva-x11-2 libva-wayland2)')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GSTVAAPI_BUILD_DEPS',ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel libdrm-devel LIBVA_DEV_BUILD_DEP bison flex)'
-`define(`GSTVAAPI_INSTALL_DEPS',glib2 libdrm libpciaccess LIBVA_INSTALL_DEP)'
+`define(`GSTVAAPI_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel libdrm-devel bison flex')'
+`define(`GSTVAAPI_INSTALL_DEPS',`glib2 libdrm libpciaccess')'
 )
-
-popdef(`LIBVA_DEV_BUILD_DEP')
 
 define(`BUILD_GSTVAAPI',
 ARG GSTVAAPI_REPO=https://github.com/GStreamer/gstreamer-vaapi/archive/GSTCORE_VER.tar.gz
