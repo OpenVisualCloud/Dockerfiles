@@ -46,13 +46,13 @@ include(gst-plugins-base.m4)
 ifdef(`ENABLE_INTEL_GFX_REPO',,`include(libva2.m4)')
 
 ifelse(OS_NAME,ubuntu,`
-define(`GVA_BUILD_DEPS',ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev))
-define(`GVA_INSTALL_DEPS',ocl-icd-libopencl1 ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2)))
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev)')
+define(`GVA_INSTALL_DEPS',`ocl-icd-libopencl1 ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2))')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`GVA_BUILD_DEPS',ifdef(`BUILD_CMAKE',,cmake3) git ocl-icd-devel opencl-headers pkg-config ifdef(`ENABLE_INTEL_GFX_REPO',libva-devel))
-define(`GVA_INSTALL_DEPS',ocl-icd ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2)))
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) git ocl-icd-devel opencl-headers pkg-config ifdef(`ENABLE_INTEL_GFX_REPO',libva-devel)')
+define(`GVA_INSTALL_DEPS',`ocl-icd ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2))')
 ')
 
 define(`BUILD_GVA',

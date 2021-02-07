@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`LIBOGG_VER',1.3.4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBOGG_BUILD_DEPS',ca-certificates wget make autoconf automake g++)
+define(`LIBOGG_BUILD_DEPS',`ca-certificates wget make autoconf automake g++')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBOGG_BUILD_DEPS',wget make autoconf diffutils automake gcc-c++ epel-release)
+define(`LIBOGG_BUILD_DEPS',`wget make autoconf diffutils automake gcc-c++')
 ')
 
 define(`BUILD_LIBOGG',`

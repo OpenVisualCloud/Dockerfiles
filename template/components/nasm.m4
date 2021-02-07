@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`NASM_VER',2.15.05)
 
 ifelse(OS_NAME,ubuntu,`
-define(`NASM_BUILD_DEPS',ca-certificates wget tar g++ make bzip2)
+define(`NASM_BUILD_DEPS',`ca-certificates wget tar g++ make bzip2')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`NASM_BUILD_DEPS',wget tar gcc-c++ make bzip2)
+define(`NASM_BUILD_DEPS',`wget tar gcc-c++ make bzip2')
 ')
 
 define(`BUILD_NASM',`

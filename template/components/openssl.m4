@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`OPENSSL_VER',1_1_1h)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OPENSSL_BUILD_DEPS',ca-certificates wget tar g++ make libtool autoconf)
+define(`OPENSSL_BUILD_DEPS',`ca-certificates wget tar g++ make libtool autoconf')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OPENSSL_BUILD_DEPS',wget tar gcc-c++ make libtool autoconf)
+define(`OPENSSL_BUILD_DEPS',`wget tar gcc-c++ make libtool autoconf')
 ')
 
 define(`BUILD_OPENSSL',`

@@ -35,11 +35,11 @@ include(libogg.m4)
 DECLARE(`LIBVORBIS_VER',1.3.7)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBVORBIS_BUILD_DEPS',ca-certificates wget make autoconf automake)
+define(`LIBVORBIS_BUILD_DEPS',`ca-certificates wget make autoconf automake')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBVORBIS_BUILD_DEPS',wget make autoconf diffutils automake)
+define(`LIBVORBIS_BUILD_DEPS',`wget make autoconf diffutils automake')
 ')
 
 define(`BUILD_LIBVORBIS',`

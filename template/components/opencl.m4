@@ -32,7 +32,7 @@ include(begin.m4)
 
 ifelse(OS_NAME,ubuntu,`
 
-define(`OPENCL_BUILD_DEPS',ca-certificates wget)
+define(`OPENCL_BUILD_DEPS',`ca-certificates wget')
 define(`BUILD_OPENCL',`dnl
 ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/20.52.18783/intel-gmmlib_20.3.2_amd64.deb
 ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.5884/intel-igc-core_1.0.5884_amd64.deb
@@ -50,7 +50,7 @@ RUN mkdir -p BUILD_HOME/opencl && \
 
 ifelse(OS_NAME,centos,`
 
-define(`OPENCL_BUILD_DEPS',yum-plugin-copr)
+define(`OPENCL_BUILD_DEPS',`yum-plugin-copr')
 define(`BUILD_OPENCL',`dnl
 RUN yum copr enable -y jdanecki/intel-opencl
 RUN yum install -y intel-opencl ocl-icd libgomp

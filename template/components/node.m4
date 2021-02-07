@@ -34,11 +34,11 @@ DECLARE(`NODE_VER',v10.21.0)
 DECLARE(`NODE_INSTALL',`false')
 
 ifelse(OS_NAME,ubuntu,`
-define(`NODE_BUILD_DEPS',wget ca-certificates xz-utils)
+define(`NODE_BUILD_DEPS',`wget ca-certificates xz-utils')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`NODE_BUILD_DEPS',wget xz-utils)
+define(`NODE_BUILD_DEPS',`wget xz-utils')
 ')
 
 define(`BUILD_NODE',`
@@ -53,11 +53,11 @@ RUN cd BUILD_HOME && \
 ifelse(NODE_INSTALL,`true',`
 
 ifelse(OS_NAME,ubuntu,`
-define(`NODE_INSTALL_DEPS',ca-certificates wget xz-utils)
+define(`NODE_INSTALL_DEPS',`ca-certificates wget xz-utils')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`NODE_INSTALL_DEPS',wget xz-utils)
+define(`NODE_INSTALL_DEPS',`wget xz-utils')
 ')
 
 define(`INSTALL_NODE',`

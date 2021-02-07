@@ -34,34 +34,14 @@ DECLARE(`LIBVA2_VER',intel-media-sg1-pv1.1)
 DECLARE(`LIBVA2_X11',true)
 DECLARE(`LIBVA2_WAYLAND',true)
 
-define(`LIBVA2_X11_BUILD',dnl
-ifelse(LIBVA2_X11,true,`ifelse(
-OS_NAME,ubuntu,libx11-dev libxext-dev libxfixes-dev,
-OS_NAME,centos,libX11-devel libXfixes-devel libXext-devel)'))dnl
-
-define(`LIBVA2_X11_INSTALL',dnl
-ifelse(LIBVA2_X11,true,`ifelse(
-OS_NAME,ubuntu,libx11-6 libxext6 libxfixes3,
-OS_NAME,centos,libX11 libXfixes libXext)'))dnl
-
-define(`LIBVA2_WAYLAND_BUILD',dnl
-ifelse(LIBVA2_WAYLAND,true,`ifelse(
-OS_NAME,ubuntu,libwayland-dev,
-OS_NAME,centos,wayland-devel)'))dnl
-
-define(`LIBVA2_WAYLAND_INSTALL',dnl
-ifelse(LIBVA2_WAYLAND,true,`ifelse(
-OS_NAME,ubuntu,libwayland-client0,
-OS_NAME,centos,libwayland-client)'))dnl
-
 ifelse(OS_NAME,ubuntu,dnl
-`define(`LIBVA2_BUILD_DEPS',`automake ca-certificates gcc libdrm-dev libtool make pkg-config wget LIBVA2_X11_BUILD LIBVA2_WAYLAND_BUILD')'
-`define(`LIBVA2_INSTALL_DEPS',`libdrm2 LIBVA2_X11_INSTALL LIBVA2_WAYLAND_INSTALL')'
+`define(`LIBVA2_BUILD_DEPS',`automake ca-certificates gcc libdrm-dev libtool make pkg-config wget ifelse(LIBVA2_X11,true,libx11-dev libxext-dev libxfixes-dev) ifelse(LIBVA2_WAYLAND,true,libwayland-dev)')'
+`define(`LIBVA2_INSTALL_DEPS',`libdrm2 ifelse(LIBVA2_X11,true,libx11-6 libxext6 libxfixes3) ifelse(LIBVA2_WAYLAND,true,libwayland-client0)')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`LIBVA2_BUILD_DEPS',`automake gcc libdrm-devel libtool make pkg-config wget which LIBVA2_X11_BUILD LIBVA2_WAYLAND_BUILD')'
-`define(`LIBVA2_INSTALL_DEPS',`libdrm LIBVA2_X11_INSTALL LIBVA2_WAYLAND_INSTALL')'
+`define(`LIBVA2_BUILD_DEPS',`automake gcc libdrm-devel libtool make pkg-config wget which ifelse(LIBVA2_X11,true,libX11-devel libXfixes-devel libXext-devel) ifelse(LIBVA2_WAYLAND,true,wayland-devel)')'
+`define(`LIBVA2_INSTALL_DEPS',`libdrm ifelse(LIBVA2_X11,true,libX11 libXfixes libXext) ifelse(LIBVA2_WAYLAND,libwayland-client)')'
 )
 
 define(`BUILD_LIBVA2',
