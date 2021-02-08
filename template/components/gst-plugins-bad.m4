@@ -73,7 +73,7 @@ RUN cd BUILD_HOME && \
       -Dexamples=disabled \
       -Dgtk_doc=disabled \
       -Dtests=disabled \
-      -Dgst_player_tests=disabled && \
+      -Dgst_player_tests=false && \
     cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install ifelse(OS_NAME,centos,`)')

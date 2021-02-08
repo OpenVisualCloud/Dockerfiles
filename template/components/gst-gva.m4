@@ -64,7 +64,7 @@ ENV LIBRARY_PATH=BUILD_LIBDIR
 RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
     cd BUILD_HOME/gst-video-analytics && \
     git submodule update --init && \
-    sed -i ``"195s/) {/||g_strrstr(name, \"image\")) {/"'' gst/elements/gvapython/python_callback.cpp && \
+    sed -i `"195s/) {/||g_strrstr(name, \"image\")) {/"' gst/elements/gvapython/python_callback.cpp && \
     mkdir -p build && cd build && \
     ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \

@@ -52,7 +52,7 @@ RUN cd BUILD_HOME && \
     cd SVT-AV1/Build/linux && \
     ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
-    sed -i 's/SvtAv1dec/SvtAv1Dec/' SvtAv1Dec.pc && \
+    sed -i "s/SvtAv1dec/SvtAv1Dec/" SvtAv1Dec.pc && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

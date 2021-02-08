@@ -30,32 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBVA2_VER',intel-media-sg1-pv1.1)
-DECLARE(`LIBVA2_X11',true)
-DECLARE(`LIBVA2_WAYLAND',true)
-
-ifelse(OS_NAME,ubuntu,`
-define(`LIBVA2_BUILD_DEPS',`automake ca-certificates gcc libdrm-dev libtool make pkg-config wget ifelse(LIBVA2_X11,true,libx11-dev libxext-dev libxfixes-dev) ifelse(LIBVA2_WAYLAND,true,libwayland-dev)')
-define(`LIBVA2_INSTALL_DEPS',`libdrm2 ifelse(LIBVA2_X11,true,libx11-6 libxext6 libxfixes3) ifelse(LIBVA2_WAYLAND,true,libwayland-client0)')
-')
-
-ifelse(OS_NAME,centos,`
-define(`LIBVA2_BUILD_DEPS',`automake gcc libdrm-devel libtool make pkg-config wget which ifelse(LIBVA2_X11,true,libX11-devel libXfixes-devel libXext-devel) ifelse(LIBVA2_WAYLAND,true,wayland-devel)')
-define(`LIBVA2_INSTALL_DEPS',`libdrm ifelse(LIBVA2_X11,true,libX11 libXfixes libXext) ifelse(LIBVA2_WAYLAND,libwayland-client)')
-')
-
-define(`BUILD_LIBVA2',`
-# build libva2
-ARG LIBVA2_REPO=https://github.com/VCDP/libva/archive/LIBVA2_VER.tar.gz
-RUN cd BUILD_HOME && \
-  wget -O - ${LIBVA2_REPO} | tar xz
-RUN cd BUILD_HOME/libva-LIBVA2_VER && \
-  ./autogen.sh --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-  make -j$(nproc) && \
-  make install DESTDIR=BUILD_DESTDIR && \
-  make install
-')
-
-REG(LIBVA2)
+define(`LIBVA2_VER',intel-media-sg1-pv1.1)
+define(`LIBVA2_SRC_REPO',https://github.com/VCDP/libva/archive/LIBVA2_VER.tar.gz)
+include(libva2.m4)
 
 include(end.m4)dnl
