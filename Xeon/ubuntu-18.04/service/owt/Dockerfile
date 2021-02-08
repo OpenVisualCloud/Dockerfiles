@@ -11,6 +11,17 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    g++ ca-certificates wget make libcurl4-gnutls-dev zlib1g-dev && \
+  rm -rf /var/lib/apt/lists/*
+ARG CMAKE_REPO=https://cmake.org/files
+RUN wget -O - ${CMAKE_REPO}/v3.19/cmake-3.19.4.tar.gz | tar xz && \
+    cd cmake-3.19.4 && \
+    ./bootstrap --prefix=/usr/local --system-curl && \
+    make -j$(nproc) && \
+    make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget tar g++ make libtool autoconf && \
   rm -rf /var/lib/apt/lists/*
 
@@ -22,9 +33,9 @@ RUN cd /opt/build && \
     make depend && \
     make -s V=0 && \
     make install DESTDIR=/opt/dist && \
-    (cd /opt/dist/usr/local && mkdir -p lib/pkgconfig && mv ssl/lib/pkgconfig/*.pc lib/pkgconfig) && \
+    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
     make install && \
-    (cd /usr/local && mkdir -p lib/pkgconfig && mv ssl/lib/pkgconfig/*.pc lib/pkgconfig)
+    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -42,7 +53,7 @@ RUN cd /opt/build/yasm-1.3.0 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget tar g++ make cmake git && \
+    ca-certificates wget tar g++ make git && \
   rm -rf /var/lib/apt/lists/*
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd /opt/build && \
@@ -84,7 +95,21 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget patch libv4l-dev libass-dev  && \
+    git make autoconf && \
+  rm -rf /var/lib/apt/lists/*
+
+ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
+RUN cd /opt/build && \
+    git clone ${LIBVPX_REPO} -b v1.8.2 --depth 1 && \
+    cd libvpx && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
+    make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget patch libx264-dev libx265-dev libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.2.tar.gz
@@ -98,7 +123,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --disable-libvpx                     --enable-libsvthevc                 && make -j$(nproc) && \
+    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264     --enable-libx265         --enable-libsvthevc                 && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -132,7 +157,7 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev && \
+    ca-certificates tar g++ gobjc wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev && \
   rm -rf /var/lib/apt/lists/*
 ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
@@ -149,6 +174,188 @@ RUN cd /opt/build/gst-plugins-base-1.16.2 && \
   cd build && \
   ninja install && \
   DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev  && \
+  rm -rf /var/lib/apt/lists/*
+ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.16.2.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${GSTGOOD_REPO} | tar xz
+RUN cd /opt/build/gst-plugins-good-1.16.2 && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    --prefix=/usr/local --buildtype=plain \
+    -Dgtk_doc=disabled && \
+    cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates gcc g++ make wget python3-numpy ccache && \
+  rm -rf /var/lib/apt/lists/*
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.4.0.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${OPENCV_REPO} | tar xz
+# TODO: file a bug against opencv since they do not accept full libdir
+RUN cd /opt/build/opencv-4.4.0 && mkdir build && cd build && \
+  cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DOPENCV_GENERATE_PKGCONFIG=ON \
+    -DBUILD_DOCS=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_PERF_TESTS=OFF \
+    -DBUILD_TESTS=OFF \
+    .. && \
+  make -j "$(nproc)" && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils && \
+  rm -rf /var/lib/apt/lists/*
+ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
+
+RUN git clone -b 2021.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+  cd /opt/build/openvino && \
+  git submodule update --init --recursive
+
+# TODO:
+# Perform make install of openvino instead of manually copying build artifacts.
+#
+# For now, only ngraph target is installed using make install (it auto-generates .cmake
+# files during install stage, so they can be later used by other projects).
+
+RUN cd /opt/build/openvino && \
+  sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
+  mkdir build && cd build && \
+  cmake \
+    -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
+    -DENABLE_CPPLINT=OFF \
+    -DENABLE_GNA=OFF \
+    -DENABLE_VPU=OFF \
+    -DENABLE_OPENCV=OFF \
+    -DENABLE_MKL_DNN=ON \
+    -DENABLE_CLDNN=ON \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_TESTS=OFF \
+    -DBUILD_TESTS=OFF \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
+    -DNGRAPH_COMPONENT_PREFIX=inference-engine/ \
+    -DNGRAPH_UNIT_TEST_ENABLE=OFF \
+    -DNGRAPH_TEST_UTIL_ENABLE=OFF \
+    .. && \
+  make -j $(nproc) && \
+  make -C ngraph install && \
+  make -C ngraph install DESTDIR=/opt/dist && \
+  rm -rf ../bin/intel64/Release/lib/libgtest* && \
+  rm -rf ../bin/intel64/Release/lib/libgmock* && \
+  rm -rf ../bin/intel64/Release/lib/libmock* && \
+  rm -rf ../bin/intel64/Release/lib/libtest*
+
+ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
+ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
+ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
+
+ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
+ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
+ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
+
+RUN cd /opt/build && \
+  mkdir -p ${CUSTOM_IE_DIR}/include && \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/include/* ${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/include/* /opt/dist/${CUSTOM_IE_DIR}/include && \
+  \
+  mkdir -p ${CUSTOM_IE_LIBDIR} && \
+  mkdir -p /opt/dist/${CUSTOM_IE_LIBDIR} && \
+  cp -r openvino/bin/intel64/Release/lib/* ${CUSTOM_IE_LIBDIR} && \
+  cp -r openvino/bin/intel64/Release/lib/* /opt/dist/${CUSTOM_IE_LIBDIR} && \
+  \
+  mkdir -p ${CUSTOM_IE_DIR}/src && \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/src && \
+  cp -r openvino/inference-engine/src/* ${CUSTOM_IE_DIR}/src/ && \
+  cp -r openvino/inference-engine/src/* /opt/dist/${CUSTOM_IE_DIR}/src/ && \
+  \
+  mkdir -p ${CUSTOM_IE_DIR}/share && \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/share && \
+  mkdir -p ${CUSTOM_IE_DIR}/external/ \
+  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/external && \
+  cp -r openvino/build/share/* ${CUSTOM_IE_DIR}/share/ && \
+  cp -r openvino/build/share/* /opt/dist/${CUSTOM_IE_DIR}/share/ && \
+  cp -r openvino/inference-engine/temp/tbb ${CUSTOM_IE_DIR}/external/ && \
+  cp -r openvino/inference-engine/temp/tbb /opt/dist/${CUSTOM_IE_DIR}/external/ && \
+  \
+  mkdir -p "${CUSTOM_IE_LIBDIR}/pkgconfig"
+
+RUN { \
+  echo "prefix=${CUSTOM_IE_DIR}"; \
+  echo "libdir=${CUSTOM_IE_LIBDIR}"; \
+  echo "includedir=${CUSTOM_IE_DIR}/include"; \
+  echo ""; \
+  echo "Name: DLDT"; \
+  echo "Description: Intel Deep Learning Deployment Toolkit"; \
+  echo "Version: 5.0"; \
+  echo ""; \
+  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
+  echo "Cflags: -I\${includedir}"; \
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
+  mkdir -p /opt/dist/usr/local/lib/pkgconfig && \
+  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib/pkgconfig
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    automake ca-certificates gcc libdrm-dev libtool make pkg-config wget libx11-dev libxext-dev libxfixes-dev libwayland-dev && \
+  rm -rf /var/lib/apt/lists/*
+ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.8.0.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${LIBVA2_REPO} | tar xz
+RUN cd /opt/build/libva-2.8.0 && \
+  ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib && \
+  make -j$(nproc) && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git ocl-icd-opencl-dev opencl-headers pkg-config  && \
+  rm -rf /var/lib/apt/lists/*
+# formerly https://github.com/opencv/gst-video-analytics
+ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
+# TODO: This is a workaround for a bug in dlstreamer_gst
+ENV LIBRARY_PATH=/usr/local/lib
+RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+    cd /opt/build/gst-video-analytics && \
+    git submodule update --init && \
+    sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
+    mkdir -p build && cd build && \
+    CFLAGS="-std=gnu99 -Wno-missing-field-initializers" \
+    CXXFLAGS="-std=c++11 -Wno-missing-field-initializers" \
+    cmake \
+        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DDISABLE_SAMPLES=ON \
+        -DENABLE_PAHO_INSTALLATION=OFF \
+        -DENABLE_RDKAFKA_INSTALLATION=OFF \
+        -DENABLE_VAAPI=ON \
+        -DENABLE_VAS_TRACKER=OFF \
+        -Dwith_drm=yes \
+        -Dwith_x11=no \
+        -Dwith_glx=no \
+        -Dwith_wayland=no \
+        -Dwith_egl=no \
+        -DMQTT=0 \
+        -DKAFKA=0 \
+        .. \
+    && make -j $(nproc) \
+    && make install \
+    && make install DESTDIR=/opt/dist
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -173,7 +380,7 @@ RUN cd /usr/local/lib && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git cmake make autoconf gcc && \
+    git make autoconf gcc && \
   rm -rf /var/lib/apt/lists/*
 
 ARG LIBRE_REPO=https://github.com/creytiv/re.git
@@ -187,7 +394,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget cmake make gcc libglib2.0-dev patch && \
+    ca-certificates wget make gcc libglib2.0-dev patch && \
   rm -rf /var/lib/apt/lists/*
 
 ARG LIBNICE_REPO=http://nice.freedesktop.org/releases/libnice-0.1.4.tar.gz
@@ -214,7 +421,7 @@ RUN cd /opt/build/libnice-0.1.4 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget automake cmake make gcc && \
+    ca-certificates wget automake make gcc && \
   rm -rf /var/lib/apt/lists/*
 
 ARG USRSCTP_REPO=https://github.com/sctplab/usrsctp/archive/0.9.5.0.tar.gz
@@ -339,13 +546,19 @@ RUN cd /opt/dist/home && \
     echo "./bin/start-all.sh" >>launch.sh && \
     chmod +x launch.sh
 
-RUN echo "Start cleanup" && \
-    rm -rf /opt/dist//usr/local/include && \
-    rm -rf /opt/dist//usr/local/share/doc && \
-    rm -rf /opt/dist//usr/local/share/gtk-doc && \
-    rm -rf /opt/dist//usr/local/share/man && \
-    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
-    echo "Cleanup done"
+# cleanup
+RUN rm -rf /opt/dist/usr/local/include && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig && \
+    find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
+RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
+RUN rm -rf /opt/dist/usr/local/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/include
+RUN rm -rf /opt/dist/usr/local/ssl/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/share/doc
+RUN cd /opt/dist/usr/local/openvino/inference-engine && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig/openvino.pc \
+       include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
+RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
 
 FROM ubuntu:18.04
 LABEL Description="This is the base image for the OWT service ubuntu 18.04"
@@ -355,7 +568,7 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libass9 libv4l-0 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
+    libx264-155 libx265-179 libv4l-0 libass9 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libgtk-3-0 libdrm2 libxext6 libxfixes3 libwayland-client0 ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
@@ -363,6 +576,9 @@ RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
 ENV GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib/gstreamer-1.0/gst-plugin-scanner
+ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
+ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
+RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
 RUN cd /usr/local && \

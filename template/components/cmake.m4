@@ -30,10 +30,10 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`CMAKE_VER',3.13.1)
+DECLARE(`CMAKE_VER',3.19.4)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`CMAKE_BUILD_DEPS',`g++ wget make libcurl4-gnutls-dev zlib1g-dev')'
+`define(`CMAKE_BUILD_DEPS',`g++ ca-certificates wget make libcurl4-gnutls-dev zlib1g-dev')'
 )
 
 ifelse(OS_NAME,centos,dnl
@@ -41,10 +41,9 @@ ifelse(OS_NAME,centos,dnl
 )
 
 define(`BUILD_CMAKE',dnl
-ARG CMAKE_VER_1=CMAKE_VER
 ARG CMAKE_REPO=https://cmake.org/files
-RUN wget -O - ${CMAKE_REPO}/v${CMAKE_VER_1%.*}/cmake-${CMAKE_VER_1}.tar.gz | tar xz && \
-    cd cmake-${CMAKE_VER_1} && \
+RUN wget -O - ${CMAKE_REPO}/v`'patsubst(CMAKE_VER,`.[0-9]$')/cmake-CMAKE_VER.tar.gz | tar xz && \
+    cd cmake-CMAKE_VER && \
     ./bootstrap --prefix=BUILD_PREFIX --system-curl && \
     make -j$(nproc) && \
     make install

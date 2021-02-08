@@ -47,84 +47,16 @@ DECLARE(`GST_MP4',true)
 DECLARE(`GST_SOUP',true)
 DECLARE(`GST_VPX',true)
 
-define(`GST_XLIB_BUILD',dnl
-ifelse(GST_XLIB,true,`ifelse(
-OS_NAME,ubuntu,libx11-dev libxv-dev libxt-dev,
-OS_NAME,centos,libX11-devel libXv-devel libXt-devel)'))dnl
-
-define(`GST_XLIB_INSTALL',dnl
-ifelse(GST_XLIB,true,`ifelse(
-OS_NAME,ubuntu,libx11-6 libxv1 libxt6,
-OS_NAME,centos,libX11 libXv libXt)'))dnl
-
-define(`GST_GDKPIXBUF_BUILD',dnl
-ifelse(GST_GDKPIXBUF,true,`ifelse(
-OS_NAME,ubuntu,libgdk-pixbuf2.0-dev,
-OS_NAME,centos,gdk-pixbuf2-devel)'))dnl
-
-define(`GST_GDKPIXBUF_INSTALL',dnl
-ifelse(GST_GDKPIXBUF,true,`ifelse(
-OS_NAME,ubuntu,libgdk-pixbuf2.0-0,
-OS_NAME,centos,gdk-pixbuf2)'))dnl
-
-define(`GST_JPEG_BUILD',dnl
-ifelse(GST_JPEG,true,`ifelse(
-OS_NAME,ubuntu,libjpeg-turbo8-dev,
-OS_NAME,centos,libjpeg-turbo-devel)'))dnl
-
-define(`GST_JPEG_INSTALL',dnl
-ifelse(GST_JPEG,true,`ifelse(
-OS_NAME,ubuntu,libjpeg-turbo8,
-OS_NAME,centos,libjpeg-turbo)'))dnl
-
-define(`GST_PNG_BUILD',dnl
-ifelse(GST_PNG,true,`ifelse(
-OS_NAME,ubuntu,libpng-dev,
-OS_NAME,centos,libpng-devel)'))dnl
-
-define(`GST_PNG_INSTALL',dnl
-ifelse(GST_PNG,true,`ifelse(
-OS_NAME,ubuntu,libpng16-16,
-OS_NAME,centos,libpng)'))dnl
-
-define(`GST_MP4_BUILD',dnl
-ifelse(GST_MP4,true,`ifelse(
-OS_NAME,ubuntu,zlib1g-dev,
-OS_NAME,centos,zlib-devel)'))dnl
-
-define(`GST_MP4_INSTALL',dnl
-ifelse(GST_MP4,true,`ifelse(
-OS_NAME,ubuntu,zlib1g,
-OS_NAME,centos,zlib)'))dnl
-
-define(`GST_SOUP_BUILD',dnl
-ifelse(GST_SOUP,true,`ifelse(
-OS_NAME,ubuntu,libsoup2.4-dev,
-OS_NAME,centos,libsoup-devel)'))dnl
-
-define(`GST_SOUP_INSTALL',dnl
-ifelse(GST_SOUP,true,`ifelse(
-OS_NAME,ubuntu,libsoup2.4-1,
-OS_NAME,centos,libsoup)'))dnl
-
-define(`GST_VPX_BUILD',dnl
-ifelse(GST_VPX,true,`ifdef(`BUILD_LIBVPX',,ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBVPX',,libvpx-dev),
-OS_NAME,centos,ifdef(`BUILD_LIBVPX',,libvpx-devel)))'))dnl
-
-define(`GST_VPX_INSTALL',dnl
-ifelse(GST_VPX,true,`ifdef(`BUILD_LIBVPX',,ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBVPX',,libvpx6),
-OS_NAME,centos,ifdef(`BUILD_LIBVPX',,libvpx)))'))dnl
-
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTGOOD_BUILD_DEPS',`git ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison GST_XLIB_BUILD GST_GDKPIXBUF_BUILD GST_JPEG_BUILD GST_PNG_BUILD GST_MP4_BUILD GST_SOUP_BUILD GST_VPX_BUILD')'
-`define(`GSTGOOD_INSTALL_DEPS',`libglib2.0-0 GST_XLIB_INSTALL GST_GDKPIXBUF_INSTALL GST_JPEG_INSTALL GST_PNG_INSTALL GST_MP4_INSTALL GST_SOUP_INSTALL GST_VPX_INSTALL')'
+`define(`GSTGOOD_BUILD_DEPS',`git ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_XLIB,true,libx11-dev libxv-dev libxt-dev) ifelse(GST_GDKPIXBUF,true,libgdk-pixbuf2.0-dev) ifelse(GST_JPEG,true,libjpeg-turbo8-dev) ifelse(GST_PNG,true,libpng-dev) ifelse(GST_MP4,true,zlib1g-dev) ifelse(GST_SOUP,true,libsoup2.4-dev) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx-dev))')'
+
+`define(`GSTGOOD_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1 libxt6) ifelse(GST_GDKPIXBUF,true,libgdk-pixbuf2.0-0) ifelse(GST_JPEG,true,libjpeg-turbo8) ifelse(GST_PNG,true,libpng16-16) ifelse(GST_MP4,true,zlib1g) ifelse(GST_SOUP,true,libsoup2.4-1) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx6))')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GSTGOOD_BUILD_DEPS',`git meson wget tar gcc-c++ glib2-devel bison flex GST_XLIB_BUILD GST_GDKPIXBUF_BUILD GST_JPEG_BUILD GST_PNG_BUILD GST_MP4_BUILD GST_SOUP_BUILD GST_VPX_BUILD')'
-`define(`GSTGOOD_INSTALL_DEPS',`glib2 GST_XLIB_INSTALL GST_GDKPIXBUF_INSTALL GST_JPEG_INSTALL GST_PNG_INSTALL GST_MP4_INSTALL GST_SOUP_INSTALL GST_VPX_INSTALL')'
+`define(`GSTGOOD_BUILD_DEPS',`git ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex ifelse(GST_XLIB,true,libX11-devel libXv-devel libXt-devel) ifelse(GST_GDKPIXBUF,true,gdk-pixbuf2-devel) ifelse(GST_JPEG,true,libjpeg-turbo-devel) ifelse(GST_PNG,true,libpng-devel) ifelse(GST_MP4,true,zlib-devel) ifelse(GST_SOUP,true,libsoup-devel) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx-devel))')'
+
+`define(`GSTGOOD_INSTALL_DEPS',`glib2 ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_GDKPIXBUF,true,gdk-pixbuf2) ifelse(GST_JPEG,true,libjpeg-turbo) ifelse(GST_PNG,true,libpng) ifelse(GST_MP4,true,zlib) ifelse(GST_SOUP,true,libsoup) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx))')'
 )
 
 define(`BUILD_GSTGOOD',

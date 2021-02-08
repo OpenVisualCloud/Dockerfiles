@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`USRSCTP_VER',0.9.5.0)
 
 ifelse(OS_NAME,ubuntu,`
-define(`USRSCTP_BUILD_DEPS',ca-certificates wget automake cmake make gcc)
+define(`USRSCTP_BUILD_DEPS',`ca-certificates wget automake ifdef(`BUILD_CMAKE',,cmake) make gcc')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`USRSCTP_BUILD_DEPS',wget cmake automake make gcc which)
+define(`USRSCTP_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake) automake make gcc which')
 ')
 
 define(`BUILD_USRSCTP',`

@@ -46,83 +46,35 @@ DECLARE(`GST_MJPEG',true)
 DECLARE(`GST_X265ENC',true)
 DECLARE(`GST_LIBDE265DEC',true)
 
-define(`GST_CURLUSESSL_BUILD',dnl
-ifelse(GST_CURLUSESSL,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_OPENSSL',,openssl) libcurl4-gnutls-dev,
-OS_NAME,centos,ifdef(`BUILD_OPENSSL',,openssl) libcurl-devel)'))dnl
-
-define(`GST_CURLUSESSL_INSTALL',dnl
-ifelse(GST_CURLUSESSL,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_OPENSSL',,openssl) libcurl3-gnutls,
-OS_NAME,centos,ifdef(`BUILD_OPENSSL',,openssl))'))dnl
-
-define(`GST_RTMP_BUILD',dnl
-ifelse(GST_RTMP,true,`ifelse(
-OS_NAME,ubuntu,librtmp-dev,
-OS_NAME,centos,librtmp-devel)'))dnl
-
-define(`GST_RTMP_INSTALL',dnl
-ifelse(GST_RTMP,true,`ifelse(
-OS_NAME,ubuntu,librtmp1,
-OS_NAME,centos,librtmp)'))dnl
-
-define(`GST_MJPEG_BUILD',dnl
-ifelse(GST_MJPEG,true,`ifelse(
-OS_NAME,ubuntu,mjpegtools,
-OS_NAME,centos,mjpegtools)'))dnl
-
-define(`GST_MJPEG_INSTALL',dnl
-ifelse(GST_MJPEG,true,`ifelse(
-OS_NAME,ubuntu,mjpegtools,
-OS_NAME,centos,mjpegtools)'))dnl
-
-define(`GST_X265ENC_BUILD',dnl
-ifelse(GST_X265ENC,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBX265',,libx265-dev),
-OS_NAME,centos,ifdef(`BUILD_LIBX265',,x265-devel))'))dnl
-
-define(`GST_X265ENC_INSTALL',dnl
-ifelse(GST_X265ENC,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBX265',,libx265-179),
-OS_NAME,centos,ifdef(`BUILD_LIBX265',,x265))'))dnl
-
-define(`GST_LIBDE265DEC_BUILD',dnl
-ifelse(GST_LIBDE265DEC,true,`ifelse(
-OS_NAME,ubuntu,libde265-dev,
-OS_NAME,centos,libde265-devel)'))dnl
-
-define(`GST_LIBDE265DEC_INSTALL',dnl
-ifelse(GST_LIBDE265DEC,true,`ifelse(
-OS_NAME,ubuntu,libde265-0,
-OS_NAME,centos,libde265)'))dnl
-
 ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTBAD_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison GST_CURLUSESSL_BUILD GST_RTMP_BUILD GST_MJPEG_BUILD GST_X265ENC_BUILD GST_LIBDE265DEC_BUILD')'
-`define(`GSTBAD_INSTALL_DEPS',`libglib2.0-0 GST_CURLUSESSL_INSTALL GST_RTMP_INSTALL GST_MJPEG_INSTALL GST_X265ENC_INSTALL GST_LIBDE265DEC_INSTALL')'
+`define(`GSTBAD_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl4-gnutls-dev) ifelse(GST_RTMP,true,librtmp-dev) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-dev)) ifelse(GST_LIBDE265DEC,true,libde265-dev)')'
+
+`define(`GSTBAD_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl3-gnutls) ifelse(GST_RTMP,true,librtmp1) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-ifelse(OS_VERSION,18.04,142,179))) ifelse(GST_LIBDE265DEC,true,libde265-0)')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`GSTBAD_BUILD_DEPS',`meson wget tar gcc-c++ glib2-devel bison flex GST_CURLUSESSL_BUILD GST_RTMP_BUILD GST_MJPEG_BUILD GST_X265ENC_BUILD GST_LIBDE265DEC_BUILD')'
-`define(`GSTBAD_INSTALL_DEPS',`glib2 GST_CURLUSESSL_INSTALL GST_RTMP_INSTALL GST_MJPEG_INSTALL GST_X265ENC_INSTALL GST_LIBDE265DEC_INSTALL')'
+`define(`GSTBAD_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar glib2-devel bison flex ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl-devel) ifelse(GST_RTMP,true,librtmp-devel) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265-devel)) ifelse(GST_LIBDE265DEC,true,libde265-devel) devtoolset-9')'
+
+`define(`GSTBAD_INSTALL_DEPS',`glib2 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl)) ifelse(GST_RTMP,true,librtmp) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265)) ifelse(LIBDE265DEC,true,libde265)')'
 )
 
 define(`BUILD_GSTBAD',
 ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTBAD_REPO} | tar xz
-RUN cd BUILD_HOME/gst-plugins-bad-GSTCORE_VER && \
-  meson build \
-    --prefix=BUILD_PREFIX \
-    --libdir=BUILD_LIBDIR \
-    --libexecdir=BUILD_LIBDIR \
-    --buildtype=plain \
-    -Ddoc=disabled \
-    -Dexamples=disabled \
-    -Dgtk_doc=disabled \
-    -Dtests=disabled && \
-  cd build && \
-  ninja install && \
-  DESTDIR=BUILD_DESTDIR ninja install
+    wget -O - ${GSTBAD_REPO} | tar xz && \
+    cd gst-plugins-bad-GSTCORE_VER && \
+    ifelse(OS_NAME,centos,`(. /opt/rh/devtoolset-9/enable && ')meson build \
+      --prefix=BUILD_PREFIX \
+      --libdir=BUILD_LIBDIR \
+      --libexecdir=BUILD_LIBDIR \
+      --buildtype=plain \
+      -Ddoc=disabled \
+      -Dexamples=disabled \
+      -Dgtk_doc=disabled \
+      -Dtests=disabled && \
+    cd build && \
+    ninja install && \
+    DESTDIR=BUILD_DESTDIR ninja install ifelse(OS_NAME,centos,`)')
 )
 
 REG(GSTBAD)

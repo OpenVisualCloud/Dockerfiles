@@ -56,6 +56,12 @@ ifelse(OS_NAME,centos,`
 define(`LIBSRTP2_VER',v2.1.0)
 include(libsrtp2.m4)
 ')
+define(`FFMPEG_ENABLE_LIBASS',true)
+define(`FFMPEG_ENABLE_LIBFREETYPE',false)
+define(`FFMPEG_ENABLE_V4L2',false)
+define(`FFMPEG_ENABLE_X265',false)
+define(`FFMPEG_ENABLE_X264',true)
+include(ffmpeg.m4)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev )git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config')
@@ -87,6 +93,7 @@ ARG OWT_LICODE_REPO=https://github.com/lynckia/licode.git
 RUN cd BUILD_HOME/owt-server/third_party && \
     git clone ${OWT_LICODE_REPO} && \
     cd licode && \
+    git config user.name x && git config user.email x@y && \
     git reset --hard OWT_LICODE_VER && \
     git am BUILD_HOME/owt-server/scripts/patches/licode/*.patch
 
@@ -158,12 +165,11 @@ RUN cd BUILD_DESTDIR/home && \
 ')
 
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1 )rabbitmq-server mongodb ifelse(OS_VERSION,18.04,libboost-system1.65.1,libboost-system1.71.0) ifelse(OS_VERSION,18.04,libboost-thread1.65.1,libboost-thread1.71.0) liblog4cxx10v5 libglib2.0-0 libfreetype6 libsrtp2-1')
+define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1) rabbitmq-server mongodb ifelse(OS_VERSION,18.04,libboost-system1.65.1,libboost-system1.71.0) ifelse(OS_VERSION,18.04,libboost-thread1.65.1,libboost-thread1.71.0) liblog4cxx10v5 libglib2.0-ifelse($1,devel,dev,0) libfreetype6 libsrtp2-1')
 ')
 
 ifelse(OS_NAME,centos,`
-
-define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11 )rabbitmq-server boost-system boost-thread log4cxx glib2 freetype')
+define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11) rabbitmq-server boost-system boost-thread log4cxx ifelse($1,devel,glib2-devel,glib2) freetype')
 
 define(`INSTALL_OWT',`
 RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
@@ -176,6 +182,12 @@ RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
 ')
 
 ')
+
+define(`CLEANUP_OWT',`dnl
+ifelse(CLEANUP_CC,yes,`dnl
+ifelse($1,devel,,`dnl
+RUN rm -rf BUILD_DESTDIR/home/owt/analytics_agent/plugins
+')')')
 
 REG(OWT)
 

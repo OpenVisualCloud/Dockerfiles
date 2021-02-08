@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`LIBNICE_VER',0.1.4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBNICE_BUILD_DEPS',ca-certificates wget cmake make gcc libglib2.0-dev patch)
+define(`LIBNICE_BUILD_DEPS',`ca-certificates wget ifdef(`BUILD_CMAKE',,cmake) make gcc libglib2.0-dev patch')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBNICE_BUILD_DEPS',wget cmake make gcc libglib2.0-devel patch)
+define(`LIBNICE_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake) make gcc libglib2.0-devel patch')
 ')
 
 define(`BUILD_LIBNICE',`

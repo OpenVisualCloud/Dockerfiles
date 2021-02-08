@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`JSONHPP_VER',v3.6.1)
 
 ifelse(OS_NAME,ubuntu,`
-define(`JSONHPP_BUILD_DEPS',ca-certificates wget)
+define(`JSONHPP_BUILD_DEPS',`ca-certificates wget')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`JSONHPP_BUILD_DEPS',wget)
+define(`JSONHPP_BUILD_DEPS',`wget')
 ')
 
 define(`BUILD_JSONHPP',`

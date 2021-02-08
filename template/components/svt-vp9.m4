@@ -37,11 +37,11 @@ DECLARE(`SVT_VP9_VER',v0.2.1)
 include(yasm.m4)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`SVT_VP9_BUILD_DEPS',`ca-certificates wget tar g++ make cmake git')'
+`define(`SVT_VP9_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`SVT_VP9_BUILD_DEPS',`wget tar gcc-c++ make git cmake3 ifdef(OS_VERSION,7,centos-release-scl)')'
+`define(`SVT_VP9_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3) ifdef(OS_VERSION,7,centos-release-scl)')'
 )
 
 define(`BUILD_SVT_VP9',
@@ -53,7 +53,7 @@ ifelse(index(OS_VERSION,7),-1,,`dnl
   ( yum install -y devtoolset-9-gcc-c++ && \
     source /opt/rh/devtoolset-9/enable && \
 ')dnl
-    ifelse(OS_NAME,centos,cmake3,cmake) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install ifelse(index(OS_VERSION,7),-1,,`)')

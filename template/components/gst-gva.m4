@@ -40,50 +40,49 @@ DECLARE(`GVA_WITH_EGL',no)
 
 DECLARE(`GVA_ENABLE_PAHO_INST',OFF)
 DECLARE(`GVA_ENABLE_RDKAFKA_INST',OFF)
+DECLARE(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',OFF)
 
 include(dldt-ie.m4)
 include(gst-plugins-base.m4)
 
-ifdef(`ENABLE_INTEL_GFX_REPO',`dnl
-pushdef(`GVA_INTEL_GFX_BUILD_DEPS',libva-dev)
-pushdef(`GVA_INTEL_GFX_INSTALL_DEPS',`libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2)')
-',`dnl
-pushdef(`GVA_INTEL_GFX_BUILD_DEPS',)
-pushdef(`GVA_INTEL_GFX_INSTALL_DEPS',)
-include(libva2.m4)
+ifelse(OS_NAME,ubuntu,`
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config ifdef(`BUILD_LIBVA2',,libva-dev)')
+define(`GVA_INSTALL_DEPS',`ocl-icd-libopencl1 ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2))')
 ')
 
-define(`GVA_BUILD_DEPS',cmake git ocl-icd-opencl-dev opencl-headers pkg-config GVA_INTEL_GFX_BUILD_DEPS)
-define(`GVA_INSTALL_DEPS',GVA_INTEL_GFX_INSTALL_DEPS)
-
-popdef(`GVA_INTEL_GFX_BUILD_DEPS')
-popdef(`GVA_INTEL_GFX_INSTALL_DEPS')
+ifelse(OS_NAME,centos,`
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) git ocl-icd-devel opencl-headers pkg-config')
+define(`GVA_INSTALL_DEPS',`ocl-icd')
+')
 
 define(`BUILD_GVA',
 # formerly https://github.com/opencv/gst-video-analytics
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
-RUN git clone $GVA_REPO BUILD_HOME/gst-video-analytics && \
-    cd BUILD_HOME/gst-video-analytics && \
-    git checkout GVA_VER && \
-    git submodule update --init
-
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=BUILD_LIBDIR
-
-RUN mkdir -p BUILD_HOME/gst-video-analytics/build \
-    && cd BUILD_HOME/gst-video-analytics/build \
-    && cmake \
+RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
+    cd BUILD_HOME/gst-video-analytics && \
+    git submodule update --init && \
+    sed -i ``"195s/) {/||g_strrstr(name, \"image\")) {/"'' gst/elements/gvapython/python_callback.cpp && \
+    mkdir -p build && cd build && \
+    ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
+        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
         -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
+        -DCMAKE_BUILD_TYPE=Release \
         -DDISABLE_SAMPLES=ON \
         -DENABLE_PAHO_INSTALLATION=GVA_ENABLE_PAHO_INST \
         -DENABLE_RDKAFKA_INSTALLATION=GVA_ENABLE_RDKAFKA_INST \
         -DENABLE_VAAPI=ON \
         -DENABLE_VAS_TRACKER=OFF \
+        -DENABLE_AUDIO_INFERENCE_ELEMENTS=GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS \
         -Dwith_drm=GVA_WITH_DRM \
         -Dwith_x11=GVA_WITH_X11 \
         -Dwith_glx=GVA_WITH_GLX \
         -Dwith_wayland=GVA_WITH_WAYLAND \
         -Dwith_egl=GVA_WITH_EGL \
+        -DMQTT=ifelse(GVA_ENABLE_PAHO_INST,ON,1,0) \
+        -DKAFKA=ifelse(GVA_ENABLE_RDKAFKA_INST,ON,1,0) \
         .. \
     && make -j $(nproc) \
     && make install \

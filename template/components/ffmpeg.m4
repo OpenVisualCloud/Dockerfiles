@@ -37,7 +37,7 @@ DECLARE(`FFMPEG_ENABLE_LIBFREETYPE',true)
 DECLARE(`FFMPEG_ENABLE_X11',false)
 DECLARE(`FFMPEG_ENABLE_NONFREE',true)
 DECLARE(`FFMPEG_ENABLE_V4L2',true)
-DECLARE(`FFMPEG_ENABLE_HWACCELS',true)
+DECLARE(`FFMPEG_ENABLE_HWACCELS',ifdef(`ENABLE_INTEL_GFX_REPO',true,ifelse(`BUILD_LIBVA2',true,false)))
 DECLARE(`FFMPEG_ENABLE_LIBMFX',ifdef(`BUILD_MSDK',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_VAAPI',ifdef(`BUILD_LIBVA2',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_X265',true)
@@ -49,44 +49,16 @@ dnl Optional flags can set ON or OFF different plugins inside this ffmpeg compon
 dnl Default option is ON (true value), to disable it use the m4 feature "define" by setting `-D FFMPEG_*=false` value.
 dnl For more information about optional configurations for this ffmpeg component go to:
 dnl https://github.com/FFmpeg/FFmpeg/blob/master/configure
-define(`FFMPEG_V4L2_BUILD',dnl
-ifelse(FFMPEG_ENABLE_V4L2,true,`ifelse(
-OS_NAME,ubuntu,libv4l-dev,
-OS_NAME,centos,libv4l-devel)'))dnl
-
-define(`FFMPEG_V4L2_INSTALL',dnl
-ifelse(FFMPEG_ENABLE_V4L2,true,`ifelse(
-OS_NAME,ubuntu,libv4l-0,
-OS_NAME,centos,libv4l)'))dnl
-
-define(`FFMPEG_ENABLE_X265_BUILD',dnl
-ifelse(FFMPEG_ENABLE_X265,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBX265',,libx265-dev),
-OS_NAME,centos,ifdef(`BUILD_LIBX265',,x265-devel))'))dnl
-
-define(`FFMPEG_ENABLE_X265_INSTALL',dnl
-ifelse(FFMPEG_ENABLE_X265,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBX265',,libx265-179),
-OS_NAME,centos,ifdef(`BUILD_LIBX265',,x265))'))dnl
-
-define(`FFMPEG_ENABLE_X264_BUILD',dnl
-ifelse(FFMPEG_ENABLE_X264,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBX264',,libx264-dev),
-OS_NAME,centos,ifdef(`BUILD_LIBX264',,libx264-devel))'))dnl
-
-define(`FFMPEG_ENABLE_X264_INSTALL',dnl
-ifelse(FFMPEG_ENABLE_X264,true,`ifelse(
-OS_NAME,ubuntu,ifdef(`BUILD_LIBX264',,libx264-155),
-OS_NAME,centos,ifdef(`BUILD_LIBX264',,libx264-static))'))dnl
 
 ifelse(OS_NAME,ubuntu,`
-define(`FFMPEG_BUILD_DEPS',ca-certificates wget patch FFMPEG_ENABLE_X264_BUILD FFMPEG_ENABLE_X265_BUILD FFMPEG_V4L2_BUILD ifelse(FFMPEG_ENABLE_LIBASS,true,libass-dev )ifelse(FFMPEG_LIBFREETYPE,true,libfreetype6-dev ))
-define(`FFMPEG_INSTALL_DEPS',FFMPEG_ENABLE_X264_INSTALL FFMPEG_ENABLE_X265_INSTALL FFMPEG_V4L2_INSTALL)
+define(`FFMPEG_BUILD_DEPS',`ca-certificates wget patch ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,true,libx264-dev)) ifdef(`BUILD_LIBX265',,ifelse(FFMPEG_ENABLE_X265,true,libx265-dev)) ifelse(FFMPEG_ENABLE_V4L2,true,libv4l-dev) ifelse(FFMPEG_ENABLE_LIBASS,true,libass-dev) ifelse(FFMPEG_LIBFREETYPE,true,libfreetype6-dev) ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev)')
+
+define(`FFMPEG_INSTALL_DEPS',`ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,true,lib264-ifelse(OS_VERSION,18.04,152,155))) ifdef(`BUILD_LIBX265',,ifelse(FFMPEG_ENABLE_X265,true,libx265-ifelse(OS_VERSION,146,179))) ifelse(FFMPEG_ENABLE_V4L2,true,libv4l-0) ifelse(FFMPEG_ENABLE_LIBASS,true,libass9) ifdef(`ENABLE_INTEL_GFX_REPO',libva2)')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`FFMPEG_BUILD_DEPS',wget patch FFMPEG_ENABLE_X264_BUILD FFMPEG_ENABLE_X265_BUILD FFMPEG_V4L2_BUILD ifelse(FFMPEG_ENABLE_LIBASS,true,libass-devel )ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,freetype-devel ))
-define(`FFMPEG_INSTALL_DEPS',FFMPEG_ENABLE_X264_INSTALL FFMPEG_ENABLE_X265_INSTALL FFMPEG_V4L2_INSTALL)
+define(`FFMPEG_BUILD_DEPS',`wget patch ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,true,libx264-devel)) ifdef(`BUILD_LIBX265',,ifelse(FFMPEG_ENABLE_X265,true,x265-devel)) ifelse(FFMPEG_ENABLE_V4L2,true,libv4l-devel) ifelse(FFMPEG_ENABLE_LIBASS,true,libass-devel) ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,freetype-devel)')
+define(`FFMPEG_INSTALL_DEPS',`ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,true,libx264-static)) ifdef(`BUILD_LIBX265',,ifelse(FFMPEG_ENABLE_X265,true,x265)) ifelse(FFMPEG_ENABLE_V4L2,true,libv4l) ifelse(FFMPEG_ENABLE_LIBASS,true,libass)')
 ')
 
 define(`BUILD_FFMPEG',`
@@ -125,14 +97,6 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     && make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
-')
-
-ifelse(OS_NAME,ubuntu,`
-define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass9 )ifelse(FFMPEG_LIBFREETYPE,true,libfreetype6 )ifelse(FFMPEG_ENABLE_V4L2,true,FFMPEG_V4L2_INSTALL ))
-')
-
-ifelse(OS_NAME,centos,`
-define(`FFMPEG_INSTALL_DEPS',ifelse(FFMPEG_ENABLE_LIBASS,true,libass )ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,freetype )ifelse(OS_VERSION,7,glibc )ifelse(FFMPEG_ENABLE_V4L2,true,FFMPEG_V4L2_INSTALL ))
 ')
 
 REG(FFMPEG)
