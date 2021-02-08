@@ -59,7 +59,7 @@ define(`GSTGOOD_BUILD_DEPS',`git ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ gl
 define(`GSTGOOD_INSTALL_DEPS',`glib2 ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_GDKPIXBUF,true,gdk-pixbuf2) ifelse(GST_JPEG,true,libjpeg-turbo) ifelse(GST_PNG,true,libpng) ifelse(GST_MP4,true,zlib) ifelse(GST_SOUP,true,libsoup) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx))')
 ')
 
-define(`BUILD_GSTGOOD',`dnl
+define(`BUILD_GSTGOOD',`
 # build gst-plugin-good
 ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \

@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBFDKAAC_BUILD_DEPS',`wget gcc-c++ autoconf libtool make automake')
 ')
 
-define(`BUILD_LIBFDKAAC',`dnl
+define(`BUILD_LIBFDKAAC',`
 # build libfdkaac
 ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v`'LIBFDKAAC_VER.tar.gz
 RUN cd BUILD_HOME && \

@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBRE_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf gcc')
 ')
 
-define(`BUILD_LIBRE',`dnl
+define(`BUILD_LIBRE',`
 # build libre
 ARG LIBRE_REPO=https://github.com/creytiv/re.git
 RUN cd BUILD_HOME && \

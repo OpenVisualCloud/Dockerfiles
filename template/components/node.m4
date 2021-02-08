@@ -41,7 +41,7 @@ ifelse(OS_NAME,centos,`
 define(`NODE_BUILD_DEPS',`wget xz-utils')
 ')
 
-define(`BUILD_NODE',`dnl
+define(`BUILD_NODE',`
 # build node
 ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
 RUN cd BUILD_HOME && \
@@ -60,7 +60,7 @@ ifelse(OS_NAME,centos,`
 define(`NODE_INSTALL_DEPS',`wget xz-utils')
 ')
 
-define(`INSTALL_NODE',`dnl
+define(`INSTALL_NODE',`
 # install node
 ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
 RUN cd BUILD_PREFIX && \

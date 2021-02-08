@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`OPENSSL_BUILD_DEPS',`wget tar gcc-c++ make libtool autoconf')
 ')
 
-define(`BUILD_OPENSSL',`dnl
+define(`BUILD_OPENSSL',`
 # build openssl
 ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_`'OPENSSL_VER.tar.gz
 RUN cd BUILD_HOME && \

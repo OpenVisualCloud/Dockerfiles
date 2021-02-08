@@ -42,7 +42,7 @@ define(`NGINX_BUILD_DEPS',`gcc libxslt-devel make pcre-devel wget zlib-devel ifd
 define(`NGINX_INSTALL_DEPS',`libxml2 libxslt pcre zlib ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
-define(`BUILD_NGINX',`dnl
+define(`BUILD_NGINX',`
 # build nginx
 ARG NGINX_REPO=https://nginx.org/download/nginx-NGINX_VER.tar.gz
 RUN cd BUILD_HOME && \

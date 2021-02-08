@@ -42,7 +42,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBAOM_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake3) make')
 ')
 
-define(`BUILD_LIBAOM',`dnl
+define(`BUILD_LIBAOM',`
 # build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd BUILD_HOME && \

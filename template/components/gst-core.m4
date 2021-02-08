@@ -42,7 +42,7 @@ define(`GSTCORE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-
 define(`GSTCORE_INSTALL_DEPS',`glib2')
 ')
 
-define(`BUILD_GSTCORE',`dnl
+define(`BUILD_GSTCORE',`
 # build gst-core
 ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \

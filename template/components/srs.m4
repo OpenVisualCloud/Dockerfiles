@@ -43,7 +43,7 @@ define(`SRS_BUILD_DEPS',`git gcc-c++ make unzip patch pkg-config ifdef(BUILD_OPE
 define(`SRS_INSTALL_DEPS',`bash ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
-define(`BUILD_SRS',`dnl
+define(`BUILD_SRS',`
 # build srs
 ARG SRS_REPO=https://github.com/ossrs/srs.git
 RUN cd BUILD_HOME && \

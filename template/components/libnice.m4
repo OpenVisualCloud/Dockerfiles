@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBNICE_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake) make gcc libglib2.0-devel patch')
 ')
 
-define(`BUILD_LIBNICE',`dnl
+define(`BUILD_LIBNICE',`
 # build libnice
 ARG LIBNICE_REPO=http://nice.freedesktop.org/releases/libnice-LIBNICE_VER.tar.gz
 RUN cd BUILD_HOME && \

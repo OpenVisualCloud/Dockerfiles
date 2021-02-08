@@ -42,7 +42,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBVORBIS_BUILD_DEPS',`wget make autoconf diffutils automake')
 ')
 
-define(`BUILD_LIBVORBIS',`dnl
+define(`BUILD_LIBVORBIS',`
 # build libvorbis
 ARG LIBVORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-LIBVORBIS_VER.tar.gz
 RUN cd BUILD_HOME && \

@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget python36-numpy ccache eigen3-devel')
 ')
 
-define(`BUILD_OPENCV',`dnl
+define(`BUILD_OPENCV',`
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/OPENCV_VER.tar.gz
 RUN cd BUILD_HOME && \

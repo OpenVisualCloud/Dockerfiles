@@ -44,7 +44,7 @@ define(`LIBX265_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) make numactl-devel libp
 define(`LIBX265_INSTALL_DEPS',`numactl-libs libpciaccess')
 ')
 
-define(`BUILD_LIBX265',`dnl
+define(`BUILD_LIBX265',`
 # build libx265
 ARG LIBX265_REPO=https://github.com/videolan/x265/archive/LIBX265_VER.tar.gz
 RUN cd BUILD_HOME && \

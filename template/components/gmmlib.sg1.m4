@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`GMMLIB_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ make wget')
 ')
 
-define(`BUILD_GMMLIB',`dnl
+define(`BUILD_GMMLIB',`
 # build gmmlib
 ARG GMMLIB_REPO=https://github.com/VCDP/gmmlib/archive/GMMLIB_VER.tar.gz
 RUN cd BUILD_HOME && \

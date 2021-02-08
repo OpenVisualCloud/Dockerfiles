@@ -44,7 +44,7 @@ define(`SVT_HEVC_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cma
 
 include(yasm.m4)
 
-define(`BUILD_SVT_HEVC',`dnl
+define(`BUILD_SVT_HEVC',`
 # build svt-hevc
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd BUILD_HOME && \

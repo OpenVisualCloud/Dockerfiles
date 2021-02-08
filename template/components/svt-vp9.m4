@@ -44,7 +44,7 @@ ifelse(OS_NAME,centos,`
 define(`SVT_VP9_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3) ifdef(OS_VERSION,7,centos-release-scl)')
 ')
 
-define(`BUILD_SVT_VP9',`dnl
+define(`BUILD_SVT_VP9',`
 # build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd BUILD_HOME && \

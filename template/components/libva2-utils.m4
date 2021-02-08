@@ -42,7 +42,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBVA2_UTILS_BUILD_DEPS',`automake gcc gcc-c++ libdrm-devel libtool make pkg-config wget which')
 ')
 
-define(`BUILD_LIBVA2_UTILS',`dnl
+define(`BUILD_LIBVA2_UTILS',`
 # build libva2-utils
 ARG LIBVA2_UTILS_REPO=https://github.com/intel/libva-utils/archive/LIBVA2_UTILS_VER.tar.gz
 RUN cd BUILD_HOME && wget -O - ${LIBVA2_UTILS_REPO} | tar xz

@@ -41,7 +41,7 @@ ifelse(OS_NAME,centos,`
 define(`GSTLIBAV_BUILD_DEPS',`wget tar gcc-c++ ifdef(`BUILD_MESON',,meson)')
 ')
 
-define(`BUILD_GSTLIBAV',`dnl
+define(`BUILD_GSTLIBAV',`
 # build gst-plugin-libav
 ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \

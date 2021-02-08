@@ -43,7 +43,7 @@ ifelse(OS_NAME,centos,`
 define(`MSDK_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc gcc-c++ make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')
 ')
 
-define(`BUILD_MSDK',`dnl
+define(`BUILD_MSDK',`
 # build media sdk
 ARG MSDK_REPO=https://github.com/VCDP/MediaSDK/archive/MSDK_VER.tar.gz
 RUN cd BUILD_HOME && \

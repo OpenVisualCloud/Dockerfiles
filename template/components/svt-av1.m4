@@ -44,7 +44,7 @@ ifelse(OS_NAME,centos,`
 define(`SVT_AV1_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3)')
 ')
 
-define(`BUILD_SVT_AV1',`dnl
+define(`BUILD_SVT_AV1',`
 # build svt av1
 ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
 RUN cd BUILD_HOME && \

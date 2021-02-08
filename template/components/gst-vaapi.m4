@@ -43,7 +43,7 @@ define(`GSTVAAPI_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2
 define(`GSTVAAPI_INSTALL_DEPS',`glib2 libdrm libpciaccess')
 ')
 
-define(`BUILD_GSTVAAPI',`dnl
+define(`BUILD_GSTVAAPI',`
 # build gst-plugin-vaapi
 ARG GSTVAAPI_REPO=https://github.com/GStreamer/gstreamer-vaapi/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \

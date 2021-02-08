@@ -55,7 +55,7 @@ define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) git ocl-icd-devel opencl-h
 define(`GVA_INSTALL_DEPS',`ocl-icd')
 ')
 
-define(`BUILD_GVA',`dnl
+define(`BUILD_GVA',`
 # build gst-plugin-gva
 # formerly https://github.com/opencv/gst-video-analytics
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git

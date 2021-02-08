@@ -54,7 +54,7 @@ define(`GSTUGLY_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-
 define(`GSTUGLY_INSTALL_DEPS',`glib2 ifelse(GST_X264ENC,true,ifdef(`BUILD_LIBX264',,libx264-static))')
 ')
 
-define(`BUILD_GSTUGLY',`dnl
+define(`BUILD_GSTUGLY',`
 # build gst-plugin-ugly
 ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \

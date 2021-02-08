@@ -44,7 +44,7 @@ define(`DLDT_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-g++ git boost-dev
 define(`DLDT_INSTALL_DEPS',`gtk3 numactl ocl-icd')
 ')
 
-define(`BUILD_DLDT',`dnl
+define(`BUILD_DLDT',`
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 RUN git clone -b DLDT_VER --depth 1 ${DLDT_REPO} BUILD_HOME/openvino && \
@@ -138,14 +138,14 @@ RUN { \
   cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig
 ')
 
-define(`INSTALL_DLDT',`dnl
+define(`INSTALL_DLDT',`
 # install DLDT
 ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 ')
 
-define(`ENV_VARS_DLDT',`dnl
+define(`ENV_VARS_DLDT',`
 ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
 ENV TBB_DIR=BUILD_PREFIX/openvino/inference-engine/external/tbb/cmake
 ENV ngraph_DIR=BUILD_PREFIX/openvino/inference-engine/cmake

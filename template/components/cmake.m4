@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`CMAKE_BUILD_DEPS',`wget gcc-c++ make libcurl-devel zlib-devel')
 ')
 
-define(`BUILD_CMAKE',`dnl
+define(`BUILD_CMAKE',`
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
 RUN cd BUILD_HOME && \

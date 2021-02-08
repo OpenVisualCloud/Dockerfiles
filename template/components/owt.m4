@@ -71,7 +71,7 @@ ifelse(OS_NAME,centos,`
 define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel )git gcc npm python glib2-devel boost-devel log4cxx-devel pkg-config devtoolset-9')
 ')
 
-define(`BUILD_OWT',`dnl
+define(`BUILD_OWT',`
 # Install npm modules
 RUN npm install -g --loglevel error node-gyp@6.1.0 grunt-cli underscore jsdoc
 
@@ -171,7 +171,7 @@ define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1) rabbitmq-server mon
 ifelse(OS_NAME,centos,`
 define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11) rabbitmq-server boost-system boost-thread log4cxx ifelse($1,devel,glib2-devel,glib2) freetype')
 
-define(`INSTALL_OWT',`dnl
+define(`INSTALL_OWT',`
 # install OWT
 RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
     echo "name=MongoDB Repository" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \

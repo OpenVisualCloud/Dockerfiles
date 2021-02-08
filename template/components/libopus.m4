@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBOPUS_BUILD_DEPS',`wget autoconf libtool make')
 ')
 
-define(`BUILD_LIBOPUS',`dnl
+define(`BUILD_LIBOPUS',`
 # build libopus
 ARG LIBOPUS_REPO=https://archive.mozilla.org/pub/opus/opus-LIBOPUS_VER.tar.gz
 RUN cd BUILD_HOME && \

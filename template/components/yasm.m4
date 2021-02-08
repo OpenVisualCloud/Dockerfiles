@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`YASM_BUILD_DEPS',`wget tar gcc-c++ make')
 ')
 
-define(`BUILD_YASM',`dnl
+define(`BUILD_YASM',`
 # build yasm
 dnl ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
 dnl temparorily use ovc resource repo as offiical yasm repo cannot be connected 

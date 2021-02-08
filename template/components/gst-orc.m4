@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`GSTORC_BUILD_DEPS',`wget tar gcc-c++ ifdef(`BUILD_MESON',,meson)')
 ')
 
-define(`BUILD_GSTORC',`dnl
+define(`BUILD_GSTORC',`
 # build gst-plugin-orc
 ARG GSTORC_REPO=https://github.com/GStreamer/orc/archive/GST_ORC_VER.tar.gz
 RUN cd BUILD_HOME && \

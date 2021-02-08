@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`NGINX_UPLOAD_DEPS',`wget')
 ')
 
-define(`BUILD_NGINX_UPLOAD',`dnl
+define(`BUILD_NGINX_UPLOAD',`
 # build nginx upload
 ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/NGINX_UPLOAD_VER.tar.gz
 RUN cd BUILD_HOME && \

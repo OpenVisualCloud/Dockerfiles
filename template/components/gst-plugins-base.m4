@@ -55,7 +55,7 @@ define(`GSTBASE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc gcc-objc g
 define(`GSTBASE_INSTALL_DEPS',`glib2 mesa-libEGL ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_ALSA,true,alsa-lib) ifelse(GST_PANGO,true,pango) ifelse(GST_THEORA,true,libtheora) ifelse(GST_LIBVISUAL,true,libvisual) ifelse(GST_OPENGL,true,mesa-libGL)')
 ')
 
-define(`BUILD_GSTBASE',`dnl
+define(`BUILD_GSTBASE',`
 # build gst-plugin-base
 ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \

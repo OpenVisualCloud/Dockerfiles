@@ -46,7 +46,7 @@ define(`LIBVA2_BUILD_DEPS',`automake gcc libdrm-devel libtool make pkg-config wg
 define(`LIBVA2_INSTALL_DEPS',`libdrm ifelse(LIBVA2_X11,true,libX11 libXfixes libXext) ifelse(LIBVA2_WAYLAND,true,libwayland-client)')
 ')
 
-define(`BUILD_LIBVA2',`dnl
+define(`BUILD_LIBVA2',`
 # build libva2
 ARG LIBVA2_REPO=https://github.com/intel/libva/archive/LIBVA2_VER.tar.gz
 RUN cd BUILD_HOME && \

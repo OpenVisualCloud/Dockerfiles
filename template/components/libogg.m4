@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBOGG_BUILD_DEPS',`wget make autoconf diffutils automake gcc-c++')
 ')
 
-define(`BUILD_LIBOGG',`dnl
+define(`BUILD_LIBOGG',`
 # build libogg
 ARG LIBOGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-LIBOGG_VER.tar.gz
 

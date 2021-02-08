@@ -43,7 +43,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBX264_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf diffutils')
 ')
 
-define(`BUILD_LIBX264',`dnl
+define(`BUILD_LIBX264',`
 # build libx264
 ARG LIBX264_REPO=https://github.com/mirror/x264
 RUN cd BUILD_HOME && \

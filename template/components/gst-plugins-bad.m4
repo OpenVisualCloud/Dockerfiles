@@ -58,7 +58,7 @@ define(`GSTBAD_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar glib2-devel bis
 define(`GSTBAD_INSTALL_DEPS',`glib2 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl)) ifelse(GST_RTMP,true,librtmp) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265)) ifelse(LIBDE265DEC,true,libde265)')
 ')
 
-define(`BUILD_GSTBAD',`dnl
+define(`BUILD_GSTBAD',`
 # build gst-plugin-bad
 ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \

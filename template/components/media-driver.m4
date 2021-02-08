@@ -44,7 +44,7 @@ ifelse(OS_NAME,centos,`
 define(`MEDIA_DRIVER_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ libpciaccess-devel make pkg-config wget')
 ')
 
-define(`BUILD_MEDIA_DRIVER',`dnl
+define(`BUILD_MEDIA_DRIVER',`
 # build media driver
 ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/MEDIA_DRIVER_VER.tar.gz
 RUN cd BUILD_HOME && \

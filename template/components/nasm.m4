@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`NASM_BUILD_DEPS',`wget tar gcc-c++ make bzip2')
 ')
 
-define(`BUILD_NASM',`dnl
+define(`BUILD_NASM',`
 # build nasm
 ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
 RUN cd BUILD_HOME && \

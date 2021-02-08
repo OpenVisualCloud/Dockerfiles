@@ -42,7 +42,7 @@ ifelse(OS_NAME,centos,`
 define(`DAV1D_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++')
 ')
 
-define(`BUILD_DAV1D',`dnl
+define(`BUILD_DAV1D',`
 # build dav1d
 ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/DAV1D_VER/dav1d-DAV1D_VER.tar.gz
 RUN cd BUILD_HOME && \

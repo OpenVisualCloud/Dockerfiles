@@ -40,7 +40,7 @@ ifelse(OS_NAME,centos,`
 define(`LIBSRTP2_BUILD_DEPS',`wget gcc make pkg-config ifdef(`BUILD_OPENSSL',,openssl-dev)')
 ')
 
-define(`BUILD_LIBSRTP2',`dnl
+define(`BUILD_LIBSRTP2',`
 # build libsrtp2
 ARG LIBSRTP2_REPO=https://github.com/cisco/libsrtp/archive/LIBSRTP2_VER.tar.gz
 RUN cd BUILD_HOME && \
@@ -52,11 +52,11 @@ RUN cd BUILD_HOME && \
     make install
 ')
 
-ifelse(OS_NAME,ubuntu,`dnl
+ifelse(OS_NAME,ubuntu,`
 define(`LIBSRTP2_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1)')
 ')
 
-ifelse(OS_NAME,centos,`dnl
+ifelse(OS_NAME,centos,`
 define(`LIBSRTP2_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,openssl11)')
 ')
 
