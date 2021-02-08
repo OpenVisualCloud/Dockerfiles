@@ -68,7 +68,7 @@ define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev )git gcc npm python l
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel )git gcc npm python glib2-devel boost-devel log4cxx-devel pkg-config devtoolset-9')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel )git gcc npm python glib2-devel boost-devel log4cxx-devel pkg-config ifelse(OS_VERSION,7,devtoolset-9)')
 ')
 
 define(`BUILD_OWT',`
@@ -109,7 +109,7 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc && \
 RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc-m79 && \
     cd BUILD_HOME/owt-server/third_party/webrtc-m79 && \
     sed -i "s/git clone/git clone --depth 1/" ../../scripts/installWebrtc.sh && \
-    ifelse(OS_NAME,centos,`(. /opt/rh/devtoolset-9/enable && ')bash ../../scripts/installWebrtc.sh`'ifelse(OS_NAME,centos,`)')
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')bash ../../scripts/installWebrtc.sh`'ifelse(OS_NAME:OS_VERSION,centos:7,`)')
 
 # Get SDK
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
@@ -143,7 +143,7 @@ RUN cd BUILD_HOME/owt-server && \
 
 # Build and package
 RUN cd BUILD_HOME/owt-server && \
-    ifelse(OS_NAME,centos,`(. /opt/rh/devtoolset-9/enable && ')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME,centos,`) ')&& \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME:OS_VERSION,centos:7,`) ')&& \
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path BUILD_HOME/owt-client-javascript/dist/samples/conference && \
     mkdir -p BUILD_DESTDIR/home && \
     mv dist BUILD_DESTDIR/home/owt
