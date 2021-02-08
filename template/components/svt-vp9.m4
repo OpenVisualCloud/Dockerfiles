@@ -41,7 +41,7 @@ define(`SVT_VP9_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAK
 ')
 
 ifelse(OS_NAME,centos,`
-define(`SVT_VP9_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3) ifdef(OS_VERSION,7,centos-release-scl)')
+define(`SVT_VP9_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3) ifdef(OS_VERSION,7,devtoolset-9)')
 ')
 
 define(`BUILD_SVT_VP9',`
@@ -50,14 +50,10 @@ ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd BUILD_HOME && \
     git clone ${SVT_VP9_REPO} -b SVT_VP9_VER --depth 1 && \
     cd SVT-VP9/Build/linux && \
-ifelse(index(OS_VERSION,7),-1,,`dnl
-  ( yum install -y devtoolset-9-gcc-c++ && \
-    source /opt/rh/devtoolset-9/enable && \
-')dnl
-    ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) && \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && '))ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j $(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,` )') && \
     make install DESTDIR=BUILD_DESTDIR && \
-    make install ifelse(index(OS_VERSION,7),-1,,`)')
+    make install
 ')
 
 define(`FFMPEG_PATCH_SVT_VP9',`dnl
