@@ -35,15 +35,16 @@ include(libva2.m4)
 DECLARE(`MSDK_VER',intel-mediasdk-20.2.1)
 DECLARE(`MSDK_BUILD_SAMPLES',no)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`MSDK_BUILD_DEPS',`ca-certificates gcc g++ make ifdef(`BUILD_CMAKE',,cmake) pkg-config wget')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`MSDK_BUILD_DEPS',`ca-certificates gcc g++ make ifdef(`BUILD_CMAKE',,cmake) pkg-config wget')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`MSDK_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc gcc-c++ make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')'
-)
+ifelse(OS_NAME,centos,`
+define(`MSDK_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc gcc-c++ make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')
+')
 
-define(`BUILD_MSDK',dnl
+define(`BUILD_MSDK',`dnl
+# build media sdk
 ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/MSDK_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${MSDK_REPO} | tar xz
@@ -62,7 +63,7 @@ ifelse(index(OS_VERSION,7),-1,,`dnl
   make -j$(nproc) && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install ifelse(index(OS_VERSION,7),-1,,`)')
-)
+')
 
 REG(MSDK)
 

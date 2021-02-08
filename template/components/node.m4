@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 
 DECLARE(`NODE_VER',v10.21.0)
-DECLARE(`NODE_INSTALL',`false')
+DECLARE(`NODE_INSTALL',false)
 
 ifelse(OS_NAME,ubuntu,`
 define(`NODE_BUILD_DEPS',`wget ca-certificates xz-utils')
@@ -41,14 +41,14 @@ ifelse(OS_NAME,centos,`
 define(`NODE_BUILD_DEPS',`wget xz-utils')
 ')
 
-define(`BUILD_NODE',`
+define(`BUILD_NODE',`dnl
+# build node
 ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
 RUN cd BUILD_HOME && \
     wget -O - ${NODE_REPO} | tar xJ && \
     cp node-NODE_VER-linux-x64/* BUILD_PREFIX -rf && \
     rm -rf node-NODE_VER-linux-x64
 ')
-
 
 ifelse(NODE_INSTALL,`true',`
 
@@ -60,7 +60,8 @@ ifelse(OS_NAME,centos,`
 define(`NODE_INSTALL_DEPS',`wget xz-utils')
 ')
 
-define(`INSTALL_NODE',`
+define(`INSTALL_NODE',`dnl
+# install node
 ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
 RUN cd BUILD_PREFIX && \
     wget -O - ${NODE_REPO} | tar xJ && \

@@ -35,16 +35,17 @@ include(gmmlib.sg1.m4)
 
 DECLARE(`MEDIA_DRIVER_VER',intel-media-sg1-pv1.1)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`MEDIA_DRIVER_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ libpciaccess-dev make pkg-config wget')'
-`define(`MEDIA_DRIVER_INSTALL_DEPS',`libpciaccess0')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`MEDIA_DRIVER_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ libpciaccess-dev make pkg-config wget')
+define(`MEDIA_DRIVER_INSTALL_DEPS',`libpciaccess0')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`MEDIA_DRIVER_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ libpciaccess-devel make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')'
-)
+ifelse(OS_NAME,centos,`
+define(`MEDIA_DRIVER_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ libpciaccess-devel make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')
+')
 
-define(`BUILD_MEDIA_DRIVER',
+define(`BUILD_MEDIA_DRIVER',`dnl
+# build media driver
 ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/MEDIA_DRIVER_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
@@ -57,7 +58,7 @@ ifelse(index(OS_VERSION,7),-1,,`dnl
   make -j$(nproc) && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install ifelse(index(OS_VERSION,7),-1,,`)')
-)
+')
 
 REG(MEDIA_DRIVER)
 

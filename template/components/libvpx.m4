@@ -42,7 +42,8 @@ ifelse(OS_NAME,centos,`
 define(`LIBVPX_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf diffutils')
 ')
 
-define(`BUILD_LIBVPX',`
+define(`BUILD_LIBVPX',`dnl
+# build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd BUILD_HOME && \
     git clone ${LIBVPX_REPO} -b v`'LIBVPX_VER --depth 1 && \

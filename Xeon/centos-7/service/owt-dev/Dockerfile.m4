@@ -25,7 +25,7 @@ INSTALL_CENTOS_REPO(epel-release centos-release-scl)
 
 BUILD_ALL()dnl
 define(`CLEANUP_CC',no)dnl
-CLEANUP(devel)dnl
+CLEANUP()dnl
 
 FROM OS_NAME:OS_VERSION
 LABEL Description="This is the development image for the OWT service OS_NAME OS_VERSION"

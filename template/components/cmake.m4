@@ -32,22 +32,24 @@ include(begin.m4)
 
 DECLARE(`CMAKE_VER',3.19.4)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`CMAKE_BUILD_DEPS',`g++ ca-certificates wget make libcurl4-gnutls-dev zlib1g-dev')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`CMAKE_BUILD_DEPS',`g++ ca-certificates wget make libcurl4-gnutls-dev zlib1g-dev')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`CMAKE_BUILD_DEPS',`wget gcc-c++ make libcurl-devel zlib-devel')'
-)
+ifelse(OS_NAME,centos,`
+define(`CMAKE_BUILD_DEPS',`wget gcc-c++ make libcurl-devel zlib-devel')
+')
 
-define(`BUILD_CMAKE',dnl
+define(`BUILD_CMAKE',`dnl
+# build cmake
 ARG CMAKE_REPO=https://cmake.org/files
-RUN wget -O - ${CMAKE_REPO}/v`'patsubst(CMAKE_VER,`.[0-9]$')/cmake-CMAKE_VER.tar.gz | tar xz && \
+RUN cd BUILD_HOME && \
+    wget -O - ${CMAKE_REPO}/v`'patsubst(CMAKE_VER,`.[0-9]$')/cmake-CMAKE_VER.tar.gz | tar xz && \
     cd cmake-CMAKE_VER && \
     ./bootstrap --prefix=BUILD_PREFIX --system-curl && \
     make -j$(nproc) && \
     make install
-)
+')
 
 REG(CMAKE)
 

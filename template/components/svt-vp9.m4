@@ -36,15 +36,16 @@ DECLARE(`SVT_VP9_VER',v0.2.1)
 
 include(yasm.m4)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`SVT_VP9_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`SVT_VP9_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`SVT_VP9_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3) ifdef(OS_VERSION,7,centos-release-scl)')'
-)
+ifelse(OS_NAME,centos,`
+define(`SVT_VP9_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3) ifdef(OS_VERSION,7,centos-release-scl)')
+')
 
-define(`BUILD_SVT_VP9',
+define(`BUILD_SVT_VP9',`dnl
+# build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd BUILD_HOME && \
     git clone ${SVT_VP9_REPO} -b SVT_VP9_VER --depth 1 && \
@@ -57,9 +58,9 @@ ifelse(index(OS_VERSION,7),-1,,`dnl
     make -j $(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install ifelse(index(OS_VERSION,7),-1,,`)')
-)
+')
 
-define(`FFMPEG_PATCH_SVT_VP9',`
+define(`FFMPEG_PATCH_SVT_VP9',`dnl
 RUN cd $1 && \
     patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
 ')

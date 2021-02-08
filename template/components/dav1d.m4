@@ -34,15 +34,16 @@ include(nasm.m4)
 
 DECLARE(`DAV1D_VER',0.7.1)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`DAV1D_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`DAV1D_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`DAV1D_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++')'
-)
+ifelse(OS_NAME,centos,`
+define(`DAV1D_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++')
+')
 
-define(`BUILD_DAV1D',dnl
+define(`BUILD_DAV1D',`dnl
+# build dav1d
 ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/DAV1D_VER/dav1d-DAV1D_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${DAV1D_REPO} | tar xz
@@ -51,7 +52,7 @@ RUN cd BUILD_HOME/dav1d-DAV1D_VER && \
   cd build && \
   ninja install && \
   DESTDIR=BUILD_DESTDIR ninja install
-)
+')
 
 REG(DAV1D)
 

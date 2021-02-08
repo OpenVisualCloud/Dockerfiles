@@ -55,7 +55,8 @@ define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) git ocl-icd-devel opencl-h
 define(`GVA_INSTALL_DEPS',`ocl-icd')
 ')
 
-define(`BUILD_GVA',
+define(`BUILD_GVA',`dnl
+# build gst-plugin-gva
 # formerly https://github.com/opencv/gst-video-analytics
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
 # TODO: This is a workaround for a bug in dlstreamer_gst
@@ -87,7 +88,7 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=BUILD_DESTDIR
-)
+')
 
 REG(GVA)
 

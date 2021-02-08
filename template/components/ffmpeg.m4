@@ -61,7 +61,8 @@ define(`FFMPEG_BUILD_DEPS',`wget patch ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENAB
 define(`FFMPEG_INSTALL_DEPS',`ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,true,libx264-static)) ifdef(`BUILD_LIBX265',,ifelse(FFMPEG_ENABLE_X265,true,x265)) ifelse(FFMPEG_ENABLE_V4L2,true,libv4l) ifelse(FFMPEG_ENABLE_LIBASS,true,libass)')
 ')
 
-define(`BUILD_FFMPEG',`
+define(`BUILD_FFMPEG',`dnl
+# build ffmpeg
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${FFMPEG_REPO} | tar xz

@@ -36,13 +36,16 @@ DECLARE(`LIBX265_VER',3.3)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBX265_BUILD_DEPS',`libnuma-dev ifdef(`BUILD_CMAKE',,cmake) make')
+define(`LIBX265_INSTALL_DEPS',`libnuma1')
 ')
 
 ifelse(OS_NAME,centos,`
 define(`LIBX265_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) make numactl-devel libpciaccess-devel')
+define(`LIBX265_INSTALL_DEPS',`numactl-libs libpciaccess')
 ')
 
-define(`BUILD_LIBX265',`
+define(`BUILD_LIBX265',`dnl
+# build libx265
 ARG LIBX265_REPO=https://github.com/videolan/x265/archive/LIBX265_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${LIBX265_REPO} | tar xz && \
@@ -51,14 +54,6 @@ RUN cd BUILD_HOME && \
     make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
-')
-
-ifelse(OS_NAME,ubuntu,`
-define(`LIBX265_INSTALL_DEPS',`libnuma1')
-')
-
-ifelse(OS_NAME,centos,`
-define(`LIBX265_INSTALL_DEPS',`numactl-libs libpciaccess')
 ')
 
 REG(LIBX265)

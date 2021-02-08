@@ -46,19 +46,20 @@ DECLARE(`GST_MJPEG',true)
 DECLARE(`GST_X265ENC',true)
 DECLARE(`GST_LIBDE265DEC',true)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTBAD_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl4-gnutls-dev) ifelse(GST_RTMP,true,librtmp-dev) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-dev)) ifelse(GST_LIBDE265DEC,true,libde265-dev)')'
+ifelse(OS_NAME,ubuntu,`
+define(`GSTBAD_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl4-gnutls-dev) ifelse(GST_RTMP,true,librtmp-dev) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-dev)) ifelse(GST_LIBDE265DEC,true,libde265-dev)')
 
-`define(`GSTBAD_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl3-gnutls) ifelse(GST_RTMP,true,librtmp1) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-ifelse(OS_VERSION,18.04,142,179))) ifelse(GST_LIBDE265DEC,true,libde265-0)')'
-)
+define(`GSTBAD_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl3-gnutls) ifelse(GST_RTMP,true,librtmp1) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-ifelse(OS_VERSION,18.04,142,179))) ifelse(GST_LIBDE265DEC,true,libde265-0)')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTBAD_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar glib2-devel bison flex ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl-devel) ifelse(GST_RTMP,true,librtmp-devel) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265-devel)) ifelse(GST_LIBDE265DEC,true,libde265-devel) devtoolset-9')'
+ifelse(OS_NAME,centos,`
+define(`GSTBAD_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar glib2-devel bison flex ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl-devel) ifelse(GST_RTMP,true,librtmp-devel) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265-devel)) ifelse(GST_LIBDE265DEC,true,libde265-devel) devtoolset-9')
 
-`define(`GSTBAD_INSTALL_DEPS',`glib2 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl)) ifelse(GST_RTMP,true,librtmp) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265)) ifelse(LIBDE265DEC,true,libde265)')'
-)
+define(`GSTBAD_INSTALL_DEPS',`glib2 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl)) ifelse(GST_RTMP,true,librtmp) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265)) ifelse(LIBDE265DEC,true,libde265)')
+')
 
-define(`BUILD_GSTBAD',
+define(`BUILD_GSTBAD',`dnl
+# build gst-plugin-bad
 ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${GSTBAD_REPO} | tar xz && \
@@ -71,11 +72,12 @@ RUN cd BUILD_HOME && \
       -Ddoc=disabled \
       -Dexamples=disabled \
       -Dgtk_doc=disabled \
-      -Dtests=disabled && \
+      -Dtests=disabled \
+      -Dgst_player_tests=disabled && \
     cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install ifelse(OS_NAME,centos,`)')
-)
+')
 
 REG(GSTBAD)
 

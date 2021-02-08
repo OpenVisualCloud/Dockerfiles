@@ -32,15 +32,16 @@ include(begin.m4)
 
 DECLARE(`GMMLIB_VER',intel-media-sg1-pv1.1)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GMMLIB_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ make wget')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`GMMLIB_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ make wget')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GMMLIB_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ make wget')'
-)
+ifelse(OS_NAME,centos,`
+define(`GMMLIB_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ make wget')
+')
 
-define(`BUILD_GMMLIB',
+define(`BUILD_GMMLIB',`dnl
+# build gmmlib
 ARG GMMLIB_REPO=https://github.com/VCDP/gmmlib/archive/GMMLIB_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${GMMLIB_REPO} | tar xz
@@ -49,7 +50,7 @@ RUN cd BUILD_HOME/gmmlib-GMMLIB_VER && mkdir build && cd build && \
   make -j$(nproc) && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
-)
+')
 
 REG(GMMLIB)
 

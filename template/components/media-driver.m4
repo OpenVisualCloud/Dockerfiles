@@ -35,16 +35,17 @@ include(gmmlib.m4)
 
 DECLARE(`MEDIA_DRIVER_VER',intel-media-20.2.0)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`MEDIA_DRIVER_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ libpciaccess-dev make pkg-config wget')'
-`define(`MEDIA_DRIVER_INSTALL_DEPS',`libpciaccess0')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`MEDIA_DRIVER_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ libpciaccess-dev make pkg-config wget')
+define(`MEDIA_DRIVER_INSTALL_DEPS',`libpciaccess0')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`MEDIA_DRIVER_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ libpciaccess-devel make pkg-config wget')'
-)
+ifelse(OS_NAME,centos,`
+define(`MEDIA_DRIVER_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ libpciaccess-devel make pkg-config wget')
+')
 
-define(`BUILD_MEDIA_DRIVER',
+define(`BUILD_MEDIA_DRIVER',`dnl
+# build media driver
 ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/MEDIA_DRIVER_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
@@ -53,7 +54,7 @@ RUN cd BUILD_HOME/media-driver-MEDIA_DRIVER_VER && mkdir build && cd build && \
   make -j$(nproc) && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
-)
+')
 
 REG(MEDIA_DRIVER)
 

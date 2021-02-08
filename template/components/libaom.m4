@@ -42,7 +42,8 @@ ifelse(OS_NAME,centos,`
 define(`LIBAOM_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake3) make')
 ')
 
-define(`BUILD_LIBAOM',`
+define(`BUILD_LIBAOM',`dnl
+# build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd BUILD_HOME && \
     git clone ${LIBAOM_REPO} -b v`'LIBAOM_VER --depth 1 && \

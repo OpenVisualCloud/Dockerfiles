@@ -35,13 +35,16 @@ DECLARE(`SRS_ENABLE_HDS',on)
 
 ifelse(OS_NAME,ubuntu,`
 define(`SRS_BUILD_DEPS',`git ca-certificates g++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-dev )')
+define(`SRS_INSTALL_DEPS',`bash ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
 ifelse(OS_NAME,centos,`
 define(`SRS_BUILD_DEPS',`git gcc-c++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-devel )')
+define(`SRS_INSTALL_DEPS',`bash ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
-define(`BUILD_SRS',`
+define(`BUILD_SRS',`dnl
+# build srs
 ARG SRS_REPO=https://github.com/ossrs/srs.git
 RUN cd BUILD_HOME && \
     git clone -b SRS_VER --depth 1 ${SRS_REPO} && \
@@ -66,14 +69,6 @@ RUN cd BUILD_HOME && \
 
 RUN echo BUILD_DESTDIR
 RUN ls BUILD_DESTDIR
-')
-
-ifelse(OS_NAME,ubuntu,`
-define(`SRS_INSTALL_DEPS',`bash ifdef(`BUILD_OPENSSL',,openssl)')
-')
-
-ifelse(OS_NAME,centos,`
-define(`SRS_INSTALL_DEPS',`bash ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
 REG(SRS)

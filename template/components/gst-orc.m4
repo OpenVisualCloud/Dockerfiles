@@ -32,15 +32,16 @@ include(begin.m4)
 
 DECLARE(`GST_ORC_VER',0.4.32)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTORC_BUILD_DEPS',`ca-certificates tar g++ wget ifdef(`BUILD_MESON',,meson)')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`GSTORC_BUILD_DEPS',`ca-certificates tar g++ wget ifdef(`BUILD_MESON',,meson)')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTORC_BUILD_DEPS',`wget tar gcc-c++ ifdef(`BUILD_MESON',,meson)')'
-)
+ifelse(OS_NAME,centos,`
+define(`GSTORC_BUILD_DEPS',`wget tar gcc-c++ ifdef(`BUILD_MESON',,meson)')
+')
 
-define(`BUILD_GSTORC',
+define(`BUILD_GSTORC',`dnl
+# build gst-plugin-orc
 ARG GSTORC_REPO=https://github.com/GStreamer/orc/archive/GST_ORC_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${GSTORC_REPO} | tar xz
@@ -51,7 +52,7 @@ RUN cd BUILD_HOME/orc-GST_ORC_VER && \
     cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install
-)
+')
 
 REG(GSTORC)
 

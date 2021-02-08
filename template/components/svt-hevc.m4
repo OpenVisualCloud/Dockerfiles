@@ -34,17 +34,18 @@ include(yasm.m4)
 
 DECLARE(`SVT_HEVC_VER',v1.5.0)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`SVT_HEVC_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`SVT_HEVC_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`SVT_HEVC_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3)')'
-)
+ifelse(OS_NAME,centos,`
+define(`SVT_HEVC_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3)')
+')
 
 include(yasm.m4)
 
-define(`BUILD_SVT_HEVC',
+define(`BUILD_SVT_HEVC',`dnl
+# build svt-hevc
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd BUILD_HOME && \
     git clone -b SVT_HEVC_VER --depth 1 ${SVT_HEVC_REPO}
@@ -53,9 +54,9 @@ RUN cd BUILD_HOME/SVT-HEVC/Build/linux && \
     make -j $(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
-)
+')
 
-define(`FFMPEG_PATCH_SVT_HEVC',`
+define(`FFMPEG_PATCH_SVT_HEVC',`dnl
 RUN cd $1 && \
     patch -p1 < BUILD_HOME/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 ')

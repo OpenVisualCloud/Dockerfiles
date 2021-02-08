@@ -40,7 +40,8 @@ ifelse(OS_NAME,centos,`
 define(`NGINX_FLV_BUILD_DEPS',`wget')
 ')
 
-define(`BUILD_NGINX_FLV',`
+define(`BUILD_NGINX_FLV',`dnl
+# build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/`v'NGINX_FLV_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${NGINX_FLV_REPO} | tar xz
