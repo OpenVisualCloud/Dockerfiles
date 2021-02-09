@@ -12,6 +12,7 @@ include(dav1d.m4)
 include(svt-hevc.m4)
 include(svt-av1.m4)
 include(svt-vp9.m4)
+include(opencv.m4)
 include(ffmpeg.m4)
 include(end.m4)dnl
 

@@ -62,6 +62,24 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
   make install
 ')
 
+define(`REBUILD_OPENCV_VIDEOIO',`
+RUN cd BUILD_HOME/opencv-OPENCV_VER/build && \
+  rm -rf ./* && \
+  ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
+    -DCMAKE_INSTALL_LIBDIR=patsubst(BUILD_LIBDIR,BUILD_PREFIX/) \
+    -DOPENCV_GENERATE_PKGCONFIG=ON \
+    -DBUILD_DOCS=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_PERF_TESTS=OFF \
+    -DBUILD_TESTS=OFF \
+    .. && \
+  cd modules/videoio && \
+  make -j "$(nproc)" && \
+  cp -f ../../lib/libopencv_videoio.so.OPENCV_VER defn(`BUILD_DESTDIR',`BUILD_LIBDIR')
+')
+
 REG(OPENCV)
 
 include(end.m4)dnl

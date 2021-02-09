@@ -98,6 +98,9 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     && make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
+ifdef(`REBUILD_OPENCV_VIDEOIO',`dnl
+REBUILD_OPENCV_VIDEOIO()dnl
+')dnl
 ')
 
 REG(FFMPEG)
