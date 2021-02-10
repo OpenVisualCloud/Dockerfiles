@@ -35,6 +35,8 @@ define(`GST_RTMP',true)
 define(`GST_MJPEG',false)
 define(`GST_X265ENC',false)
 define(`GST_LIBDE265DEC',false)
+define(`GST_RSVG',false)
+define(`GST_FDKAAC',false)
 include(gst-plugins-bad.m4)
 
 include(end.m4)dnl
