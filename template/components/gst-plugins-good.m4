@@ -70,8 +70,14 @@ RUN cd BUILD_HOME/gst-plugins-good-GSTCORE_VER && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dgtk_doc=disabled && \
-    cd build && \
+    -Dgtk_doc=disabled \
+    -Dgdk-pixbuf=ifelse(GST_GDKPIXBUF,true,enabled,disabled) \
+    -Djpeg=ifelse(GST_JPEG,true,enabled,disabled) \
+    -Dpng=ifelse(GST_PNG,true,enabled,disabled) \
+    -Disomp4=ifelse(GST_MP4,true,enabled,disabled) \
+    -Dsoup=ifelse(GST_SOUP,true,enabled,disabled) \
+    -Dvpx=ifelse(GST_VPX,true,enabled,disabled) \
+    && cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install
 ')

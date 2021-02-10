@@ -45,17 +45,19 @@ DECLARE(`GST_RTMP',true)
 DECLARE(`GST_MJPEG',true)
 DECLARE(`GST_X265ENC',true)
 DECLARE(`GST_LIBDE265DEC',true)
+DECLARE(`GST_RSVG',false)
+DECLARE(`GST_FDKAAC',ifdef(`BUILD_LIBFDKAAC',true,false))
 
 ifelse(OS_NAME,ubuntu,`
-define(`GSTBAD_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl4-gnutls-dev) ifelse(GST_RTMP,true,librtmp-dev) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-dev)) ifelse(GST_LIBDE265DEC,true,libde265-dev)')
+define(`GSTBAD_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl4-gnutls-dev) ifelse(GST_RTMP,true,librtmp-dev) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-dev)) ifelse(GST_LIBDE265DEC,true,libde265-dev) ifelse(GST_RSVG,true,librsvg2-dev) ifelse(GST_FDKAAC,true,ifdef(`BUILD_LIBFDKAAC',,libfdk-aac-dev))')
 
-define(`GSTBAD_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl3-gnutls) ifelse(GST_RTMP,true,librtmp1) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-ifelse(OS_VERSION,18.04,142,179))) ifelse(GST_LIBDE265DEC,true,libde265-0)')
+define(`GSTBAD_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl3-gnutls) ifelse(GST_RTMP,true,librtmp1) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,libx265-ifelse(OS_VERSION,18.04,142,179))) ifelse(GST_LIBDE265DEC,true,libde265-0) ifelse(GST_RSVG,true,librsvg2-2) ifelse(GST_FDKAAC,true,ifdef(`BUILD_LIBFDKAAC',,libfdk-aac1))')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`GSTBAD_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar glib2-devel bison flex ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl-devel) ifelse(GST_RTMP,true,librtmp-devel) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265-devel)) ifelse(GST_LIBDE265DEC,true,libde265-devel) ifelse(OS_VERSION,7,devtoolset-9)')
+define(`GSTBAD_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar glib2-devel bison flex ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl) libcurl-devel) ifelse(GST_RTMP,true,librtmp-devel) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265-devel)) ifelse(GST_LIBDE265DEC,true,libde265-devel) ifelse(OS_VERSION,7,devtoolset-9) ifelse(GST_RSVG,true,librsvg2-devel)')
 
-define(`GSTBAD_INSTALL_DEPS',`glib2 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl)) ifelse(GST_RTMP,true,librtmp) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265)) ifelse(LIBDE265DEC,true,libde265)')
+define(`GSTBAD_INSTALL_DEPS',`glib2 ifelse(GST_CURLUSESSL,true,ifdef(`BUILD_OPENSSL',,openssl)) ifelse(GST_RTMP,true,librtmp) ifelse(GST_MJPEG,true,mjpegtools) ifelse(GST_X265ENC,true,ifdef(`BUILD_LIBX265',,x265)) ifelse(LIBDE265DEC,true,libde265) ifelse(GST_RSVG,true,librsvg2)')
 ')
 
 define(`BUILD_GSTBAD',`
@@ -73,8 +75,12 @@ RUN cd BUILD_HOME && \
       -Dexamples=disabled \
       -Dgtk_doc=disabled \
       -Dtests=disabled \
-      -Dgst_player_tests=false && \
-    cd build && \
+      -Dgst_player_tests=false \
+      -Drtmp=ifelse(GST_RTMP,true,enabled,disabled) \
+      -Dx265=ifelse(GST_X265ENC,true,enabled,disabled) \
+      -Drsvg=ifelse(GST_RSVG,true,enabled,disabled) \
+      -Dfdkaac=ifelse(GST_FDKAAC,true,enabled,disabled) \
+    && cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install ifelse(OS_NAME:OS_VERSION,centos:7,`)')
 ')

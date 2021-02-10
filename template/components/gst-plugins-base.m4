@@ -69,8 +69,13 @@ RUN cd BUILD_HOME/gst-plugins-base-GSTCORE_VER && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dgtk_doc=disabled && \
-  cd build && \
+    -Dgtk_doc=disabled \
+    -Dalsa=ifelse(GST_ALSA,true,enabled,disabled) \
+    -Dpango=ifelse(GST_PANGO,true,enabled,disabled) \
+    -Dtheora=ifelse(GST_THEORA,true,enabled,disabled) \
+    -Dlibvisual=ifelse(GST_LIBVISUAL,true,enabled,disabled) \
+    -Dgl=ifelse(GST_OPENGL,true,enabled,disabled) \
+  && cd build && \
   ninja install && \
   DESTDIR=BUILD_DESTDIR ninja install
 ')
