@@ -3,6 +3,7 @@ include(begin.m4)
 include(qat-core.m4)
 include(qat-zip.m4)
 include(openssl.m4)
+include(qat-cryptomb.m4)
 include(qat-engine.m4)
 include(nginx-flv.m4)
 include(nginx-upload.m4)
@@ -23,4 +24,3 @@ WORKDIR /home
 
 # Install
 INSTALL_ALL(runtime,build)
-

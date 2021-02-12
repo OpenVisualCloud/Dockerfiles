@@ -30,42 +30,33 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_ENGINE_VER',v0.5.43)
-dnl CentOS QAT 1.7.0-470b06 only supports QAT engine version up to 0.5.43.
-dnl CentOS QAT 1.7.0-470b12 and above can support QAT engine version beyond 0.5.43.
-
-include(openssl.m4)
+DECLARE(`QAT_CRYPTOMB_VER',ippcp_2020u3)
 
 ifelse(OS_NAME,ubuntu,`
-define(`QAT_ENGINE_BUILD_DEPS',`wget ca-certificates make gcc gawk autoconf automake libtool pkg-config')
+define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ca-certificates ifdef(`BUILD_CMAKE',,cmake) make ifelse(OS_VERSION,18.04,software-properties-common,gcc g++) python ')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`QAT_ENGINE_BUILD_DEPS',`wget make gcc gawk autoconf automake libtool pkg-config')
+define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake3) make python devtoolset-9')
 ')
 
-define(`BUILD_QAT_ENGINE',`
-# load qat-engine
-ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/QAT_ENGINE_VER.tar.gz
+define(`BUILD_QAT_CRYPTOMB',`
+ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,`dnl
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update && apt-get install -y gcc-9 g++-9
+')
+ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/QAT_CRYPTOMB_VER.tar.gz
 RUN cd BUILD_HOME && \
-    wget -O - ${QAT_ENGINE_REPO} | tar xz && \
-    cd QAT_Engine* && \
-    ./autogen.sh && \
-    export PERL5LIB="$(ls -1 -d BUILD_HOME/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=BUILD_PREFIX/ssl --prefix=/opt/intel/QATengine --enable-multibuff_offload && \
-    make -j8 && \
+    wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
+    ls -l ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb && \
+    mkdir -p ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/build && \
+    cd ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/build && \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,CC="gcc-9" CXX="g++-9" )CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DOPENSSL_INCLUDE_DIR=BUILD_PREFIX/ssl/include -DOPENSSL_LIBRARIES=BUILD_PREFIX/ssl/lib -DOPENSSL_ROOT_DIR=BUILD_PREFIX/ssl .. && \
+    make -j8 ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
     make install && \
-    tar cf - BUILD_PREFIX/ssl | (cd BUILD_DESTDIR && tar xf -)
+    make install DESTDIR=BUILD_DESTDIR
 ')
 
-define(`QAT_ENGINE_ENV_VARS',`dnl
-ENV OPENSSL_ENGINES=BUILD_PREFIX/ssl/lib/engines-1.1
-')
-
-define(`INSTALL_QAT_ENGINE',`dnl
-RUN echo "/opt/intel/QAT/build" >> /etc/ld.so.conf.d/qat.conf && ldconfig
-')
-
-REG(QAT_ENGINE)
+REG(QAT_CRYPTOMB)
 
 include(end.m4)dnl

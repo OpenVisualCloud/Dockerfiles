@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="qat-ubuntu1804-media-dev"
+IMAGE="qat-ubuntu2004-media-dev"
 DIR=$(dirname $(readlink -f "$0"))
 
 . "${DIR}/../../../../script/qatshell.sh"

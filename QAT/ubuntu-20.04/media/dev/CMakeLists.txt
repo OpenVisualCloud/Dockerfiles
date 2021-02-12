@@ -1,5 +1,5 @@
-set(image "qat_media_devel_ubuntu1804")
-set(dep_image "xeon_media_devel_ubuntu1804")
+set(image "qat_media_devel_ubuntu2004")
+set(dep_image "xeon_media_devel_ubuntu2004")
 set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/qat.tar.gz")
 include(image)
 include(nginx-tests)
