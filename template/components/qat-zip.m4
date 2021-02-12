@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_ZIP_VER',v1.0.1)
+DECLARE(`QAT_ZIP_VER',v1.0.2)
 
 include(qat-core.m4)
 
@@ -53,7 +53,6 @@ RUN cd BUILD_HOME && \
     /bin/bash ./configure LDFLAGS="-Wl,-rpath=/opt/intel/QAT/build" --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/QATzip && \
     make -j8 && \
     make install && \
-    (cd /opt/intel/QATzip/lib64 && ln -s libqatzip.so libqatzip.so.1) && \
     tar cf - /opt/intel/QATzip | (cd BUILD_DESTDIR && tar xf -)
 ')
 
