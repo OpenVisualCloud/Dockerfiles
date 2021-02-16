@@ -33,7 +33,7 @@ include(begin.m4)
 DECLARE(`OSPRAY_VER',c42a885)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OSPRAY_BUILD_DEPS',`ca-certificates g++ make cmake git libglfw3-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev')
+define(`OSPRAY_BUILD_DEPS',`ca-certificates g++ make ifdef(`BUILD_CMAKE',,cmake) git libglfw3-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev')
 ')
 
 ifelse(OS_NAME,centos,`

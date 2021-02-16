@@ -34,7 +34,7 @@ include(openexr.m4)
 DECLARE(`OIIO_VER',5daa9a1)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OIIO_BUILD_DEPS',`ca-certificates g++ make cmake git')
+define(`OIIO_BUILD_DEPS',`ca-certificates g++ make ifdef(`BUILD_CMAKE',,cmake) git')
 ')
 
 ifelse(OS_NAME,centos,`

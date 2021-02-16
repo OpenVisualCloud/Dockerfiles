@@ -33,7 +33,7 @@ include(begin.m4)
 DECLARE(`OPENEXR_VER',0ac2ea3)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OPENEXR_BUILD_DEPS',`ca-certificates g++ make cmake git libtiff-dev zlib1g-dev libpng-dev libjpeg-dev ifelse(OS_VERSION,20.04,python2.7-dev libboost1.67-dev libboost-python1.67-dev libboost-filesystem1.67-dev libboost-thread1.67-dev,libboost-python-dev libboost-filesystem-dev libboost-thread-dev)')
+define(`OPENEXR_BUILD_DEPS',`ca-certificates g++ make ifdef(`BUILD_CMAKE',,cmake) git libtiff-dev zlib1g-dev libpng-dev libjpeg-dev ifelse(OS_VERSION,20.04,python2.7-dev libboost1.67-dev libboost-python1.67-dev libboost-filesystem1.67-dev libboost-thread1.67-dev,libboost-python-dev libboost-filesystem-dev libboost-thread-dev)')
 define(`OPENEXR_INSTALL_DEPS',`libtiff-dev libpng16-16 ifelse(OS_VERSION,20.04,libboost-filesystem1.67-dev libboost-thread1.67-dev,libboost-filesystem-dev libboost-thread-dev)')
 ')
 

@@ -33,7 +33,7 @@ include(begin.m4)
 DECLARE(`EMBREE_VER',df0b324)
 
 ifelse(OS_NAME,ubuntu,`
-define(`EMBREE_BUILD_DEPS',`ca-certificates wget g++ make cmake git libtbb-dev libgl1-mesa-dev')
+define(`EMBREE_BUILD_DEPS',`ca-certificates wget g++ make ifdef(`BUILD_CMAKE',,cmake) git libtbb-dev libgl1-mesa-dev')
 define(`EMBREE_INSTALL_DEPS',`libtbb2')
 ')
 

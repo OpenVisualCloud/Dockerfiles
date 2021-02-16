@@ -33,7 +33,7 @@ include(begin.m4)
 DECLARE(`OSPRAY_MPI_VER',c42a885)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OSPRAY_MPI_BUILD_DEPS',`ca-certificates g++ make cmake git libglfw3-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev libmpich-dev mpich openssh-server openssh-client')
+define(`OSPRAY_MPI_BUILD_DEPS',`ca-certificates g++ make ifdef(`BUILD_CMAKE',,cmake) git libglfw3-dev libgl1-mesa-dri libxrandr-dev  libxinerama-dev libxcursor-dev libmpich-dev mpich openssh-server openssh-client')
 ')
 
 ifelse(OS_NAME,centos,`
