@@ -28,7 +28,7 @@ RUN cd /opt/build && \
   wget -O - ${ISPC_REPO} | tar xz
 ENV ISPC_EXECUTABLE=/opt/build/ispc-v1.9.1-linux/ispc
 
-RUN yum install -y wget gcc-c++ make cmake git tbb-devel mesa-libGL-devel
+RUN yum install -y wget gcc-c++ make git tbb-devel mesa-libGL-devel
 
 # build EMBREE
 ARG EMBREE_REPO=https://github.com/embree/embree.git
