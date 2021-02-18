@@ -41,6 +41,7 @@ define(`LIBRE_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf gcc')
 ')
 
 define(`BUILD_LIBRE',`
+# build libre
 ARG LIBRE_REPO=https://github.com/creytiv/re.git
 RUN cd BUILD_HOME && \
     git clone ${LIBRE_REPO} -b LIBRE_VER --depth 1 && \

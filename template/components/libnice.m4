@@ -41,6 +41,7 @@ define(`LIBNICE_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake) make gcc libglib2.
 ')
 
 define(`BUILD_LIBNICE',`
+# build libnice
 ARG LIBNICE_REPO=http://nice.freedesktop.org/releases/libnice-LIBNICE_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${LIBNICE_REPO} | tar xz

@@ -34,19 +34,19 @@ include(opencv.m4)
 DECLARE(`DLDT_VER',2021.2)
 DECLARE(`DLDT_WARNING_AS_ERRORS',false)
 
-ifelse(OS_NAME,ubuntu,`dnl
+ifelse(OS_NAME,ubuntu,`
 define(`DLDT_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ ifdef(`BUILD_GIT',,git) libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils libnuma-dev ocl-icd-opencl-dev opencl-headers')
 define(`DLDT_INSTALL_DEPS',`libgtk-3-0 libnuma1 ocl-icd-libopencl1')
 ')
 
-ifelse(OS_NAME,centos,`dnl
+ifelse(OS_NAME,centos,`
 define(`DLDT_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-g++ ifdef(`BUILD_GIT',,git) boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz numactl-devel ocl-icd-devel opencl-headers')
 define(`DLDT_INSTALL_DEPS',`gtk3 numactl ocl-icd')
 ')
 
-define(`BUILD_DLDT',
+define(`BUILD_DLDT',`
+# build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-
 RUN git clone -b DLDT_VER --depth 1 ${DLDT_REPO} BUILD_HOME/openvino && \
   cd BUILD_HOME/openvino && \
   git submodule update --init --recursive
@@ -138,16 +138,20 @@ RUN { \
   } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
   mkdir -p defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig && \
   cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig
-)
+')
 
-define(`INSTALL_DLDT',
+define(`INSTALL_DLDT',`
+# install DLDT
 ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
+')
+
+define(`ENV_VARS_DLDT',`
 ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
 ENV TBB_DIR=BUILD_PREFIX/openvino/inference-engine/external/tbb/cmake
 ENV ngraph_DIR=BUILD_PREFIX/openvino/inference-engine/cmake
-)
+')
 
 define(`FFMPEG_PATCH_ANALYTICS',
 ARG FFMPEG_MA_RELEASE_VER=0.5

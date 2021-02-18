@@ -43,19 +43,20 @@ DECLARE(`GST_THEORA',true)
 DECLARE(`GST_LIBVISUAL',true)
 DECLARE(`GST_OPENGL',true)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTBASE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ gobjc wget pkg-config libglib2.0-dev flex bison ifelse(GST_XLIB,true,libx11-dev libxv-dev libxt-dev) ifelse(GST_ALSA,true,libasound2-dev) ifelse(GST_PANGO,true,libpango1.0-dev) ifelse(GST_THEORA,true,libtheora-dev) ifelse(GST_LIBVISUAL,true,libvisual-0.4-dev) ifelse(GST_OPENGL,true,libgl1-mesa-dev)')'
+ifelse(OS_NAME,ubuntu,`
+define(`GSTBASE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ gobjc wget pkg-config libglib2.0-dev flex bison ifelse(GST_XLIB,true,libx11-dev libxv-dev libxt-dev) ifelse(GST_ALSA,true,libasound2-dev) ifelse(GST_PANGO,true,libpango1.0-dev) ifelse(GST_THEORA,true,libtheora-dev) ifelse(GST_LIBVISUAL,true,libvisual-0.4-dev) ifelse(GST_OPENGL,true,libgl1-mesa-dev)')
 
-`define(`GSTBASE_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1 libxt6) ifelse(GST_ALSA,true,libasound2) ifelse(GST_PANGO,true,libpangocairo-1.0-0 libcairo-gobject2) ifelse(GST_THEORA,true,libtheora0) ifelse(GST_LIBVISUAL,true,libvisual-0.4-0) ifelse(GST_OPENGL,true,libgl1-mesa-dri)')'
-)
+define(`GSTBASE_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1 libxt6) ifelse(GST_ALSA,true,libasound2) ifelse(GST_PANGO,true,libpangocairo-1.0-0 libcairo-gobject2) ifelse(GST_THEORA,true,libtheora0) ifelse(GST_LIBVISUAL,true,libvisual-0.4-0) ifelse(GST_OPENGL,true,libgl1-mesa-dri)')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTBASE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex ifelse(GST_XLIB,true,libX11-devel libXv-devel libXt-devel) ifelse(GST_ALSA,true,alsa-lib-devel) ifelse(GST_PANGO,true,libpango1.0-dev) ifelse(GST_THEORA,true,libtheora) ifelse(GST_LIBVISUAL,true,libvisual) ifelse(GST_OPENGL,true,libegl1-mesa)')'
+ifelse(OS_NAME,centos,`
+define(`GSTBASE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex ifelse(GST_XLIB,true,libX11-devel libXv-devel libXt-devel) ifelse(GST_ALSA,true,alsa-lib-devel) ifelse(GST_PANGO,true,libpango1.0-dev) ifelse(GST_THEORA,true,libtheora) ifelse(GST_LIBVISUAL,true,libvisual) ifelse(GST_OPENGL,true,libegl1-mesa)')
 
-`define(`GSTBASE_INSTALL_DEPS',`glib2 mesa-libEGL ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_ALSA,true,alsa-lib) ifelse(GST_PANGO,true,pango) ifelse(GST_THEORA,true,libtheora) ifelse(GST_LIBVISUAL,true,libvisual) ifelse(GST_OPENGL,true,mesa-libGL)')'
-)
+define(`GSTBASE_INSTALL_DEPS',`glib2 mesa-libEGL ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_ALSA,true,alsa-lib) ifelse(GST_PANGO,true,pango) ifelse(GST_THEORA,true,libtheora) ifelse(GST_LIBVISUAL,true,libvisual) ifelse(GST_OPENGL,true,mesa-libGL)')
+')
 
-define(`BUILD_GSTBASE',
+define(`BUILD_GSTBASE',`
+# build gst-plugin-base
 ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${GSTBASE_REPO} | tar xz
@@ -67,11 +68,17 @@ RUN cd BUILD_HOME/gst-plugins-base-GSTCORE_VER && \
     --buildtype=plain \
     -Dexamples=disabled \
     -Dtests=disabled \
-    -Dgtk_doc=disabled && \
-  cd build && \
+    -Ddoc=disabled \
+    -Dgtk_doc=disabled \
+    -Dalsa=ifelse(GST_ALSA,true,enabled,disabled) \
+    -Dpango=ifelse(GST_PANGO,true,enabled,disabled) \
+    -Dtheora=ifelse(GST_THEORA,true,enabled,disabled) \
+    -Dlibvisual=ifelse(GST_LIBVISUAL,true,enabled,disabled) \
+    -Dgl=ifelse(GST_OPENGL,true,enabled,disabled) \
+  && cd build && \
   ninja install && \
   DESTDIR=BUILD_DESTDIR ninja install
-)
+')
 
 REG(GSTBASE)
 

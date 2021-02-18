@@ -33,36 +33,34 @@ include(begin.m4)
 include(libva2.m4)
 
 DECLARE(`MSDK_VER',intel-mediasdk-20.2.1)
+DECLARE(`MSDK_SRC_REPO',https://github.com/Intel-Media-SDK/MediaSDK/archive/MSDK_VER.tar.gz)
 DECLARE(`MSDK_BUILD_SAMPLES',no)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`MSDK_BUILD_DEPS',`ca-certificates gcc g++ make ifdef(`BUILD_CMAKE',,cmake) pkg-config wget')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`MSDK_BUILD_DEPS',`ca-certificates gcc g++ make ifdef(`BUILD_CMAKE',,cmake) pkg-config wget')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`MSDK_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc gcc-c++ make pkg-config wget ifdef(OS_VERSION,7,centos-release-scl)')'
-)
+ifelse(OS_NAME,centos,`
+define(`MSDK_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc gcc-c++ make pkg-config wget ifdef(OS_VERSION,7,devtoolset-9)')
+')
 
-define(`BUILD_MSDK',dnl
-ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/MSDK_VER.tar.gz
+define(`BUILD_MSDK',`
+# build media sdk
+ARG MSDK_REPO=MSDK_SRC_REPO
 RUN cd BUILD_HOME && \
-  wget -O - ${MSDK_REPO} | tar xz
+    wget -O - ${MSDK_REPO} | tar xz
 RUN cd BUILD_HOME/MediaSDK-MSDK_VER && \
-  mkdir -p build && cd build && \
-ifelse(index(OS_VERSION,7),-1,,`dnl
-  ( yum install -y devtoolset-9-gcc-c++ && \
-    source /opt/rh/devtoolset-9/enable && \
-')dnl
-  cmake \
+    mkdir -p build && cd build && \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')cmake \
     -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
     -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR \
     -DBUILD_SAMPLES=MSDK_BUILD_SAMPLES \
     -DBUILD_TUTORIALS=OFF \
     .. && \
-  make -j$(nproc) && \
-  make install DESTDIR=BUILD_DESTDIR && \
-  make install ifelse(index(OS_VERSION,7),-1,,`)')
-)
+    make -j$(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,`)') && \
+    make install DESTDIR=BUILD_DESTDIR && \
+    make install
+')
 
 REG(MSDK)
 

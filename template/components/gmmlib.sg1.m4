@@ -30,27 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GMMLIB_VER',intel-media-sg1-pv1.1)
-
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GMMLIB_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ make wget')'
-)
-
-ifelse(OS_NAME,centos,dnl
-`define(`GMMLIB_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ make wget')'
-)
-
-define(`BUILD_GMMLIB',
-ARG GMMLIB_REPO=https://github.com/VCDP/gmmlib/archive/GMMLIB_VER.tar.gz
-RUN cd BUILD_HOME && \
-  wget -O - ${GMMLIB_REPO} | tar xz
-RUN cd BUILD_HOME/gmmlib-GMMLIB_VER && mkdir build && cd build && \
-  cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR .. && \
-  make -j$(nproc) && \
-  make install DESTDIR=BUILD_DESTDIR && \
-  make install
-)
-
-REG(GMMLIB)
+define(`GMMLIB_VER',intel-media-sg1-pv1.1)
+define(`GMMLIB_SRC_REPO',https://github.com/VCDP/gmmlib/archive/GMMLIB_VER.tar.gz)
+include(gmmlib.m4)
 
 include(end.m4)dnl

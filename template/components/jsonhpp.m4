@@ -41,6 +41,7 @@ define(`JSONHPP_BUILD_DEPS',`wget')
 ')
 
 define(`BUILD_JSONHPP',`
+# build jsonhpp
 ARG JSONHPP_REPO=https://github.com/nlohmann/json/releases/download/JSONHPP_VER/json.hpp
 RUN wget -O /usr/include/json.hpp ${JSONHPP_REPO}
 ')

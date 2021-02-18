@@ -64,6 +64,7 @@ define(`FFMPEG_INSTALL_DEPS',`ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,t
 ')
 
 define(`BUILD_FFMPEG',`
+# build ffmpeg
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${FFMPEG_REPO} | tar xz
@@ -115,6 +116,9 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     && make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
+ifdef(`REBUILD_OPENCV_VIDEOIO',`dnl
+REBUILD_OPENCV_VIDEOIO()dnl
+')dnl
 ')
 
 REG(FFMPEG)

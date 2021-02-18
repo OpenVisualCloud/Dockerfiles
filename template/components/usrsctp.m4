@@ -41,6 +41,7 @@ define(`USRSCTP_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake) automake make gcc 
 ')
 
 define(`BUILD_USRSCTP',`
+# build usrsctp
 ARG USRSCTP_REPO=https://github.com/sctplab/usrsctp/archive/USRSCTP_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${USRSCTP_REPO} | tar xz && \

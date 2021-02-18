@@ -43,6 +43,7 @@ define(`LIBVPX_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake) 
 ')
 
 define(`BUILD_LIBVPX',`
+# build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd BUILD_HOME && \
     git clone ${LIBVPX_REPO} -b v`'LIBVPX_VER --depth 1 && \

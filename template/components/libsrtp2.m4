@@ -32,15 +32,16 @@ include(begin.m4)
 
 DECLARE(`LIBSRTP2_VER',v2.3.0)
 
-ifelse(OS_NAME,ubuntu,
+ifelse(OS_NAME,ubuntu,`
 define(`LIBSRTP2_BUILD_DEPS',`ca-certificates wget gcc make pkg-config ifdef(`BUILD_OPENSSL',,libssl-dev)')
-)
+')
 
-ifelse(OS_NAME,centos,
+ifelse(OS_NAME,centos,`
 define(`LIBSRTP2_BUILD_DEPS',`wget gcc make pkg-config ifdef(`BUILD_OPENSSL',,openssl-dev)')
-)
+')
 
 define(`BUILD_LIBSRTP2',`
+# build libsrtp2
 ARG LIBSRTP2_REPO=https://github.com/cisco/libsrtp/archive/LIBSRTP2_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${LIBSRTP2_REPO} | tar xz && \

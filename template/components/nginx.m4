@@ -34,13 +34,16 @@ DECLARE(`NGINX_VER',1.18.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`NGINX_BUILD_DEPS',`ca-certificates gcc libpcre3-dev libxslt1-dev make wget zlib1g-dev ifdef(`BUILD_OPENSSL',,libssl-dev)')
+define(`NGINX_INSTALL_DEPS',`libpcre3 libxml2 libxslt1.1 zlib1g ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
 ifelse(OS_NAME,centos,`
 define(`NGINX_BUILD_DEPS',`gcc libxslt-devel make pcre-devel wget zlib-devel ifdef(`BUILD_OPENSSL',,openssl-devel)')
+define(`NGINX_INSTALL_DEPS',`libxml2 libxslt pcre zlib ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
 define(`BUILD_NGINX',`
+# build nginx
 ARG NGINX_REPO=https://nginx.org/download/nginx-NGINX_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${NGINX_REPO} | tar xz && \
@@ -95,14 +98,6 @@ ifdef(`BUILD_NGINX_UPLOAD',`dnl
     mkdir -p BUILD_DESTDIR/var/www/upload && \
 ')dnl
     mkdir -p BUILD_DESTDIR/var/www/html
-')
-
-ifelse(OS_NAME,ubuntu,`
-define(`NGINX_INSTALL_DEPS',`libpcre3 libxml2 libxslt1.1 zlib1g ifdef(`BUILD_OPENSSL',,openssl)')
-')
-
-ifelse(OS_NAME,centos,`
-define(`NGINX_INSTALL_DEPS',`libxml2 libxslt pcre zlib ifdef(`BUILD_OPENSSL',,openssl)')
 ')
 
 REG(NGINX)

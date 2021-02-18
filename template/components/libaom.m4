@@ -43,6 +43,7 @@ define(`LIBAOM_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake3)
 ')
 
 define(`BUILD_LIBAOM',`
+# build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd BUILD_HOME && \
     git clone ${LIBAOM_REPO} -b v`'LIBAOM_VER --depth 1 && \

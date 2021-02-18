@@ -47,30 +47,40 @@ DECLARE(`GST_MP4',true)
 DECLARE(`GST_SOUP',true)
 DECLARE(`GST_VPX',true)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTGOOD_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_XLIB,true,libx11-dev libxv-dev libxt-dev) ifelse(GST_GDKPIXBUF,true,libgdk-pixbuf2.0-dev) ifelse(GST_JPEG,true,libjpeg-turbo8-dev) ifelse(GST_PNG,true,libpng-dev) ifelse(GST_MP4,true,zlib1g-dev) ifelse(GST_SOUP,true,libsoup2.4-dev) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx-dev))')'
+ifelse(OS_NAME,ubuntu,`
+define(`GSTGOOD_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_XLIB,true,libx11-dev libxv-dev libxt-dev) ifelse(GST_GDKPIXBUF,true,libgdk-pixbuf2.0-dev) ifelse(GST_JPEG,true,libjpeg-turbo8-dev) ifelse(GST_PNG,true,libpng-dev) ifelse(GST_MP4,true,zlib1g-dev) ifelse(GST_SOUP,true,libsoup2.4-dev) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx-dev))')
 
-`define(`GSTGOOD_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1 libxt6) ifelse(GST_GDKPIXBUF,true,libgdk-pixbuf2.0-0) ifelse(GST_JPEG,true,libjpeg-turbo8) ifelse(GST_PNG,true,libpng16-16) ifelse(GST_MP4,true,zlib1g) ifelse(GST_SOUP,true,libsoup2.4-1) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx6))')'
-)
+define(`GSTGOOD_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1 libxt6) ifelse(GST_GDKPIXBUF,true,libgdk-pixbuf2.0-0) ifelse(GST_JPEG,true,libjpeg-turbo8) ifelse(GST_PNG,true,libpng16-16) ifelse(GST_MP4,true,zlib1g) ifelse(GST_SOUP,true,libsoup2.4-1) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx6))')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTGOOD_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex ifelse(GST_XLIB,true,libX11-devel libXv-devel libXt-devel) ifelse(GST_GDKPIXBUF,true,gdk-pixbuf2-devel) ifelse(GST_JPEG,true,libjpeg-turbo-devel) ifelse(GST_PNG,true,libpng-devel) ifelse(GST_MP4,true,zlib-devel) ifelse(GST_SOUP,true,libsoup-devel) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx-devel))')'
+ifelse(OS_NAME,centos,`
+define(`GSTGOOD_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex ifelse(GST_XLIB,true,libX11-devel libXv-devel libXt-devel) ifelse(GST_GDKPIXBUF,true,gdk-pixbuf2-devel) ifelse(GST_JPEG,true,libjpeg-turbo-devel) ifelse(GST_PNG,true,libpng-devel) ifelse(GST_MP4,true,zlib-devel) ifelse(GST_SOUP,true,libsoup-devel) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx-devel))')
 
-`define(`GSTGOOD_INSTALL_DEPS',`glib2 ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_GDKPIXBUF,true,gdk-pixbuf2) ifelse(GST_JPEG,true,libjpeg-turbo) ifelse(GST_PNG,true,libpng) ifelse(GST_MP4,true,zlib) ifelse(GST_SOUP,true,libsoup) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx))')'
-)
+define(`GSTGOOD_INSTALL_DEPS',`glib2 ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_GDKPIXBUF,true,gdk-pixbuf2) ifelse(GST_JPEG,true,libjpeg-turbo) ifelse(GST_PNG,true,libpng) ifelse(GST_MP4,true,zlib) ifelse(GST_SOUP,true,libsoup) ifelse(GST_VPX,true,ifdef(`BUILD_LIBVPX',,libvpx))')
+')
 
-define(`BUILD_GSTGOOD',
+define(`BUILD_GSTGOOD',`
+# build gst-plugin-good
 ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${GSTGOOD_REPO} | tar xz
 RUN cd BUILD_HOME/gst-plugins-good-GSTCORE_VER && \
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
+    -Dgtk_doc=disabled \
+    -Dgdk-pixbuf=ifelse(GST_GDKPIXBUF,true,enabled,disabled) \
+    -Djpeg=ifelse(GST_JPEG,true,enabled,disabled) \
+    -Dpng=ifelse(GST_PNG,true,enabled,disabled) \
+    -Disomp4=ifelse(GST_MP4,true,enabled,disabled) \
+    -Dsoup=ifelse(GST_SOUP,true,enabled,disabled) \
+    -Dvpx=ifelse(GST_VPX,true,enabled,disabled) \
+    && cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install
-)
+')
 
 REG(GSTGOOD)
 

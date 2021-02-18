@@ -31,17 +31,19 @@ dnl
 include(begin.m4)
 
 DECLARE(`GMMLIB_VER',intel-gmmlib-20.2.5)
+DECLARE(`GMMLIB_SRC_REPO',https://github.com/intel/gmmlib/archive/GMMLIB_VER.tar.gz)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GMMLIB_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ make wget')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`GMMLIB_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ make wget')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GMMLIB_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ make wget')'
-)
+ifelse(OS_NAME,centos,`
+define(`GMMLIB_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ make wget')
+')
 
-define(`BUILD_GMMLIB',
-ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/GMMLIB_VER.tar.gz
+define(`BUILD_GMMLIB',`
+# build gmmlib
+ARG GMMLIB_REPO=GMMLIB_SRC_REPO
 RUN cd BUILD_HOME && \
   wget -O - ${GMMLIB_REPO} | tar xz
 RUN cd BUILD_HOME/gmmlib-GMMLIB_VER && mkdir build && cd build && \
@@ -49,7 +51,7 @@ RUN cd BUILD_HOME/gmmlib-GMMLIB_VER && mkdir build && cd build && \
   make -j$(nproc) && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
-)
+')
 
 REG(GMMLIB)
 

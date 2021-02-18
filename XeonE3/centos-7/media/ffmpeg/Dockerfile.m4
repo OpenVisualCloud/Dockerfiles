@@ -17,6 +17,7 @@ include(gmmlib.m4)
 include(libva2.m4)
 include(media-driver.m4)
 include(msdk.m4)
+include(opencv.m4)
 include(ffmpeg.m4)
 include(end.m4)dnl
 

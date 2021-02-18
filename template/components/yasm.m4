@@ -32,15 +32,16 @@ include(begin.m4)
 
 DECLARE(`YASM_VER',1.3.0)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`YASM_BUILD_DEPS',`ca-certificates wget tar g++ make')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`YASM_BUILD_DEPS',`ca-certificates wget tar g++ make')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`YASM_BUILD_DEPS',`wget tar gcc-c++ make')'
-)
+ifelse(OS_NAME,centos,`
+define(`YASM_BUILD_DEPS',`wget tar gcc-c++ make')
+')
 
-define(`BUILD_YASM',
+define(`BUILD_YASM',`
+# build yasm
 dnl ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
 dnl temparorily use ovc resource repo as offiical yasm repo cannot be connected 
 ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
@@ -52,7 +53,7 @@ RUN cd BUILD_HOME/yasm-YASM_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
     make -j $(nproc) && \
     make install
-)
+')
 
 REG(YASM)
 

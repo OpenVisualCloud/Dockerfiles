@@ -44,6 +44,7 @@ define(`LIBX264_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake)
 ')
 
 define(`BUILD_LIBX264',`
+# build libx264
 ARG LIBX264_REPO=https://github.com/mirror/x264
 RUN cd BUILD_HOME && \
     git clone ${LIBX264_REPO} -b LIBX264_VER --depth 1 && \

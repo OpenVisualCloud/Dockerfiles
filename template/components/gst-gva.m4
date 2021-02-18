@@ -55,7 +55,8 @@ define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) ifdef(`BUILD_GIT',,git) oc
 define(`GVA_INSTALL_DEPS',`ocl-icd libass')
 ')
 
-define(`BUILD_GVA',
+define(`BUILD_GVA',`
+# build gst-plugin-gva
 # formerly https://github.com/opencv/gst-video-analytics
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
 # TODO: This is a workaround for a bug in dlstreamer_gst
@@ -63,7 +64,7 @@ ENV LIBRARY_PATH=BUILD_LIBDIR
 RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
     cd BUILD_HOME/gst-video-analytics && \
     git submodule update --init && \
-    sed -i ``"195s/) {/||g_strrstr(name, \"image\")) {/"'' gst/elements/gvapython/python_callback.cpp && \
+    sed -i `"195s/) {/||g_strrstr(name, \"image\")) {/"' gst/elements/gvapython/python_callback.cpp && \
     mkdir -p build && cd build && \
     ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \

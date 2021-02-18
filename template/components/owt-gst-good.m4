@@ -31,7 +31,7 @@ dnl
 include(begin.m4)dnl
 
 define(`GST_XLIB',false)
-define(`GST_GDKPIXBUF',false)
+define(`GST_GDKPIXBUF',true)
 define(`GST_JPEG',false)
 define(`GST_PNG',false)
 define(`GST_MP4',false)

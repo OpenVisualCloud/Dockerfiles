@@ -32,15 +32,16 @@ include(begin.m4)
 
 DECLARE(`OPENCV_VER',4.4.0)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`OPENCV_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ make wget python3-numpy ccache libeigen3-dev')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`OPENCV_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ make wget python3-numpy ccache libeigen3-dev')
+')
 
-ifelse(OS_NAME,centos,dnl
-`define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget python36-numpy ccache eigen3-devel')'
-)
+ifelse(OS_NAME,centos,`
+define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget python36-numpy ccache eigen3-devel')
+')
 
-define(`BUILD_OPENCV',`dnl
+define(`BUILD_OPENCV',`
+# build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/OPENCV_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${OPENCV_REPO} | tar xz
@@ -59,6 +60,24 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
   make -j "$(nproc)" && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
+')
+
+define(`REBUILD_OPENCV_VIDEOIO',`
+RUN cd BUILD_HOME/opencv-OPENCV_VER/build && \
+  rm -rf ./* && \
+  ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
+    -DCMAKE_INSTALL_LIBDIR=patsubst(BUILD_LIBDIR,BUILD_PREFIX/) \
+    -DOPENCV_GENERATE_PKGCONFIG=ON \
+    -DBUILD_DOCS=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_PERF_TESTS=OFF \
+    -DBUILD_TESTS=OFF \
+    .. && \
+  cd modules/videoio && \
+  make -j "$(nproc)" && \
+  cp -f ../../lib/libopencv_videoio.so.OPENCV_VER defn(`BUILD_DESTDIR',`BUILD_LIBDIR')
 ')
 
 REG(OPENCV)

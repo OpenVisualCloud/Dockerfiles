@@ -32,18 +32,19 @@ include(begin.m4)
 
 include(gst-plugins-bad.m4)
 
-ifelse(OS_NAME,ubuntu,`dnl
+ifelse(OS_NAME,ubuntu,`
 define(`GSTVAAPI_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev)')
 
 define(`GSTVAAPI_INSTALL_DEPS',`libdrm2 libglib2.0-0 libpciaccess0 libgl1-mesa-glx ifdef(`ENABLE_INTEL_GFX_REPO',libva2 libva-drm2 libva-x11-2 libva-wayland2)')
 ')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTVAAPI_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel libdrm-devel bison flex')'
-`define(`GSTVAAPI_INSTALL_DEPS',`glib2 libdrm libpciaccess')'
-)
+ifelse(OS_NAME,centos,`
+define(`GSTVAAPI_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel libdrm-devel bison flex')
+define(`GSTVAAPI_INSTALL_DEPS',`glib2 libdrm libpciaccess')
+')
 
-define(`BUILD_GSTVAAPI',
+define(`BUILD_GSTVAAPI',`
+# build gst-plugin-vaapi
 ARG GSTVAAPI_REPO=https://github.com/GStreamer/gstreamer-vaapi/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${GSTVAAPI_REPO} | tar xz
@@ -59,11 +60,11 @@ RUN cd BUILD_HOME/gstreamer-vaapi-GSTCORE_VER && \
   cd build && \
   ninja install && \
   DESTDIR=BUILD_DESTDIR ninja install
-)
+')
 
-define(`ENV_VARS_GSTVAAPI',
+define(`ENV_VARS_GSTVAAPI',`dnl
 ENV GST_VAAPI_ALL_DRIVERS=1
-)
+')
 
 REG(GSTVAAPI)
 
