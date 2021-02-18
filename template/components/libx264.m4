@@ -36,11 +36,11 @@ DECLARE(`LIBX264_VER',stable)
 DECLARE(`LIBX264_GPL',true)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBX264_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf')
+define(`LIBX264_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake) make autoconf')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBX264_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf diffutils')
+define(`LIBX264_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake) make autoconf diffutils')
 ')
 
 define(`BUILD_LIBX264',`

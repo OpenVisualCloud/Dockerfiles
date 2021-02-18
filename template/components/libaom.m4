@@ -35,11 +35,11 @@ include(nasm.m4)
 DECLARE(`LIBAOM_VER',2.0.0)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBAOM_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make')
+define(`LIBAOM_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake) make')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBAOM_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake3) make')
+define(`LIBAOM_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake3) make')
 ')
 
 define(`BUILD_LIBAOM',`

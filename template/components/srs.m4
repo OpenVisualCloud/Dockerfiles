@@ -34,11 +34,11 @@ DECLARE(`SRS_VER',v4.0.62)
 DECLARE(`SRS_ENABLE_HDS',on)
 
 ifelse(OS_NAME,ubuntu,`
-define(`SRS_BUILD_DEPS',`git ca-certificates g++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-dev )')
+define(`SRS_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ca-certificates g++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-dev )')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`SRS_BUILD_DEPS',`git gcc-c++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-devel )')
+define(`SRS_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) gcc-c++ make unzip patch pkg-config ifdef(BUILD_OPENSSL,,libssl-devel )')
 ')
 
 define(`BUILD_SRS',`

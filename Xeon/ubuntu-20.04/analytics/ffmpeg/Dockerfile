@@ -104,7 +104,8 @@ ARG LIBX264_REPO=https://github.com/mirror/x264
 RUN cd /opt/build && \
     git clone ${LIBX264_REPO} -b stable --depth 1 && \
     cd x264 && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib \
+        --enable-shared && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
@@ -156,9 +157,8 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd /opt/build && \
-    git clone ${SVT_HEVC_REPO}
+    git clone -b v1.5.0 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
-    git checkout v1.5.0 && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -180,7 +180,20 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates cmake gcc g++ make wget && \
+    ca-certificates wget tar g++ make cmake git && \
+  rm -rf /var/lib/apt/lists/*
+ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
+RUN cd /opt/build && \
+    git clone ${SVT_VP9_REPO} -b v0.2.1 --depth 1 && \
+    cd SVT-VP9/Build/linux && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j $(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install 
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates cmake gcc g++ make wget python3-numpy ccache libeigen3-dev && \
   rm -rf /var/lib/apt/lists/*
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.4.0.tar.gz
 RUN cd /opt/build && \
@@ -203,45 +216,63 @@ RUN cd /opt/build/opencv-4.4.0 && mkdir build && cd build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates cmake gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils && \
+    ca-certificates cmake gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils libnuma-dev ocl-icd-opencl-dev opencl-headers && \
   rm -rf /var/lib/apt/lists/*
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
 
-RUN cd /opt/build && git clone -b 2021.1 ${DLDT_REPO} && \
-  cd openvino && \
-  git submodule update --init --recursive && \
-  sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
-  mkdir build && \
-  cd build && \
+RUN git clone -b 2021.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+  cd /opt/build/openvino && \
+  git submodule update --init --recursive
+
+# TODO:
+# Perform make install of openvino instead of manually copying build artifacts.
+#
+# For now, only ngraph target is installed using make install (it auto-generates .cmake
+# files during install stage, so they can be later used by other projects).
+
+RUN cd /opt/build/openvino && \
+    sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
+  mkdir build && cd build && \
   cmake \
-    -DCMAKE_INSTALL_PREFIX=PREFIX_BUILD/dldt \
+    -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
+    -DENABLE_CPPLINT=OFF \
     -DENABLE_GNA=OFF \
     -DENABLE_VPU=OFF \
     -DENABLE_OPENCV=OFF \
-    -DTREAT_WARNING_AS_ERROR=OFF \
-    -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
     -DENABLE_MKL_DNN=ON \
     -DENABLE_CLDNN=ON \
+    -DENABLE_SAMPLES=OFF \
     -DENABLE_TESTS=OFF \
     -DBUILD_TESTS=OFF \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
+    -DNGRAPH_COMPONENT_PREFIX=inference-engine/ \
     -DNGRAPH_UNIT_TEST_ENABLE=OFF \
     -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
+  make -C ngraph install && \
+  make -C ngraph install DESTDIR=/opt/dist && \
   rm -rf ../bin/intel64/Release/lib/libgtest* && \
   rm -rf ../bin/intel64/Release/lib/libgmock* && \
   rm -rf ../bin/intel64/Release/lib/libmock* && \
   rm -rf ../bin/intel64/Release/lib/libtest*
 
-ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
+
+ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
+ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
+ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
 
 RUN cd /opt/build && \
   mkdir -p ${CUSTOM_IE_DIR}/include && \
   mkdir -p /opt/dist/${CUSTOM_IE_DIR}/include && \
   cp -r openvino/inference-engine/include/* ${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/ie_bridges/c/include/* ${CUSTOM_IE_DIR}/include && \
   cp -r openvino/inference-engine/include/* /opt/dist/${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/ie_bridges/c/include/* /opt/dist/${CUSTOM_IE_DIR}/include && \
   \
   mkdir -p ${CUSTOM_IE_LIBDIR} && \
   mkdir -p /opt/dist/${CUSTOM_IE_LIBDIR} && \
@@ -259,8 +290,8 @@ RUN cd /opt/build && \
   mkdir -p /opt/dist/${CUSTOM_IE_DIR}/external && \
   cp -r openvino/build/share/* ${CUSTOM_IE_DIR}/share/ && \
   cp -r openvino/build/share/* /opt/dist/${CUSTOM_IE_DIR}/share/ && \
-  cp -r openvino/inference-engine/temp/* ${CUSTOM_IE_DIR}/external/ && \
-  cp -r openvino/inference-engine/temp/* /opt/dist/${CUSTOM_IE_DIR}/external/ && \
+  cp -r openvino/inference-engine/temp/tbb ${CUSTOM_IE_DIR}/external/ && \
+  cp -r openvino/inference-engine/temp/tbb /opt/dist/${CUSTOM_IE_DIR}/external/ && \
   \
   mkdir -p "${CUSTOM_IE_LIBDIR}/pkgconfig"
 
@@ -273,15 +304,39 @@ RUN { \
   echo "Description: Intel Deep Learning Deployment Toolkit"; \
   echo "Version: 5.0"; \
   echo ""; \
-  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_wrapper"; \
+  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_api"; \
   echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/dldt.pc
+  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
+  mkdir -p /opt/dist/usr/local/lib/pkgconfig && \
+  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib/pkgconfig
 
-RUN rm -rf openvino
+
+
+ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-0.13.1-20180305.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${LIBJSONC_REPO} | tar xz && \
+    cd json-c-json-c-0.13.1-20180305 && \
+    sh autogen.sh && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
+    make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+
+
+ARG KAFKA_VER=1.0.0
+ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${KAFKA_VER}.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
+    cd librdkafka-1.0.0 && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
+    make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget patch libv4l-dev libass-dev  && \
+    build-essential ca-certificates wget patch libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.2.tar.gz
@@ -299,19 +354,43 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
     patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
+    patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
+ARG FFMPEG_MA_RELEASE_VER=0.5
+ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
+ARG FFMPEG_MA_PATH=/opt/build/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
+RUN cd /opt/build && wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
+RUN cp ${FFMPEG_MA_PATH}/docker/patch/opencv.pc /usr/lib/pkgconfig
+ARG CVDEF_H=/usr/local/include/opencv4/opencv2/core/cvdef.h
+RUN if [ -f "${CVDEF_H}" ]; then cp ${FFMPEG_MA_PATH}/docker/patch/cvdef.h ${CVDEF_H}; fi
+RUN cd /opt/build/FFmpeg-n4.2.2 && \
+    find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+
+ARG FFMPEG_PATCHES_RELEASE_VER=0.2
+ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
+ARG FFMPEG_PATCHES_PATH=/opt/build/CDN-${FFMPEG_PATCHES_RELEASE_VER}
+
+RUN cd /opt/build && \
+    wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz && \
+    cd /opt/build/FFmpeg-n4.2.2 && \
+    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+
+RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc         --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9         --enable-libdav1d     --enable-librdkafka     --enable-libjson_c     --enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN echo "Start cleanup" && \
-    rm -rf /opt/dist//usr/local/include && \
-    rm -rf /opt/dist//usr/local/share/doc && \
-    rm -rf /opt/dist//usr/local/share/gtk-doc && \
-    rm -rf /opt/dist//usr/local/share/man && \
-    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
-    echo "Cleanup done"
+# cleanup
+RUN rm -rf /opt/dist/usr/local/include && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig && \
+    find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
+RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
+RUN rm -rf /opt/dist/usr/local/share/man
+RUN cd /opt/dist/usr/local/openvino/inference-engine && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig/openvino.pc \
+       include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
+RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
 
 FROM ubuntu:20.04
 LABEL Description="This is the base image for FFMPEG ubuntu 20.04"
@@ -321,17 +400,15 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libnuma1 libgtk-3-0 libass9 libv4l-0  && \
+    libnuma1 libgtk-3-0 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
-ARG CUSTOM_IE_DIR=/usr/local/dldt/inference-engine
+ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-RUN { \
-   echo "${CUSTOM_IE_LIBDIR}"; \
-   echo "${CUSTOM_IE_DIR}/external/tbb/lib"; \
-   echo "${CUSTOM_IE_DIR}/external/opencv/lib"; \
-} > /etc/ld.so.conf.d/dldt.conf
-RUN ldconfig
+RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
+ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
+ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
+ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake

@@ -37,11 +37,11 @@ DECLARE(`SVT_VP9_VER',v0.2.1)
 include(yasm.m4)
 
 ifelse(OS_NAME,ubuntu,dnl
-`define(`SVT_VP9_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')'
+`define(`SVT_VP9_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) ifdef(`BUILD_GIT',,git)')'
 )
 
 ifelse(OS_NAME,centos,dnl
-`define(`SVT_VP9_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3) ifdef(OS_VERSION,7,centos-release-scl)')'
+`define(`SVT_VP9_BUILD_DEPS',`wget tar gcc-c++ make ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake3) ifdef(OS_VERSION,7,centos-release-scl)')'
 )
 
 define(`BUILD_SVT_VP9',

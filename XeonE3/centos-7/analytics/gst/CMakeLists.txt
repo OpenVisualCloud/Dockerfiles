@@ -1,4 +1,4 @@
-set(image "xeone3_dldt_gst_centos7")
+set(image "xeone3_analytics_gst_centos7")
 include(image)
 include(gst-tests)
 include(dldt-gst-tests)
