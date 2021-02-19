@@ -88,7 +88,6 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=BUILD_DESTDIR
-
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0/:/usr/local/lib/
 
 RUN cp -r  BUILD_HOME/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/gstreamer-1.0/.
@@ -101,7 +100,7 @@ RUN mkdir -p /opt/intel/dl_streamer/python && \
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 RUN mkdir -p BUILD_DESTDIR/opt/intel/dl_streamer/python && \
     cp -r BUILD_HOME/gst-video-analytics/python/* BUILD_DESTDIR/opt/intel/dl_streamer/python
-)
+')
 
 define(`INSTALL_GVA',
 ENV LD_LIBRARY_PATH=/usr/local/lib/gstreamer-1.0/
