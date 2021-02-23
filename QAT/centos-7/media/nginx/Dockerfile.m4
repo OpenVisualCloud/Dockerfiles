@@ -1,27 +1,30 @@
 
-FROM centos:centos7 AS build
-WORKDIR /home
-define(`BUILD_LINKAGE',shared)dnl
-define(`BUILD_TOOLS_NO_ASM')dnl
-
-include(build-tools.m4)
-include(nginx-http-flv.m4)
-include(nginx-upload.m4)
-include(qat.m4)
+include(begin.m4)
+include(qat-core.m4)
 include(qat-zip.m4)
-include(qat-openssl.m4)
+include(openssl.m4)
+include(qat-cryptomb.m4)
 include(qat-engine.m4)
-include(nginx-qat.m4)
+include(nginx-flv.m4)
+include(nginx-upload.m4)
+include(qat-nginx.m4)
 include(nginx-cert.m4)
-include(cleanup.m4)
+include(end.m4)
 
-FROM openvisualcloud/xeon-centos7-media-ffmpeg:latest
-LABEL Description="This is the base image for the NGINX-QAT service"
+PREAMBLE
+FROM OS_NAME:OS_VERSION AS build
+include(centos-repo.m4)
+INSTALL_CENTOS_REPO(epel-release centos-release-scl)
+
+BUILD_ALL()dnl
+CLEANUP()dnl
+
+FROM openvisualcloud/xeon-OS_NAME`'patsubst(OS_VERSION,\.)-media-ffmpeg:BUILD_VERSION
+LABEL Description="This is the base image for QAT NGINX OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
-# Prerequisites
-include(install.pkgs.m4)
 # Install
-include(install.m4)
+INSTALL_CENTOS_REPO(epel-release)
+INSTALL_ALL(runtime,build)
 

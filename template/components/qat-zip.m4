@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020-2021, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,43 +30,38 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENSSL_VER',1_1_1i)
+DECLARE(`QAT_ZIP_VER',v1.0.2)
+
+include(qat-core.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OPENSSL_BUILD_DEPS',`ca-certificates wget tar g++ make libtool autoconf')
+define(`QAT_ZIP_BUILD_DEPS',`wget ca-certificates make gcc libzip-dev')
+define(`QAT_ZIP_INSTALL_DEPS',`libzip`'ifelse(OS_VERSION,18.04,4,5)')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OPENSSL_BUILD_DEPS',`wget tar gcc-c++ make libtool autoconf')
+define(`QAT_ZIP_BUILD_DEPS',`wget make gcc zlib-devel')
+define(`QAT_ZIP_INSTALL_DEPS',`zlib')
 ')
 
-define(`BUILD_OPENSSL',`
-# build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_`'OPENSSL_VER.tar.gz
+define(`BUILD_QAT_ZIP',`
+# load qat-zip
+ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/QAT_ZIP_VER.tar.gz
 RUN cd BUILD_HOME && \
-    wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_`'OPENSSL_VER && \
-    ./config no-ssl3 shared --prefix=BUILD_PREFIX/ssl --openssldir=BUILD_PREFIX/ssl -fPIC -Wl,-rpath=BUILD_PREFIX/ssl/lib && \
-    make depend && \
-    make -s V=0 && \
-    make install DESTDIR=BUILD_DESTDIR && \
-    (cd BUILD_DESTDIR && mkdir -p .BUILD_LIBDIR/pkgconfig && mv .BUILD_PREFIX/ssl/lib/pkgconfig/*.pc .BUILD_LIBDIR/pkgconfig/) && \
+    wget -O - ${QAT_ZIP_REPO} | tar xz && \
+    cd QATzip* && \
+    /bin/bash ./configure LDFLAGS="-Wl,-rpath=/opt/intel/QAT/build" --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/QATzip && \
+    make -j8 && \
     make install && \
-    (mkdir -p BUILD_LIBDIR/pkgconfig && mv BUILD_PREFIX/ssl/lib/pkgconfig/*.pc BUILD_LIBDIR/pkgconfig/)
+    tar cf - /opt/intel/QATzip | (cd BUILD_DESTDIR && tar xf -)
 ')
 
-define(`CLEANUP_OPENSSL',`dnl
-ifelse(CLEANUP_CC,yes,`dnl
-RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/include
-')dnl
-ifelse(CLEANUP_MAN,yes,`dnl
-RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/man
-')dnl
+define(`CLEANUP_QAT_ZIP',`dnl
 ifelse(CLEANUP_DOC,yes,`dnl
-RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/doc
+RUN rm -rf /opt/intel/QATzip/share/man
 ')dnl
 ')
 
-REG(OPENSSL)
+REG(QAT_ZIP)
 
 include(end.m4)dnl

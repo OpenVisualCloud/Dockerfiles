@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020-2021, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,43 +30,42 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENSSL_VER',1_1_1i)
+DECLARE(`QAT_ENGINE_VER',v0.5.43)
+dnl CentOS QAT 1.7.0-470b06 only supports QAT engine version up to 0.5.43.
+dnl CentOS QAT 1.7.0-470b12 and above can support QAT engine version beyond 0.5.43.
+
+include(openssl.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OPENSSL_BUILD_DEPS',`ca-certificates wget tar g++ make libtool autoconf')
+define(`QAT_ENGINE_BUILD_DEPS',`wget ca-certificates make gcc gawk autoconf automake libtool pkg-config')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OPENSSL_BUILD_DEPS',`wget tar gcc-c++ make libtool autoconf')
+define(`QAT_ENGINE_BUILD_DEPS',`wget make gcc gawk autoconf automake libtool pkg-config')
 ')
 
-define(`BUILD_OPENSSL',`
-# build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_`'OPENSSL_VER.tar.gz
+define(`BUILD_QAT_ENGINE',`
+# load qat-engine
+ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/QAT_ENGINE_VER.tar.gz
 RUN cd BUILD_HOME && \
-    wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_`'OPENSSL_VER && \
-    ./config no-ssl3 shared --prefix=BUILD_PREFIX/ssl --openssldir=BUILD_PREFIX/ssl -fPIC -Wl,-rpath=BUILD_PREFIX/ssl/lib && \
-    make depend && \
-    make -s V=0 && \
-    make install DESTDIR=BUILD_DESTDIR && \
-    (cd BUILD_DESTDIR && mkdir -p .BUILD_LIBDIR/pkgconfig && mv .BUILD_PREFIX/ssl/lib/pkgconfig/*.pc .BUILD_LIBDIR/pkgconfig/) && \
+    wget -O - ${QAT_ENGINE_REPO} | tar xz && \
+    cd QAT_Engine* && \
+    ./autogen.sh && \
+    export PERL5LIB="$(ls -1 -d BUILD_HOME/openssl-*)" && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=BUILD_PREFIX/ssl --prefix=/opt/intel/QATengine --enable-multibuff_offload && \
+    make -j8 && \
     make install && \
-    (mkdir -p BUILD_LIBDIR/pkgconfig && mv BUILD_PREFIX/ssl/lib/pkgconfig/*.pc BUILD_LIBDIR/pkgconfig/)
+    tar cf - BUILD_PREFIX/ssl | (cd BUILD_DESTDIR && tar xf -)
 ')
 
-define(`CLEANUP_OPENSSL',`dnl
-ifelse(CLEANUP_CC,yes,`dnl
-RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/include
-')dnl
-ifelse(CLEANUP_MAN,yes,`dnl
-RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/man
-')dnl
-ifelse(CLEANUP_DOC,yes,`dnl
-RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/doc
-')dnl
+define(`QAT_ENGINE_ENV_VARS',`dnl
+ENV OPENSSL_ENGINES=BUILD_PREFIX/ssl/lib/engines-1.1
 ')
 
-REG(OPENSSL)
+define(`INSTALL_QAT_ENGINE',`dnl
+RUN echo "/opt/intel/QAT/build" >> /etc/ld.so.conf.d/qat.conf && ldconfig
+')
+
+REG(QAT_ENGINE)
 
 include(end.m4)dnl

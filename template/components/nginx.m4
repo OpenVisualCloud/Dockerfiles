@@ -34,12 +34,12 @@ DECLARE(`NGINX_VER',1.18.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`NGINX_BUILD_DEPS',`ca-certificates gcc libpcre3-dev libxslt1-dev make wget zlib1g-dev ifdef(`BUILD_OPENSSL',,libssl-dev)')
-define(`NGINX_INSTALL_DEPS',`libpcre3 libxml2 libxslt1.1 zlib1g ifdef(`BUILD_OPENSSL',,openssl)')
+define(`NGINX_INSTALL_DEPS',`libpcre3 libxml2 libxslt1.1 zlib1g ifdef(`BUILD_OPENSSL',,libssl1.1)')
 ')
 
 ifelse(OS_NAME,centos,`
 define(`NGINX_BUILD_DEPS',`gcc libxslt-devel make pcre-devel wget zlib-devel ifdef(`BUILD_OPENSSL',,openssl-devel)')
-define(`NGINX_INSTALL_DEPS',`libxml2 libxslt pcre zlib ifdef(`BUILD_OPENSSL',,openssl)')
+define(`NGINX_INSTALL_DEPS',`libxml2 libxslt pcre zlib ifdef(`BUILD_OPENSSL',,openssl11)')
 ')
 
 define(`BUILD_NGINX',`
@@ -77,8 +77,8 @@ ifdef(`BUILD_NGINX_UPLOAD',`dnl
         --add-module=../nginx-upload-module-NGINX_UPLOAD_VER \
 ')dnl
 ifdef(`BUILD_OPENSSL',`dnl
-        --with-cc-opt="-I/usr/local/ssl/include/" \
-        --with-ld-opt="-L/usr/local/ssl/lib/ -Wl`,'-rpath=BUILD_PREFIX/ssl/lib" \
+        --with-cc-opt="-I`'BUILD_PREFIX/ssl/include/" \
+        --with-ld-opt="-L`'BUILD_PREFIX/ssl/lib/ -Wl`,'-rpath=BUILD_PREFIX/ssl/lib" \
 ')dnl
     && make -j$(nproc) \
     && make install DESTDIR=BUILD_DESTDIR

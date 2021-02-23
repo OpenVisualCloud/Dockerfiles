@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020-2021, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,43 +30,16 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENSSL_VER',1_1_1i)
+define(`NGINX_CERT_BUILD_DEPS',`openssl')
 
-ifelse(OS_NAME,ubuntu,`
-define(`OPENSSL_BUILD_DEPS',`ca-certificates wget tar g++ make libtool autoconf')
+define(`BUILD_NGINX_CERT',`
+# Generate a self-certificate for testing purpose
+RUN mkdir -p BUILD_DESTDIR/etc/nginx && \
+    printf "US\nOR\nPortland\nOregon\nData Center Group\nIntel Corporation\n%s\nnobody@intel.com\n" "$(hostname)" | openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout BUILD_DESTDIR/etc/nginx/cert.key -out BUILD_DESTDIR/etc/nginx/cert.crt && \
+    chmod 640 BUILD_DESTDIR/etc/nginx/cert.key && \
+    chmod 644 BUILD_DESTDIR/etc/nginx/cert.crt
 ')
 
-ifelse(OS_NAME,centos,`
-define(`OPENSSL_BUILD_DEPS',`wget tar gcc-c++ make libtool autoconf')
-')
-
-define(`BUILD_OPENSSL',`
-# build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_`'OPENSSL_VER.tar.gz
-RUN cd BUILD_HOME && \
-    wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_`'OPENSSL_VER && \
-    ./config no-ssl3 shared --prefix=BUILD_PREFIX/ssl --openssldir=BUILD_PREFIX/ssl -fPIC -Wl,-rpath=BUILD_PREFIX/ssl/lib && \
-    make depend && \
-    make -s V=0 && \
-    make install DESTDIR=BUILD_DESTDIR && \
-    (cd BUILD_DESTDIR && mkdir -p .BUILD_LIBDIR/pkgconfig && mv .BUILD_PREFIX/ssl/lib/pkgconfig/*.pc .BUILD_LIBDIR/pkgconfig/) && \
-    make install && \
-    (mkdir -p BUILD_LIBDIR/pkgconfig && mv BUILD_PREFIX/ssl/lib/pkgconfig/*.pc BUILD_LIBDIR/pkgconfig/)
-')
-
-define(`CLEANUP_OPENSSL',`dnl
-ifelse(CLEANUP_CC,yes,`dnl
-RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/include
-')dnl
-ifelse(CLEANUP_MAN,yes,`dnl
-RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/man
-')dnl
-ifelse(CLEANUP_DOC,yes,`dnl
-RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/doc
-')dnl
-')
-
-REG(OPENSSL)
+REG(NGINX_CERT)
 
 include(end.m4)dnl
