@@ -31,7 +31,7 @@ RUN cd /opt/build && \
     git clone ${EMBREE_REPO} && \
     mkdir embree/build && \
     cd embree/build && \
-    git checkout df0b324 && \
+    git reset --hard df0b324 && \
     cmake .. -Wno-dev -DEMBREE_TUTORIALS=OFF && \
     make -j 8 && \
     make install DESTDIR=/opt/dist && \
@@ -48,7 +48,7 @@ RUN cd /opt/build && \
     git clone ${OSPRAY_REPO} && \
     mkdir ospray/build && \
     cd ospray/build && \
-    git checkout c42a885 && \
+    git reset --hard c42a885 && \
     cmake .. && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist

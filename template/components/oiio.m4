@@ -48,7 +48,7 @@ ARG OIIO_REPO=https://github.com/OpenImageIO/oiio.git
 RUN git clone ${OIIO_REPO} && \
     mkdir oiio/build && \
     cd oiio/build && \
-    git checkout OIIO_VER && \
+    git reset --hard OIIO_VER && \
     cmake .. && \
     make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \

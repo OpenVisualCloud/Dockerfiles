@@ -50,7 +50,7 @@ RUN cd BUILD_HOME && \
     git clone ${OpenEXR_REPO} && \
     mkdir openexr/build && \
     cd openexr/build && \
-    git checkout OPENEXR_VER && \
+    git reset --hard OPENEXR_VER && \
     cmake .. && \
     make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \

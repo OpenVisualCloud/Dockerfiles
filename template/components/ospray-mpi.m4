@@ -49,7 +49,7 @@ RUN cd BUILD_HOME && \
     git clone ${OSPRAY_REPO} ospray_mpi&& \
     mkdir ospray_mpi/build && \
     cd ospray_mpi/build && \
-    git checkout OSPRAY_MPI_VER && \
+    git reset --hard OSPRAY_MPI_VER && \
     cmake -DOSPRAY_MODULE_MPI=ON -DOSPRAY_SG_OPENIMAGEIO=ON .. && \
     make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR

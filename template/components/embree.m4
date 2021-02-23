@@ -49,7 +49,7 @@ RUN cd BUILD_HOME && \
     git clone ${EMBREE_REPO} && \
     mkdir embree/build && \
     cd embree/build && \
-    git checkout EMBREE_VER && \
+    git reset --hard EMBREE_VER && \
     cmake .. -Wno-dev -DEMBREE_TUTORIALS=OFF && \
     make -j 8 && \
     make install DESTDIR=BUILD_DESTDIR && \

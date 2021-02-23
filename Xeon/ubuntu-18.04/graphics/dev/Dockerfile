@@ -31,7 +31,7 @@ RUN cd /opt/build && \
     git clone ${EMBREE_REPO} && \
     mkdir embree/build && \
     cd embree/build && \
-    git checkout df0b324 && \
+    git reset --hard df0b324 && \
     cmake .. -Wno-dev -DEMBREE_TUTORIALS=OFF && \
     make -j 8 && \
     make install DESTDIR=/opt/dist && \
@@ -49,7 +49,7 @@ RUN cd /opt/build && \
     git clone ${OpenEXR_REPO} && \
     mkdir openexr/build && \
     cd openexr/build && \
-    git checkout 0ac2ea3 && \
+    git reset --hard 0ac2ea3 && \
     cmake .. && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -66,7 +66,7 @@ ARG OIIO_REPO=https://github.com/OpenImageIO/oiio.git
 RUN git clone ${OIIO_REPO} && \
     mkdir oiio/build && \
     cd oiio/build && \
-    git checkout 5daa9a1 && \
+    git reset --hard 5daa9a1 && \
     cmake .. && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -83,7 +83,7 @@ RUN cd /opt/build && \
     git clone ${OSPRAY_REPO} && \
     mkdir ospray/build && \
     cd ospray/build && \
-    git checkout c42a885 && \
+    git reset --hard c42a885 && \
     cmake .. && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist
@@ -100,7 +100,7 @@ RUN cd /opt/build && \
     git clone ${OSPRAY_REPO} ospray_mpi&& \
     mkdir ospray_mpi/build && \
     cd ospray_mpi/build && \
-    git checkout c42a885 && \
+    git reset --hard c42a885 && \
     cmake -DOSPRAY_MODULE_MPI=ON -DOSPRAY_SG_OPENIMAGEIO=ON .. && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist

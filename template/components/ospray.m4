@@ -47,7 +47,7 @@ RUN cd BUILD_HOME && \
     git clone ${OSPRAY_REPO} && \
     mkdir ospray/build && \
     cd ospray/build && \
-    git checkout OSPRAY_VER && \
+    git reset --hard OSPRAY_VER && \
     cmake .. && \
     make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR
