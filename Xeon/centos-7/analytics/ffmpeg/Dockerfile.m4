@@ -22,7 +22,7 @@ include(end.m4)dnl
 PREAMBLE
 FROM OS_NAME:OS_VERSION AS build
 
-INSTALL_CENTOS_REPO(epel-release)
+INSTALL_CENTOS_REPO(epel-release centos-release-scl)
 
 BUILD_ALL()dnl
 CLEANUP()dnl
