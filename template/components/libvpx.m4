@@ -35,11 +35,11 @@ include(nasm.m4)
 DECLARE(`LIBVPX_VER',1.8.2)
 
 ifelse(OS_NAME,ubuntu,`
-define(`LIBVPX_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake) make autoconf')
+define(`LIBVPX_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`LIBVPX_BUILD_DEPS',`ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake) make autoconf diffutils')
+define(`LIBVPX_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf diffutils')
 ')
 
 define(`BUILD_LIBVPX',`

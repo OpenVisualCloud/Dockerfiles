@@ -46,12 +46,12 @@ include(dldt-ie.m4)
 include(gst-plugins-base.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) ifdef(`BUILD_GIT',,git) ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ifdef(`BUILD_LIBVA2',,libva-dev)')
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ifdef(`BUILD_LIBVA2',,libva-dev)')
 define(`GVA_INSTALL_DEPS',`ocl-icd-libopencl1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2))')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) ifdef(`BUILD_GIT',,git) ocl-icd-devel opencl-headers pkg-config')
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) git ocl-icd-devel opencl-headers pkg-config')
 define(`GVA_INSTALL_DEPS',`ocl-icd libass')
 ')
 

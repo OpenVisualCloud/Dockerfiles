@@ -64,11 +64,11 @@ define(`FFMPEG_ENABLE_X264',true)
 include(ffmpeg.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev ) ifdef(`BUILD_GIT',,git) gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev ) git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel ) ifdef(`BUILD_GIT',,git) gcc npm python glib2-devel boost-devel log4cxx-devel pkg-config ifelse(OS_VERSION,7,devtoolset-9)')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel ) git gcc npm python glib2-devel boost-devel log4cxx-devel pkg-config ifelse(OS_VERSION,7,devtoolset-9)')
 ')
 
 define(`BUILD_OWT',`

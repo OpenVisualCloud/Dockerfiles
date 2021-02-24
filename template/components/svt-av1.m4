@@ -37,11 +37,11 @@ DECLARE(`SVT_AV1_VER',v0.8.5)
 include(yasm.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`SVT_AV1_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) ifdef(`BUILD_GIT',,git)')
+define(`SVT_AV1_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`SVT_AV1_BUILD_DEPS',`wget tar gcc-c++ make ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake3)')
+define(`SVT_AV1_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3)')
 ')
 
 define(`BUILD_SVT_AV1',`

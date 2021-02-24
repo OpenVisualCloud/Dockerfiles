@@ -35,11 +35,11 @@ include(yasm.m4)
 DECLARE(`SVT_HEVC_VER',v1.5.0)
 
 ifelse(OS_NAME,ubuntu,`
-define(`SVT_HEVC_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) ifdef(`BUILD_GIT',,git)')
+define(`SVT_HEVC_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`SVT_HEVC_BUILD_DEPS',`wget tar gcc-c++ make ifdef(`BUILD_GIT',,git) ifdef(`BUILD_CMAKE',,cmake3)')
+define(`SVT_HEVC_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3)')
 ')
 
 include(yasm.m4)
