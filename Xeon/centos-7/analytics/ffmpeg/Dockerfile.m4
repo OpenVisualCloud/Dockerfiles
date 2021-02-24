@@ -17,7 +17,6 @@ include(svt-vp9.m4)
 include(dldt-ie.m4)
 include(libjsonc.m4)
 include(librdkafka.m4)
-include(media-driver.m4)
 include(opencv.m4)
 include(ffmpeg.m4)
 include(end.m4)dnl
