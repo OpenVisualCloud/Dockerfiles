@@ -58,7 +58,7 @@ RUN git clone -b DLDT_VER --depth 1 ${DLDT_REPO} BUILD_HOME/openvino && \
 # files during install stage, so they can be later used by other projects).
 
 RUN cd BUILD_HOME/openvino && \
-ifelse(DLDT_WARNING_AS_ERRORS,false,`dnl
+  ifelse(DLDT_WARNING_AS_ERRORS,false,`dnl
   sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
 ')dnl
   mkdir build && cd build && \
@@ -99,7 +99,9 @@ RUN cd BUILD_HOME && \
   mkdir -p ${CUSTOM_IE_DIR}/include && \
   mkdir -p BUILD_DESTDIR/${CUSTOM_IE_DIR}/include && \
   cp -r openvino/inference-engine/include/* ${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/ie_bridges/c/include/* ${CUSTOM_IE_DIR}/include && \
   cp -r openvino/inference-engine/include/* BUILD_DESTDIR/${CUSTOM_IE_DIR}/include && \
+  cp -r openvino/inference-engine/ie_bridges/c/include/* BUILD_DESTDIR/${CUSTOM_IE_DIR}/include && \
   \
   mkdir -p ${CUSTOM_IE_LIBDIR} && \
   mkdir -p BUILD_DESTDIR/${CUSTOM_IE_LIBDIR} && \
@@ -150,6 +152,18 @@ ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
 ENV TBB_DIR=BUILD_PREFIX/openvino/inference-engine/external/tbb/cmake
 ENV ngraph_DIR=BUILD_PREFIX/openvino/inference-engine/cmake
 ')
+
+define(`FFMPEG_PATCH_ANALYTICS',
+ARG FFMPEG_MA_RELEASE_VER=0.5
+ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
+ARG FFMPEG_MA_PATH=BUILD_HOME/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
+RUN cd BUILD_HOME && wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
+RUN cp ${FFMPEG_MA_PATH}/docker/patch/opencv.pc /usr/lib/pkgconfig
+ARG CVDEF_H=/usr/local/include/opencv4/opencv2/core/cvdef.h
+RUN if [ -f "${CVDEF_H}" ]; then cp ${FFMPEG_MA_PATH}/docker/patch/cvdef.h ${CVDEF_H}; fi
+RUN cd $1 && \
+    find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+)
 
 define(`CLEANUP_DLDT',`dnl
 ifelse(CLEANUP_CC,yes,`dnl

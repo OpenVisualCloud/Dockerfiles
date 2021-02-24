@@ -32,27 +32,27 @@ include(begin.m4)
 
 DECLARE(`GVA_VER',v1.3)
 
-DECLARE(`GVA_WITH_DRM',yes)
+DECLARE(`GVA_WITH_DRM',no)
 DECLARE(`GVA_WITH_X11',no)
 DECLARE(`GVA_WITH_GLX',no)
 DECLARE(`GVA_WITH_WAYLAND',no)
 DECLARE(`GVA_WITH_EGL',no)
 
 DECLARE(`GVA_ENABLE_PAHO_INST',OFF)
-DECLARE(`GVA_ENABLE_RDKAFKA_INST',OFF)
+DECLARE(`GVA_ENABLE_RDKAFKA_INST',ifdef(`BUILD_LIBRDKAFKA',ON,OFF))
 DECLARE(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',OFF)
 
 include(dldt-ie.m4)
 include(gst-plugins-base.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config ifdef(`BUILD_LIBVA2',,libva-dev)')
-define(`GVA_INSTALL_DEPS',`ocl-icd-libopencl1 ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2))')
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ifdef(`BUILD_LIBVA2',,libva-dev)')
+define(`GVA_INSTALL_DEPS',`ocl-icd-libopencl1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2))')
 ')
 
 ifelse(OS_NAME,centos,`
 define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) git ocl-icd-devel opencl-headers pkg-config')
-define(`GVA_INSTALL_DEPS',`ocl-icd')
+define(`GVA_INSTALL_DEPS',`ocl-icd libass')
 ')
 
 define(`BUILD_GVA',`
@@ -74,7 +74,7 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
         -DDISABLE_SAMPLES=ON \
         -DENABLE_PAHO_INSTALLATION=GVA_ENABLE_PAHO_INST \
         -DENABLE_RDKAFKA_INSTALLATION=GVA_ENABLE_RDKAFKA_INST \
-        -DENABLE_VAAPI=ON \
+        -DENABLE_VAAPI=OFF \
         -DENABLE_VAS_TRACKER=OFF \
         -DENABLE_AUDIO_INFERENCE_ELEMENTS=GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS \
         -Dwith_drm=GVA_WITH_DRM \
@@ -88,7 +88,26 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=BUILD_DESTDIR
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0/:/usr/local/lib/
+
+RUN cp -r  BUILD_HOME/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/gstreamer-1.0/.
+RUN cp -r  BUILD_HOME/gst-video-analytics/build/intel64/Release/lib/* BUILD_DESTDIR/usr/local/lib/gstreamer-1.0/.
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
+
+RUN mkdir -p /opt/intel/dl_streamer/python && \
+    cp -r BUILD_HOME/gst-video-analytics/python/* /opt/intel/dl_streamer/python
+
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+RUN mkdir -p BUILD_DESTDIR/opt/intel/dl_streamer/python && \
+    cp -r BUILD_HOME/gst-video-analytics/python/* BUILD_DESTDIR/opt/intel/dl_streamer/python
 ')
+
+define(`INSTALL_GVA',
+ENV LD_LIBRARY_PATH=/usr/local/lib/gstreamer-1.0/
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib/x86_64-linux-gnu/girepository-1.0/
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
+)
 
 REG(GVA)
 

@@ -24,7 +24,7 @@ sudo -E docker run openvisualcloud/xeon-centos76-media-svt /bin/bash -c "dd if=/
 ```
 - SVT VP9 encoder:
 ```bash
-sudo -E docker run openvisualcloud/xeon-ubuntu1604-media-svt /bin/bash -c "dd if=/dev/urandom bs=115200 count=300 of=test.yuv && SvtVp9EncApp -i test.yuv -w 320 -h 240 -b out.ivf ."
+sudo -E docker run openvisualcloud/xeon-ubuntu1804-media-svt /bin/bash -c "dd if=/dev/urandom bs=115200 count=300 of=test.yuv && SvtVp9EncApp -i test.yuv -w 320 -h 240 -b out.ivf ."
 ```
 - SVT HEVC with FFmpeg:
 ```bash

@@ -259,17 +259,17 @@ RUN wget -O - ${MSDK_REPO} | tar xz && mv MediaSDK-${MSDK_VER} MediaSDK && \
 
 RUN mkdir neo
 
-RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19.01.12103/intel-gmmlib_18.4.0.348_amd64.deb
-RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19.01.12103/intel-igc-core_18.50.1270_amd64.deb
-RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19.01.12103/intel-igc-opencl_18.50.1270_amd64.deb
-RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/19.01.12103/intel-opencl_19.01.12103_amd64.deb
+RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/20.52.18783/intel-gmmlib_20.3.2_amd64.deb
+RUN cd neo && wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.5884/intel-igc-core_1.0.5884_amd64.deb
+RUN cd neo && wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.5884/intel-igc-opencl_1.0.5884_amd64.deb
+RUN cd neo && wget https://github.com/intel/compute-runtime/releases/download/20.52.18783/intel-opencl_20.52.18783_amd64.deb
 
 RUN cd neo && \
     dpkg -i ./*.deb && \
-    dpkg-deb -x intel-gmmlib_18.4.0.348_amd64.deb /home/build/ && \
-    dpkg-deb -x intel-igc-core_18.50.1270_amd64.deb /home/build/ && \
-    dpkg-deb -x intel-igc-opencl_18.50.1270_amd64.deb /home/build/ && \
-    dpkg-deb -x intel-opencl_19.01.12103_amd64.deb /home/build/
+    dpkg-deb -x intel-gmmlib_20.3.2_amd64.deb /home/build/ && \
+    dpkg-deb -x intel-igc-core_1.0.5884_amd64.deb /home/build/ && \
+    dpkg-deb -x intel-igc-opencl_1.0.5884_amd64.deb /home/build/ && \
+    dpkg-deb -x intel-opencl_20.52.18783_amd64.deb /home/build/
 
 
 #clinfo needs to be installed after build directory is copied over
@@ -632,7 +632,7 @@ WORKDIR /home
 ENV DEBIAN_FRONTEND=noninteractive
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
     apt-get update && apt-get install -y -q --no-install-recommends libnuma1 libssl1.1 libglib2.0 libpango-1.0-0 libpangocairo-1.0-0 gobject-introspection libcurl3-gnutls libdrm-intel1 libudev1 libx11-xcb1 libgl1-mesa-glx libxrandr2 libglib2.0-0 libpng16-16 libxv1 libvisual-0.4-0 libgl1-mesa-glx libegl1-mesa libpango-1.0-0 libtheora0 libcdparanoia0 libasound2 libsoup2.4-1 libjpeg8 libjpeg-turbo8 libgtk2.0 libdrm2 libxv1 libpugixml1v5 python3-numpy python3-gi python3-gi-cairo python3-dev \
-libdrm2  libjson-c3 libboost-filesystem1.65.1 libboost-system1.65.1 libusb-1.0-0-dev libboost-program-options1.65.1  && \
+libdrm2 libjson-c3 libboost-filesystem1.65.1 libboost-system1.65.1 libusb-1.0-0-dev libboost-program-options1.65.1  && \
     apt-get clean	&& \
     rm -rf /var/lib/apt/lists/*
 
