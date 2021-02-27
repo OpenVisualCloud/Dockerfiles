@@ -30,34 +30,28 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
+DECLARE(`LIBUSB_VER',v1.0.22)
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTPYTHON_BUILD_DEPS',`ca-certificates tar g++ wget gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin libpython3-dev libpython3-stdlib libpython3-all-dev ')'
-)
+ifelse(OS_NAME,ubuntu,`
+define(`LIBUSB_BUILD_DEPS',`wget make autoconf automake build-essential ca-certificates libtool libboost-filesystem1.65 libboost-thread1.65 libboost-program-options1.65 libjson-c-dev')
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTPYTHON_BUILD_DEPS',`wget tar gcc-c++ glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel ifdef(`BUILD_MESON',,meson)')'
-)
+define(`LIBUSB_INSTALL_DEPS',`libboost-filesystem1.65-dev libboost-thread1.65-dev libboost-program-options1.65-dev libjson-c3')
+')
 
-define(`BUILD_GSTPYTHON',
-ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-GSTCORE_VER.tar.xz
+define(`BUILD_LIBUSB',`
+# build libusb
+ARG LIBUSB_REPO=https://github.com/libusb/libusb/archive/LIBUSB_VER.tar.gz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTPYTHON_REPO} | tar xJ
-RUN cd BUILD_HOME/gst-python-GSTCORE_VER && \
-#WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
-ifelse(OS_VERSION,20.04,
-    sed -i "s/.*python\.dependency.*/pythonver \= python\.language_version\(\)\npython_dep \= dependency\(\'python-\@0\@-embed\'\.format\(pythonver\)\, version\: \'\>\=3\'\, required\: false\)\nif not python_dep\.found\(\)\n\tpython_dep \= python\.dependency\(required \: true\)\nendif/g" meson.build && \)
-    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dpython=/usr/bin/python3 -Dlibpython-dir=/usr/lib/x86_64-linux-gnu/ \
-    -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
+    wget -O - ${LIBUSB_REPO} | tar xz && \
+    cd libusb* && \
+    ./autogen.sh enable_udev=no && \
+    make -j$(nproc) && \
+    cp ./libusb/.libs/libusb-1.0.so /lib/x86_64-linux-gnu/libusb-1.0.so.0
 
-)
+RUN mkdir -p BUILD_DESTDIR/lib/x86_64-linux-gnu	&& \
+    cp /lib/x86_64-linux-gnu/libusb-1.0.so.0 BUILD_DESTDIR/lib/x86_64-linux-gnu/libusb-1.0.so.0
+')
 
-REG(GSTPYTHON)
+REG(LIBUSB)
 
 include(end.m4)dnl

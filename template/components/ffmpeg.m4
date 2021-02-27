@@ -37,7 +37,7 @@ DECLARE(`FFMPEG_ENABLE_LIBFREETYPE',true)
 DECLARE(`FFMPEG_ENABLE_X11',false)
 DECLARE(`FFMPEG_ENABLE_NONFREE',true)
 DECLARE(`FFMPEG_ENABLE_V4L2',true)
-DECLARE(`FFMPEG_ENABLE_HWACCELS',ifdef(`ENABLE_INTEL_GFX_REPO',true,ifelse(`BUILD_LIBVA2',true,false)))
+DECLARE(`FFMPEG_ENABLE_HWACCELS',ifdef(`ENABLE_INTEL_GFX_REPO',true,ifdef(`BUILD_LIBVA2',true,false)))
 DECLARE(`FFMPEG_ENABLE_LIBMFX',ifdef(`BUILD_MSDK',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_VAAPI',ifdef(`BUILD_LIBVA2',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_X265',true)
@@ -73,6 +73,7 @@ ifdef(`BUILD_SVT_AV1',`FFMPEG_PATCH_SVT_AV1(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
 ifdef(`FFMPEG_FLV_PATCH',
 ARG FFMPEG_PATCHES_RELEASE_VER=0.2
@@ -113,6 +114,7 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifdef(`BUILD_LIBRDKAFKA',--enable-librdkafka )dnl
     ifdef(`BUILD_LIBJSONC',--enable-libjson_c )dnl
     ifdef(`BUILD_DLDT',--enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR )dnl
+    ifdef(`BUILD_OPENVINO',--enable-libinference_engine_c_api --extra-cflags=-I$OPENVINO_IE_DIR/include --extra-ldflags=-L$OPENVINO_IE_DIR/lib/intel64 )dnl
     && make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
