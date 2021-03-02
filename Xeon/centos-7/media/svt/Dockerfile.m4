@@ -12,7 +12,7 @@ INSTALL_CENTOS_REPO(epel-release)
 BUILD_ALL()dnl
 CLEANUP()dnl
 
-FROM OS_NAME:OS_VERSION
+FROM openvisualcloud/xeon-centos7-media-ffmpeg:latest
 LABEL Description="This is the showcase image for SVT OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home

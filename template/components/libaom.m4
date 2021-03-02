@@ -40,6 +40,7 @@ define(`LIBAOM_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make')
 
 ifelse(OS_NAME,centos,`
 define(`LIBAOM_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake3) make')
+define(`LIBAOM_INSTALL_DEPS',`bash')
 ')
 
 define(`BUILD_LIBAOM',`
