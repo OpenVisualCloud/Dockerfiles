@@ -35,6 +35,7 @@ include(gmmlib.sg1.m4)
 
 define(`MEDIA_DRIVER_VER',intel-media-sg1-pv1.1)
 define(`MEDIA_DRIVER_SRC_REPO',https://github.com/VCDP/media-driver/archive/MEDIA_DRIVER_VER.tar.gz)
+define(`ENABLE_PRODUCTION_KMD',ON)
 include(media-driver.m4)
 
 include(end.m4)dnl
