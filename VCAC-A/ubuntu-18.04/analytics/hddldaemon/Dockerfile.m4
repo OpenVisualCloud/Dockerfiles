@@ -1,14 +1,20 @@
+include(begin.m4)
+include(ubuntu.m4)
+include(libusb.m4)
+include(hddl-openvino.m4)
+include(end.m4)dnl
 
-FROM ubuntu:18.04 as builder
+PREAMBLE
+FROM OS_NAME:OS_VERSION AS build
+
+BUILD_ALL()dnl
+CLEANUP()dnl
+
+FROM OS_NAME:OS_VERSION
+LABEL Description="This is the HDDL Daemon image for OS_NAME OS_VERSION"
+LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
-include(build-tools-hddl.m4)
-include(libusb.m4)
-include(openvino.binary.m4)
+# Install
+INSTALL_ALL(runtime,build)dnl
 
-FROM ubuntu:18.04
-
-include(build-tools-hddl-layer.m4)
-COPY --from=builder /lib/x86_64-linux-gnu/libusb-1.0.so.0 /lib/x86_64-linux-gnu/libusb-1.0.so.0
-COPY --from=builder /home/opt/intel /opt/intel
-COPY *_hddl.sh /usr/local/bin/

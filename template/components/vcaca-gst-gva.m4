@@ -30,34 +30,28 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
+ifelse(OS_NAME,ubuntu,`
+define(`GVA_INSTALL_DEPS',`python3-numpy python3-gi python3-gi-cairo python3-dev')
+')
 
-ifelse(OS_NAME,ubuntu,dnl
-`define(`GSTPYTHON_BUILD_DEPS',`ca-certificates tar g++ wget gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin libpython3-dev libpython3-stdlib libpython3-all-dev ')'
+define(`BUILD_GVA',`
+# Copy gstreamer and dl_streamer libs
+
+ENV LIBRARY_PATH=BUILD_LIBDIR
+RUN cp -r /opt/intel/openvino/data_processing/dl_streamer/lib/* BUILD_DESTDIR/usr/local/lib/gstreamer-1.0
+
+RUN mkdir -p BUILD_DESTDIR/opt/intel/dl_streamer/python && \
+    cp -r /opt/intel/openvino/data_processing/dl_streamer/python/* BUILD_DESTDIR/opt/intel/dl_streamer/python
+')dnl
+
+define(`INSTALL_GVA',
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0
+ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/opt/intel/openvino/data_processing/gstreamer/lib/girepository-1.0/
 )
 
-ifelse(OS_NAME,centos,dnl
-`define(`GSTPYTHON_BUILD_DEPS',`wget tar gcc-c++ glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel ifdef(`BUILD_MESON',,meson)')'
-)
+REG(GVA)
 
-define(`BUILD_GSTPYTHON',
-ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-GSTCORE_VER.tar.xz
-RUN cd BUILD_HOME && \
-    wget -O - ${GSTPYTHON_REPO} | tar xJ
-RUN cd BUILD_HOME/gst-python-GSTCORE_VER && \
-#WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
-ifelse(OS_VERSION,20.04,
-    sed -i "s/.*python\.dependency.*/pythonver \= python\.language_version\(\)\npython_dep \= dependency\(\'python-\@0\@-embed\'\.format\(pythonver\)\, version\: \'\>\=3\'\, required\: false\)\nif not python_dep\.found\(\)\n\tpython_dep \= python\.dependency\(required \: true\)\nendif/g" meson.build && \)
-    meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dpython=/usr/bin/python3 -Dlibpython-dir=/usr/lib/x86_64-linux-gnu/ \
-    -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=BUILD_DESTDIR ninja install
-
-)
-
-REG(GSTPYTHON)
-
-include(end.m4)dnl
+include(end.m4)
