@@ -33,6 +33,7 @@ PREAMBLE
 FROM OS_NAME:OS_VERSION AS build
 
 INSTALL_CENTOS_REPO(epel-release centos-release-scl)
+INSTALL_CENTOS_RPMFUSION_REPO(7)
 
 BUILD_ALL()dnl
 define(`CLEANUP_CC',no)dnl
@@ -44,6 +45,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 INSTALL_CENTOS_REPO(epel-release)
+INSTALL_CENTOS_RPMFUSION_REPO(7)
 
 # Install
 INSTALL_ALL(runtime,build)dnl
