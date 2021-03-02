@@ -35,6 +35,7 @@ include(gmmlib.m4)
 
 DECLARE(`MEDIA_DRIVER_VER',intel-media-20.2.0)
 DECLARE(`MEDIA_DRIVER_SRC_REPO',https://github.com/intel/media-driver/archive/MEDIA_DRIVER_VER.tar.gz)
+DECLARE(`ENABLE_PRODUCTION_KMD',OFF)
 
 ifelse(OS_NAME,ubuntu,`
 define(`MEDIA_DRIVER_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ libpciaccess-dev make pkg-config wget')
@@ -51,7 +52,7 @@ ARG MEDIA_DRIVER_REPO=MEDIA_DRIVER_SRC_REPO
 RUN cd BUILD_HOME && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
 RUN cd BUILD_HOME/media-driver-MEDIA_DRIVER_VER && mkdir build && cd build && \
-  ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR .. && \
+  ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DENABLE_PRODUCTION_KMD=ENABLE_PRODUCTION_KMD .. && \
   make -j$(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,` )') && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
