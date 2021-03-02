@@ -37,6 +37,7 @@ RUN yum install -y -q $1 && rm -rf /var/yum/cache/*
 ')
 
 define(`INSTALL_CENTOS_RPMFUSION_REPO',
+RUN yum install -y -q dnf
 RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-$1.noarch.rpm && \
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$1.noarch.rpm)
 
