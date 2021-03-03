@@ -31,12 +31,12 @@ dnl
 include(begin.m4)
 
 DECLARE(`OPENVINO_VER',2021.2)
-DECLARE(`OPENVINO_BUNDLE',l_openvino_toolkit_p_2020.4.287)
-DECLARE(`OPENVINO_BUILD_NO',16803)
+DECLARE(`OPENVINO_BUNDLE',l_openvino_toolkit_p_2021.2.185)
+DECLARE(`OPENVINO_BUILD_NO',17504)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENVINO_BUILD_DEPS',`cpio libjson-c-dev')
-define(`OPENVINO_INSTALL_DEPS',`libusb-1.0-0-dev libboost-filesystem1.65.1 libboost-system1.65.1 libboost-program-options1.65.1 libjson-c3')
+define(`OPENVINO_INSTALL_DEPS',`libusb-1.0-0-dev ifelse(OS_VERSION,20.04,libboost-filesystem1.67.0 libboost-system1.67.0 libboost-program-options1.67.0 libjson-c4,libboost-filesystem1.65.1 libboost-system1.65.1 libboost-program-options1.65.1 libjson-c3)')
 ')
 
 define(`BUILD_OPENVINO',`
@@ -64,6 +64,10 @@ RUN echo "ACCEPT_EULA=accept" > BUILD_HOME/openvino/silent.cfg                  
 
 #Install OpenVino
 RUN BUILD_HOME/openvino/OPENVINO_BUNDLE/install.sh --ignore-signature --cli-mode -s BUILD_HOME/openvino/silent.cfg && rm -rf BUILD_HOME/openvino
+
+#Create symlink to assure compatibility with components
+RUN cd /opt/intel/      &&\
+    ln -s openvino_2021 openvino
 
 ARG OPENVINO_IE_DIR=/opt/intel/openvino/deployment_tools/inference_engine
 
