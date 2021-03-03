@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENCV_VER',4.4.0)
+DECLARE(`OPENCV_VER',4.5.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENCV_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ make wget python3-numpy ccache libeigen3-dev')
