@@ -1,7 +1,6 @@
 
 
 include(begin.m4)
-#include(cmake.m4)
 include(openssl.m4)
 include(svt-hevc.m4)
 ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')
