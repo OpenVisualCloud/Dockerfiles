@@ -19,7 +19,7 @@ include(owt.m4)
 include(end.m4)dnl
 
 PREAMBLE
-FROM OS_NAME:OS_VERSION as build
+FROM OS_NAME:OS_VERSION AS build
 
 BUILD_ALL()dnl
 CLEANUP()dnl

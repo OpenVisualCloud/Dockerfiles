@@ -144,16 +144,17 @@ RUN cd BUILD_HOME/owt-server && \
     npm install nan
 
 # Build and package
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}::BUILD_LIBDIR:/usr/local/ssl/lib
 RUN cd BUILD_HOME/owt-server && \
-    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME:OS_VERSION,centos:7,`) ')&& \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable &&')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME:OS_VERSION,centos:7,`) ')&& \
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path BUILD_HOME/owt-client-javascript/dist/samples/conference && \
     mkdir -p BUILD_DESTDIR/home && \
     mv dist BUILD_DESTDIR/home/owt
 
-RUN cd BUILD_DESTDIR/home && \
+ RUN cd BUILD_DESTDIR/home && \
     echo "#!/bin/bash -e" >>launch.sh && \
-    echo "service mongodb start &" >>launch.sh && \
-    echo "service rabbitmq-server start &" >>launch.sh && \
+    echo ifelse(OS_NAME,centos,`"mongod --config /etc/mongod.conf &" ',`"service mongodb start &" ')>>launch.sh && \
+    echo ifelse(OS_NAME,centos,`"rabbitmq-server &" ',`"service rabbitmq-server start &" ')>>launch.sh && \
     echo "while ! mongo --quiet --eval \"db.adminCommand(\\\"listDatabases\\\")\"" >>launch.sh && \
     echo "do" >>launch.sh && \
     echo "  echo mongod not launch" >>launch.sh && \
