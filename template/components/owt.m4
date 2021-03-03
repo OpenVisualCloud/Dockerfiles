@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OWT_VER',)
+DECLARE(`OWT_VER',fc61b5499f09cc5583be72892f3ffdf2db1b20de)
 DECLARE(`OWT_LICODE_VER',8b4692c88f1fc24dedad66b4f40b1f3d804b50ca)
 DECLARE(`OWT_WEBRTC_VER',59-server)
 DECLARE(`OWT_SDK_VER',master)
@@ -78,7 +78,9 @@ RUN npm install -g --loglevel error node-gyp@6.1.0 grunt-cli underscore jsdoc
 # Get owt-server Source
 ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd BUILD_HOME && \
-    git clone --depth 1 ${OWT_REPO}
+    git clone ${OWT_REPO} && \
+    cd owt-server && \
+    git reset --hard OWT_VER
 
 # Prep OpenH264
 RUN mkdir -p BUILD_HOME/owt-server/third_party/openh264 && \

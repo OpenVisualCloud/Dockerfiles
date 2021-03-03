@@ -1,6 +1,7 @@
 
 
 include(begin.m4)
+include(cmake.m4)
 include(openssl.m4)
 include(svt-hevc.m4)
 ifelse(defn(`BUILD_FDKAAC'),`ON',`include(libfdk-aac.m4)')
@@ -24,6 +25,7 @@ PREAMBLE
 FROM OS_NAME:OS_VERSION as build
 include(centos-repo.m4)
 INSTALL_CENTOS_REPO(epel-release centos-release-scl)
+INSTALL_CENTOS_RPMFUSION_REPO(7)
 
 BUILD_ALL()dnl
 CLEANUP()dnl
@@ -35,5 +37,6 @@ WORKDIR /home
 
 # Install
 INSTALL_CENTOS_REPO(epel-release)
+INSTALL_CENTOS_RPMFUSION_REPO(7)
 INSTALL_ALL(runtime,build)
 
