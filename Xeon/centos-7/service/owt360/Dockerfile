@@ -137,18 +137,6 @@ RUN cd /opt/build/opencv-4.5.0 && mkdir build && cd build && \
   make install DESTDIR=/opt/dist && \
   make install
 
-RUN yum install -y automake gcc libdrm-devel libtool make pkg-config wget which libX11-devel libXfixes-devel libXext-devel wayland-devel
-
-# build libva2
-ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.8.0.tar.gz
-RUN cd /opt/build && \
-  wget -O - ${LIBVA2_REPO} | tar xz
-RUN cd /opt/build/libva-2.8.0 && \
-  ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
-  make -j$(nproc) && \
-  make install DESTDIR=/opt/dist && \
-  make install
-
 RUN yum install -y cmake3 gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz numactl-devel ocl-icd-devel opencl-headers
 
 # build dldt
@@ -274,7 +262,7 @@ RUN cd /opt/build && \
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2             --enable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264             --enable-libsvthevc                         --enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR         && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264             --enable-libsvthevc                         --enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR         && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -293,174 +281,6 @@ RUN cd /opt/build/opencv-4.5.0/build && \
   cd modules/videoio && \
   make -j "$(nproc)" && \
   cp -f ../../lib/libopencv_videoio.so.4.5.0 /opt/dist/usr/local/lib64
-
-RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex
-
-# build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTCORE_REPO} | tar xz
-RUN cd /opt/build/gstreamer-1.16.2 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Dbenchmarks=disabled \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex alsa-lib-devel 
-
-# build gst-plugin-base
-ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-  wget -O - ${GSTBASE_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-base-1.16.2 && \
-  meson build \
-    --prefix=/usr/local \
-    --libdir=/usr/local/lib64 \
-    --libexecdir=/usr/local/lib64 \
-    --buildtype=plain \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled \
-    -Dalsa=enabled \
-    -Dpango=disabled \
-    -Dtheora=disabled \
-    -Dlibvisual=disabled \
-    -Dgl=disabled \
-  && cd build && \
-  ninja install && \
-  DESTDIR=/opt/dist ninja install
-
-RUN yum install -y git meson wget tar gcc-c++ glib2-devel bison flex gdk-pixbuf2-devel 
-
-# build gst-plugin-good
-ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTGOOD_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-good-1.16.2 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled \
-    -Dgdk-pixbuf=enabled \
-    -Djpeg=disabled \
-    -Dpng=disabled \
-    -Disomp4=disabled \
-    -Dsoup=disabled \
-    -Dvpx=enabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y meson wget tar glib2-devel bison flex libcurl-devel librtmp-devel devtoolset-9 
-
-# build gst-plugin-bad
-ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTBAD_REPO} | tar xz && \
-    cd gst-plugins-bad-1.16.2 && \
-    (. /opt/rh/devtoolset-9/enable && meson build \
-      --prefix=/usr/local \
-      --libdir=/usr/local/lib64 \
-      --libexecdir=/usr/local/lib64 \
-      --buildtype=plain \
-      -Ddoc=disabled \
-      -Dexamples=disabled \
-      -Dgtk_doc=disabled \
-      -Dtests=disabled \
-      -Dgst_player_tests=false \
-      -Drtmp=enabled \
-      -Dx265=disabled \
-      -Drsvg=disabled \
-      -Dfdkaac=disabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install )
-
-RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex 
-
-# build gst-plugin-ugly
-ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTUGLY_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-ugly-1.16.2 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled \
-    -Dx264=enabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y wget tar gcc-c++ meson
-
-# build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTLIBAV_REPO} | tar xz
-RUN cd /opt/build/gst-libav-1.16.2 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y cmake3 git ocl-icd-devel opencl-headers pkg-config
-
-# build gst-plugin-gva
-# formerly https://github.com/opencv/gst-video-analytics
-ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
-# TODO: This is a workaround for a bug in dlstreamer_gst
-ENV LIBRARY_PATH=/usr/local/lib64
-RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
-    cd /opt/build/gst-video-analytics && \
-    git submodule update --init && \
-    sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
-    mkdir -p build && cd build && \
-    cmake3 \
-        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=OFF \
-        -DENABLE_RDKAFKA_INSTALLATION=OFF \
-        -DENABLE_VAAPI=OFF \
-        -DENABLE_VAS_TRACKER=OFF \
-        -DENABLE_AUDIO_INFERENCE_ELEMENTS=OFF \
-        -Dwith_drm=no \
-        -Dwith_x11=no \
-        -Dwith_glx=no \
-        -Dwith_wayland=no \
-        -Dwith_egl=no \
-        -DMQTT=0 \
-        -DKAFKA=0 \
-        .. \
-    && make -j $(nproc) \
-    && make install \
-    && make install DESTDIR=/opt/dist
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0/:/usr/local/lib/
-
-RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/gstreamer-1.0/.
-RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /opt/dist/usr/local/lib/gstreamer-1.0/.
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
-
-RUN mkdir -p /opt/intel/dl_streamer/python && \
-    cp -r /opt/build/gst-video-analytics/python/* /opt/intel/dl_streamer/python
-
-ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
-RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
-    cp -r /opt/build/gst-video-analytics/python/* /opt/dist/opt/intel/dl_streamer/python
 
 
 
@@ -628,9 +448,10 @@ RUN mkdir -p /opt/build/owt-server/third_party/quic-lib && \
 
 # Build and pack owt
 RUN cd /opt/build/owt-server && \
+    sed -i "/cflags_cc/s/\[/[\"-Wl,rpath=\/usr\/local\/ssl\/lib\",/" source/agent/webrtc/webrtcLib/binding.gyp && \
+    sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" source/agent/webrtc/webrtcLib/binding.gyp && \
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
-
     sed -i "1i#include <stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c
 
 # Install nan module
@@ -639,11 +460,10 @@ RUN cd /opt/build/owt-server && \
     npm install nan
 
 # Build and package
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}::/usr/local/lib64:/usr/local/ssl/lib
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64:/usr/local/ssl/lib
 RUN cd /opt/build/owt-server && \
     (. /opt/rh/devtoolset-9/enable &&./scripts/build.js -t mcu-all -r -c)  &&\
-    ln -s /lib64/libcrypto.so.10 /lib64/libcrypto.so && ln -s /lib64/libssl.so.10 /lib64/libssl.so && \
-    ./scripts/pack.js -t all --install-module --no-pseudo --app-path /opt/build/owt-client-javascript/dist/samples/conference && \
+    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /opt/build/owt-client-javascript/dist/samples/conference && \
     mkdir -p /opt/dist/home && \
     mv dist /opt/dist/home/owt
 
@@ -689,7 +509,7 @@ RUN yum install -y -q dnf
 RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && \
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
-RUN yum install -y libdrm libX11 libXfixes libXext libwayland-client gtk3 numactl ocl-icd libass glib2 mesa-libEGL alsa-lib gdk-pixbuf2 librtmp wget xz-utils rabbitmq-server boost-system boost-thread log4cxx freetype
+RUN yum install -y gtk3 numactl ocl-icd libass wget xz-utils rabbitmq-server boost-system boost-thread log4cxx glib2 freetype
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
@@ -698,17 +518,11 @@ RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
 ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
 ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
-ENV GST_PLUGIN_PATH=/usr/local/lib64/gstreamer-1.0
-ENV GST_PLUGIN_SCANNER=/usr/local/lib64/gstreamer-1.0/gst-plugin-scanner
 
 # install DLDT
 ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
-ENV LD_LIBRARY_PATH=/usr/local/lib/gstreamer-1.0/
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib/x86_64-linux-gnu/girepository-1.0/
-ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
 
 # install node
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz

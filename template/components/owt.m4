@@ -135,15 +135,13 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/quic-lib && \
 
 # Build and pack owt
 RUN cd BUILD_HOME/owt-server && \
-ifelse(OWT_360,false,`
-    ifdef(`BUILD_OPENSSL',`dnl
-        sed -i "/cflags_cc/s/\[/[\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
-        sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
-    ')dnl
+ifdef(`BUILD_OPENSSL',`dnl
+    sed -i "/cflags_cc/s/\[/[\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'/" ifelse(OWT_360,true, `source/agent/webrtc/webrtcLib/binding.gyp',`source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp') && \
+    sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" ifelse(OWT_360,true, `source/agent/webrtc/webrtcLib/binding.gyp',`source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp') && \
 ')dnl
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
-ifelse(OWT_360,false,`
+ifdef(`BUILD_GSTCORE',`dnl
     sed -i "s/--cflags glib-2.0/--cflags glib-2.0 gstreamer-1.0/" source/agent/analytics/videoGstPipeline/binding.pipeline.gyp && \
     sed -i "/lgstreamer/i\"<!@(pkg-config --libs gstreamer-1.0)\"`,'" source/agent/analytics/videoGstPipeline/binding.pipeline.gyp && \
 ')dnl
@@ -158,8 +156,7 @@ RUN cd BUILD_HOME/owt-server && \
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_LIBDIR:/usr/local/ssl/lib
 RUN cd BUILD_HOME/owt-server && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable &&')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME:OS_VERSION,centos:7,`) ') &&\
-    ifelse(OWT_360,true,`ln -s /lib64/libcrypto.so.10 /lib64/libcrypto.so && ln -s /lib64/libssl.so.10 /lib64/libssl.so') && \
-    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path BUILD_HOME/owt-client-javascript/dist/samples/conference && \
+    ./scripts/pack.js -t all --install-module --no-pseudo ifelse(OWT_360,true,--sample-path, --app-path) BUILD_HOME/owt-client-javascript/dist/samples/conference && \
     mkdir -p BUILD_DESTDIR/home && \
     mv dist BUILD_DESTDIR/home/owt
 

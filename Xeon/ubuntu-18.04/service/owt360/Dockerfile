@@ -311,207 +311,6 @@ RUN cd /opt/build/opencv-4.5.0/build && \
   make -j "$(nproc)" && \
   cp -f ../../lib/libopencv_videoio.so.4.5.0 /opt/dist/usr/local/lib
 
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    python3-pip ninja-build python3-setuptools && \
-  rm -rf /var/lib/apt/lists/*
-
-# build meson
-ARG MESON_REPO=https://github.com/mesonbuild/meson
-RUN git clone ${MESON_REPO}; \
-    cd meson; \
-    git checkout 0.53.1; \
-    python3 setup.py install;
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTCORE_REPO} | tar xz
-RUN cd /opt/build/gstreamer-1.16.2 && \
-    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
-    --prefix=/usr/local --buildtype=plain \
-    -Dbenchmarks=disabled \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ gobjc wget pkg-config libglib2.0-dev flex bison libasound2-dev  && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gst-plugin-base
-ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-  wget -O - ${GSTBASE_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-base-1.16.2 && \
-  meson build \
-    --prefix=/usr/local \
-    --libdir=/usr/local/lib \
-    --libexecdir=/usr/local/lib \
-    --buildtype=plain \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled \
-    -Dalsa=enabled \
-    -Dpango=disabled \
-    -Dtheora=disabled \
-    -Dlibvisual=disabled \
-    -Dgl=disabled \
-  && cd build && \
-  ninja install && \
-  DESTDIR=/opt/dist ninja install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libgdk-pixbuf2.0-dev  && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gst-plugin-good
-ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTGOOD_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-good-1.16.2 && \
-    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
-    --prefix=/usr/local --buildtype=plain \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled \
-    -Dgdk-pixbuf=enabled \
-    -Djpeg=disabled \
-    -Dpng=disabled \
-    -Disomp4=disabled \
-    -Dsoup=disabled \
-    -Dvpx=enabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libcurl4-gnutls-dev librtmp-dev  && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gst-plugin-bad
-ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTBAD_REPO} | tar xz && \
-    cd gst-plugins-bad-1.16.2 && \
-    meson build \
-      --prefix=/usr/local \
-      --libdir=/usr/local/lib \
-      --libexecdir=/usr/local/lib \
-      --buildtype=plain \
-      -Ddoc=disabled \
-      -Dexamples=disabled \
-      -Dgtk_doc=disabled \
-      -Dtests=disabled \
-      -Dgst_player_tests=false \
-      -Drtmp=enabled \
-      -Dx265=disabled \
-      -Drsvg=disabled \
-      -Dfdkaac=disabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install 
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison  && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gst-plugin-ugly
-ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTUGLY_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-ugly-1.16.2 && \
-    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
-    --prefix=/usr/local --buildtype=plain \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled \
-    -Dx264=enabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget  && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.16.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTLIBAV_REPO} | tar xz
-RUN cd /opt/build/gst-libav-1.16.2 && \
-    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
-    --prefix=/usr/local --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev libva-dev && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gst-plugin-gva
-# formerly https://github.com/opencv/gst-video-analytics
-ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
-# TODO: This is a workaround for a bug in dlstreamer_gst
-ENV LIBRARY_PATH=/usr/local/lib
-RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
-    cd /opt/build/gst-video-analytics && \
-    git submodule update --init && \
-    sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
-    mkdir -p build && cd build && \
-    cmake \
-        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=OFF \
-        -DENABLE_RDKAFKA_INSTALLATION=OFF \
-        -DENABLE_VAAPI=OFF \
-        -DENABLE_VAS_TRACKER=OFF \
-        -DENABLE_AUDIO_INFERENCE_ELEMENTS=OFF \
-        -Dwith_drm=no \
-        -Dwith_x11=no \
-        -Dwith_glx=no \
-        -Dwith_wayland=no \
-        -Dwith_egl=no \
-        -DMQTT=0 \
-        -DKAFKA=0 \
-        .. \
-    && make -j $(nproc) \
-    && make install \
-    && make install DESTDIR=/opt/dist
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0/:/usr/local/lib/
-
-RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/gstreamer-1.0/.
-RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /opt/dist/usr/local/lib/gstreamer-1.0/.
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
-
-RUN mkdir -p /opt/intel/dl_streamer/python && \
-    cp -r /opt/build/gst-video-analytics/python/* /opt/intel/dl_streamer/python
-
-ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
-RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
-    cp -r /opt/build/gst-video-analytics/python/* /opt/dist/opt/intel/dl_streamer/python
-
 
 
 # build 360scvp
@@ -687,6 +486,8 @@ RUN mkdir -p /opt/build/owt-server/third_party/quic-lib && \
 
 # Build and pack owt
 RUN cd /opt/build/owt-server && \
+    sed -i "/cflags_cc/s/\[/[\"-Wl,rpath=\/usr\/local\/ssl\/lib\",/" source/agent/webrtc/webrtcLib/binding.gyp && \
+    sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" source/agent/webrtc/webrtcLib/binding.gyp && \
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "1i#include <stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c
@@ -697,10 +498,9 @@ RUN cd /opt/build/owt-server && \
     npm install nan
 
 # Build and package
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}::/usr/local/lib:/usr/local/ssl/lib
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/ssl/lib
 RUN cd /opt/build/owt-server && \
     ./scripts/build.js -t mcu-all -r -c &&\
-    ln -s /lib64/libcrypto.so.10 /lib64/libcrypto.so && ln -s /lib64/libssl.so.10 /lib64/libssl.so && \
     ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /opt/build/owt-client-javascript/dist/samples/conference && \
     mkdir -p /opt/dist/home && \
     mv dist /opt/dist/home/owt
@@ -743,7 +543,7 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
+    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libglib2.0-0 libfreetype6 libsrtp2-1 && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
@@ -753,17 +553,11 @@ RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
 ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
 ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
-ENV GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0
-ENV GST_PLUGIN_SCANNER=/usr/local/lib/gstreamer-1.0/gst-plugin-scanner
 
 # install DLDT
 ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
-ENV LD_LIBRARY_PATH=/usr/local/lib/gstreamer-1.0/
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib/x86_64-linux-gnu/girepository-1.0/
-ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
 
 # install node
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
