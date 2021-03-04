@@ -30,10 +30,14 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
+DECLARE(`OWT_360',false)
+DECLARE(`OWT_BRANCH', master)
 DECLARE(`OWT_VER',fc61b5499f09cc5583be72892f3ffdf2db1b20de)
 DECLARE(`OWT_LICODE_VER',8b4692c88f1fc24dedad66b4f40b1f3d804b50ca)
-DECLARE(`OWT_WEBRTC_VER',59-server)
-DECLARE(`OWT_SDK_VER',master)
+DECLARE(`OWT_WEBRTC_BRANCH',59-server)
+DECLARE(`OWT_WEBRTC_VER',)
+DECLARE(`OWT_SDK_BRANCH',master)
+DECLARE(`OWT_SDK_VER',)
 DECLARE(`OWT_QUIC_VER',v0.1)
 
 # required components for OWT
@@ -78,7 +82,7 @@ RUN npm install -g --loglevel error node-gyp@6.1.0 grunt-cli underscore jsdoc
 # Get owt-server Source
 ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd BUILD_HOME && \
-    git clone ${OWT_REPO} && \
+    git clone -b OWT_BRANCH ${OWT_REPO} && \
     cd owt-server && \
     git reset --hard OWT_VER
 
@@ -103,21 +107,24 @@ RUN cd BUILD_HOME/owt-server/third_party && \
 ARG OWT_WEBRTC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-webrtc.git
 RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc && \
     cd BUILD_HOME/owt-server/third_party/webrtc && \
-    git clone -b OWT_WEBRTC_VER --depth 1 ${OWT_WEBRTC_REPO} src && \
-    ./src/tools-woogeen/install.sh && \
-    ./src/tools-woogeen/build.sh
+    git clone -b OWT_WEBRTC_BRANCH ${OWT_WEBRTC_REPO} src && \
+    cd src && ifelse(OWT_360,true,`git reset --hard OWT_WEBRTC_VER &&')\
+    ./tools-woogeen/install.sh && ifelse(OWT_360,true,`patch -p1 < BUILD_HOME/owt-server/scripts/patches/0001-Implement-RtcpFOVObserver.patch &&')\
+    ./tools-woogeen/build.sh
 
+ifelse(OWT_360, false, `
 # Get webrtc79
 RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc-m79 && \
     cd BUILD_HOME/owt-server/third_party/webrtc-m79 && \
     sed -i "s/git clone/git clone --depth 1/" ../../scripts/installWebrtc.sh && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')bash ../../scripts/installWebrtc.sh`'ifelse(OS_NAME:OS_VERSION,centos:7,`)')
+')
 
 # Get SDK
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 RUN cd BUILD_HOME && \
-    git clone -b OWT_SDK_VER --depth 1 ${OWT_SDK_REPO} && \
-    cd owt-client-javascript/scripts && \
+    git clone -b OWT_SDK_BRANCH ${OWT_SDK_REPO} && \
+    cd owt-client-javascript/scripts && ifelse(OWT_360,true,`git reset --hard OWT_SDK_VER &&') \
     npm install && grunt 
     
 # Get quic
@@ -128,14 +135,18 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/quic-lib && \
 
 # Build and pack owt
 RUN cd BUILD_HOME/owt-server && \
-ifdef(`BUILD_OPENSSL',`dnl
-    sed -i "/cflags_cc/s/\[/[\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
-    sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
+ifelse(OWT_360,false,`
+    ifdef(`BUILD_OPENSSL',`dnl
+        sed -i "/cflags_cc/s/\[/[\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
+        sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
+    ')dnl
 ')dnl
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
+ifelse(OWT_360,false,`
     sed -i "s/--cflags glib-2.0/--cflags glib-2.0 gstreamer-1.0/" source/agent/analytics/videoGstPipeline/binding.pipeline.gyp && \
     sed -i "/lgstreamer/i\"<!@(pkg-config --libs gstreamer-1.0)\"`,'" source/agent/analytics/videoGstPipeline/binding.pipeline.gyp && \
+')dnl
     sed -i "1i#include <stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c
 
 # Install nan module
@@ -146,7 +157,8 @@ RUN cd BUILD_HOME/owt-server && \
 # Build and package
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}::BUILD_LIBDIR:/usr/local/ssl/lib
 RUN cd BUILD_HOME/owt-server && \
-    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable &&')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME:OS_VERSION,centos:7,`) ')&& \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable &&')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME:OS_VERSION,centos:7,`) ') &&\
+    ifelse(OWT_360,true,`ln -s /lib64/libcrypto.so.10 /lib64/libcrypto.so && ln -s /lib64/libssl.so.10 /lib64/libssl.so') && \
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path BUILD_HOME/owt-client-javascript/dist/samples/conference && \
     mkdir -p BUILD_DESTDIR/home && \
     mv dist BUILD_DESTDIR/home/owt
