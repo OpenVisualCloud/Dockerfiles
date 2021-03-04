@@ -689,7 +689,6 @@ RUN mkdir -p /opt/build/owt-server/third_party/quic-lib && \
 RUN cd /opt/build/owt-server && \
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
-
     sed -i "1i#include <stdint.h>" source/agent/sip/sipIn/sip_gateway/sipua/src/account.c
 
 # Install nan module
@@ -702,7 +701,7 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}::/usr/local/lib:/usr/local/ssl/lib
 RUN cd /opt/build/owt-server && \
     ./scripts/build.js -t mcu-all -r -c &&\
     ln -s /lib64/libcrypto.so.10 /lib64/libcrypto.so && ln -s /lib64/libssl.so.10 /lib64/libssl.so && \
-    ./scripts/pack.js -t all --install-module --no-pseudo --app-path /opt/build/owt-client-javascript/dist/samples/conference && \
+    ./scripts/pack.js -t all --install-module --no-pseudo --sample-path /opt/build/owt-client-javascript/dist/samples/conference && \
     mkdir -p /opt/dist/home && \
     mv dist /opt/dist/home/owt
 
