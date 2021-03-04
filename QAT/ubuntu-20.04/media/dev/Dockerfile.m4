@@ -18,7 +18,7 @@ BUILD_ALL()dnl
 define(`CLEANUP_CC',no)dnl
 CLEANUP()dnl
 
-FROM openvisualcloud/xeon-OS_NAME`'patsubst(OS_VERSION,\.)-media-ffmpeg:BUILD_VERSION
+FROM openvisualcloud/xeon-OS_NAME`'patsubst(OS_VERSION,\.)-media-dev:BUILD_VERSION
 LABEL Description="This is the QAT development image for OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
