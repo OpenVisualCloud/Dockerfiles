@@ -217,7 +217,7 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex libX11-devel libXv-devel libXt-devel alsa-lib-devel libpango1.0-dev libtheora-devel libvisual-devel libegl1-mesa
+RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex libX11-devel libXv-devel libXt-devel alsa-lib-devel pango-devel libtheora-devel libvisual-devel mesa-libGL-devel
 
 # build gst-plugin-base
 ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.16.2.tar.gz
