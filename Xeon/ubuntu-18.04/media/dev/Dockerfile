@@ -14,6 +14,7 @@ RUN apt-get update && \
     ca-certificates wget make autoconf automake g++ && \
   rm -rf /var/lib/apt/lists/*
 
+# build libogg
 ARG LIBOGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.gz
 
 RUN cd /opt/build && \
@@ -29,8 +30,8 @@ RUN apt-get update && \
     ca-certificates wget make autoconf automake && \
   rm -rf /var/lib/apt/lists/*
 
+# build libvorbis
 ARG LIBVORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.gz
-
 RUN cd /opt/build && \
     wget -O - ${LIBVORBIS_REPO} | tar xz && \
     cd libvorbis-1.3.7 && \
@@ -44,6 +45,7 @@ RUN apt-get update && \
     ca-certificates wget g++ autoconf libtool autotools-dev automake make && \
   rm -rf /var/lib/apt/lists/*
 
+# build libfdkaac
 ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBFDKAAC_REPO} | tar xz && \
@@ -59,6 +61,7 @@ RUN apt-get update && \
     ca-certificates wget autoconf libtool make && \
   rm -rf /var/lib/apt/lists/*
 
+# build libopus
 ARG LIBOPUS_REPO=https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBOPUS_REPO} | tar xz && \
@@ -73,6 +76,7 @@ RUN apt-get update && \
     ca-certificates wget tar g++ make bzip2 && \
   rm -rf /var/lib/apt/lists/*
 
+# build nasm
 ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
@@ -87,6 +91,7 @@ RUN apt-get update && \
     git cmake make autoconf && \
   rm -rf /var/lib/apt/lists/*
 
+# build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd /opt/build && \
     git clone ${LIBVPX_REPO} -b v1.8.2 --depth 1 && \
@@ -101,6 +106,7 @@ RUN apt-get update && \
     git cmake make && \
   rm -rf /var/lib/apt/lists/*
 
+# build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd /opt/build && \
     git clone ${LIBAOM_REPO} -b v2.0.0 --depth 1 && \
@@ -115,11 +121,13 @@ RUN apt-get update && \
     git cmake make autoconf && \
   rm -rf /var/lib/apt/lists/*
 
+# build libx264
 ARG LIBX264_REPO=https://github.com/mirror/x264
 RUN cd /opt/build && \
     git clone ${LIBX264_REPO} -b stable --depth 1 && \
     cd x264 && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib \
+        --enable-shared && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
@@ -128,6 +136,8 @@ RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget tar g++ make && \
   rm -rf /var/lib/apt/lists/*
+
+# build yasm
 ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
@@ -143,6 +153,7 @@ RUN apt-get update && \
     libnuma-dev cmake make && \
   rm -rf /var/lib/apt/lists/*
 
+# build libx265
 ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBX265_REPO} | tar xz && \
@@ -154,8 +165,10 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    python3-setuptools && \
+    python3-pip ninja-build python3-setuptools && \
   rm -rf /var/lib/apt/lists/*
+
+# build meson
 ARG MESON_REPO=https://github.com/mesonbuild/meson
 RUN git clone ${MESON_REPO}; \
     cd meson; \
@@ -164,8 +177,10 @@ RUN git clone ${MESON_REPO}; \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config && \
+    ca-certificates tar g++ wget pkg-config && \
   rm -rf /var/lib/apt/lists/*
+
+# build dav1d
 ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.7.1/dav1d-0.7.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${DAV1D_REPO} | tar xz
@@ -179,11 +194,12 @@ RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget tar g++ make cmake git && \
   rm -rf /var/lib/apt/lists/*
+
+# build svt-hevc
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd /opt/build && \
-    git clone ${SVT_HEVC_REPO}
+    git clone -b v1.5.0 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
-    git checkout v1.5.0 && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -193,13 +209,15 @@ RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget tar g++ make cmake git && \
   rm -rf /var/lib/apt/lists/*
+
+# build svt av1
 ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
 RUN cd /opt/build && \
     git clone ${SVT_AV1_REPO} -b v0.8.5 --depth 1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
-    sed -i 's/SvtAv1dec/SvtAv1Dec/' SvtAv1Dec.pc && \
+    sed -i "s/SvtAv1dec/SvtAv1Dec/" SvtAv1Dec.pc && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -207,6 +225,8 @@ RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget tar g++ make cmake git && \
   rm -rf /var/lib/apt/lists/*
+
+# build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd /opt/build && \
     git clone ${SVT_VP9_REPO} -b v0.2.1 --depth 1 && \
@@ -214,18 +234,24 @@ RUN cd /opt/build && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
     make install DESTDIR=/opt/dist && \
-    make install 
+    make install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison && \
   rm -rf /var/lib/apt/lists/*
+
+# build gst-core
 ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTCORE_REPO} | tar xz
 RUN cd /opt/build/gstreamer-1.16.2 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
+    -Dbenchmarks=disabled \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
     -Dgtk_doc=disabled && \
     cd build && \
     ninja install && \
@@ -233,97 +259,147 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev && \
+    ca-certificates tar g++ gobjc wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev libx11-xcb-dev && \
   rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-base
 ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
-    wget -O - ${GSTBASE_REPO} | tar xz
+  wget -O - ${GSTBASE_REPO} | tar xz
 RUN cd /opt/build/gst-plugins-base-1.16.2 && \
-    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
-    --prefix=/usr/local --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
+  meson build \
+    --prefix=/usr/local \
+    --libdir=/usr/local/lib \
+    --libexecdir=/usr/local/lib \
+    --buildtype=plain \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
+    -Dgtk_doc=disabled \
+    -Dalsa=enabled \
+    -Dpango=enabled \
+    -Dtheora=enabled \
+    -Dlibvisual=enabled \
+    -Dgl=enabled \
+  && cd build && \
+  ninja install && \
+  DESTDIR=/opt/dist ninja install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev  && \
+    git ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev  && \
   rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-good
 ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTGOOD_REPO} | tar xz
 RUN cd /opt/build/gst-plugins-good-1.16.2 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
+    -Dgtk_doc=disabled \
+    -Dgdk-pixbuf=enabled \
+    -Djpeg=enabled \
+    -Dpng=enabled \
+    -Disomp4=enabled \
+    -Dsoup=enabled \
+    -Dvpx=enabled \
+    && cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison openssl libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison openssl libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
   rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-bad
 ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
-    wget -O - ${GSTBAD_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-bad-1.16.2 && \
-    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
-    --prefix=/usr/local --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
+    wget -O - ${GSTBAD_REPO} | tar xz && \
+    cd gst-plugins-bad-1.16.2 && \
+    meson build \
+      --prefix=/usr/local \
+      --libdir=/usr/local/lib \
+      --libexecdir=/usr/local/lib \
+      --buildtype=plain \
+      -Ddoc=disabled \
+      -Dexamples=disabled \
+      -Dgtk_doc=disabled \
+      -Dtests=disabled \
+      -Dgst_player_tests=false \
+      -Drtmp=enabled \
+      -Dx265=enabled \
+      -Drsvg=disabled \
+      -Dfdkaac=enabled \
+    && cd build && \
     ninja install && \
-    DESTDIR=/opt/dist ninja install
+    DESTDIR=/opt/dist ninja install 
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison  && \
   rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-ugly
 ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTUGLY_REPO} | tar xz
 RUN cd /opt/build/gst-plugins-ugly-1.16.2 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
-    -Dgtk_doc=disabled && \
-    cd build && \
+    -Ddoc=disabled \
+    -Dgtk_doc=disabled \
+    -Dx264=enabled \
+    && cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget patch libv4l-dev libass-dev  && \
+    build-essential ca-certificates wget patch libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
+# build ffmpeg
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_REPO} | tar xz
-
 
 ARG FFMPEG_PATCH_SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1/archive/v0.8.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_PATCH_SVT_AV1_REPO} | tar xz && \
     cd /opt/build/FFmpeg-n4.2.2 && \
     patch -p1 < ../SVT-AV1-0.8.4/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch || true
-
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
-
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
+
+ARG FFMPEG_PATCHES_RELEASE_VER=0.2
+ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
+ARG FFMPEG_PATCHES_PATH=/opt/build/CDN-${FFMPEG_PATCHES_RELEASE_VER}
+
+RUN cd /opt/build && \
+    wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz && \
+    cd /opt/build/FFmpeg-n4.2.2 && \
+    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9     --enable-libaom     --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9     --enable-libaom     --enable-libdav1d                     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget meson && \
+    ca-certificates tar g++ wget  && \
   rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-libav
 ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTLIBAV_REPO} | tar xz
@@ -337,28 +413,28 @@ RUN cd /opt/build/gst-libav-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget meson && \
+    ca-certificates tar g++ wget  && \
   rm -rf /var/lib/apt/lists/*
 
-RUN \
-    cd /opt/build/SVT-HEVC/gstreamer-plugin && \
-    meson build -Dprefix=/usr/local --buildtype=plain && \
+RUN cd /opt/build/SVT-HEVC/gstreamer-plugin && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    -Dprefix=/usr/local --buildtype=plain && \
+    cd build && ninja install && \
+    DESTDIR=/opt/dist ninja install
+RUN cd /opt/build/SVT-AV1/gstreamer-plugin && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    -Dprefix=/usr/local --buildtype=plain && \
+    cd build && ninja install && \
+    DESTDIR=/opt/dist ninja install
+RUN cd /opt/build/SVT-VP9/gstreamer-plugin && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    -Dprefix=/usr/local --buildtype=plain && \
     cd build && ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN \
-    cd /opt/build/SVT-AV1/gstreamer-plugin && \
-    meson build -Dprefix=/usr/local --buildtype=plain && \
-    cd build && ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN echo "Start cleanup" && \
-    rm -rf /opt/dist//usr/local/include && \
-    rm -rf /opt/dist//usr/local/share/doc && \
-    rm -rf /opt/dist//usr/local/share/gtk-doc && \
-    rm -rf /opt/dist//usr/local/share/man && \
-    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
-    echo "Cleanup done"
+# cleanup
+RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
+RUN rm -rf /opt/dist/usr/local/share/man
 
 FROM ubuntu:18.04
 LABEL Description="This is the base image for Gstreamer ubuntu 18.04"
@@ -368,8 +444,9 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libnuma1 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 openssl libcurl3-gnutls librtmp1 mjpegtools libde265-0 libass9 libv4l-0  && \
+    libnuma1 libglib2.0-0 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 openssl libcurl3-gnutls librtmp1 mjpegtools libde265-0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
   rm -rf /var/lib/apt/lists/*
+ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig

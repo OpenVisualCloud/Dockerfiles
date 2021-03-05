@@ -14,12 +14,14 @@ RUN apt-get update && \
     ca-certificates wget && \
   rm -rf /var/lib/apt/lists/*
 
+# build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.8.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_REPO} | tar xz
 
 
 
+# build nginx upload
 ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_UPLOAD_REPO} | tar xz
@@ -29,6 +31,7 @@ RUN apt-get update && \
     ca-certificates gcc libpcre3-dev libxslt1-dev make wget zlib1g-dev libssl-dev && \
   rm -rf /var/lib/apt/lists/*
 
+# build nginx
 ARG NGINX_REPO=https://nginx.org/download/nginx-1.18.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_REPO} | tar xz && \
@@ -72,15 +75,14 @@ RUN mkdir -p /opt/dist/var/www/tmp/client_body && \
     mkdir -p /opt/dist/var/www/upload && \
     mkdir -p /opt/dist/var/www/html
 
-RUN echo "Start cleanup" && \
-    rm -rf /opt/dist//usr/local/include && \
-    rm -rf /opt/dist//usr/local/share/doc && \
-    rm -rf /opt/dist//usr/local/share/gtk-doc && \
-    rm -rf /opt/dist//usr/local/share/man && \
-    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
-    echo "Cleanup done"
+# cleanup
+RUN rm -rf /opt/dist/usr/local/include && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig && \
+    find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
+RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
+RUN rm -rf /opt/dist/usr/local/share/man
 
-FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:latest
+FROM openvisualcloud/xeone3-ubuntu1804-media-ffmpeg:1.0
 LABEL Description="This is the base image for NGINX+RTMP ubuntu 18.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
@@ -88,7 +90,7 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libpcre3 libxml2 libxslt1.1 zlib1g openssl && \
+    libpcre3 libxml2 libxslt1.1 zlib1g libssl1.1 && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
