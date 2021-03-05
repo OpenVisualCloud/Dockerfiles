@@ -5,19 +5,19 @@ if [[ -z $DIR ]]; then
     exit 1
 fi
 
-if [[ $1 == -n ]]; then
-    BUILD_VERSION="${1:-1.0}"
-    OS_NAME="${2:-ubuntu}"
-    OS_VERSION="${3:-18.04}"
-    BUILD_FDKAAC="${4:-ON}"
-    DOCKER_PREFIX="${5:-openvisualcloud}"
-    SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/"
+BUILD_VERSION="${1:-1.0}"
+OS_NAME="${2:-ubuntu}"
+OS_VERSION="${3:-18.04}"
+BUILD_FDKAAC="${4:-ON}"
+DOCKER_PREFIX="${5:-openvisualcloud}"
 
-    for m4file in "${DIR}"/*.m4; do
-        if [[ -f $m4file ]]; then
-            m4 "-I${SCRIPT_ROOT}/../template/" -DDOCKER_IMAGE=${IMAGE} -DBUILD_FDKAAC=${BUILD_FDKAAC} -DOS_NAME=${OS_NAME} -DOS_VERSION=${OS_VERSION} -DBUILD_VERSION=${BUILD_VERSION} "${m4file}" > "${m4file%\.m4}"
-        fi
-    done || true
+for m4file in "${DIR}"/*.m4; do
+    if [[ -f $m4file ]]; then
+        m4 "-I${DIR}/../../../../template/components" "-I${DIR}/../../../../template/system" -DDOCKER_IMAGE=${IMAGE} -DBUILD_FDKAAC=${BUILD_FDKAAC} -DOS_NAME=${OS_NAME} -DOS_VERSION=${OS_VERSION} -DBUILD_VERSION=${BUILD_VERSION} "${m4file}" > "${m4file%\.m4}"
+    fi
+done || true
+
+if [[ $1 == -n ]]; then
     exit 0
 fi
 
