@@ -59,6 +59,12 @@ RUN cd BUILD_HOME/libva-LIBVA2_VER && \
   make install
 ')
 
+define(`ENV_VARS_LIBVA2',`dnl
+ENV LIBVA_DRIVERS_PATH=BUILD_LIBDIR/dri
+ENV LIBVA_DRIVER_NAME=iHD
+ENV DISPLAY=:0.0
+')
+
 REG(LIBVA2)
 
 include(end.m4)dnl
