@@ -597,7 +597,7 @@ RUN npm install -g --loglevel error node-gyp@6.1.0 grunt-cli underscore jsdoc
 # Get owt-server Source
 ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd /opt/build && \
-    git clone ${OWT_REPO} && \
+    git clone -b master ${OWT_REPO} && \
     cd owt-server && \
     git reset --hard fc61b5499f09cc5583be72892f3ffdf2db1b20de
 
@@ -622,9 +622,11 @@ RUN cd /opt/build/owt-server/third_party && \
 ARG OWT_WEBRTC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-webrtc.git
 RUN mkdir -p /opt/build/owt-server/third_party/webrtc && \
     cd /opt/build/owt-server/third_party/webrtc && \
-    git clone -b 59-server --depth 1 ${OWT_WEBRTC_REPO} src && \
-    ./src/tools-woogeen/install.sh && \
-    ./src/tools-woogeen/build.sh
+    git clone -b 59-server ${OWT_WEBRTC_REPO} src && \
+    cd src && \
+    ./tools-woogeen/install.sh && \
+    ./tools-woogeen/build.sh
+
 
 # Get webrtc79
 RUN mkdir -p /opt/build/owt-server/third_party/webrtc-m79 && \
@@ -632,11 +634,12 @@ RUN mkdir -p /opt/build/owt-server/third_party/webrtc-m79 && \
     sed -i "s/git clone/git clone --depth 1/" ../../scripts/installWebrtc.sh && \
     bash ../../scripts/installWebrtc.sh
 
+
 # Get SDK
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 RUN cd /opt/build && \
-    git clone -b master --depth 1 ${OWT_SDK_REPO} && \
-    cd owt-client-javascript/scripts && \
+    git clone -b master ${OWT_SDK_REPO} && \
+    cd owt-client-javascript/scripts &&  \
     npm install && grunt 
     
 # Get quic
@@ -661,9 +664,9 @@ RUN cd /opt/build/owt-server && \
     npm install nan
 
 # Build and package
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}::/usr/local/lib:/usr/local/ssl/lib
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/ssl/lib
 RUN cd /opt/build/owt-server && \
-    ./scripts/build.js -t mcu-all -r -c&& \
+    ./scripts/build.js -t mcu-all -r -c &&\
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path /opt/build/owt-client-javascript/dist/samples/conference && \
     mkdir -p /opt/dist/home && \
     mv dist /opt/dist/home/owt

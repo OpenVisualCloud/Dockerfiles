@@ -4,8 +4,7 @@
 # To update, modify the template and regenerate.
 FROM centos:7 AS build
 
-RUN yum install -y -q epel-release
-
+RUN yum install -y -q epel-release && rm -rf /var/yum/cache/*
 
 
 RUN mkdir -p /opt/build && mkdir -p /opt/dist
@@ -14,18 +13,21 @@ ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
 RUN yum install -y wget
 
+# build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.8.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_REPO} | tar xz
 
 
 
+# build nginx upload
 ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
 RUN yum install -y gcc libxslt-devel make pcre-devel wget zlib-devel openssl-devel
 
+# build nginx
 ARG NGINX_REPO=https://nginx.org/download/nginx-1.18.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_REPO} | tar xz && \
@@ -69,24 +71,22 @@ RUN mkdir -p /opt/dist/var/www/tmp/client_body && \
     mkdir -p /opt/dist/var/www/upload && \
     mkdir -p /opt/dist/var/www/html
 
-RUN echo "Start cleanup" && \
-    rm -rf /opt/dist//usr/local/include && \
-    rm -rf /opt/dist//usr/local/share/doc && \
-    rm -rf /opt/dist//usr/local/share/gtk-doc && \
-    rm -rf /opt/dist//usr/local/share/man && \
-    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
-    echo "Cleanup done"
+# cleanup
+RUN rm -rf /opt/dist/usr/local/include && \
+    rm -rf /opt/dist/usr/local/lib64/pkgconfig && \
+    find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
+RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
+RUN rm -rf /opt/dist/usr/local/share/man
 
-FROM openvisualcloud/xeon-centos7-media-ffmpeg:latest
+FROM openvisualcloud/xeone3-centos7-media-ffmpeg:1.0
 LABEL Description="This is the base image for NGINX+RTMP centos 7"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
-RUN yum install -y -q epel-release
-
-
 # Install
-RUN yum install -y libxml2 libxslt pcre zlib openssl
+RUN yum install -y -q epel-release && rm -rf /var/yum/cache/*
+
+RUN yum install -y libxml2 libxslt pcre zlib openssl11
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig

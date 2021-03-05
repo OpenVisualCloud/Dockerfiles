@@ -13,7 +13,7 @@ INSTALL_CENTOS_REPO(epel-release)
 BUILD_ALL()dnl
 CLEANUP()dnl
 
-FROM openvisualcloud/xeon-OS_NAME`'patsubst(OS_VERSION,\.)-media-ffmpeg:BUILD_VERSION
+FROM openvisualcloud/xeone3-OS_NAME`'patsubst(OS_VERSION,\.)-media-ffmpeg:BUILD_VERSION
 LABEL Description="This is the base image for NGINX+RTMP OS_NAME OS_VERSION"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home

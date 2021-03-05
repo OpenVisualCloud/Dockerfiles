@@ -7,6 +7,7 @@ include(libvpx.m4)
 include(libx264.m4)
 include(opencv.m4)
 include(libva2.m4)
+include(dldt-ie.m4)
 include(ffmpeg.m4)
 include(gst-core.m4)
 include(owt-gst-base.m4)
@@ -22,6 +23,7 @@ PREAMBLE
 FROM OS_NAME:OS_VERSION as build
 include(centos-repo.m4)
 INSTALL_CENTOS_REPO(epel-release centos-release-scl)
+INSTALL_CENTOS_RPMFUSION_REPO(7)
 
 BUILD_ALL()dnl
 define(`CLEANUP_CC',no)dnl
@@ -34,5 +36,7 @@ WORKDIR /home
 
 # Install
 INSTALL_CENTOS_REPO(epel-release)
+INSTALL_CENTOS_RPMFUSION_REPO(7)
+
 INSTALL_ALL(devel,build)
 
