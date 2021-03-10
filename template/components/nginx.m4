@@ -84,6 +84,7 @@ ifdef(`BUILD_OPENSSL',`dnl
     && make install DESTDIR=BUILD_DESTDIR
 
 # NGINX Setup
+COPY nginx.conf BUILD_DESTDIR/etc/nginx
 RUN mkdir -p BUILD_DESTDIR/var/www/tmp/client_body && \
     mkdir -p BUILD_DESTDIR/var/www/tmp/proxy && \
     mkdir -p BUILD_DESTDIR/var/www/tmp/fastcgi && \

@@ -31,20 +31,30 @@ dnl
 include(begin.m4)
 
 DECLARE(`NGINX_FLV_VER',1.2.8)
+DECLARE(`NGINX_FLV_PATCHES_VER',0.2)
 
 ifelse(OS_NAME,ubuntu,`
-define(`NGINX_FLV_BUILD_DEPS',`ca-certificates wget')
+define(`NGINX_FLV_BUILD_DEPS',`ca-certificates wget patch')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`NGINX_FLV_BUILD_DEPS',`wget')
+define(`NGINX_FLV_BUILD_DEPS',`wget patch')
 ')
 
 define(`BUILD_NGINX_FLV',`
+ARG NGINX_FLV_PATCHES_REPO=https://github.com/VCDP/CDN/archive/`v'NGINX_FLV_PATCHES_VER.tar.gz
+ARG NGINX_FLV_PATCHES_PATH=BUILD_HOME/CDN-NGINX_FLV_PATCHES_VER
+RUN cd BUILD_HOME && \
+    wget -O - ${NGINX_FLV_PATCHES_REPO} | tar xz
+
 # build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/`v'NGINX_FLV_VER.tar.gz
 RUN cd BUILD_HOME && \
-    wget -O - ${NGINX_FLV_REPO} | tar xz
+    wget -O - ${NGINX_FLV_REPO} | tar xz && \
+    cd nginx-http-flv-module-NGINX_FLV_VER && \
+    mkdir -p BUILD_DEST/var/www/html && \
+    cp -f stat.xsl BUILD_DEST/var/www/html && \
+    find ${NGINX_FLV_PATCHES_PATH}/Nginx-HTTP-FLV_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i
 ')
 
 REG(NGINX_FLV)
