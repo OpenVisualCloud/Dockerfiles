@@ -44,15 +44,15 @@ DECLARE(`GST_LIBVISUAL',true)
 DECLARE(`GST_OPENGL',true)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GSTBASE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ gobjc wget pkg-config libglib2.0-dev flex bison ifelse(GST_XLIB,true,libx11-dev libxv-dev libxt-dev) ifelse(GST_ALSA,true,libasound2-dev) ifelse(GST_PANGO,true,libpango1.0-dev) ifelse(GST_THEORA,true,libtheora-dev) ifelse(GST_LIBVISUAL,true,libvisual-0.4-dev) ifelse(GST_OPENGL,true,libgl1-mesa-dev libx11-xcb-dev)')
+define(`GSTBASE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ gobjc wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev ifelse(GST_XLIB,true,libx11-dev libxv-dev libxt-dev) ifelse(GST_ALSA,true,libasound2-dev) ifelse(GST_PANGO,true,libpango1.0-dev) ifelse(GST_THEORA,true,libtheora-dev) ifelse(GST_LIBVISUAL,true,libvisual-0.4-dev) ifelse(GST_OPENGL,true,libgl1-mesa-dev libx11-xcb-dev)')
 
-define(`GSTBASE_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1 libxt6) ifelse(GST_ALSA,true,libasound2) ifelse(GST_PANGO,true,libpangocairo-1.0-0 libcairo-gobject2) ifelse(GST_THEORA,true,libtheora0) ifelse(GST_LIBVISUAL,true,libvisual-0.4-0) ifelse(GST_OPENGL,true,libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa)')
+define(`GSTBASE_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1 libxt6) ifelse(GST_ALSA,true,libasound2) ifelse(GST_PANGO,true,libpangocairo-1.0-0 libcairo-gobject2) ifelse(GST_THEORA,true,libtheora0) ifelse(GST_LIBVISUAL,true,libvisual-0.4-0) ifelse(GST_OPENGL,true,libgl1-mesa-dri libgl1-mesa-glx libegl1)')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`GSTBASE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex ifelse(GST_XLIB,true,libX11-devel libXv-devel libXt-devel) ifelse(GST_ALSA,true,alsa-lib-devel) ifelse(GST_PANGO,true,pango-devel) ifelse(GST_THEORA,true,libtheora-devel) ifelse(GST_LIBVISUAL,true,libvisual-devel) ifelse(GST_OPENGL,true,mesa-libGL-devel)')
+define(`GSTBASE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel ifelse(GST_XLIB,true,libX11-devel libXv-devel libXt-devel) ifelse(GST_ALSA,true,alsa-lib-devel) ifelse(GST_PANGO,true,libpango1.0-dev) ifelse(GST_THEORA,true,libtheora-devel) ifelse(GST_LIBVISUAL,true,libvisual-devel) ifelse(GST_OPENGL,true,libegl1-mesa)')
 
-define(`GSTBASE_INSTALL_DEPS',`glib2 ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_ALSA,true,alsa-lib) ifelse(GST_PANGO,true,pango) ifelse(GST_THEORA,true,libtheora) ifelse(GST_LIBVISUAL,true,libvisual) ifelse(GST_OPENGL,true,mesa-libGL)')
+define(`GSTBASE_INSTALL_DEPS',`glib2 mesa-libEGL gobject-introspection ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_ALSA,true,alsa-lib) ifelse(GST_PANGO,true,pango) ifelse(GST_THEORA,true,libtheora) ifelse(GST_LIBVISUAL,true,libvisual) ifelse(GST_OPENGL,true,mesa-libGL)')
 ')
 
 define(`BUILD_GSTBASE',`
@@ -69,6 +69,7 @@ RUN cd BUILD_HOME/gst-plugins-base-GSTCORE_VER && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
+    -Dintrospection=enabled \
     -Dgtk_doc=disabled \
     -Dalsa=ifelse(GST_ALSA,true,enabled,disabled) \
     -Dpango=ifelse(GST_PANGO,true,enabled,disabled) \
