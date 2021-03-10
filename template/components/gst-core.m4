@@ -33,13 +33,13 @@ include(begin.m4)
 DECLARE(`GSTCORE_VER',1.16.2)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison')
+define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev')
 define(`GSTCORE_INSTALL_DEPS',`libglib2.0-0')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`GSTCORE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex')
-define(`GSTCORE_INSTALL_DEPS',`glib2')
+define(`GSTCORE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel')
+define(`GSTCORE_INSTALL_DEPS',`glib2 gobject-introspection')
 ')
 
 define(`BUILD_GSTCORE',`
@@ -54,6 +54,7 @@ RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
+    -Dintrospection=enabled \
     -Dgtk_doc=disabled && \
     cd build && \
     ninja install && \
