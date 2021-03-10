@@ -42,6 +42,7 @@ RUN cp -r /opt/intel/openvino/data_processing/dl_streamer/lib/* BUILD_DESTDIR/us
 
 RUN mkdir -p BUILD_DESTDIR/opt/intel/dl_streamer/python && \
     cp -r /opt/intel/openvino/data_processing/dl_streamer/python/* BUILD_DESTDIR/opt/intel/dl_streamer/python
+
 ')dnl
 
 define(`INSTALL_GVA',
