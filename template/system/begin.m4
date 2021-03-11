@@ -254,7 +254,7 @@ pushdef(`_install_mode',$1)dnl
 pushdef(`_deps',GET_INSTALL_DEPS(ARGS(COMPONENTS_LIST)))dnl
 popdef(`_install_mode')dnl
 pushdef(`_pkgs',PKGS(REMOVE_DUPLICATES(`_deps INSTALL_PKGS_LIST')))dnl
-INSTALL_PKGS(ARGS(_pkgs))
+ifelse(len(_pkgs),0,,`INSTALL_PKGS(ARGS(_pkgs))')
 popdef(`_pkgs')dnl
 popdef(`_deps')dnl
 ifelse(CLEANUP_CC,yes,,`dnl
