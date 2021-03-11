@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(yasm.m4)
 
-DECLARE(`SVT_AV1_VER',v0.8.5)
+DECLARE(`SVT_AV1_VER',v0.8.6)
 
 include(yasm.m4)
 
@@ -43,13 +43,12 @@ define(`SVT_AV1_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAK
 ifelse(OS_NAME,centos,`
 define(`SVT_AV1_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3)')
 ')
-
 define(`BUILD_SVT_AV1',`
 # build svt av1
-ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/SVT_AV1_VER/SVT-AV1-SVT_AV1_VER.tar.gz
 RUN cd BUILD_HOME && \
-    git clone ${SVT_AV1_REPO} -b SVT_AV1_VER --depth 1 && \
-    cd SVT-AV1/Build/linux && \
+    wget -O - ${SVT_AV1_REPO} | tar zx && \
+    cd SVT-AV1-SVT_AV1_VER/Build/linux && \
     ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
     sed -i "s/SvtAv1dec/SvtAv1Dec/" SvtAv1Dec.pc && \
