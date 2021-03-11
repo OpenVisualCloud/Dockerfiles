@@ -30,42 +30,30 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_ENGINE_VER',v0.5.43)
-dnl CentOS QAT 1.7.0-470b06 only supports QAT engine version up to 0.5.43.
-dnl CentOS QAT 1.7.0-470b12 and above can support QAT engine version beyond 0.5.43.
-
-include(openssl.m4)
+DECLARE(`IPSECMB_VER',v0.55)
 
 ifelse(OS_NAME,ubuntu,`
-define(`QAT_ENGINE_BUILD_DEPS',`wget ca-certificates make gcc gawk autoconf automake libtool pkg-config')
+define(`IPSECMB_BUILD_DEPS',`git make ifelse(OS_VERSION,18.04,software-properties-common,gcc g++) ')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`QAT_ENGINE_BUILD_DEPS',`wget make gcc gawk autoconf automake libtool pkg-config')
+define(`IPSECMB_BUILD_DEPS',`git make devtoolset-9')
 ')
 
-define(`BUILD_QAT_ENGINE',`
-# load qat-engine
-ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/QAT_ENGINE_VER.tar.gz
+define(`BUILD_IPSECMB',`
+ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,`dnl
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update && apt-get install -y gcc-9 g++-9
+')
+ARG IPSECMB_REPO=https://github.com/intel/intel-ipsec-mb.git
 RUN cd BUILD_HOME && \
-    wget -O - ${QAT_ENGINE_REPO} | tar xz && \
-    cd QAT_Engine* && \
-    ./autogen.sh && \
-    export PERL5LIB="$(ls -1 -d BUILD_HOME/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=BUILD_PREFIX/ssl --prefix=/opt/intel/QATengine ifdef(`BUILD_QAT_CRYPTOMB',--enable-multibuff_offload --enable-multibuff_ecx) ifdef(`BUILD_IPSECMB',--enable-ipsec_offload) && \
-    make -j8 && \
+    git clone -b IPSECMB_VER ${IPSECMB_REPO} && \
+    cd intel-ipsec-mb && \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,CC="gcc-9" CXX="g++-9" )CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
     make install && \
-    tar cf - BUILD_PREFIX/ssl | (cd BUILD_DESTDIR && tar xf -)
+    make install PREFIX=BUILD_DESTDIR
 ')
 
-define(`QAT_ENGINE_ENV_VARS',`dnl
-ENV OPENSSL_ENGINES=BUILD_PREFIX/ssl/lib/engines-1.1
-')
-
-define(`INSTALL_QAT_ENGINE',`dnl
-RUN echo "/opt/intel/QAT/build" >> /etc/ld.so.conf.d/qat.conf && ldconfig
-')
-
-REG(QAT_ENGINE)
+REG(IPSECMB)
 
 include(end.m4)dnl
