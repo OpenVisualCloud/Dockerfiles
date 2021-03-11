@@ -52,7 +52,7 @@ RUN cd BUILD_HOME && \
     cd QAT_Engine* && \
     ./autogen.sh && \
     export PERL5LIB="$(ls -1 -d BUILD_HOME/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=BUILD_PREFIX/ssl --prefix=/opt/intel/QATengine --enable-multibuff_offload && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=BUILD_PREFIX/ssl --prefix=/opt/intel/QATengine ifdef(`BUILD_QAT_CRYPTOMB',--enable-multibuff_offload --enable-multibuff_ecx) ifdef(`BUILD_IPSECMB',--enable-ipsec_offload) && \
     make -j8 && \
     make install && \
     tar cf - BUILD_PREFIX/ssl | (cd BUILD_DESTDIR && tar xf -)
