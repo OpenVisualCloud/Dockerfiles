@@ -42,9 +42,7 @@ define(`YASM_BUILD_DEPS',`wget tar gcc-c++ make')
 
 define(`BUILD_YASM',`
 # build yasm
-dnl ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
-dnl temparorily use ovc resource repo as offiical yasm repo cannot be connected 
-ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd BUILD_HOME/yasm-YASM_VER && \
