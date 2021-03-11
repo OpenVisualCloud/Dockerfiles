@@ -52,7 +52,7 @@ define(`GSTBASE_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_XLIB,true,libx11-6 libxv1
 ifelse(OS_NAME,centos,`
 define(`GSTBASE_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel ifelse(GST_XLIB,true,libX11-devel libXv-devel libXt-devel) ifelse(GST_ALSA,true,alsa-lib-devel) ifelse(GST_PANGO,true,libpango1.0-dev pango-devel) ifelse(GST_THEORA,true,libtheora-devel) ifelse(GST_LIBVISUAL,true,libvisual-devel) ifelse(GST_OPENGL,true,libegl1-mesa mesa-libGL-devel)')
 
-define(`GSTBASE_INSTALL_DEPS',`glib2 mesa-libEGL gobject-introspection ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_ALSA,true,alsa-lib) ifelse(GST_PANGO,true,pango) ifelse(GST_THEORA,true,libtheora) ifelse(GST_LIBVISUAL,true,libvisual) ifelse(GST_OPENGL,true,mesa-libGL)')
+define(`GSTBASE_INSTALL_DEPS',`glib2 mesa-libEGL gobject-introspection ifelse(GST_XLIB,true,libX11 libXv libXt) ifelse(GST_ALSA,true,alsa-lib) ifelse(GST_PANGO,true,pango) ifelse(GST_THEORA,true,libtheora) ifelse(GST_LIBVISUAL,true,libvisual) ifelse(GST_OPENGL,true,mesa-libGL mesa-dri-drivers)')
 ')
 
 define(`BUILD_GSTBASE',`
