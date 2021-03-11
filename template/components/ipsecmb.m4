@@ -30,32 +30,30 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_CRYPTOMB_VER',ippcp_2020u3)
+DECLARE(`IPSECMB_VER',v0.55)
 
 ifelse(OS_NAME,ubuntu,`
-define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ca-certificates ifdef(`BUILD_CMAKE',,cmake) make ifelse(OS_VERSION,18.04,software-properties-common,gcc g++) python ')
+define(`IPSECMB_BUILD_DEPS',`git make ifelse(OS_VERSION,18.04,software-properties-common,gcc g++) ')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake3) make python devtoolset-9')
+define(`IPSECMB_BUILD_DEPS',`git make devtoolset-9')
 ')
 
-define(`BUILD_QAT_CRYPTOMB',`
+define(`BUILD_IPSECMB',`
 ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,`dnl
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
     apt-get update && apt-get install -y gcc-9 g++-9
 ')
-ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/QAT_CRYPTOMB_VER.tar.gz
+ARG IPSECMB_REPO=https://github.com/intel/intel-ipsec-mb.git
 RUN cd BUILD_HOME && \
-    wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
-    mkdir -p ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/build && \
-    cd ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/build && \
-    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,CC="gcc-9" CXX="g++-9" )CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DOPENSSL_INCLUDE_DIR=BUILD_PREFIX/ssl/include -DOPENSSL_LIBRARIES=BUILD_PREFIX/ssl/lib -DOPENSSL_ROOT_DIR=BUILD_PREFIX/ssl .. && \
-    make -j8 ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
+    git clone -b IPSECMB_VER ${IPSECMB_REPO} && \
+    cd intel-ipsec-mb && \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,CC="gcc-9" CXX="g++-9" )CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
     make install && \
-    make install DESTDIR=BUILD_DESTDIR
+    make install PREFIX=BUILD_DESTDIR
 ')
 
-REG(QAT_CRYPTOMB)
+REG(IPSECMB)
 
 include(end.m4)dnl
