@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GVA_INSTALL_DEPS',`python3-numpy python3-gi python3-gi-cairo python3-dev ifelse(OS_VERSION,20.04,libwayland-egl1 libegl1-mesa)')
+define(`GVA_INSTALL_DEPS',`python3-numpy python3-gi python3-gi-cairo python3-dev ocl-icd-opencl-dev ifelse(OS_VERSION,20.04,libwayland-egl1 libegl1-mesa)')
 ')
 
 define(`BUILD_GVA',`
@@ -42,7 +42,6 @@ RUN cp -r /opt/intel/openvino/data_processing/dl_streamer/lib/* BUILD_DESTDIR/us
 
 RUN mkdir -p BUILD_DESTDIR/opt/intel/dl_streamer/python && \
     cp -r /opt/intel/openvino/data_processing/dl_streamer/python/* BUILD_DESTDIR/opt/intel/dl_streamer/python
-
 ')dnl
 
 define(`INSTALL_GVA',
