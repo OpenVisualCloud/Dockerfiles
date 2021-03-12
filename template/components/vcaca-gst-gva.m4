@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GVA_INSTALL_DEPS',`python3-numpy python3-gi python3-gi-cairo python3-dev ocl-icd-opencl-dev ifelse(OS_VERSION,20.04,libwayland-egl1 libegl1-mesa)')
+define(`GVA_INSTALL_DEPS',`python3-numpy python3-gi python3-gi-cairo python3-dev ocl-icd-opencl-dev ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,libwayland-egl1 libegl1-mesa)')
 ')
 
 define(`BUILD_GVA',`
@@ -49,7 +49,7 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/opt/intel/openvino/data_processing/gstreamer/lib/girepository-1.0/
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,/usr/local/lib/girepository-1.0/,/opt/intel/openvino/data_processing/gstreamer/lib/girepository-1.0/)
 )
 
 REG(GVA)

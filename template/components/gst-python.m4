@@ -46,7 +46,7 @@ RUN cd BUILD_HOME && \
     wget -O - ${GSTPYTHON_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-python-GSTCORE_VER && \
 #WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
-ifelse(OS_VERSION,20.04,
+ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,
     sed -i "s/.*python\.dependency.*/pythonver \= python\.language_version\(\)\npython_dep \= dependency\(\'python-\@0\@-embed\'\.format\(pythonver\)\, version\: \'\>\=3\'\, required\: false\)\nif not python_dep\.found\(\)\n\tpython_dep \= python\.dependency\(required \: true\)\nendif/g" meson.build && \)
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain \
