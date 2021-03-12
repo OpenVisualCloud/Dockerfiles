@@ -11,7 +11,7 @@ fi
 
 pip3 install pyyaml requests
 
-if grep --quiet 'Ubuntu 18' /etc/os-release; then
+if grep --quiet 'Ubuntu' /etc/os-release; then
   wget https://download.01.org/opencv/2021/openvinotoolkit/2021.1/open_model_zoo/models_bin/2/vehicle-license-plate-detection-barrier-0106/FP32/vehicle-license-plate-detection-barrier-0106.bin
   wget https://download.01.org/opencv/2021/openvinotoolkit/2021.1/open_model_zoo/models_bin/2/vehicle-license-plate-detection-barrier-0106/FP32/vehicle-license-plate-detection-barrier-0106.xml
   wget https://raw.githubusercontent.com/openvinotoolkit/dlstreamer_gst/master/samples/model_proc/vehicle-license-plate-detection-barrier-0106.json

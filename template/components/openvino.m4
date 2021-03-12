@@ -36,7 +36,7 @@ DECLARE(`OPENVINO_BUILD_NO',17504)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENVINO_BUILD_DEPS',`cpio libjson-c-dev')
-define(`OPENVINO_INSTALL_DEPS',`libusb-1.0-0-dev ifelse(OS_VERSION,20.04,libboost-filesystem1.67.0 libboost-system1.67.0 libboost-program-options1.67.0 libjson-c4,libboost-filesystem1.65.1 libboost-system1.65.1 libboost-program-options1.65.1 libjson-c3)')
+define(`OPENVINO_INSTALL_DEPS',`libusb-1.0-0-dev ifelse(OS_VERSION,20.04,libboost-filesystem1.71.0 libboost-system1.71.0 libboost-program-options1.71.0 libjson-c4,libboost-filesystem1.65.1 libboost-system1.65.1 libboost-program-options1.65.1 libjson-c3)')
 ')
 
 define(`BUILD_OPENVINO',`
