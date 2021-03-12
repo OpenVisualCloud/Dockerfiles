@@ -9,12 +9,14 @@ else
   apt-get install -y wget make python3 python3-pip
   if grep --quiet 'Ubuntu 18' /etc/os-release; then
     apt-get install -y libjson-c3
+  elif grep --quiet 'Ubuntu 20' /etc/os-release; then
+    apt-get install -y libjson-c4
   fi
 fi
 
 pip3 install pyyaml requests
 
-if grep --quiet 'Ubuntu 18' /etc/os-release; then
+if grep --quiet 'Ubuntu' /etc/os-release; then
   wget https://download.01.org/opencv/2021/openvinotoolkit/2021.1/open_model_zoo/models_bin/2/vehicle-license-plate-detection-barrier-0106/FP16/vehicle-license-plate-detection-barrier-0106.xml
   wget https://download.01.org/opencv/2021/openvinotoolkit/2021.1/open_model_zoo/models_bin/2/vehicle-license-plate-detection-barrier-0106/FP16/vehicle-license-plate-detection-barrier-0106.bin
   wget https://download.01.org/opencv/2021/openvinotoolkit/2021.1/open_model_zoo/models_bin/2/vehicle-attributes-recognition-barrier-0039/FP16/vehicle-attributes-recognition-barrier-0039.bin
