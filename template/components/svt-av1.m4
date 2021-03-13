@@ -48,7 +48,8 @@ define(`BUILD_SVT_AV1',`
 ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/SVT_AV1_VER/SVT-AV1-SVT_AV1_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
-    cd SVT-AV1-SVT_AV1_VER/Build/linux && \
+    mv SVT-AV1-SVT_AV1_VER SVT-AV1 && \
+    cd SVT-AV1/Build/linux && \
     ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
     sed -i "s/SvtAv1dec/SvtAv1Dec/" SvtAv1Dec.pc && \
