@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2020, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,28 +30,23 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-ifelse(OS_NAME,ubuntu,`
-define(`GVA_INSTALL_DEPS',`python3-numpy python3-gi python3-gi-cairo python3-dev ocl-icd-opencl-dev ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,libwayland-egl1 libegl1-mesa)')
+DECLARE(`BOOST_VER',1.65.0)
+
+ifelse(OS_NAME,centos,`
+define(`BOOST_BUILD_DEPS',`python-devel')
 ')
 
-define(`BUILD_GVA',`
-# Copy gstreamer and dl_streamer libs
+define(`BUILD_BOOST',`
+# build boost
+ARG BOOST_REPO=http://iweb.dl.sourceforge.net/project/boost/boost/BOOST_VER/boost_1_65_0.tar.bz2
+RUN cd BUILD_HOME && \
+  wget -O - ${BOOST_REPO} | tar jx
+RUN cd BUILD_HOME/boost_1_65_0 && \
+  chmod +x bootstrap.sh && \
+  ./bootstrap.sh && \
+  ./b2 && ./b2 install --prefix=BUILD_PREFIX
+')
 
-ENV LIBRARY_PATH=BUILD_LIBDIR
-RUN cp -r /opt/intel/openvino/data_processing/dl_streamer/lib/* BUILD_DESTDIR/usr/local/lib/gstreamer-1.0
+REG(BOOST)
 
-RUN mkdir -p BUILD_DESTDIR/opt/intel/dl_streamer/python && \
-    cp -r /opt/intel/openvino/data_processing/dl_streamer/python/* BUILD_DESTDIR/opt/intel/dl_streamer/python
-')dnl
-
-define(`INSTALL_GVA',
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0
-ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0
-ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,/usr/local/lib/girepository-1.0/,/opt/intel/openvino/data_processing/gstreamer/lib/girepository-1.0/)
-)
-
-REG(GVA)
-
-include(end.m4)
+include(end.m4)dnl

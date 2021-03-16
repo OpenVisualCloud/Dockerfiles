@@ -30,28 +30,30 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
+DECLARE(`IPSECMB_VER',v0.55)
+
 ifelse(OS_NAME,ubuntu,`
-define(`GVA_INSTALL_DEPS',`python3-numpy python3-gi python3-gi-cairo python3-dev ocl-icd-opencl-dev ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,libwayland-egl1 libegl1-mesa)')
+define(`IPSECMB_BUILD_DEPS',`git make ifelse(OS_VERSION,18.04,software-properties-common,gcc g++) ')
 ')
 
-define(`BUILD_GVA',`
-# Copy gstreamer and dl_streamer libs
+ifelse(OS_NAME,centos,`
+define(`IPSECMB_BUILD_DEPS',`git make devtoolset-9')
+')
 
-ENV LIBRARY_PATH=BUILD_LIBDIR
-RUN cp -r /opt/intel/openvino/data_processing/dl_streamer/lib/* BUILD_DESTDIR/usr/local/lib/gstreamer-1.0
+define(`BUILD_IPSECMB',`
+ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,`dnl
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update && apt-get install -y gcc-9 g++-9
+')
+ARG IPSECMB_REPO=https://github.com/intel/intel-ipsec-mb.git
+RUN cd BUILD_HOME && \
+    git clone -b IPSECMB_VER ${IPSECMB_REPO} && \
+    cd intel-ipsec-mb && \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,CC="gcc-9" CXX="g++-9" )CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
+    make install && \
+    make install PREFIX=BUILD_DESTDIR
+')
 
-RUN mkdir -p BUILD_DESTDIR/opt/intel/dl_streamer/python && \
-    cp -r /opt/intel/openvino/data_processing/dl_streamer/python/* BUILD_DESTDIR/opt/intel/dl_streamer/python
-')dnl
+REG(IPSECMB)
 
-define(`INSTALL_GVA',
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0
-ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0
-ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,/usr/local/lib/girepository-1.0/,/opt/intel/openvino/data_processing/gstreamer/lib/girepository-1.0/)
-)
-
-REG(GVA)
-
-include(end.m4)
+include(end.m4)dnl
