@@ -59,6 +59,14 @@ RUN cd BUILD_HOME/libva-LIBVA2_VER && \
   make install
 ')
 
+define(`FFMPEG_PATCH_VAAPI',`dnl
+ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
+RUN cd BUILD_HOME && \
+    wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
+    cd $1 && \
+    patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
+')
+
 define(`ENV_VARS_LIBVA2',`dnl
 ENV LIBVA_DRIVERS_PATH=BUILD_LIBDIR/dri
 ENV LIBVA_DRIVER_NAME=iHD
