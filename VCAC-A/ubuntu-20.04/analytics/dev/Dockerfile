@@ -137,7 +137,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build yasm
-ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd /opt/build/yasm-1.3.0 && \
@@ -234,7 +234,7 @@ ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
 RUN cd /opt/build/media-driver-intel-media-20.2.0 && mkdir build && cd build && \
-  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
+  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DENABLE_PRODUCTION_KMD=OFF .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
   make install
@@ -350,11 +350,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.0.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.0 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -371,7 +371,7 @@ RUN cd /opt/build/opencv-4.5.0 && mkdir build && cd build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison && \
+    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-core
@@ -385,6 +385,7 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
+    -Dintrospection=enabled \
     -Dgtk_doc=disabled && \
     cd build && \
     ninja install && \
@@ -392,7 +393,7 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ gobjc wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev wayland-protocols && \
+    ca-certificates meson tar g++ gobjc wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev libx11-xcb-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-base
@@ -408,6 +409,7 @@ RUN cd /opt/build/gst-plugins-base-1.16.2 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
+    -Dintrospection=enabled \
     -Dgtk_doc=disabled \
     -Dalsa=enabled \
     -Dpango=enabled \
@@ -446,7 +448,7 @@ RUN cd /opt/build/gst-plugins-good-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison openssl libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
+    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev openssl libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-bad
@@ -463,6 +465,7 @@ RUN cd /opt/build && \
       -Dexamples=disabled \
       -Dgtk_doc=disabled \
       -Dtests=disabled \
+      -Dintrospection=enabled \
       -Dgst_player_tests=false \
       -Drtmp=enabled \
       -Dx265=enabled \
@@ -506,11 +509,16 @@ ARG FFMPEG_MA_RELEASE_VER=0.5
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=/opt/build/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
 RUN cd /opt/build && wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
-RUN cp ${FFMPEG_MA_PATH}/docker/patch/opencv.pc /usr/lib/pkgconfig
+RUN cp ${FFMPEG_MA_PATH}/docker/patch/opencv.pc /usr/local/lib/pkgconfig
 ARG CVDEF_H=/usr/local/include/opencv4/opencv2/core/cvdef.h
 RUN if [ -f "${CVDEF_H}" ]; then cp ${FFMPEG_MA_PATH}/docker/patch/cvdef.h ${CVDEF_H}; fi
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     find ${FFMPEG_MA_PATH}/patches -type f -name "*.patch" -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
+    cd /opt/build/FFmpeg-n4.2.2 && \
+    patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
 ARG FFMPEG_PATCHES_RELEASE_VER=0.2
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
@@ -528,7 +536,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.0/build && \
+RUN cd /opt/build/opencv-4.5.1/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -542,7 +550,7 @@ RUN cd /opt/build/opencv-4.5.0/build && \
     .. && \
   cd modules/videoio && \
   make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.0 /opt/dist/usr/local/lib
+  cp -f ../../lib/libopencv_videoio.so.4.5.1 /opt/dist/usr/local/lib
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -649,7 +657,7 @@ RUN cd /opt/build/gst-python-1.16.2 && \
 sed -i "s/.*python\.dependency.*/pythonver \= python\.language_version\(\)\npython_dep \= dependency\(\'python-\@0\@-embed\'\.format\(pythonver\)\, version\: \'\>\=3\'\, required\: false\)\nif not python_dep\.found\(\)\n\tpython_dep \= python\.dependency\(required \: true\)\nendif/g" meson.build && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
-    -Dpython=/usr/bin/python3 -Dlibpython-dir=/usr/lib/x86_64-linux-gnu/ \
+    -Dpython=/usr/bin/python3 -Dlibpython-dir=/usr/lib/x86_64-linux-gnu/  \
     -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides \
     -Dgtk_doc=disabled && \
     cd build && \
@@ -672,12 +680,15 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libnuma1 libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libusb-1.0-0-dev libboost-filesystem1.67.0 libboost-system1.67.0 libboost-program-options1.67.0 libjson-c4 libglib2.0-0 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 openssl libcurl3-gnutls librtmp1 mjpegtools libde265-0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9 python3-numpy python3-gi python3-gi-cairo python3-dev libwayland-egl1 libegl1-mesa  && \
+    libnuma1 libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libusb-1.0-0-dev libboost-filesystem1.71.0 libboost-system1.71.0 libboost-program-options1.71.0 libjson-c4 libglib2.0-0 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 openssl libcurl3-gnutls librtmp1 mjpegtools libde265-0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9 python3-numpy python3-gi python3-gi-cairo python3-dev ocl-icd-opencl-dev libwayland-egl1 libglib2.0-dev && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
+ENV LIBVA_DRIVERS_PATH=/usr/local/lib/dri
+ENV LIBVA_DRIVER_NAME=iHD
+ENV DISPLAY=:0.0
 ENV GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib/gstreamer-1.0/gst-plugin-scanner
 ENV GST_VAAPI_ALL_DRIVERS=1
@@ -690,5 +701,6 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/opt/intel/openvino/data_processing/gstreamer/lib/girepository-1.0/
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/girepository-1.0/
+
 

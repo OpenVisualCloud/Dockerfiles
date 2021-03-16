@@ -123,7 +123,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build yasm
-ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd /opt/build/yasm-1.3.0 && \
@@ -184,9 +184,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build svt av1
-ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.6/SVT-AV1-v0.8.6.tar.gz
 RUN cd /opt/build && \
-    git clone ${SVT_AV1_REPO} -b v0.8.5 --depth 1 && \
+    wget -O - ${SVT_AV1_REPO} | tar zx && \
+    mv SVT-AV1-v0.8.6 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -281,11 +282,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.0.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.0 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -319,6 +320,11 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
     patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
+ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
+    cd /opt/build/FFmpeg-n4.2.2 && \
+    patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
 ARG FFMPEG_PATCHES_RELEASE_VER=0.2
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
@@ -336,7 +342,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.0/build && \
+RUN cd /opt/build/opencv-4.5.1/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -350,7 +356,7 @@ RUN cd /opt/build/opencv-4.5.0/build && \
     .. && \
   cd modules/videoio && \
   make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.0 /opt/dist/usr/local/lib
+  cp -f ../../lib/libopencv_videoio.so.4.5.1 /opt/dist/usr/local/lib
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/include && \
@@ -373,4 +379,7 @@ RUN apt-get update && \
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
+ENV LIBVA_DRIVERS_PATH=/usr/local/lib/dri
+ENV LIBVA_DRIVER_NAME=iHD
+ENV DISPLAY=:0.0
 

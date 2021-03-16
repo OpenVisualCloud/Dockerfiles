@@ -14,6 +14,7 @@ RUN apt-get update && \
     ca-certificates wget tar g++ make bzip2 && \
   rm -rf /var/lib/apt/lists/*
 
+# build nasm
 ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
@@ -28,6 +29,7 @@ RUN apt-get update && \
     git cmake make && \
   rm -rf /var/lib/apt/lists/*
 
+# build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd /opt/build && \
     git clone ${LIBAOM_REPO} -b v2.0.0 --depth 1 && \
@@ -37,13 +39,12 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN echo "Start cleanup" && \
-    rm -rf /opt/dist//usr/local/include && \
-    rm -rf /opt/dist//usr/local/share/doc && \
-    rm -rf /opt/dist//usr/local/share/gtk-doc && \
-    rm -rf /opt/dist//usr/local/share/man && \
-    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
-    echo "Cleanup done"
+# cleanup
+RUN rm -rf /opt/dist/usr/local/include && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig && \
+    find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
+RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
+RUN rm -rf /opt/dist/usr/local/share/man
 
 FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:latest
 LABEL Description="This is the showcase image for SVT ubuntu 18.04"
@@ -51,10 +52,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-     && \
-  rm -rf /var/lib/apt/lists/*
+
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig

@@ -10,6 +10,21 @@ RUN mkdir -p /opt/build && mkdir -p /opt/dist
 
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make bzip2 && \
+  rm -rf /var/lib/apt/lists/*
+
+# build nasm
+ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
+RUN cd /opt/build && \
+    wget -O - ${NASM_REPO} | tar xj && \
+    cd nasm-2.15.05 && \
+    ./autogen.sh && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
+     make -j$(nproc) && \
+     make install
+
 
 
 # load qat core
@@ -23,14 +38,13 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # load qat-zip
-ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.0.1.tar.gz
+ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.0.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_ZIP_REPO} | tar xz && \
     cd QATzip* && \
     /bin/bash ./configure LDFLAGS="-Wl,-rpath=/opt/intel/QAT/build" --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/QATzip && \
     make -j8 && \
     make install && \
-    (cd /opt/intel/QATzip/lib64 && ln -s libqatzip.so libqatzip.so.1) && \
     tar cf - /opt/intel/QATzip | (cd /opt/dist && tar xf -)
 
 RUN apt-get update && \
@@ -39,10 +53,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1h.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1i.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1h && \
+    cd openssl-OpenSSL_1_1_1i && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -53,30 +67,55 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    wget ca-certificates automake make gcc gawk && \
+    wget ca-certificates cmake make gcc g++ python  && \
+  rm -rf /var/lib/apt/lists/*
+
+
+ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/ippcp_2020u3.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
+    mkdir -p ipp-crypto-ippcp_2020u3/sources/ippcp/crypto_mb/build && \
+    cd ipp-crypto-ippcp_2020u3/sources/ippcp/crypto_mb/build && \
+    CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" cmake -DOPENSSL_INCLUDE_DIR=/usr/local/ssl/include -DOPENSSL_LIBRARIES=/usr/local/ssl/lib -DOPENSSL_ROOT_DIR=/usr/local/ssl .. && \
+    make -j8  && \
+    make install && \
+    make install DESTDIR=/opt/dist
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    wget ca-certificates make gcc gawk autoconf automake libtool pkg-config && \
   rm -rf /var/lib/apt/lists/*
 
 # load qat-engine
-ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.5.42.tar.gz
+ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
     ./autogen.sh && \
     export PERL5LIB="$(ls -1 -d /opt/build/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --enable-upstream_driver --enable-usdm --prefix=/opt/intel/QATengine --enable-qat_debug && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE" --enable-multibuff_offload --enable-multibuff_ecx && \
     make -j8 && \
     make install && \
     tar cf - /usr/local/ssl | (cd /opt/dist && tar xf -)
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget && \
+    ca-certificates wget patch && \
   rm -rf /var/lib/apt/lists/*
+
+ARG NGINX_FLV_PATCHES_REPO=https://github.com/VCDP/CDN/archive/v0.2.tar.gz
+ARG NGINX_FLV_PATCHES_PATH=/opt/build/CDN-0.2
+RUN cd /opt/build && \
+    wget -O - ${NGINX_FLV_PATCHES_REPO} | tar xz
 
 # build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.8.tar.gz
 RUN cd /opt/build && \
-    wget -O - ${NGINX_FLV_REPO} | tar xz
+    wget -O - ${NGINX_FLV_REPO} | tar xz && \
+    cd nginx-http-flv-module-1.2.8 && \
+    mkdir -p BUILD_DEST/var/www/html && \
+    cp -f stat.xsl BUILD_DEST/var/www/html && \
+    find ${NGINX_FLV_PATCHES_PATH}/Nginx-HTTP-FLV_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i
 
 
 
@@ -90,7 +129,7 @@ RUN apt-get update && \
     wget ca-certificates libpcre3-dev zlib1g-dev libxslt1-dev  && \
   rm -rf /var/lib/apt/lists/*
 
-ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.0.tar.gz
+ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.4.tar.gz
 RUN wget -O - ${QAT_NGINX_REPO} | tar xz && cd asynch_mode_nginx* && \
     ./configure --with-ld-opt="-Wl,-rpath=/usr/local/ssl/lib,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib64,-rpath=/opt/intel/QAT/build -L/usr/local/ssl/lib -L/opt/intel/QATzip/lib64 -lqatzip -lz" \
         --with-cc-opt="-DNGX_SECURE_MEM -I/usr/local/ssl/include -I/opt/intel/QATzip/include -Wno-error=deprecated-declarations" \
@@ -173,7 +212,7 @@ RUN rm -rf /opt/dist/usr/local/ssl/include
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 
-FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:21.3
+FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:-n
 LABEL Description="This is the base image for QAT NGINX ubuntu 20.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
@@ -187,5 +226,5 @@ RUN apt-get update && \
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
-
+RUN echo "/opt/intel/QAT/build" >> /etc/ld.so.conf.d/qat.conf && ldconfig
 

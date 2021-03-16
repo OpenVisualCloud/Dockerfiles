@@ -11,15 +11,26 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget && \
+    ca-certificates wget patch && \
   rm -rf /var/lib/apt/lists/*
 
+ARG NGINX_FLV_PATCHES_REPO=https://github.com/VCDP/CDN/archive/v0.2.tar.gz
+ARG NGINX_FLV_PATCHES_PATH=/opt/build/CDN-0.2
+RUN cd /opt/build && \
+    wget -O - ${NGINX_FLV_PATCHES_REPO} | tar xz
+
+# build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.8.tar.gz
 RUN cd /opt/build && \
-    wget -O - ${NGINX_FLV_REPO} | tar xz
+    wget -O - ${NGINX_FLV_REPO} | tar xz && \
+    cd nginx-http-flv-module-1.2.8 && \
+    mkdir -p BUILD_DEST/var/www/html && \
+    cp -f stat.xsl BUILD_DEST/var/www/html && \
+    find ${NGINX_FLV_PATCHES_PATH}/Nginx-HTTP-FLV_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i
 
 
 
+# build nginx upload
 ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_UPLOAD_REPO} | tar xz
@@ -29,6 +40,7 @@ RUN apt-get update && \
     ca-certificates gcc libpcre3-dev libxslt1-dev make wget zlib1g-dev libssl-dev && \
   rm -rf /var/lib/apt/lists/*
 
+# build nginx
 ARG NGINX_REPO=https://nginx.org/download/nginx-1.18.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_REPO} | tar xz && \
@@ -61,6 +73,7 @@ RUN cd /opt/build && \
     && make install DESTDIR=/opt/dist
 
 # NGINX Setup
+COPY nginx.conf /opt/dist/etc/nginx
 RUN mkdir -p /opt/dist/var/www/tmp/client_body && \
     mkdir -p /opt/dist/var/www/tmp/proxy && \
     mkdir -p /opt/dist/var/www/tmp/fastcgi && \
@@ -72,15 +85,14 @@ RUN mkdir -p /opt/dist/var/www/tmp/client_body && \
     mkdir -p /opt/dist/var/www/upload && \
     mkdir -p /opt/dist/var/www/html
 
-RUN echo "Start cleanup" && \
-    rm -rf /opt/dist//usr/local/include && \
-    rm -rf /opt/dist//usr/local/share/doc && \
-    rm -rf /opt/dist//usr/local/share/gtk-doc && \
-    rm -rf /opt/dist//usr/local/share/man && \
-    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
-    echo "Cleanup done"
+# cleanup
+RUN rm -rf /opt/dist/usr/local/include && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig && \
+    find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
+RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
+RUN rm -rf /opt/dist/usr/local/share/man
 
-FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:latest
+FROM openvisualcloud/xeone3-ubuntu2004-media-ffmpeg:-n
 LABEL Description="This is the base image for NGINX+RTMP ubuntu 20.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
@@ -88,7 +100,7 @@ WORKDIR /home
 # Install
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libpcre3 libxml2 libxslt1.1 zlib1g openssl && \
+    libpcre3 libxml2 libxslt1.1 zlib1g libssl1.1 && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /

@@ -47,7 +47,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build yasm
-ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd /opt/build/yasm-1.3.0 && \
@@ -140,11 +140,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.0.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.0 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -294,7 +294,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.0/build && \
+RUN cd /opt/build/opencv-4.5.1/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -308,7 +308,7 @@ RUN cd /opt/build/opencv-4.5.0/build && \
     .. && \
   cd modules/videoio && \
   make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.0 /opt/dist/usr/local/lib
+  cp -f ../../lib/libopencv_videoio.so.4.5.1 /opt/dist/usr/local/lib
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -324,7 +324,7 @@ RUN git clone ${MESON_REPO}; \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-core
@@ -338,6 +338,7 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
+    -Dintrospection=enabled \
     -Dgtk_doc=disabled && \
     cd build && \
     ninja install && \
@@ -345,7 +346,7 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ gobjc wget pkg-config libglib2.0-dev flex bison libasound2-dev  && \
+    ca-certificates tar g++ gobjc wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libasound2-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-base
@@ -361,6 +362,7 @@ RUN cd /opt/build/gst-plugins-base-1.16.2 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
+    -Dintrospection=enabled \
     -Dgtk_doc=disabled \
     -Dalsa=enabled \
     -Dpango=disabled \
@@ -399,7 +401,7 @@ RUN cd /opt/build/gst-plugins-good-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libcurl4-gnutls-dev librtmp-dev  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libcurl4-gnutls-dev librtmp-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-bad
@@ -416,6 +418,7 @@ RUN cd /opt/build && \
       -Dexamples=disabled \
       -Dgtk_doc=disabled \
       -Dtests=disabled \
+      -Dintrospection=enabled \
       -Dgst_player_tests=false \
       -Drtmp=enabled \
       -Dx265=disabled \
@@ -463,7 +466,7 @@ RUN cd /opt/build/gst-libav-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev libva-dev && \
+    git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates libva-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-gva
@@ -501,7 +504,7 @@ RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0/:/usr/local/lib/
 
 RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/gstreamer-1.0/.
-RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /opt/dist/usr/local/lib/gstreamer-1.0/.
+RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /opt/dist//usr/local/lib/gstreamer-1.0/.
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
 
 RUN mkdir -p /opt/intel/dl_streamer/python && \
@@ -625,7 +628,7 @@ ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd /opt/build && \
     git clone -b master ${OWT_REPO} && \
     cd owt-server && \
-    git reset --hard fc61b5499f09cc5583be72892f3ffdf2db1b20de
+    git reset --hard 387db8dfeaf52818cc248b34d990f6bdb222ecc4
 
 # Prep OpenH264
 RUN mkdir -p /opt/build/owt-server/third_party/openh264 && \
@@ -753,7 +756,7 @@ ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 ENV LD_LIBRARY_PATH=/usr/local/lib/gstreamer-1.0/
-ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/lib/x86_64-linux-gnu/girepository-1.0/
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/girepository-1.0/ 
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
 
