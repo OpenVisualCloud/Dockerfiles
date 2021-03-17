@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included FFmpeg and codecs such as aac, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-ubuntu-1804-media-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/ubuntu-18.04/media/ffmpeg/Dockerfile)
+ - [xeone3-ubuntu-1804-media-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/XeonE3/ubuntu-18.04/media/ffmpeg/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -37,8 +37,9 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
 |Intel Graphics Memory Management Library| MIT License|
 |Intel libva| MIT License
-|Intel media-driver | MIT License|
+|Intel media driver | MIT License|
 |Intel media SDK|MIT License|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 

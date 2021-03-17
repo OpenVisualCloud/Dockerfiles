@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Included what are in FFmpeg & GStreamer media analytics images. Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-centos-7-analytics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/centos-7/analytics/dev/Dockerfile)
+ - [xeone3-centos-7-analytics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/XeonE3/centos-7/analytics/dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -37,25 +37,23 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
 |Intel Graphics Memory Management Library| MIT License|
-|libdrm|MIT license|
 |Intel libva| MIT License
-|Intel media-driver | MIT License|
+|Intel opencl | MIT License|
+|Intel media driver | MIT License|
 |Intel media SDK|MIT License|
-|intel-opencl | MIT License|
-|json-c|MIT License|
+|OpenVINO|Apache License v2.0|
 |librdkafka|BSD 2-clause "Simplified" License|
 |gstreamer|GNU Lesser General Public License v2.1 or later|
-|gst orc|GNU Lesser General Public License v2.1 or later|
-|gst plugin base|GNU Lesser General Public License v2.1 or later|
-|gst plugin good|GNU Lesser General Public License v2.1 or later|
-|gst plugin bad|GNU Lesser General Public License v2.1 or later|
-|gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Library General Public License Version 2|
-|gst plugin svt|GNU Lesser General Public License v2.1 or later|
-|gst plugin vaapi|GNU Lesser General Public License v2.1 or later|
-|opencv|BSD 3-clause "New" or "Revised" License|
-|DLDT|Apache License v2.0|
-|gst plugin gva|MIT License|
+|gst plugins base|GNU Lesser General Public License v2.1 or later|
+|gst plugins good|GNU Lesser General Public License v2.1 or later|
+|gst plugins bad|GNU Lesser General Public License v2.1 or later|
+|gst plugins ugly|GNU Lesser General Public License v2.1 or later|
+|gst libav|GNU Library General Public License Version 2.1 or later|
+|gst vaapi|GNU Lesser General Public License v2.1 or later|
+|gst svt|GNU Lesser General Public License v2.1 or later|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
+|gst video analytics|MIT License|
+|gst python|GNU Library General Public License Version 2.1|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 

@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery GStreamer image, inferencing engine and video analytics plugins. Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-centos-7-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/centos-7/analytics/gst/Dockerfile)
+ - [xeone3-centos-7-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/XeonE3/centos-7/analytics/gst/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -36,24 +36,23 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-HEVC|BSD-2-Clause Plus Patent License|
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
-|libdrm|MIT license|
-|Intel libva| MIT License
 |Intel Graphics Memory Management Library| MIT License|
-|Intel media-driver | MIT License|
-|Intel media SDK|MIT License|
-|intel-opencl | MIT License|
+|Intel libva| MIT License
+|Intel opencl | MIT License|
+|Intel media driver | MIT License|
+|OpenVINO|Apache License v2.0|
+|librdkafka|BSD 2-clause "Simplified" License|
 |gstreamer|GNU Lesser General Public License v2.1 or later|
-|gst orc|GNU Lesser General Public License v2.1 or later|
-|gst plugin base|GNU Lesser General Public License v2.1 or later|
-|gst plugin good|GNU Lesser General Public License v2.1 or later|
-|gst plugin bad|GNU Lesser General Public License v2.1 or later|
-|gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Library General Public License Version 2|
-|gst plugin svt|GNU Lesser General Public License v2.1 or later|
-|gst plugin vaapi|GNU Lesser General Public License v2.1 or later|
-|opencv|BSD 3-clause "New" or "Revised" License|
-|DLDT|Apache License v2.0|
-|gst plugin gva|MIT License|
+|gst plugins base|GNU Lesser General Public License v2.1 or later|
+|gst plugins good|GNU Lesser General Public License v2.1 or later|
+|gst plugins bad|GNU Lesser General Public License v2.1 or later|
+|gst plugins ugly|GNU Lesser General Public License v2.1 or later|
+|gst libav|GNU Library General Public License Version 2.1 or later|
+|gst vaapi|GNU Lesser General Public License v2.1 or later|
+|gst svt|GNU Lesser General Public License v2.1 or later|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
+|gst video analytics|MIT License|
+|gst python|GNU Library General Public License Version 2.1|
 
 
 More license information can be found in [components source package](https://github.com/OpenVisualCloud/Dockerfiles-Resources).   

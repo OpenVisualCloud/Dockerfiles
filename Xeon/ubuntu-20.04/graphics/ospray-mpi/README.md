@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Docker images optimized for Intel OSPRay and multi-host connections. Included the Intel OSPRay ray tracing engine with multi-host connections via MPI. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-ubuntu-2004-graphics-ospray-mpi](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/ubuntu-20.04/graphics/ospray-mpi/Dockerfile)
+ - [xeon-ubuntu-2004-graphics-ospray-mpi](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/Xeon/ubuntu-20.04/graphics/ospray-mpi/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -27,7 +27,7 @@ This docker installs third party components licensed under various open source l
 |Ubuntu| [Various](https://hub.docker.com/_/ubuntu) |
 |ispc|BSD 3-clause License|
 |embree|Apache License 2.0|
-|oiio|BSD 3-clause License|,|openexr|BSD 3-clause "New" or "Revised" License|
+|OpenImageIO|BSD 3-clause License|,|openexr|BSD 3-clause "New" or "Revised" License|
 |ospray|Apache License v2.0|
 
 

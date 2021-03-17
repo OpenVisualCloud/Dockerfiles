@@ -1,11 +1,11 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-ubuntu-1804-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/ubuntu-18.04/analytics/ffmpeg/Dockerfile)
+ - [xeone3-ubuntu-2004-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/XeonE3/ubuntu-20.04/analytics/ffmpeg/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
-  Intel&reg; Xeon&reg; E3 platform, Ubuntu 18.04
+  Intel&reg; Xeon&reg; E3 platform, Ubuntu 20.04
 
 - #### Usage instructions:
   [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	
@@ -36,15 +36,14 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
 |Intel Graphics Memory Management Library| MIT License|
-|libdrm|MIT license|
 |Intel libva| MIT License
-|Intel media-driver | MIT License|
+|Intel opencl | MIT License|
+|Intel media driver | MIT License|
 |Intel media SDK|MIT License|
-|intel-opencl | MIT License|
-|json-c|MIT License|
+|OpenVINO|Apache License v2.0|
 |librdkafka|BSD 2-clause "Simplified" License|
-|opencv|BSD 3-clause "New" or "Revised" License|
-|DLDT|Apache License v2.0|
+|json-c|MIT License|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 

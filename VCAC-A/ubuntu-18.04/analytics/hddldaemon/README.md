@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. With OpenVINO HDDL daemon installed and configured. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [vcac-a-ubuntu-1804-analytics-hddldaemon](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/VCAC-A/ubuntu-18.04/analytics/hddldaemon/Dockerfile)
+ - [vcac-a-ubuntu-1804-analytics-hddldaemon](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/VCAC-A/ubuntu-18.04/analytics/hddldaemon/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -24,7 +24,7 @@ This docker installs third party components licensed under various open source l
 | Components | License |
 | ----- | ----- |
 |Ubuntu| [Various](https://hub.docker.com/_/ubuntu) |
-|OpenVINO|End User License Agreement for the Intel(R) Software Development Products|
+|openvino|End User License Agreement for the Intel(R) Software Development Products|
 
 
 More license information can be found in [components source package](https://github.com/OpenVisualCloud/Dockerfiles-Resources).   

@@ -5,7 +5,7 @@ import re
 import os
 import sys
 
-REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/master/"
+REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/"
 
 #Platform to full name
 platform_subs = {
@@ -14,23 +14,60 @@ platform_subs = {
                 "VCA2" : "VCA2 platform",
                 "QAT" : "QAT platform",
                 "VCAC-A" : "VCAC-A platform",
+                "SG1": "SG1 platform"
                 }
 
 #When image is based on another OVC image, this is used to find path of inherited image
 path_subs = {
-                "xeone3-ubuntu1804-media-ffmpeg" : "XeonE3/ubuntu-18.04/media/ffmpeg/",
                 "xeone3-centos7-media-ffmpeg" : "XeonE3/centos-7/media/ffmpeg/",
-                "xeon-ubuntu1804-media-ffmpeg" : "Xeon/ubuntu-18.04/media/ffmpeg/",
-                "xeon-ubuntu1804-media-dev" : "Xeon/ubuntu-18.04/media/dev/",
+                "xeone3-ubuntu1804-media-ffmpeg" : "XeonE3/ubuntu-18.04/media/ffmpeg/",
+                "xeone3-ubuntu2004-media-ffmpeg" : "XeonE3/ubuntu-20.04/media/ffmpeg/",
+                "xeone3-centos7-media-dev" : "XeonE3/centos-7/media/dev/",
+                "xeone3-ubuntu1804-media-dev" : "XeonE3/ubuntu-18.04/media/dev/",
+                "xeone3-ubuntu2004-media-dev" : "XeonE3/ubuntu-20.04/media/dev/",
                 "xeon-centos7-media-ffmpeg" : "Xeon/centos-7/media/ffmpeg/",
+                "xeon-ubuntu1804-media-ffmpeg" : "Xeon/ubuntu-18.04/media/ffmpeg/",
+                "xeon-ubuntu2004-media-ffmpeg" : "Xeon/ubuntu-20.04/media/ffmpeg/",
                 "xeon-centos7-media-dev" : "Xeon/centos-7/media/dev/",
+                "xeon-ubuntu1804-media-dev" : "Xeon/ubuntu-18.04/media/dev/",
+                "xeon-ubuntu2004-media-dev" : "Xeon/ubuntu-20.04/media/dev/",
                 }
 
 #OS subs to their version detail 
 os_subs = {
                 "centos-7" : "CentOS-7",
-                "centos-7.6" : "CentOS-7.6.1810",
-                "ubuntu-18.04" : "Ubuntu 18.04"
+                "ubuntu-18.04" : "Ubuntu 18.04",
+                "ubuntu-20.04" : "Ubuntu 20.04"
+          }
+
+#included components links
+included_subs = {
+                "nginx" : ["[NGINX](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/nginx.md)"],
+                "svt" : ["[SVT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/svt.md)"],
+                "owt" : ["[OWT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt.md)"],
+                "owt360" : ["[OWT360](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt360.md)"],
+                "ospray" : ["[OSPRay](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ospray.md)"],
+                "ospray-mpi" : ["[OSPRay-MPI](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ospray-mpi.md)"],
+                "ffmpeg" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)"],
+                "gst" : ["[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"],
+                "dev" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)","[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"]
+                }
+
+# License to be included based on m4 templates
+license_subs = {
+                "xeon-centos7-media-ffmpeg" : "Xeon/centos-7/media/ffmpeg/",
+                "xeon-ubuntu1804-media-ffmpeg" : "Xeon/ubuntu-18.04/media/ffmpeg/",
+                "xeon-ubuntu2004-media-ffmpeg" : "Xeon/ubuntu-20.04/media/ffmpeg/",
+                "xeon-centos7-media-dev" : "Xeon/centos-7/media/dev/",
+                "xeon-ubuntu1804-media-dev" : "Xeon/ubuntu-18.04/media/dev/",
+                "xeon-ubuntu2004-media-dev" : "Xeon/ubuntu-20.04/media/dev/"
+                }
+
+#OS subs to their version detail 
+os_subs = {
+                "centos-7" : "CentOS-7",
+                "ubuntu-18.04" : "Ubuntu 18.04",
+                "ubuntu-20.04" : "Ubuntu 20.04"
           }
 
 #included components links
@@ -49,21 +86,23 @@ included_subs = {
 # License to be included based on m4 templates
 license_subs = {
                 "dav1d" : ["|dav1d|BSD 2-clause \"Simplified\" License|"],
-                "dldt-ie" : ["|DLDT|Apache License v2.0|"],
+                "dldt-ie" : ["|OpenVINO|Apache License v2.0|"],
                 "embree" : ["|embree|Apache License 2.0|"],
                 "ffmpeg" : ["|FFmpeg|GNU Lesser General Public License v2.1 or later|"],
-                "ffmpeg-n4.1" : ["|FFmpeg|GNU Lesser General Public License v2.1 or later|"],
                 "gmmlib" : ["|Intel Graphics Memory Management Library| MIT License|"],
-                "gst" : ["|gstreamer|GNU Lesser General Public License v2.1 or later|"],
+                "gmmlib.sg1" : ["|Intel Graphics Memory Management Library| MIT License|"],
+                "gst-core" : ["|gstreamer|GNU Lesser General Public License v2.1 or later|"],
                 "gst-orc" : ["|gst orc|GNU Lesser General Public License v2.1 or later|"],
-                "gst-plugin-base" : ["|gst plugin base|GNU Lesser General Public License v2.1 or later|"],
-                "gst-plugin-bad" : ["|gst plugin bad|GNU Lesser General Public License v2.1 or later|"],
-                "gst-plugin-good" : ["|gst plugin good|GNU Lesser General Public License v2.1 or later|"],
-                "gst-plugin-libav" : ["|gst plugin libav|GNU Library General Public License Version 2|"],
-                "gst-plugin-svt" : ["|gst plugin svt|GNU Lesser General Public License v2.1 or later|"],
-                "gst-plugin-ugly" : ["|gst plugin ugly|GNU Lesser General Public License v2.1 or later|"],
-                "gst-plugin-vaapi" : ["|gst plugin vaapi|GNU Lesser General Public License v2.1 or later|"],
-                "gst-plugin-gva" : ["|gst plugin gva|MIT License|"],
+                "gst-plugins-base" : ["|gst plugins base|GNU Lesser General Public License v2.1 or later|"],
+                "gst-plugins-bad" : ["|gst plugins bad|GNU Lesser General Public License v2.1 or later|"],
+                "gst-plugins-good" : ["|gst plugins good|GNU Lesser General Public License v2.1 or later|"],
+                "gst-libav" : ["|gst libav|GNU Library General Public License Version 2.1 or later|"],
+                "gst-python" : ["|gst python|GNU Library General Public License Version 2.1|"],
+                "gst-svt" : ["|gst svt|GNU Lesser General Public License v2.1 or later|"],
+                "gst-plugins-ugly" : ["|gst plugins ugly|GNU Lesser General Public License v2.1 or later|"],
+                "gst-vaapi" : ["|gst vaapi|GNU Lesser General Public License v2.1 or later|"],
+                "gst-gva" : ["|gst video analytics|MIT License|"],
+                "hddl-openvino" : ["|openvino|End User License Agreement for the Intel(R) Software Development Products|"],
                 "ispc" : ["|ispc|BSD 3-clause License|"],
                 "libaom" : ["|Aomedia AV1 Codec Library|BSD 2-clause \"Simplified\" License|"],
                 "libdrm" : ["|libdrm|MIT license|"],
@@ -72,32 +111,44 @@ license_subs = {
                 "libogg" : ["|libogg|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "libopus" : ["|Opus Interactive Audio Codec|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "librdkafka" : ["|librdkafka|BSD 2-clause \"Simplified\" License|"],
+                "libpahomqtt" : ["|paho.mqtt.c|Eclipse Public License - v 2.0|"],
                 "libre" : ["|libre|BSD 3-clause License|"],
                 "libsrtp2" : ["|libsrtp2|BSD 3-clause License|"],
-                "libva" : ["|Intel libva| MIT License"],
+                "libva2" : ["|Intel libva| MIT License"],
+                "libva2.sg1" : ["|Intel libva| MIT License"],
                 "libvorbis" : ["|libvorbis|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "libvpx" : ["|libvpx|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "libx264" : ["|x264|GNU General Public License v2.0 or later|"],
                 "libx265" : ["|x265|GNU General Public License v2.0 or later|"],
-                "media-driver" : ["|Intel media-driver | MIT License|"],
-                "media-sdk" : ["|Intel media SDK|MIT License|"],
-                "nginx-http-flv" : ["|NGINX_HTTP_FLV|BSD 2-clause \"Simplified\" License|"],
-                "nginx" : ["|NGINX|BSD 2-clause \"Simplified\" License|"],
-                "nginx-qat" : ["|asynch_mode_nginx |BSD 3-clause \"New\" or \"Revised\" License|"],
-                "nginx-upload" : ["|NGINX_Upload_Module|BSD 3-clause \"Simplified\" License|"],
+                "media-driver" : ["|Intel media driver | MIT License|"],
+                "media-driver.sg1" : ["|Intel media driver | MIT License|"],
+                "msdk" : ["|Intel media SDK|MIT License|"],
+                "msdk.sg1" : ["|Intel media SDK|MIT License|"],
+                "nginx-flv" : ["|nginx http flv|BSD 2-clause \"Simplified\" License|"],
+                "nginx" : ["|nginx|BSD 2-clause \"Simplified\" License|"],
+                "nginx-upload" : ["|nginx upload module|BSD 3-clause \"Simplified\" License|"],
                 "nodetools" : ["|nodejs| MIT Open Source License|"],
-                "opencl" : ["|intel-opencl | MIT License|"],
-                "opencv" : ["|opencv|BSD 3-clause \"New\" or \"Revised\" License|"],
-                "OpenImageIO" : ["|oiio|BSD 3-clause License|,|openexr|BSD 3-clause \"New\" or \"Revised\" License|"],
-                "openssl" : ["|openssl|Apache License 2.0|"],
-                "openvino.binary" : ["|OpenVINO|End User License Agreement for the Intel(R) Software Development Products|"],
+                "oiio" : ["|OpenImageIO|BSD 3-clause License|,|openexr|BSD 3-clause \"New\" or \"Revised\" License|"],
+                "opencl" : ["|Intel opencl | MIT License|"],
+                "opencv" : ["|OpenCV|BSD 3-clause \"New\" or \"Revised\" License|"],
+                "openssl" : ["|OpenSSL|Apache License 2.0|"],
+                "openvino" : ["|OpenVINO|End User License Agreement for the Intel(R) Software Development Products|"],
                 "ospray" : ["|ospray|Apache License v2.0|"],
                 "ospray-mpi" : ["|ospray|Apache License v2.0|"],
                 "owt360" : ["|owt-server|Apache License v2.0|","|owt-sdk|Apache License v2.0|","|owt-deps-webrtc|BSD 3-clause License|"],
                 "owt" : ["|owt-server|Apache License v2.0|","|owt-sdk|Apache License v2.0|","|owt-deps-webrtc|BSD 3-clause License|"],
-                "qat-engine" : ["|qat-engine|BSD 3-clause \"New\" or \"Revised\" License|"],
-                "qat-openssl" : ["|openssl|Apache License 2.0|"],
-                "qat-zip" : ["|qat-zip|BSD 3-clause \"New\" or \"Revised\" License|"],
+                "owt-gst-base" : ["|gst plugins base|GNU Lesser General Public License v2.1 or later|"],
+                "owt-gst-bad" : ["|gst plugins bad|GNU Lesser General Public License v2.1 or later|"],
+                "owt-gst-good" : ["|gst plugins good|GNU Lesser General Public License v2.1 or later|"],
+                "owt-gst-gva" : ["|gst video analytics|MIT License|"],
+                "owt-gst-ugly" : ["|gst plugins ugly|GNU Lesser General Public License v2.1 or later|"],
+                "qat-cryptomb" : ["|ipp crypo|Apache-2.0 License|"],
+                "qat-engine" : ["|QAT OpenSSL engine|BSD 3-clause \"New\" or \"Revised\" License|"],
+                "qat-nginx" : ["|asynch mode nginx |BSD 3-clause \"New\" or \"Revised\" License|"],
+                "qat-openssl" : ["|OpenSSL|Apache License 2.0|"],
+                "qat-zip" : ["|QATzip|BSD 3-clause \"New\" or \"Revised\" License|"],
+                "scvp" : ["|360SCVP|BSD 3-clause \"New\" or \"Revised\" License|"],
+                "srs" : ["|Simple Realtime Server|MIT License|"],
                 "svt-av1" : ["|Intel SVT-AV1|BSD-2-Clause Plus Patent License|"],
                 "svt-hevc.1-3-0" : ["|Intel SVT-HEVC|BSD-2-Clause Plus Patent License|"],
                 "svt-hevc" : ["|Intel SVT-HEVC|BSD-2-Clause Plus Patent License|"],
@@ -106,7 +157,7 @@ license_subs = {
                }
 
 # M4 files for which no license is needed
-license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog','libusb']
+license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat-core', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog','libusb','begin','end','ubuntu', 'centos-repo','ipsecmb','meson','boost','vcaca-gst-gva']
 
 # Find image platform / OS / image type / image name from file path
 def parse_ingredients(path):
@@ -167,8 +218,14 @@ def inheritance_populate(handler_list, inherited_file_path):
             line = fh.readline()
     return inherited_entry_holder
 
+def parse_inherited_file(inherited_file,image_os):
+   parsed_inherited_file = ''
+   image_os1 = image_os.replace("-","").replace(".","")
+   parsed_inherited_file = inherited_file.replace("OS_NAME`'patsubst(OS_VERSION,\\.)", image_os1)
+   return parsed_inherited_file
+
 # Parse M4 to populate license info
-def parse_m4(local_path):
+def parse_m4(local_path,image_os):
     entry_holder = ''
     os_flag = False
     ovc_inheritance_flag = False
@@ -176,19 +233,19 @@ def parse_m4(local_path):
     with open(local_path+'/Dockerfile.m4', 'r') as fp:
         line = fp.readline()
         while line:
-            if 'FROM' in line:
-                if 'FROM ubuntu' in line and not os_flag:
-                    entry_holder += '|Ubuntu| [Various](https://hub.docker.com/_/ubuntu) |'
-                    entry_holder += '\n'
-                    os_flag = True
-                elif 'FROM centos' in line and not os_flag:
-                    entry_holder += '|CentOS| [Various](https://hub.docker.com/_/centos) |'
-                    entry_holder += '\n'
-                    os_flag = True
-                elif 'FROM openvisualcloud' in line and not ovc_inheritance_flag:
-                    inherited_file = line.split('/')[1].split(':')[0]
-                    entry_holder += inheritance_populate(handler_list, path_subs[inherited_file])
-                    ovc_inheritance_flag = True
+            if 'ubuntu' in image_os and not os_flag:
+                entry_holder += '|Ubuntu| [Various](https://hub.docker.com/_/ubuntu) |'
+                entry_holder += '\n'
+                os_flag = True
+            elif 'centos' in image_os and not os_flag:
+                entry_holder += '|CentOS| [Various](https://hub.docker.com/_/centos) |'
+                entry_holder += '\n'
+                os_flag = True
+            elif 'FROM openvisualcloud' in line and not ovc_inheritance_flag:
+                inherited_file = line.split('/')[1].split(':')[0]
+                inherited_file_1 = parse_inherited_file(inherited_file,image_os)
+                entry_holder += inheritance_populate(handler_list, path_subs[inherited_file_1])
+                ovc_inheritance_flag = True
             if 'm4' in line:
                 m = re.search('[a-zA-Z0-9\-\.\_]+.m4', line)
                 if m:
@@ -208,7 +265,7 @@ This docker installs third party components licensed under various open source l
 """
     text_holder += "| Components | License |\n"
     text_holder += "| ----- | ----- |\n"
-    text_holder += parse_m4(local_path) 
+    text_holder += parse_m4(local_path, image_os) 
     text_holder += "\n\n"
     text_holder += """More license information can be found in [components source package](https://github.com/OpenVisualCloud/Dockerfiles-Resources).   
 As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses and potential fees for all software contained within. We will have no indemnity or warranty coverage from suppliers.
@@ -233,7 +290,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in FFmpeg or GStreamer media creation and delivery images . ")
         if image_type=="graphics":
             my_file.write("This image is for Intel OSPRay C++ application development. ")
-        if image_platform=="XeonE3" or image_platform=="VCA2" or image_platform=="VCAC-A":
+        if image_platform=="XeonE3" or image_platform=="SG1" or image_platform=="VCAC-A":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="analytics":
@@ -244,7 +301,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. ")
         if image_name=="hddldaemon":
             my_file.write("With OpenVINO HDDL daemon installed and configured. ")
-        if image_platform=="XeonE3" or image_platform=="VCA2" or image_platform=="VCAC-A" and image_name!="hddldaemon":
+        if image_platform=="XeonE3" or image_platform=="SG1" or image_platform=="VCAC-A" and image_name!="hddldaemon":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="media":
@@ -257,7 +314,9 @@ def create_readme(path, path_components):
             my_file.write("Optimized for NGINX web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy. ")
         if image_name=="svt":
             my_file.write("Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. ")
-        if image_platform=="XeonE3" or image_platform=="VCA2":
+        if image_name=="srs":
+            my_file.write("Image with SRS high efficiency, stable and simple RTMP/HLS/FLV streaming cluster. ")
+        if image_platform=="XeonE3" or image_platform=="SG1" or image_platform=="VCAC-A":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="service":
@@ -289,4 +348,5 @@ if len(sys.argv)<1:
     exit(1)
 
 path=sys.argv[1]
+path1=path.split('/')
 create_readme(path, parse_ingredients(path))
