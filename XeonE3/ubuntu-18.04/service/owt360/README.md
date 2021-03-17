@@ -25,16 +25,16 @@ This docker installs third party components licensed under various open source l
 | Components | License |
 | ----- | ----- |
 |Ubuntu| [Various](https://hub.docker.com/_/ubuntu) |
-|openssl|Apache License 2.0|
+|OpenSSL|Apache License 2.0|
 |Intel SVT-HEVC|BSD-2-Clause Plus Patent License|
 |libvpx|BSD 3-clause "New" or "Revised" License|
 |x264|GNU General Public License v2.0 or later|
 |Intel Graphics Memory Management Library| MIT License|
 |Intel libva| MIT License
-|Intel media-driver | MIT License|
+|Intel media driver | MIT License|
 |Intel media SDK|MIT License|
-|opencv|BSD 3-clause "New" or "Revised" License|
-|DLDT|Apache License v2.0|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
+|OpenVINO|Apache License v2.0|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 |360SCVP|BSD 3-clause "New" or "Revised" License|
 |owt-server|Apache License v2.0|

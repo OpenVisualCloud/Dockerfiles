@@ -38,17 +38,17 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
 |Intel Graphics Memory Management Library| MIT License|
 |Intel libva| MIT License
-|Intel media-driver | MIT License|
+|Intel media driver | MIT License|
 |Intel media SDK|MIT License|
 |gstreamer|GNU Lesser General Public License v2.1 or later|
-|gst plugin base|GNU Lesser General Public License v2.1 or later|
-|gst plugin good|GNU Lesser General Public License v2.1 or later|
-|gst plugin bad|GNU Lesser General Public License v2.1 or later|
-|gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Library General Public License Version 2.1 or later|
-|gst plugin svt|GNU Lesser General Public License v2.1 or later|
+|gst plugins base|GNU Lesser General Public License v2.1 or later|
+|gst plugins good|GNU Lesser General Public License v2.1 or later|
+|gst plugins bad|GNU Lesser General Public License v2.1 or later|
+|gst plugins ugly|GNU Lesser General Public License v2.1 or later|
+|gst libav|GNU Library General Public License Version 2.1 or later|
+|gst svt|GNU Lesser General Public License v2.1 or later|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
-|gst plugin vaapi|GNU Lesser General Public License v2.1 or later|
+|gst vaapi|GNU Lesser General Public License v2.1 or later|
 
 
 More license information can be found in [components source package](https://github.com/OpenVisualCloud/Dockerfiles-Resources).   

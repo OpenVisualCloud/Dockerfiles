@@ -26,7 +26,7 @@ This docker installs third party components licensed under various open source l
 | ----- | ----- |
 |CentOS| [Various](https://hub.docker.com/_/centos) |
 |nginx http flv|BSD 2-clause "Simplified" License|
-|NGINX_Upload_Module|BSD 3-clause "Simplified" License|
+|nginx upload module|BSD 3-clause "Simplified" License|
 |nginx|BSD 2-clause "Simplified" License|
 |libogg|BSD 3-clause "New" or "Revised" License|
 |libvorbis|BSD 3-clause "New" or "Revised" License|
@@ -40,9 +40,9 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
 |Intel Graphics Memory Management Library| MIT License|
 |Intel libva| MIT License
-|Intel media-driver | MIT License|
+|Intel media driver | MIT License|
 |Intel media SDK|MIT License|
-|opencv|BSD 3-clause "New" or "Revised" License|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 

@@ -35,19 +35,19 @@ This docker installs third party components licensed under various open source l
 |dav1d|BSD 2-clause "Simplified" License|
 |Intel Graphics Memory Management Library| MIT License|
 |Intel libva| MIT License
-|intel-opencl | MIT License|
-|Intel media-driver | MIT License|
+|Intel opencl | MIT License|
+|Intel media driver | MIT License|
 |OpenVINO|End User License Agreement for the Intel(R) Software Development Products|
 |json-c|MIT License|
 |librdkafka|BSD 2-clause "Simplified" License|
-|opencv|BSD 3-clause "New" or "Revised" License|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
 |gstreamer|GNU Lesser General Public License v2.1 or later|
-|gst plugin base|GNU Lesser General Public License v2.1 or later|
-|gst plugin good|GNU Lesser General Public License v2.1 or later|
-|gst plugin bad|GNU Lesser General Public License v2.1 or later|
-|gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Library General Public License Version 2.1 or later|
-|gst plugin vaapi|GNU Lesser General Public License v2.1 or later|
+|gst plugins base|GNU Lesser General Public License v2.1 or later|
+|gst plugins good|GNU Lesser General Public License v2.1 or later|
+|gst plugins bad|GNU Lesser General Public License v2.1 or later|
+|gst plugins ugly|GNU Lesser General Public License v2.1 or later|
+|gst libav|GNU Library General Public License Version 2.1 or later|
+|gst vaapi|GNU Lesser General Public License v2.1 or later|
 |paho.mqtt.c|Eclipse Public License - v 2.0|
 |gst python|GNU Library General Public License Version 2.1|
 

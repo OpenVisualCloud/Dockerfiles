@@ -25,13 +25,13 @@ This docker installs third party components licensed under various open source l
 | Components | License |
 | ----- | ----- |
 |CentOS| [Various](https://hub.docker.com/_/centos) |
-|qat-zip|BSD 3-clause "New" or "Revised" License|
-|openssl|Apache License 2.0|
+|QATzip|BSD 3-clause "New" or "Revised" License|
+|OpenSSL|Apache License 2.0|
 |ipp crypo|Apache-2.0 License|
-|qat-engine|BSD 3-clause "New" or "Revised" License|
+|QAT OpenSSL engine|BSD 3-clause "New" or "Revised" License|
 |nginx http flv|BSD 2-clause "Simplified" License|
-|NGINX_Upload_Module|BSD 3-clause "Simplified" License|
-|asynch_mode_nginx |BSD 3-clause "New" or "Revised" License|
+|nginx upload module|BSD 3-clause "Simplified" License|
+|asynch mode nginx |BSD 3-clause "New" or "Revised" License|
 |libogg|BSD 3-clause "New" or "Revised" License|
 |libvorbis|BSD 3-clause "New" or "Revised" License|
 |Opus Interactive Audio Codec|BSD 3-clause "New" or "Revised" License|
@@ -42,7 +42,7 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-HEVC|BSD-2-Clause Plus Patent License|
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
-|opencv|BSD 3-clause "New" or "Revised" License|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 

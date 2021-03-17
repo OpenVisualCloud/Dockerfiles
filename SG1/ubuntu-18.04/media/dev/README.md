@@ -38,7 +38,7 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
 |Intel Graphics Memory Management Library| MIT License|
 |Intel libva| MIT License
-|Intel media-driver | MIT License|
+|Intel media driver | MIT License|
 |Intel media SDK|MIT License|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
