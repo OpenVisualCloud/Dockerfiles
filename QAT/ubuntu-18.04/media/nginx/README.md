@@ -29,7 +29,7 @@ This docker installs third party components licensed under various open source l
 |openssl|Apache License 2.0|
 |ipp crypo|Apache-2.0 License|
 |qat-engine|BSD 3-clause "New" or "Revised" License|
-|NGINX_HTTP_FLV|BSD 2-clause "Simplified" License|
+|nginx http flv|BSD 2-clause "Simplified" License|
 |NGINX_Upload_Module|BSD 3-clause "Simplified" License|
 |asynch_mode_nginx |BSD 3-clause "New" or "Revised" License|
 |libogg|BSD 3-clause "New" or "Revised" License|

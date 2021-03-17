@@ -25,9 +25,9 @@ This docker installs third party components licensed under various open source l
 | Components | License |
 | ----- | ----- |
 |CentOS| [Various](https://hub.docker.com/_/centos) |
-|NGINX_HTTP_FLV|BSD 2-clause "Simplified" License|
+|nginx http flv|BSD 2-clause "Simplified" License|
 |NGINX_Upload_Module|BSD 3-clause "Simplified" License|
-|NGINX|BSD 2-clause "Simplified" License|
+|nginx|BSD 2-clause "Simplified" License|
 |libogg|BSD 3-clause "New" or "Revised" License|
 |libvorbis|BSD 3-clause "New" or "Revised" License|
 |Opus Interactive Audio Codec|BSD 3-clause "New" or "Revised" License|
