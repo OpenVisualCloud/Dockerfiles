@@ -113,7 +113,7 @@ RUN cd /opt/build && \
 RUN yum install -y wget tar gcc-c++ make
 
 # build yasm
-ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd /opt/build/yasm-1.3.0 && \
@@ -162,9 +162,10 @@ RUN cd /opt/build/SVT-HEVC/Build/linux && \
 RUN yum install -y wget tar gcc-c++ make git 
 
 # build svt av1
-ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.6/SVT-AV1-v0.8.6.tar.gz
 RUN cd /opt/build && \
-    git clone ${SVT_AV1_REPO} -b v0.8.5 --depth 1 && \
+    wget -O - ${SVT_AV1_REPO} | tar zx && \
+    mv SVT-AV1-v0.8.6 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -241,11 +242,11 @@ RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.2 && \
 RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.0.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.0 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -298,7 +299,7 @@ RUN cd /opt/build/FFmpeg-n4.2.2 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.0/build && \
+RUN cd /opt/build/opencv-4.5.1/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -312,7 +313,7 @@ RUN cd /opt/build/opencv-4.5.0/build && \
     .. && \
   cd modules/videoio && \
   make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.0 /opt/dist/usr/local/lib64
+  cp -f ../../lib/libopencv_videoio.so.4.5.1 /opt/dist/usr/local/lib64
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/include && \

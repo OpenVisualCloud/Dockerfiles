@@ -128,7 +128,7 @@ RUN cd /opt/build && \
 RUN yum install -y wget tar gcc-c++ make
 
 # build yasm
-ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd /opt/build/yasm-1.3.0 && \
@@ -177,9 +177,10 @@ RUN cd /opt/build/SVT-HEVC/Build/linux && \
 RUN yum install -y wget tar gcc-c++ make git 
 
 # build svt av1
-ARG SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.6/SVT-AV1-v0.8.6.tar.gz
 RUN cd /opt/build && \
-    git clone ${SVT_AV1_REPO} -b v0.8.5 --depth 1 && \
+    wget -O - ${SVT_AV1_REPO} | tar zx && \
+    mv SVT-AV1-v0.8.6 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -199,7 +200,7 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex
+RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel
 
 # build gst-core
 ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.16.2.tar.gz
@@ -212,12 +213,13 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
+    -Dintrospection=enabled \
     -Dgtk_doc=disabled && \
     cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex libX11-devel libXv-devel libXt-devel alsa-lib-devel pango-devel libtheora-devel libvisual-devel mesa-libGL-devel
+RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel libX11-devel libXv-devel libXt-devel alsa-lib-devel libpango1.0-dev pango-devel libtheora-devel libvisual-devel libegl1-mesa mesa-libGL-devel
 
 # build gst-plugin-base
 ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.16.2.tar.gz
@@ -232,6 +234,7 @@ RUN cd /opt/build/gst-plugins-base-1.16.2 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
+    -Dintrospection=enabled \
     -Dgtk_doc=disabled \
     -Dalsa=enabled \
     -Dpango=enabled \
@@ -265,7 +268,7 @@ RUN cd /opt/build/gst-plugins-good-1.16.2 && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y meson wget tar glib2-devel bison flex openssl libcurl-devel librtmp-devel mjpegtools libde265-devel devtoolset-9 
+RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel openssl libcurl-devel librtmp-devel mjpegtools libde265-devel devtoolset-9 
 
 # build gst-plugin-bad
 ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.16.2.tar.gz
@@ -281,6 +284,7 @@ RUN cd /opt/build && \
       -Dexamples=disabled \
       -Dgtk_doc=disabled \
       -Dtests=disabled \
+      -Dintrospection=enabled \
       -Dgst_player_tests=false \
       -Drtmp=enabled \
       -Dx265=enabled \
@@ -387,7 +391,7 @@ RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-releas
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
 # Install
-RUN yum install -y bash numactl-libs libpciaccess glib2 mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup openssl librtmp mjpegtools libv4l libass 
+RUN yum install -y bash numactl-libs libpciaccess glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup openssl librtmp mjpegtools libde265 libv4l libass 
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
 COPY --from=build /opt/dist /

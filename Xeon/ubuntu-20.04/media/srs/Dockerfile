@@ -14,23 +14,25 @@ RUN apt-get update && \
     ca-certificates wget tar g++ make libtool autoconf && \
   rm -rf /var/lib/apt/lists/*
 
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1h.tar.gz
+# build openssl
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1i.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1h && \
+    cd openssl-OpenSSL_1_1_1i && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
     make install DESTDIR=/opt/dist && \
-    (cd /opt/dist/usr/local && mkdir -p lib/pkgconfig && mv ssl/lib/pkgconfig/*.pc lib/pkgconfig) && \
+    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
     make install && \
-    (cd /usr/local && mkdir -p lib/pkgconfig && mv ssl/lib/pkgconfig/*.pc lib/pkgconfig)
+    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     git ca-certificates g++ make unzip patch pkg-config  && \
   rm -rf /var/lib/apt/lists/*
 
+# build srs
 ARG SRS_REPO=https://github.com/ossrs/srs.git
 RUN cd /opt/build && \
     git clone -b v4.0.62 --depth 1 ${SRS_REPO} && \
@@ -56,13 +58,15 @@ RUN cd /opt/build && \
 RUN echo /opt/dist
 RUN ls /opt/dist
 
-RUN echo "Start cleanup" && \
-    rm -rf /opt/dist//usr/local/include && \
-    rm -rf /opt/dist//usr/local/share/doc && \
-    rm -rf /opt/dist//usr/local/share/gtk-doc && \
-    rm -rf /opt/dist//usr/local/share/man && \
-    ( find /opt/dist -name "*.a" -exec rm -f {} \; ) && \
-    echo "Cleanup done"
+# cleanup
+RUN rm -rf /opt/dist/usr/local/include && \
+    rm -rf /opt/dist/usr/local/lib/pkgconfig && \
+    find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
+RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
+RUN rm -rf /opt/dist/usr/local/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/include
+RUN rm -rf /opt/dist/usr/local/ssl/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 
 FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:latest
 LABEL Description="This is the base image for Media SRS ubuntu 20.04"

@@ -25,6 +25,17 @@ RUN mkdir -p /opt/build && mkdir -p /opt/dist
 
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
+RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
+
+# build cmake
+ARG CMAKE_REPO=https://cmake.org/files
+RUN cd /opt/build && \
+    wget -O - ${CMAKE_REPO}/v3.19/cmake-3.19.4.tar.gz | tar xz && \
+    cd cmake-3.19.4 && \
+    ./bootstrap --prefix=/usr/local --system-curl && \
+    make -j$(nproc) && \
+    make install
+
 RUN yum install -y wget tar gcc-c++ make libtool autoconf
 
 # build openssl
@@ -43,7 +54,7 @@ RUN cd /opt/build && \
 RUN yum install -y wget tar gcc-c++ make
 
 # build yasm
-ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd /opt/build/yasm-1.3.0 && \
@@ -53,14 +64,14 @@ RUN cd /opt/build/yasm-1.3.0 && \
     make -j $(nproc) && \
     make install
 
-RUN yum install -y wget tar gcc-c++ make git cmake3
+RUN yum install -y wget tar gcc-c++ make git 
 
 # build svt-hevc
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd /opt/build && \
     git clone -b v1.5.0 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
-    cmake3 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
@@ -90,7 +101,7 @@ RUN cd /opt/build && \
      make -j$(nproc) && \
      make install
 
-RUN yum install -y git cmake make autoconf diffutils
+RUN yum install -y git make autoconf diffutils
 
 # build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
@@ -102,7 +113,7 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y git cmake make autoconf diffutils
+RUN yum install -y git make autoconf diffutils
 
 # build libx264
 ARG LIBX264_REPO=https://github.com/mirror/x264
@@ -115,15 +126,69 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y cmake3 gcc gcc-c++ make wget python36-numpy ccache eigen3-devel
+RUN yum install -y gcc-c++ make wget
+
+# build gmmlib
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/intel-gmmlib-20.2.5.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${GMMLIB_REPO} | tar xz
+RUN cd /opt/build/gmmlib-intel-gmmlib-20.2.5 && mkdir build && cd build && \
+  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 .. && \
+  make -j$(nproc) && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN yum install -y automake gcc libdrm-devel libtool make pkg-config wget which libX11-devel libXfixes-devel libXext-devel wayland-devel
+
+# build libva2
+ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.8.0.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${LIBVA2_REPO} | tar xz
+RUN cd /opt/build/libva-2.8.0 && \
+  ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
+  make -j$(nproc) && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN yum install -y gcc-c++ libpciaccess-devel make pkg-config wget devtoolset-9
+
+# build media driver
+ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-20.2.0.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${MEDIA_DRIVER_REPO} | tar xz
+RUN cd /opt/build/media-driver-intel-media-20.2.0 && mkdir build && cd build && \
+  (. /opt/rh/devtoolset-9/enable && cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DENABLE_PRODUCTION_KMD=OFF .. && \
+  make -j$(nproc) ) && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN yum install -y gcc gcc-c++ make pkg-config wget devtoolset-9
+
+# build media sdk
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-20.2.1.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${MSDK_REPO} | tar xz
+RUN cd /opt/build/MediaSDK-intel-mediasdk-20.2.1 && \
+    mkdir -p build && cd build && \
+    (. /opt/rh/devtoolset-9/enable && cmake \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 \
+    -DBUILD_SAMPLES=no \
+    -DBUILD_TUTORIALS=OFF \
+    .. && \
+    make -j$(nproc)) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.0.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.0 && mkdir build && cd build && \
-  cmake3 \
+RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
+  cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DCMAKE_INSTALL_LIBDIR=lib64 \
@@ -137,7 +202,7 @@ RUN cd /opt/build/opencv-4.5.0 && mkdir build && cd build && \
   make install DESTDIR=/opt/dist && \
   make install
 
-RUN yum install -y cmake3 gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz numactl-devel ocl-icd-devel opencl-headers
+RUN yum install -y gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz numactl-devel ocl-icd-devel opencl-headers
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
@@ -154,7 +219,7 @@ RUN git clone -b 2021.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
 RUN cd /opt/build/openvino && \
     sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
   mkdir build && cd build && \
-  cmake3 \
+  cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
     -DENABLE_CPPLINT=OFF \
     -DENABLE_GNA=OFF \
@@ -249,6 +314,11 @@ ARG CVDEF_H=/usr/local/include/opencv4/opencv2/core/cvdef.h
 RUN if [ -f "${CVDEF_H}" ]; then cp ${FFMPEG_MA_PATH}/docker/patch/cvdef.h ${CVDEF_H}; fi
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
+    cd /opt/build/FFmpeg-n4.2.2 && \
+    patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
 ARG FFMPEG_PATCHES_RELEASE_VER=0.2
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
@@ -262,13 +332,13 @@ RUN cd /opt/build && \
 RUN cd /opt/build/FFmpeg-n4.2.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264             --enable-libsvthevc                         --enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR         && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264             --enable-libsvthevc                         --enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR         && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.0/build && \
+RUN cd /opt/build/opencv-4.5.1/build && \
   rm -rf ./* && \
-  cmake3 \
+  cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DCMAKE_INSTALL_LIBDIR=lib64 \
@@ -280,7 +350,7 @@ RUN cd /opt/build/opencv-4.5.0/build && \
     .. && \
   cd modules/videoio && \
   make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.0 /opt/dist/usr/local/lib64
+  cp -f ../../lib/libopencv_videoio.so.4.5.1 /opt/dist/usr/local/lib64
 
 
 
@@ -316,7 +386,7 @@ RUN cd /usr/local/lib64 && \
     cp -r /usr/local/lib64/libopenh264.so.4 . && \
     ln -s -v libopenh264.so.4 libopenh264.so
 
-RUN yum install -y git cmake make autoconf gcc
+RUN yum install -y git make autoconf gcc
 
 # build libre
 ARG LIBRE_REPO=https://github.com/creytiv/re.git
@@ -328,7 +398,7 @@ RUN cd /opt/build && \
     make SYSROOT_ALT=/opt/dist/usr RELEASE=1 && \
     make install SYSROOT_ALT=/opt/dist/usr RELEASE=1 PREFIX=/opt/dist/usr
 
-RUN yum install -y wget cmake make gcc libglib2.0-devel patch
+RUN yum install -y wget make gcc libglib2.0-devel patch
 
 # build libnice
 ARG LIBNICE_REPO=http://nice.freedesktop.org/releases/libnice-0.1.4.tar.gz
@@ -353,7 +423,7 @@ RUN cd /opt/build/libnice-0.1.4 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget cmake automake make gcc which
+RUN yum install -y wget automake make gcc which
 
 # build usrsctp
 ARG USRSCTP_REPO=https://github.com/sctplab/usrsctp/archive/0.9.5.0.tar.gz
@@ -509,11 +579,14 @@ RUN yum install -y -q dnf
 RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && \
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
-RUN yum install -y gtk3 numactl ocl-icd libass wget xz-utils rabbitmq-server boost-system boost-thread log4cxx glib2 freetype
+RUN yum install -y libdrm libX11 libXfixes libXext libwayland-client gtk3 numactl ocl-icd libass wget xz-utils rabbitmq-server boost-system boost-thread log4cxx glib2 freetype
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
+ENV LIBVA_DRIVERS_PATH=/usr/local/lib64/dri
+ENV LIBVA_DRIVER_NAME=iHD
+ENV DISPLAY=:0.0
 
 ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
 ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
