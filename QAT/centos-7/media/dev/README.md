@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for NGINX web server with compute-intensive operations acceleration with Intel® QuickAssist Technology (Intel® QAT).The docker image can be used in the FROM field of a downstream Dockerfile.
 
 ## Supported tags and respective Dockerfile links
- - [qat-centos-7-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/QAT/centos-7/media/dev/Dockerfile)
+ - [qat-centos-7-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/QAT/centos-7/media/dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -25,12 +25,13 @@ This docker installs third party components licensed under various open source l
 | Components | License |
 | ----- | ----- |
 |CentOS| [Various](https://hub.docker.com/_/centos) |
-|NGINX_HTTP_FLV|BSD 2-clause "Simplified" License|
-|NGINX_Upload_Module|BSD 3-clause "Simplified" License|
-|qat-zip|BSD 3-clause "New" or "Revised" License|
-|openssl|Apache License 2.0|
-|qat-engine|BSD 3-clause "New" or "Revised" License|
-|asynch_mode_nginx |BSD 3-clause "New" or "Revised" License|
+|QATzip|BSD 3-clause "New" or "Revised" License|
+|OpenSSL|Apache License 2.0|
+|ipp crypo|Apache-2.0 License|
+|QAT OpenSSL engine|BSD 3-clause "New" or "Revised" License|
+|nginx http flv|BSD 2-clause "Simplified" License|
+|nginx upload module|BSD 3-clause "Simplified" License|
+|asynch mode nginx |BSD 3-clause "New" or "Revised" License|
 |libogg|BSD 3-clause "New" or "Revised" License|
 |libvorbis|BSD 3-clause "New" or "Revised" License|
 |Opus Interactive Audio Codec|BSD 3-clause "New" or "Revised" License|
@@ -43,13 +44,12 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
 |gstreamer|GNU Lesser General Public License v2.1 or later|
-|gst orc|GNU Lesser General Public License v2.1 or later|
-|gst plugin base|GNU Lesser General Public License v2.1 or later|
-|gst plugin good|GNU Lesser General Public License v2.1 or later|
-|gst plugin bad|GNU Lesser General Public License v2.1 or later|
-|gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Library General Public License Version 2|
-|gst plugin svt|GNU Lesser General Public License v2.1 or later|
+|gst plugins base|GNU Lesser General Public License v2.1 or later|
+|gst plugins good|GNU Lesser General Public License v2.1 or later|
+|gst plugins bad|GNU Lesser General Public License v2.1 or later|
+|gst plugins ugly|GNU Lesser General Public License v2.1 or later|
+|gst libav|GNU Library General Public License Version 2.1 or later|
+|gst svt|GNU Lesser General Public License v2.1 or later|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 

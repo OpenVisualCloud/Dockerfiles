@@ -1,11 +1,11 @@
 This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Included what are in FFmpeg & GStreamer media analytics images. Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [vcac-a-ubuntu-1804-analytics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/VCAC-A/ubuntu-18.04/analytics/dev/Dockerfile)
+ - [vcac-a-ubuntu-2004-analytics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/VCAC-A/ubuntu-20.04/analytics/dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
-  Intel&reg; VCAC-A platform, Ubuntu 18.04
+  Intel&reg; VCAC-A platform, Ubuntu 20.04
 
 - #### Usage instructions:
   [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)	
@@ -34,23 +34,23 @@ This docker installs third party components licensed under various open source l
 |x265|GNU General Public License v2.0 or later|
 |dav1d|BSD 2-clause "Simplified" License|
 |Intel Graphics Memory Management Library| MIT License|
-|libdrm|MIT license|
 |Intel libva| MIT License
-|Intel media-driver | MIT License|
+|Intel opencl | MIT License|
+|Intel media driver | MIT License|
 |Intel media SDK|MIT License|
-|intel-opencl | MIT License|
-|json-c|MIT License|
-|gstreamer|GNU Lesser General Public License v2.1 or later|
-|gst orc|GNU Lesser General Public License v2.1 or later|
-|gst plugin base|GNU Lesser General Public License v2.1 or later|
-|gst plugin good|GNU Lesser General Public License v2.1 or later|
-|gst plugin bad|GNU Lesser General Public License v2.1 or later|
-|gst plugin ugly|GNU Lesser General Public License v2.1 or later|
-|gst plugin libav|GNU Library General Public License Version 2|
-|gst plugin vaapi|GNU Lesser General Public License v2.1 or later|
-|opencv|BSD 3-clause "New" or "Revised" License|
 |OpenVINO|End User License Agreement for the Intel(R) Software Development Products|
-|gst plugin gva|MIT License|
+|json-c|MIT License|
+|librdkafka|BSD 2-clause "Simplified" License|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
+|gstreamer|GNU Lesser General Public License v2.1 or later|
+|gst plugins base|GNU Lesser General Public License v2.1 or later|
+|gst plugins good|GNU Lesser General Public License v2.1 or later|
+|gst plugins bad|GNU Lesser General Public License v2.1 or later|
+|gst plugins ugly|GNU Lesser General Public License v2.1 or later|
+|gst libav|GNU Library General Public License Version 2.1 or later|
+|gst vaapi|GNU Lesser General Public License v2.1 or later|
+|paho.mqtt.c|Eclipse Public License - v 2.0|
+|gst python|GNU Library General Public License Version 2.1|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 

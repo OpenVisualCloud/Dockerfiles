@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Docker images optimized for Intel OSPRay. Included the Intel OSPRay ray tracing engine and examples. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-centos-7-graphics-ospray](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/centos-7/graphics/ospray/Dockerfile)
+ - [xeon-centos-7-graphics-ospray](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/Xeon/centos-7/graphics/ospray/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS

@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-ubuntu-1804-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/Xeon/ubuntu-18.04/analytics/ffmpeg/Dockerfile)
+ - [xeon-ubuntu-1804-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/Xeon/ubuntu-18.04/analytics/ffmpeg/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -35,10 +35,10 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-HEVC|BSD-2-Clause Plus Patent License|
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
+|OpenVINO|Apache License v2.0|
 |json-c|MIT License|
 |librdkafka|BSD 2-clause "Simplified" License|
-|opencv|BSD 3-clause "New" or "Revised" License|
-|DLDT|Apache License v2.0|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 

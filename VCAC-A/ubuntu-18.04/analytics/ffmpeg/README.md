@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [vcac-a-ubuntu-1804-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/VCAC-A/ubuntu-18.04/analytics/ffmpeg/Dockerfile)
+ - [vcac-a-ubuntu-1804-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/VCAC-A/ubuntu-18.04/analytics/ffmpeg/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -33,15 +33,14 @@ This docker installs third party components licensed under various open source l
 |x265|GNU General Public License v2.0 or later|
 |dav1d|BSD 2-clause "Simplified" License|
 |Intel Graphics Memory Management Library| MIT License|
-|libdrm|MIT license|
 |Intel libva| MIT License
-|Intel media-driver | MIT License|
+|Intel opencl | MIT License|
+|Intel media driver | MIT License|
 |Intel media SDK|MIT License|
-|intel-opencl | MIT License|
+|OpenVINO|End User License Agreement for the Intel(R) Software Development Products|
 |json-c|MIT License|
 |librdkafka|BSD 2-clause "Simplified" License|
-|opencv|BSD 3-clause "New" or "Revised" License|
-|OpenVINO|End User License Agreement for the Intel(R) Software Development Products|
+|OpenCV|BSD 3-clause "New" or "Revised" License|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 
