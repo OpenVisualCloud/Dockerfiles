@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Optimized for NGINX web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy. Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-centos-7-media-nginx](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/XeonE3/centos-7/media/nginx/Dockerfile)
+ - [xeone3-centos-7-media-nginx](https://github.com/OpenVisualCloud/Dockerfiles/blob/v2.0/XeonE3/centos-7/media/nginx/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -39,10 +39,10 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
 |Intel Graphics Memory Management Library| MIT License|
-|libdrm|MIT license|
 |Intel libva| MIT License
 |Intel media-driver | MIT License|
 |Intel media SDK|MIT License|
+|opencv|BSD 3-clause "New" or "Revised" License|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|
 
 
