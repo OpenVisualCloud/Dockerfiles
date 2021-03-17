@@ -24,7 +24,7 @@ include(owt.m4)
 include(end.m4)dnl
 
 PREAMBLE
-FROM OS_NAME:OS_VERSION as build
+FROM OS_NAME:OS_VERSION AS build
 include(centos-repo.m4)
 INSTALL_CENTOS_REPO(epel-release centos-release-scl)
 INSTALL_CENTOS_RPMFUSION_REPO(7)
