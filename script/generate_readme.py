@@ -5,7 +5,7 @@ import re
 import os
 import sys
 
-REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/master/"
+REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/"
 
 #Platform to full name
 platform_subs = {
