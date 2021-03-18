@@ -522,6 +522,17 @@ ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
     cp -r /opt/build/gst-video-analytics/python/* /opt/dist/opt/intel/dl_streamer/python
 
+RUN yum install -y python-devel
+
+# build boost
+ARG BOOST_REPO=http://iweb.dl.sourceforge.net/project/boost/boost/1.65.0/boost_1_65_0.tar.bz2
+RUN cd /opt/build && \
+  wget -O - ${BOOST_REPO} | tar jx
+RUN cd /opt/build/boost_1_65_0 && \
+  chmod +x bootstrap.sh && \
+  ./bootstrap.sh && \
+  ./b2 && ./b2 install --prefix=/usr/local
+
 RUN yum install -y wget bzip2
 
 # Build OpenH264
