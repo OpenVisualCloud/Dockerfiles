@@ -36,20 +36,20 @@
 | service-owt-dev | V | - | V |
 
 | Platform: VCAC-A | Ubuntu 18.04 LTS |Ubuntu 20.04 LTS |
-|-----|:---:|
+|-----|:---:|:---:|
 | analytics-ffmpeg | V | V |
 | analytics-gst | V | V |
 | analytics-dev | V | V |
 | analytics-hddldaemon| V | V |
 
 | Platform: QAT | Ubuntu 18.04 LTS | Ubuntu 20.04 LTS | CentOS-7 |
-|-----|:---:|:---:|
+|-----|:---:|:---:|:---:|
 | media-nginx | V | V | V |
 | media-dev | V | V | V |
 
 
 | Platform: SG1 | Ubuntu 18.04 LTS | Ubuntu 20.04 LTS | CentOS-7 |
-|-----|:---:|:---:|
+|-----|:---:|:---:|:---:|
 | media-ffmpeg | V | V | V |
 | media-dev | V | V | V |
 
