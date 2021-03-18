@@ -4,7 +4,7 @@ This folder contains dockerfiles to build Intel(R) CPU and Server GPU SG1 softwa
 ### Setup host platform:
 
 Refer to below instructions to setup host platform:
-- Updating Kernel and KMD [SG1 Platform Setup Guide](https://cdrdv2.intel.com/v1/dl/getContent/632320?wapkw=SG1)  
+- Updating Kernel and KMD (see [SG1 Platform Setup Guide](https://cdrdv2.intel.com/v1/dl/getContent/632320?wapkw=SG1).)  
 
 - Installing the docker.ce service (see [../README.md](../README.md).)
 

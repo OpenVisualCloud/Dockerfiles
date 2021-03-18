@@ -309,7 +309,7 @@ def create_readme(path, path_components):
         if image_name=="gst":
             my_file.write("Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. ")
         if image_name=="ffmpeg":
-            my_file.write("Included FFmpeg and codecs such as aac, opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. ")
+            my_file.write("Included FFmpeg and codecs such as opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. ")
         if image_name=="nginx":
             my_file.write("Optimized for NGINX web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy. ")
         if image_name=="svt":
