@@ -32,7 +32,11 @@ include(begin.m4)
 
 DECLARE(`LIBPAHO_VER',1.3.6)
 
-define(`LIBPAHO_BUILD_DEPS',`wget make libssl-dev')
+ifelse(OS_NAME,ubuntu,`
+define(`LIBPAHO_BUILD_DEPS',`wget make libssl-dev uuid-dev')')
+
+ifelse(OS_NAME,centos,`
+define(`LIBPAHO_BUILD_DEPS',`wget make openssl-devel')')
 
 define(`BUILD_LIBPAHO',`
 # build libpahomqtt
