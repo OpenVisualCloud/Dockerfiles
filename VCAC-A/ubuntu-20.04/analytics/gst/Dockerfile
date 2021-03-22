@@ -572,7 +572,7 @@ RUN cd /opt/build/gstreamer-vaapi-1.16.2 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    wget make libssl-dev && \
+    wget make libssl-dev uuid-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build libpahomqtt

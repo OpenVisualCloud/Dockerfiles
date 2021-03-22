@@ -685,6 +685,50 @@ RUN cd /opt/build/SVT-VP9/gstreamer-plugin && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    wget make libssl-dev uuid-dev && \
+  rm -rf /var/lib/apt/lists/*
+
+# build libpahomqtt
+ARG PAHO_VER=1.3.6
+ARG LIBPAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${LIBPAHO_REPO} | tar -xz
+RUN cd /opt/build/paho.mqtt.c-1.3.6 && \
+  make	&& \
+  make install
+
+#Copy and link in runtime layer
+RUN cd /opt/build/paho.mqtt.c-1.3.6 && \
+  cp build/output/libpaho-mqtt3c.so.1.3 /opt/dist//usr/local/lib && 	\
+  cp build/output/libpaho-mqtt3cs.so.1.3 /opt/dist//usr/local/lib &&   \
+  cp build/output/libpaho-mqtt3a.so.1.3 /opt/dist//usr/local/lib &&   \
+  cp build/output/libpaho-mqtt3as.so.1.3 /opt/dist//usr/local/lib &&   \
+  cp build/output/paho_c_version /opt/dist/usr/local/bin/ && \
+  cp build/output/samples/paho_c_pub /opt/dist/usr/local/bin/ && \
+  cp build/output/samples/paho_c_sub /opt/dist/usr/local/bin/ && \
+  cp build/output/samples/paho_cs_pub /opt/dist/usr/local/bin/ && \
+  cp build/output/samples/paho_cs_sub /opt/dist/usr/local/bin/ && \
+  chmod 644 /opt/dist//usr/local/lib/libpaho-mqtt3c.so.1.3 && \
+  chmod 644 /opt/dist//usr/local/lib/libpaho-mqtt3cs.so.1.3 && \
+  chmod 644 /opt/dist//usr/local/lib/libpaho-mqtt3a.so.1.3 && \
+  chmod 644 /opt/dist//usr/local/lib/libpaho-mqtt3as.so.1.3 && \
+  ln /opt/dist//usr/local/lib/libpaho-mqtt3c.so.1.3 /opt/dist//usr/local/lib/libpaho-mqtt3c.so.1 && \
+  ln /opt/dist//usr/local/lib/libpaho-mqtt3cs.so.1.3 /opt/dist//usr/local/lib/libpaho-mqtt3cs.so.1 && \
+  ln /opt/dist//usr/local/lib/libpaho-mqtt3a.so.1.3 /opt/dist//usr/local/lib/libpaho-mqtt3a.so.1 && \
+  ln /opt/dist//usr/local/lib/libpaho-mqtt3as.so.1.3 /opt/dist//usr/local/lib/libpaho-mqtt3as.so.1 && \
+  ln /opt/dist//usr/local/lib/libpaho-mqtt3c.so.1 /opt/dist//usr/local/lib/libpaho-mqtt3c.so && \
+  ln /opt/dist//usr/local/lib/libpaho-mqtt3cs.so.1 /opt/dist//usr/local/lib/libpaho-mqtt3cs.so && \
+  ln /opt/dist//usr/local/lib/libpaho-mqtt3a.so.1 /opt/dist//usr/local/lib/libpaho-mqtt3a.so && \
+  ln /opt/dist//usr/local/lib/libpaho-mqtt3as.so.1 /opt/dist//usr/local/lib/libpaho-mqtt3as.so && \
+  cp src/MQTTAsync.h /opt/dist/usr/local/include/ && \
+  cp src/MQTTClient.h /opt/dist/usr/local/include/ && \
+  cp src/MQTTClientPersistence.h /opt/dist/usr/local/include/ && \
+  cp src/MQTTProperties.h /opt/dist/usr/local/include/ && \
+  cp src/MQTTReasonCodes.h /opt/dist/usr/local/include/ && \
+  cp src/MQTTSubscribeOpts.h /opt/dist/usr/local/include/; 
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     cmake git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates  && \
   rm -rf /var/lib/apt/lists/*
 
@@ -704,7 +748,7 @@ RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
         -DCMAKE_INSTALL_PREFIX=/usr/local \
         -DCMAKE_BUILD_TYPE=Release \
         -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=OFF \
+        -DENABLE_PAHO_INSTALLATION=ON \
         -DENABLE_RDKAFKA_INSTALLATION=ON \
         -DENABLE_VAAPI=OFF \
         -DENABLE_VAS_TRACKER=OFF \
@@ -714,7 +758,7 @@ RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
         -Dwith_glx=no \
         -Dwith_wayland=no \
         -Dwith_egl=no \
-        -DMQTT=0 \
+        -DMQTT=1 \
         -DKAFKA=1 \
         .. \
     && make -j $(nproc) \
