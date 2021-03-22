@@ -1,5 +1,6 @@
 
 include(begin.m4)
+include(ubuntu.m4)
 include(cmake.m4)
 include(openssl.m4)
 include(svt-hevc.m4)
