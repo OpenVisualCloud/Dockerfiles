@@ -451,6 +451,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     libnuma1 libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libusb-1.0-0-dev libboost-filesystem1.65.1 libboost-system1.65.1 libboost-program-options1.65.1 libjson-c3 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \

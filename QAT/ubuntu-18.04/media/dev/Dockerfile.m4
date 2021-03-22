@@ -1,5 +1,6 @@
 
 include(begin.m4)
+include(ubuntu.m4)
 include(nasm.m4)
 include(qat-core.m4)
 include(qat-zip.m4)
@@ -26,5 +27,6 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+UPGRADE_UBUNTU_COMPONENTS()
 INSTALL_ALL(devel,build)
 

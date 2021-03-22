@@ -52,6 +52,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+RUN apt-get update && apt-get upgrade -y systemd
 
 
 COPY --from=build /opt/dist /

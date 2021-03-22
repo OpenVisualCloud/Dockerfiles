@@ -40,5 +40,6 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+UPGRADE_UBUNTU_COMPONENTS()
 INSTALL_ALL(devel,build)dnl
 

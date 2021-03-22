@@ -98,6 +98,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     libpcre3 libxml2 libxslt1.1 zlib1g libssl1.1 && \

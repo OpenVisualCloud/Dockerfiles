@@ -736,6 +736,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \

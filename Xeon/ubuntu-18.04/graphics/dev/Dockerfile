@@ -129,6 +129,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     libtbb2 libtiff-dev libpng16-16 libboost-filesystem-dev libboost-thread-dev  && \
