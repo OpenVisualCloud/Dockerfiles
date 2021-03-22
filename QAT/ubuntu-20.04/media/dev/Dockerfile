@@ -214,6 +214,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+UPGRADE_UBUNTU_COMPONENTS()
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     libzip5 libxml2 libpcre3 zlib1g libxslt1.1  && \

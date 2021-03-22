@@ -97,6 +97,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     libboost-filesystem1.65-dev libboost-thread1.65-dev libboost-program-options1.65-dev libjson-c3  && \

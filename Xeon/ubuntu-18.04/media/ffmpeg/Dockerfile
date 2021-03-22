@@ -312,6 +312,7 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     libnuma1 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
@@ -319,6 +320,5 @@ RUN apt-get update && \
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
-
 
 
