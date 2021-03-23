@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -56,7 +56,7 @@ DECLARE(`CLEANUP_MAN',yes)dnl
 DECLARE(`PREAMBLE',dnl
 ``# BSD 3-Clause License''
 ``#''
-``# Copyright (c) 2020, Intel Corporation''
+``# Copyright (c) 2021, Intel Corporation''
 ``# All rights reserved.''
 ``#''
 ``# Redistribution and use in source and binary forms, with or without''
