@@ -28,6 +28,7 @@ include(gst-libav.m4)
 include(gst-vaapi.m4)
 include(gst-svt.m4)
 include(opencv.m4)
+include(libpahomqtt.m4)
 include(gst-gva.m4)
 include(gst-python.m4)
 include(end.m4)dnl
@@ -44,5 +45,6 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+UPGRADE_UBUNTU_COMPONENTS()
 INSTALL_ALL(runtime,build)dnl
 

@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,11 @@ include(begin.m4)
 
 DECLARE(`LIBPAHO_VER',1.3.6)
 
-define(`LIBPAHO_BUILD_DEPS',`wget make libssl-dev')
+ifelse(OS_NAME,ubuntu,`
+define(`LIBPAHO_BUILD_DEPS',`wget make libssl-dev uuid-dev')')
+
+ifelse(OS_NAME,centos,`
+define(`LIBPAHO_BUILD_DEPS',`wget make openssl-devel')')
 
 define(`BUILD_LIBPAHO',`
 # build libpahomqtt

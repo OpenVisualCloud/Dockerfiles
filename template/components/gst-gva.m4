@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ DECLARE(`GVA_WITH_GLX',no)
 DECLARE(`GVA_WITH_WAYLAND',no)
 DECLARE(`GVA_WITH_EGL',no)
 
-DECLARE(`GVA_ENABLE_PAHO_INST',OFF)
+DECLARE(`GVA_ENABLE_PAHO_INST',ifdef(`BUILD_LIBPAHO',ON,OFF))
 DECLARE(`GVA_ENABLE_RDKAFKA_INST',ifdef(`BUILD_LIBRDKAFKA',ON,OFF))
 DECLARE(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',OFF)
 

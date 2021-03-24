@@ -1,5 +1,6 @@
 
 include(begin.m4)
+include(ubuntu.m4)
 include(cmake.m4)
 include(openssl.m4)
 include(svt-hevc.m4)
@@ -21,7 +22,7 @@ include(owt.m4)
 include(end.m4)dnl
 
 PREAMBLE
-FROM OS_NAME:OS_VERSION as build
+FROM OS_NAME:OS_VERSION AS build
 
 BUILD_ALL()dnl
 define(`CLEANUP_CC',no)dnl
@@ -33,5 +34,6 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
+UPGRADE_UBUNTU_COMPONENTS()
 INSTALL_ALL(devel,build)dnl
 

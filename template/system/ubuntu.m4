@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2020, Intel Corporation
+dnl Copyright (c) 2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -32,3 +32,7 @@ define(`UBUNTU_CODENAME',`ifelse(
 $1,18.04,bionic,
 $1,20.04,focal,
 `ERROR(`ubuntu codename not known for the $1 version')')')dnl
+
+define(`UPGRADE_UBUNTU_COMPONENTS',`dnl
+RUN apt-get update && apt-get upgrade -y systemd')
+
