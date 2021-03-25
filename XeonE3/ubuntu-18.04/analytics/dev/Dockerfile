@@ -722,10 +722,22 @@ RUN apt-get update && \
     ca-certificates tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison  && \
   rm -rf /var/lib/apt/lists/*
 
+# patch gst-vaapi with gst-video-analytics patch
+ARG GST_PLUGIN_VAAPI_PATCH_VER=v1.0.0
+ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/opencv/gst-video-analytics.git
+
 # build gst-plugin-vaapi
 ARG GSTVAAPI_REPO=https://github.com/GStreamer/gstreamer-vaapi/archive/1.16.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${GSTVAAPI_REPO} | tar xz
+
+RUN cd /opt/build/gstreamer-vaapi-1.16.2 && \
+  git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
+  cd gst-video-analytics && git checkout ${GST_PLUGIN_VAAPI_PATCH_VER} && \
+  cd .. && \
+  git apply gst-video-analytics/patches/gstreamer-vaapi/vasurface_qdata.patch && \
+  rm -fr gst-video-analytics
+
 RUN cd /opt/build/gstreamer-vaapi-1.16.2 && \
   meson build \
     --prefix=/usr/local \
@@ -827,7 +839,7 @@ RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
         -DDISABLE_SAMPLES=ON \
         -DENABLE_PAHO_INSTALLATION=ON \
         -DENABLE_RDKAFKA_INSTALLATION=ON \
-        -DENABLE_VAAPI=OFF \
+        -DENABLE_VAAPI=ON \
         -DENABLE_VAS_TRACKER=OFF \
         -DENABLE_AUDIO_INFERENCE_ELEMENTS=OFF \
         -Dwith_drm=no \

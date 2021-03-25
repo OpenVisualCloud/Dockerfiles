@@ -44,10 +44,22 @@ define(`GSTVAAPI_INSTALL_DEPS',`glib2 libdrm libpciaccess')
 ')
 
 define(`BUILD_GSTVAAPI',`
+# patch gst-vaapi with gst-video-analytics patch
+ARG GST_PLUGIN_VAAPI_PATCH_VER=v1.0.0
+ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/opencv/gst-video-analytics.git
+
 # build gst-plugin-vaapi
 ARG GSTVAAPI_REPO=https://github.com/GStreamer/gstreamer-vaapi/archive/GSTCORE_VER.tar.gz
 RUN cd BUILD_HOME && \
   wget -O - ${GSTVAAPI_REPO} | tar xz
+
+RUN cd BUILD_HOME/gstreamer-vaapi-GSTCORE_VER && \
+  git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
+  cd gst-video-analytics && git checkout ${GST_PLUGIN_VAAPI_PATCH_VER} && \
+  cd .. && \
+  git apply gst-video-analytics/patches/gstreamer-vaapi/vasurface_qdata.patch && \
+  rm -fr gst-video-analytics
+
 RUN cd BUILD_HOME/gstreamer-vaapi-GSTCORE_VER && \
   meson build \
     --prefix=BUILD_PREFIX \
