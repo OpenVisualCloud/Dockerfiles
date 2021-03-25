@@ -68,8 +68,8 @@ The table lists the available docker images:
 
 |Image|Dockerfile|Docker Image|
 |:-:|---|---|
-|media-dev|[centos-7/media/dev](centos-7/media/dev)<br>[ubuntu-18.04/media/dev](ubuntu-18.04/media/dev)|[openvisualcloud/qat-centos7-media-dev](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-dev)<br>[openvisualcloud/qat-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-dev)|
-|media-nginx|[centos-7/media/nginx](centos-7/media/nginx)<br>[ubuntu-18.04/media/nginx](ubuntu-18.04/media/nginx)|[openvisualcloud/qat-centos7-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx)<br>[openvisualcloud/qat-ubuntu1804-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-nginx)|
+|media-dev|[centos-7/media/dev](centos-7/media/dev)<br>[ubuntu-18.04/media/dev](ubuntu-18.04/media/dev)<br>[ubuntu-20.04/media/dev](ubuntu-20.04/media/dev)||[openvisualcloud/qat-centos7-media-dev](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-dev)<br>[openvisualcloud/qat-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-dev)<br>[openvisualcloud/qat-ubuntu2004-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-dev)|
+|media-nginx|[centos-7/media/nginx](centos-7/media/nginx)<br>[ubuntu-18.04/media/nginx](ubuntu-18.04/media/nginx)<br>[ubuntu-20.04/media/nginx](ubuntu-20.04/media/nginx)|[openvisualcloud/qat-centos7-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx)<br>[openvisualcloud/qat-ubuntu1804-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-nginx)<br>[openvisualcloud/qat-ubuntu2004-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx)|
 
 The docker images **must** run with the following devices attached:  
 - `/dev/hugepages`: The hugepage kernel pages.  
