@@ -36,7 +36,7 @@ DECLARE(`OPENVINO_BUILD_NO',16803)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENVINO_BUILD_DEPS',`cpio')
-define(`OPENVINO_INSTALL_DEPS',`libjson-c3')
+define(`OPENVINO_INSTALL_DEPS',`libjson-c3 kmod')
 ')
 
 define(`BUILD_OPENVINO',`
