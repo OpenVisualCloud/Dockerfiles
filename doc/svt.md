@@ -7,7 +7,7 @@ SVT Images get built with following SVT transcoders
 |Module|Version|Comment
 |------|------|------|
 |SVT-HEVC|v1.5.0|HEVC-compliant encoder library core that achieves excellent density-quality tradeoffs|
-|SVT-AV1|v0.8.5|AV1 Compliant encoder library for VOD and Live encoding / transcoding video applications|
+|SVT-AV1|v0.8.6|AV1 Compliant encoder library for VOD and Live encoding / transcoding video applications|
 |SVT-VP9|v0.2.1|VP9 Compliant encoder library for VOD and Live encoding / transcoding video applications|
 
 ### Evaluate SVT 
@@ -24,7 +24,7 @@ sudo -E docker run openvisualcloud/xeon-centos76-media-svt /bin/bash -c "dd if=/
 ```
 - SVT VP9 encoder:
 ```bash
-sudo -E docker run openvisualcloud/xeon-ubuntu1604-media-svt /bin/bash -c "dd if=/dev/urandom bs=115200 count=300 of=test.yuv && SvtVp9EncApp -i test.yuv -w 320 -h 240 -b out.ivf ."
+sudo -E docker run openvisualcloud/xeon-ubuntu1804-media-svt /bin/bash -c "dd if=/dev/urandom bs=115200 count=300 of=test.yuv && SvtVp9EncApp -i test.yuv -w 320 -h 240 -b out.ivf ."
 ```
 - SVT HEVC with FFmpeg:
 ```bash

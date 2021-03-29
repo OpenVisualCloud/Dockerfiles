@@ -1,0 +1,5 @@
+set(image "xeon_analytics_devel_ubuntu2004")
+include(image)
+include(gst-tests)
+include(ffmpeg-tests)
+include(dldt-gst-tests)
