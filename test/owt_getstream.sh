@@ -6,6 +6,9 @@ case "$1" in
         yum install -y -q curl;;
 esac
 
+#HOTFIX1
+echo 'NODENAME=rabbit@localhost' > /etc/rabbitmq/rabbitmq-env.conf
+
 /home/launch.sh
 
 response=$(curl -sb -H "Accept: application/json" http://localhost:3001/rooms | awk -F "," '{print $NF}' | awk '{split($0,a,"\""); print a[4]}')
