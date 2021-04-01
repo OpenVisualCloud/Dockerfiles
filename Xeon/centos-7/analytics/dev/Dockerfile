@@ -482,18 +482,18 @@ RUN cd /opt/build/gst-plugins-ugly-1.16.2 && \
 RUN yum install -y wget patch libv4l-devel libass-devel freetype-devel
 
 # build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.2.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_REPO} | tar xz
 
 ARG FFMPEG_PATCH_SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1/archive/v0.8.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_PATCH_SVT_AV1_REPO} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.2 && \
+    cd /opt/build/FFmpeg-n4.2.4 && \
     patch -p1 < ../SVT-AV1-0.8.4/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch || true
-RUN cd /opt/build/FFmpeg-n4.2.2 && \
+RUN cd /opt/build/FFmpeg-n4.2.4 && \
     patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
-RUN cd /opt/build/FFmpeg-n4.2.2 && \
+RUN cd /opt/build/FFmpeg-n4.2.4 && \
     patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
 ARG FFMPEG_MA_RELEASE_VER=0.5
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
@@ -502,7 +502,7 @@ RUN cd /opt/build && wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
 RUN cp ${FFMPEG_MA_PATH}/docker/patch/opencv.pc /usr/local/lib64/pkgconfig
 ARG CVDEF_H=/usr/local/include/opencv4/opencv2/core/cvdef.h
 RUN if [ -f "${CVDEF_H}" ]; then cp ${FFMPEG_MA_PATH}/docker/patch/cvdef.h ${CVDEF_H}; fi
-RUN cd /opt/build/FFmpeg-n4.2.2 && \
+RUN cd /opt/build/FFmpeg-n4.2.4 && \
     find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
 ARG FFMPEG_PATCHES_RELEASE_VER=0.2
@@ -511,10 +511,10 @@ ARG FFMPEG_PATCHES_PATH=/opt/build/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.2 && \
+    cd /opt/build/FFmpeg-n4.2.4 && \
     find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 
-RUN cd /opt/build/FFmpeg-n4.2.2 && \
+RUN cd /opt/build/FFmpeg-n4.2.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
     --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9     --enable-libaom     --enable-libdav1d     --enable-librdkafka     --enable-libjson_c     --enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR         && make -j$(nproc) && \
