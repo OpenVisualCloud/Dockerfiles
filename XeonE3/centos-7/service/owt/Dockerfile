@@ -669,7 +669,7 @@ ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd /opt/build && \
     git clone -b master ${OWT_REPO} && \
     cd owt-server && \
-    git reset --hard 37bc75675b9b28e638abc532b3ef0b37704eb4e3
+    git reset --hard v5.0
 
 # Prep OpenH264
 RUN mkdir -p /opt/build/owt-server/third_party/openh264 && \
