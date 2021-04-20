@@ -548,15 +548,16 @@ RUN cd /opt/build && \
     wget -O - ${LIBNICE_REPO} | tar xz
 
 
-ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v4.3.1.tar.gz
+ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v5.0.tar.gz
 
 RUN cd /opt/build/libnice-0.1.4 && \
     wget -O - ${LIBNICE_PATCH_REPO} | tar xz && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-agentlock.patch && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-agentlock-plus.patch && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-removecandidate.patch && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-keepalive.patch && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-startcheck.patch
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-agentlock.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-agentlock-plus.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-removecandidate.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-keepalive.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-startcheck.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-closelock.patch
 
 
 RUN cd /opt/build/libnice-0.1.4 && \
