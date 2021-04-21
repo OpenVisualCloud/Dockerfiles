@@ -47,8 +47,7 @@ include(openh264.m4)
 define(`LIBRE_VER',v0.5.0)
 include(libre.m4)
 define(`LIBNICE_VER',0.1.4)
-ifelse(OWT_360,true,`
-define(`LIBNICE_PATCH_VER',4.3.1)',`
+ifelse(OWT_360,false,`
 define(`LIBNICE_PATCH_VER',5.0)
 ')
 include(libnice.m4)
