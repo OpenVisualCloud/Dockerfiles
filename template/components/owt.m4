@@ -39,6 +39,7 @@ DECLARE(`OWT_WEBRTC_VER',)
 DECLARE(`OWT_SDK_BRANCH',master)
 DECLARE(`OWT_SDK_VER',)
 DECLARE(`OWT_QUIC_VER',v0.1)
+DECLARE(`LIBNICE_PATCH_VER',5.0)
 
 # required components for OWT
 include(openssl.m4)
@@ -47,9 +48,6 @@ include(openh264.m4)
 define(`LIBRE_VER',v0.5.0)
 include(libre.m4)
 define(`LIBNICE_VER',0.1.4)
-ifelse(OWT_360,false,`
-define(`LIBNICE_PATCH_VER',5.0)
-')
 include(libnice.m4)
 define(`USRSCTP_VER',0.9.5.0)
 include(usrsctp.m4)
