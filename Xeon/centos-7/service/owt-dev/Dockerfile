@@ -57,10 +57,10 @@ ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 RUN yum install -y wget tar gcc-c++ make libtool autoconf
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1i.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1j.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1i && \
+    cd openssl-OpenSSL_1_1_1j && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -548,15 +548,16 @@ RUN cd /opt/build && \
     wget -O - ${LIBNICE_REPO} | tar xz
 
 
-ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v4.3.1.tar.gz
+ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v5.0.tar.gz
 
 RUN cd /opt/build/libnice-0.1.4 && \
     wget -O - ${LIBNICE_PATCH_REPO} | tar xz && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-agentlock.patch && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-agentlock-plus.patch && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-removecandidate.patch && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-keepalive.patch && \
-    patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-startcheck.patch
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-agentlock.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-agentlock-plus.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-removecandidate.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-keepalive.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-startcheck.patch && \
+    patch -p1 < owt-server-5.0/scripts/patches/libnice014-closelock.patch
 
 
 RUN cd /opt/build/libnice-0.1.4 && \
@@ -615,7 +616,7 @@ ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd /opt/build && \
     git clone -b master ${OWT_REPO} && \
     cd owt-server && \
-    git reset --hard 387db8dfeaf52818cc248b34d990f6bdb222ecc4
+    git reset --hard v5.0
 
 # Prep OpenH264
 RUN mkdir -p /opt/build/owt-server/third_party/openh264 && \
