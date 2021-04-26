@@ -55,7 +55,11 @@ RUN cd BUILD_HOME/libnice-LIBNICE_VER && \
     patch -p1 < owt-server-LIBNICE_PATCH_VER/scripts/patches/libnice014-agentlock-plus.patch && \
     patch -p1 < owt-server-LIBNICE_PATCH_VER/scripts/patches/libnice014-removecandidate.patch && \
     patch -p1 < owt-server-LIBNICE_PATCH_VER/scripts/patches/libnice014-keepalive.patch && \
+ifelse(OWT_360,false,`dnl
+    patch -p1 < owt-server-LIBNICE_PATCH_VER/scripts/patches/libnice014-startcheck.patch && \
+    patch -p1 < owt-server-LIBNICE_PATCH_VER/scripts/patches/libnice014-closelock.patch',`dnl
     patch -p1 < owt-server-LIBNICE_PATCH_VER/scripts/patches/libnice014-startcheck.patch
+')
 ')
 
 RUN cd BUILD_HOME/libnice-LIBNICE_VER && \
