@@ -192,6 +192,20 @@ RUN cd /opt/build/dav1d-0.7.1 && \
   ninja install && \
   DESTDIR=/opt/dist ninja install
 
+RUN yum install -y meson wget tar gcc-c++ ninja-build devtoolset-9
+
+# build VMAF
+ARG VMAF_VER=2.1.1
+ARG LIBVMAF_REPO=https://github.com/Netflix/vmaf/archive/refs/tags/v${VMAF_VER}.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${LIBVMAF_REPO} | tar xz && ls
+RUN cd /opt/build/vmaf-2.1.1/libvmaf && \
+  ls && \ 
+  (. /opt/rh/devtoolset-9/enable &&  meson build --prefix=/usr/local --libdir /usr/local/lib64 --buildtype=plain && \
+  cd build && \
+  ninja install && \
+  DESTDIR=/opt/dist ninja install )
+
 RUN yum install -y wget tar gcc-c++ make git 
 
 # build svt-hevc
@@ -369,7 +383,7 @@ RUN cd /opt/build && \
 RUN cd /opt/build/FFmpeg-n4.2.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9     --enable-libaom     --enable-libdav1d                     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9     --enable-libaom     --enable-libvmaf --enable-version3     --enable-libdav1d                     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
