@@ -716,7 +716,7 @@ RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
         -DENABLE_PAHO_INSTALLATION=ON \
         -DENABLE_RDKAFKA_INSTALLATION=ON \
         -DENABLE_VAAPI=ON \
-        -DENABLE_VAS_TRACKER=OFF \
+        -DENABLE_VAS_TRACKER=ON \
         -DENABLE_AUDIO_INFERENCE_ELEMENTS=OFF \
         -Dwith_drm=no \
         -Dwith_x11=no \
