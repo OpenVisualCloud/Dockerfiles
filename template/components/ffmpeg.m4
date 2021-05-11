@@ -111,6 +111,7 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc )dnl
     ifdef(`BUILD_SVT_VP9',--enable-libsvtvp9 )dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
+    ifdef(`BUILD_LIBVMAF',--enable-libvmaf --enable-version3 )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl
     ifdef(`BUILD_LIBRDKAFKA',--enable-librdkafka )dnl
     ifdef(`BUILD_LIBJSONC',--enable-libjson_c )dnl

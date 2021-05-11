@@ -422,7 +422,7 @@ RUN cd /opt/build && \
 RUN cd /opt/build/FFmpeg-n4.2.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265                     --enable-libdav1d     --enable-librdkafka     --enable-libjson_c         --enable-libinference_engine_c_api --extra-cflags=-I$OPENVINO_IE_DIR/include --extra-ldflags=-L$OPENVINO_IE_DIR/lib/intel64     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265                         --enable-libdav1d     --enable-librdkafka     --enable-libjson_c         --enable-libinference_engine_c_api --extra-cflags=-I$OPENVINO_IE_DIR/include --extra-ldflags=-L$OPENVINO_IE_DIR/lib/intel64     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 

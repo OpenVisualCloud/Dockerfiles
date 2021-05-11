@@ -222,6 +222,23 @@ RUN cd /opt/build/dav1d-0.7.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ wget pkg-config ninja-build && \
+  rm -rf /var/lib/apt/lists/*
+
+# build VMAF
+ARG VMAF_VER=2.1.1
+ARG LIBVMAF_REPO=https://github.com/Netflix/vmaf/archive/refs/tags/v${VMAF_VER}.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${LIBVMAF_REPO} | tar xz && ls
+RUN cd /opt/build/vmaf-2.1.1/libvmaf && \
+  ls && \ 
+   meson build --prefix=/usr/local --libdir /usr/local/lib --buildtype=plain && \
+  cd build && \
+  ninja install && \
+  DESTDIR=/opt/dist ninja install 
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget tar g++ make cmake git && \
   rm -rf /var/lib/apt/lists/*
 
@@ -370,7 +387,7 @@ RUN cd /opt/build && \
 RUN cd /opt/build/FFmpeg-n4.2.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9     --enable-libaom     --enable-libdav1d                     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9     --enable-libaom     --enable-libvmaf --enable-version3     --enable-libdav1d                     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
