@@ -37,7 +37,7 @@ DECLARE(`OWT_LICODE_VER',8b4692c88f1fc24dedad66b4f40b1f3d804b50ca)
 DECLARE(`OWT_WEBRTC_BRANCH',59-server)
 DECLARE(`OWT_WEBRTC_VER',)
 DECLARE(`OWT_SDK_BRANCH',master)
-DECLARE(`OWT_SDK_VER',)
+DECLARE(`OWT_SDK_VER',v5.0)
 DECLARE(`OWT_QUIC_VER',v0.1)
 DECLARE(`LIBNICE_PATCH_VER',5.0)
 
@@ -123,7 +123,8 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc-m79 && \
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 RUN cd BUILD_HOME && \
     git clone -b OWT_SDK_BRANCH ${OWT_SDK_REPO} && \
-    cd owt-client-javascript/scripts && ifelse(OWT_360,true,`git reset --hard OWT_SDK_VER &&') \
+    cd owt-client-javascript/scripts && \
+    git reset --hard OWT_SDK_VER && \
     npm install && grunt 
     
 # Get quic

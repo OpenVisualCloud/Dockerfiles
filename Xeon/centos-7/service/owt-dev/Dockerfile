@@ -656,7 +656,8 @@ RUN mkdir -p /opt/build/owt-server/third_party/webrtc-m79 && \
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 RUN cd /opt/build && \
     git clone -b master ${OWT_SDK_REPO} && \
-    cd owt-client-javascript/scripts &&  \
+    cd owt-client-javascript/scripts && \
+    git reset --hard v5.0 && \
     npm install && grunt 
     
 # Get quic
