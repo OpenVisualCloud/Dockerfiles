@@ -44,7 +44,8 @@ define(`LIBVORBIS_BUILD_DEPS',`wget make autoconf diffutils automake')
 
 define(`BUILD_LIBVORBIS',`
 # build libvorbis
-ARG LIBVORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-LIBVORBIS_VER.tar.gz
+ARG VORBIS_VER=LIBVORBIS_VER
+ARG LIBVORBIS_REPO=https://github.com/xiph/vorbis/releases/download/v${VORBIS_VER}/libvorbis-LIBVORBIS_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${LIBVORBIS_REPO} | tar xz && \
     cd libvorbis-LIBVORBIS_VER && \
