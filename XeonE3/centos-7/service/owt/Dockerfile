@@ -553,6 +553,23 @@ ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
     cp -r /opt/build/gst-video-analytics/python/* /opt/dist/opt/intel/dl_streamer/python
 
+RUN yum install -y wget tar gcc-c++ glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel meson
+ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.16.2.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTPYTHON_REPO} | tar xJ
+RUN cd /opt/build/gst-python-1.16.2 && \
+#WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
+
+    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
+    --prefix=/usr/local --buildtype=plain \
+    -Dpython=/usr/bin/python3 -Dlibpython-dir=/usr/lib64/ \
+    -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides \
+    -Dgtk_doc=disabled && \
+    cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+
 RUN yum install -y python-devel
 
 # build boost
@@ -807,6 +824,7 @@ ENV LD_LIBRARY_PATH=/usr/local/lib64/gstreamer-1.0/
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib64/girepository-1.0/ 
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0/
+RUN python3 -m pip install numpy
 
 # install node
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz

@@ -617,6 +617,26 @@ RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ wget gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin libpython3-dev libpython3-stdlib libpython3-all-dev  && \
+  rm -rf /var/lib/apt/lists/*
+ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.16.2.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTPYTHON_REPO} | tar xJ
+RUN cd /opt/build/gst-python-1.16.2 && \
+#WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
+
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    --prefix=/usr/local --buildtype=plain \
+    -Dpython=/usr/bin/python3 -Dlibpython-dir=/usr/lib/x86_64-linux-gnu/  \
+    -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides \
+    -Dgtk_doc=disabled && \
+    cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget bzip2 && \
   rm -rf /var/lib/apt/lists/*
 
@@ -834,7 +854,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libglib2.0-dev libfreetype6 libsrtp2-1 && \
+    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
   rm -rf /var/lib/apt/lists/*
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
@@ -859,6 +879,7 @@ ENV LD_LIBRARY_PATH=/usr/local/lib/gstreamer-1.0/
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/girepository-1.0/ 
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
+
 
 # install node
 ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
