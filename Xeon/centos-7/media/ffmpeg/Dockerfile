@@ -45,11 +45,12 @@ ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 RUN yum install -y wget make autoconf diffutils automake gcc-c++
 
 # build libogg
-ARG LIBOGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.gz
+ARG OGG_VER=1.3.5
+ARG LIBOGG_REPO=https://github.com/xiph/ogg/releases/download/v${OGG_VER}/libogg-1.3.5.tar.gz
 
 RUN cd /opt/build && \
     wget -O - ${LIBOGG_REPO} | tar xz && \
-    cd libogg-1.3.4 && \
+    cd libogg-1.3.5 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -58,7 +59,8 @@ RUN cd /opt/build && \
 RUN yum install -y wget make autoconf diffutils automake
 
 # build libvorbis
-ARG LIBVORBIS_REPO=https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.gz
+ARG VORBIS_VER=1.3.7
+ARG LIBVORBIS_REPO=https://github.com/xiph/vorbis/releases/download/v${VORBIS_VER}/libvorbis-1.3.7.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBVORBIS_REPO} | tar xz && \
     cd libvorbis-1.3.7 && \

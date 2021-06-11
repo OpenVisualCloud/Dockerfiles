@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBOGG_VER',1.3.4)
+DECLARE(`LIBOGG_VER',1.3.5)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBOGG_BUILD_DEPS',`ca-certificates wget make autoconf automake g++')
@@ -42,7 +42,8 @@ define(`LIBOGG_BUILD_DEPS',`wget make autoconf diffutils automake gcc-c++')
 
 define(`BUILD_LIBOGG',`
 # build libogg
-ARG LIBOGG_REPO=https://downloads.xiph.org/releases/ogg/libogg-LIBOGG_VER.tar.gz
+ARG OGG_VER=LIBOGG_VER
+ARG LIBOGG_REPO=https://github.com/xiph/ogg/releases/download/v${OGG_VER}/libogg-LIBOGG_VER.tar.gz
 
 RUN cd BUILD_HOME && \
     wget -O - ${LIBOGG_REPO} | tar xz && \
