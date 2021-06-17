@@ -1,7 +1,7 @@
 include(begin.m4)
 include(ubuntu.m4)
 include(libusb.m4)
-include(hddl-openvino.binary.m4)
+include(hddl-openvino.m4)
 include(end.m4)dnl
 
 PREAMBLE
