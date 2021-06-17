@@ -22,6 +22,7 @@ include(owt-gst-bad.m4)
 include(owt-gst-ugly.m4)
 include(gst-libav.m4)
 include(owt-gst-gva.m4)
+include(gst-python.m4)
 include(owt.m4)
 include(end.m4)dnl
 
