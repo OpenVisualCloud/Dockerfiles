@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBUSB_VER',v1.0.22)
+DECLARE(`LIBUSB_VER',v1.0.24)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBUSB_BUILD_DEPS',`wget make autoconf automake build-essential ca-certificates libtool libboost-filesystem1.65 libboost-thread1.65 libboost-program-options1.65 libjson-c-dev')

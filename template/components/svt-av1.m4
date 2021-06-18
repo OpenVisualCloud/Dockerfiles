@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(yasm.m4)
 
-DECLARE(`SVT_AV1_VER',v0.8.6)
+DECLARE(`SVT_AV1_VER',v0.8.7)
 
 include(yasm.m4)
 
@@ -55,15 +55,6 @@ RUN cd BUILD_HOME && \
     sed -i "s/SvtAv1dec/SvtAv1Dec/" SvtAv1Dec.pc && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
-')
-
-define(`FFMPEG_PATCH_SVT_AV1_VER',0.8.4)
-define(`FFMPEG_PATCH_SVT_AV1',`dnl
-ARG FFMPEG_PATCH_SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1/archive/v`'FFMPEG_PATCH_SVT_AV1_VER.tar.gz
-RUN cd BUILD_HOME && \
-    wget -O - ${FFMPEG_PATCH_SVT_AV1_REPO} | tar xz && \
-    cd $1 && \
-    patch -p1 < ../SVT-AV1-FFMPEG_PATCH_SVT_AV1_VER/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch || true
 ')
 
 REG(SVT_AV1)

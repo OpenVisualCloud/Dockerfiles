@@ -50,10 +50,10 @@ RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_PATCHES_REPO} | tar xz
 
 # build nginx flv
-ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.8.tar.gz
+ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.9.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_REPO} | tar xz && \
-    cd nginx-http-flv-module-1.2.8 && \
+    cd nginx-http-flv-module-1.2.9 && \
     mkdir -p BUILD_DEST/var/www/html && \
     cp -f stat.xsl BUILD_DEST/var/www/html && \
     find ${NGINX_FLV_PATCHES_PATH}/Nginx-HTTP-FLV_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i
@@ -71,10 +71,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build nginx
-ARG NGINX_REPO=https://nginx.org/download/nginx-1.18.0.tar.gz
+ARG NGINX_REPO=https://nginx.org/download/nginx-1.19.9.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_REPO} | tar xz && \
-    cd nginx-1.18.0 && \
+    cd nginx-1.19.9 && \
     ./configure --prefix=/var/www \
         --sbin-path=/usr/local/sbin/nginx --modules-path=/usr/local/lib/nginx/modules \
         --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/www/log/error.log \
@@ -97,7 +97,7 @@ RUN cd /opt/build && \
         --with-http_slice_module --with-http_stub_status_module --with-stream \
         --with-stream_ssl_module --with-stream_realip_module \
         --with-stream_ssl_preread_module --with-pcre \
-        --add-module=../nginx-http-flv-module-1.2.8 \
+        --add-module=../nginx-http-flv-module-1.2.9 \
         --add-module=../nginx-upload-module-2.3.0 \
     && make -j$(nproc) \
     && make install DESTDIR=/opt/dist

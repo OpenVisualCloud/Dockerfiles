@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`JSONHPP_VER',v3.6.1)
+DECLARE(`JSONHPP_VER',v3.9.1)
 
 ifelse(OS_NAME,ubuntu,`
 define(`JSONHPP_BUILD_DEPS',`ca-certificates wget')

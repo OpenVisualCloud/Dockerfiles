@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(yasm.m4)
 
-DECLARE(`SVT_HEVC_VER',v1.5.0)
+DECLARE(`SVT_HEVC_VER',v1.5.1)
 
 ifelse(OS_NAME,ubuntu,`
 define(`SVT_HEVC_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')
@@ -58,7 +58,7 @@ RUN cd BUILD_HOME/SVT-HEVC/Build/linux && \
 
 define(`FFMPEG_PATCH_SVT_HEVC',`dnl
 RUN cd $1 && \
-    patch -p1 < BUILD_HOME/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
+    patch -p1 < BUILD_HOME/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 ')
 
 REG(SVT_HEVC)

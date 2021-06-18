@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`ISPC_VER',1.9.1)
+DECLARE(`ISPC_VER',1.16.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`ISPC_BUILD_DEPS',`ca-certificates wget')

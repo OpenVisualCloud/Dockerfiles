@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBRE_VER',v0.5.0)
+DECLARE(`LIBRE_VER',v0.6.1)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBRE_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf gcc')
