@@ -15,9 +15,6 @@
 | analytics-ffmpeg | V | V | V |
 | analytics-gst | V | V | V |
 | analytics-dev | V | V | V |
-| graphics-ospray | V | V | V |
-| graphics-ospray-mpi | V | V | V |
-| graphics-dev | V | V | V |
 | service-owt | V | - | V |
 | service-owt360 | V | - | V |
 | service-owt-dev | V | - | V | 
