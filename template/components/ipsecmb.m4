@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`IPSECMB_VER',v0.55)
+DECLARE(`IPSECMB_VER',v1.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`IPSECMB_BUILD_DEPS',`git make ifelse(OS_VERSION,18.04,software-properties-common,gcc g++) ')

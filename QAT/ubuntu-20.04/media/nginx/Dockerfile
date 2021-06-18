@@ -68,7 +68,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # load qat-zip
-ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.0.2.tar.gz
+ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.0.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_ZIP_REPO} | tar xz && \
     cd QATzip* && \
@@ -83,10 +83,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1j.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1j && \
+    cd openssl-OpenSSL_1_1_1k && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -101,11 +101,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 
-ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/ippcp_2020u3.tar.gz
+ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/ippcp_2021.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
-    mkdir -p ipp-crypto-ippcp_2020u3/sources/ippcp/crypto_mb/build && \
-    cd ipp-crypto-ippcp_2020u3/sources/ippcp/crypto_mb/build && \
+    mkdir -p ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/build && \
+    cd ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/build && \
     CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" cmake -DOPENSSL_INCLUDE_DIR=/usr/local/ssl/include -DOPENSSL_LIBRARIES=/usr/local/ssl/lib -DOPENSSL_ROOT_DIR=/usr/local/ssl .. && \
     make -j8  && \
     make install && \
@@ -117,13 +117,13 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # load qat-engine
-ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.4.tar.gz
+ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.6.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
     ./autogen.sh && \
     export PERL5LIB="$(ls -1 -d /opt/build/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE" --enable-multibuff_offload --enable-multibuff_ecx && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE -IBUILD_HOME/ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/include" --enable-multibuff_offload --enable-multibuff_ecx --enable-qat_sw && \
     make -j8 && \
     make install && \
     tar cf - /usr/local/ssl | (cd /opt/dist && tar xf -)
@@ -159,10 +159,10 @@ RUN apt-get update && \
     wget ca-certificates libpcre3-dev zlib1g-dev libxslt1-dev  && \
   rm -rf /var/lib/apt/lists/*
 
-ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.4.tar.gz
+ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.5.tar.gz
 RUN wget -O - ${QAT_NGINX_REPO} | tar xz && cd asynch_mode_nginx* && \
     ./configure --with-ld-opt="-Wl,-rpath=/usr/local/ssl/lib,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib64,-rpath=/opt/intel/QAT/build -L/usr/local/ssl/lib -L/opt/intel/QATzip/lib64 -lqatzip -lz" \
-        --with-cc-opt="-DNGX_SECURE_MEM -I/usr/local/ssl/include -I/opt/intel/QATzip/include -Wno-error=deprecated-declarations" \
+        --with-cc-opt="-DNGX_SECURE_MEM -I/usr/local/ssl/include -I/opt/intel/QATzip/include -I/opt/intel/QAT/quickassist/include/dc -I/opt/intel/QAT/quickassist/include -Wno-error=deprecated-declarations" \
         --add-dynamic-module=modules/nginx_qatzip_module \
         --add-dynamic-module=modules/nginx_qat_module \
         --prefix=/var/www \
