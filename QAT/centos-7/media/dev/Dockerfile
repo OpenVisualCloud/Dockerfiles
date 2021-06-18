@@ -111,6 +111,17 @@ RUN cd /opt/build && \
     make install && \
     make install DESTDIR=/opt/dist
 
+RUN yum install -y git make devtoolset-9
+
+
+ARG IPSECMB_REPO=https://github.com/intel/intel-ipsec-mb.git
+RUN cd /opt/build && \
+    git clone -b v1.0 ${IPSECMB_REPO} && \
+    cd intel-ipsec-mb && \
+    (. /opt/rh/devtoolset-9/enable && CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y )  && \
+    make install && \
+    make install PREFIX=/opt/dist
+
 RUN yum install -y wget make gcc gawk autoconf automake libtool pkg-config
 
 # load qat-engine

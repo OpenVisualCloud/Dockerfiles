@@ -97,24 +97,6 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    wget ca-certificates cmake make software-properties-common python  && \
-  rm -rf /var/lib/apt/lists/*
-
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
-    apt-get update && apt-get install -y gcc-9 g++-9
-
-ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/ippcp_2021.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
-    mkdir -p ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/build && \
-    cd ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/build && \
-    CC="gcc-9" CXX="g++-9" CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" cmake -DOPENSSL_INCLUDE_DIR=/usr/local/ssl/include -DOPENSSL_LIBRARIES=/usr/local/ssl/lib -DOPENSSL_ROOT_DIR=/usr/local/ssl .. && \
-    make -j8  && \
-    make install && \
-    make install DESTDIR=/opt/dist
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     wget ca-certificates make gcc gawk autoconf automake libtool pkg-config && \
   rm -rf /var/lib/apt/lists/*
 
@@ -125,7 +107,7 @@ RUN cd /opt/build && \
     cd QAT_Engine* && \
     ./autogen.sh && \
     export PERL5LIB="$(ls -1 -d /opt/build/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE -IBUILD_HOME/ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/include" --enable-multibuff_offload --enable-multibuff_ecx --enable-qat_sw && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE -IBUILD_HOME/ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/include" --enable-qat_hw --with-qat_hw_dir=/opt/intel/QAT && \
     make -j8 && \
     make install && \
     tar cf - /usr/local/ssl | (cd /opt/dist && tar xf -)

@@ -113,6 +113,20 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git make gcc g++  && \
+  rm -rf /var/lib/apt/lists/*
+
+
+ARG IPSECMB_REPO=https://github.com/intel/intel-ipsec-mb.git
+RUN cd /opt/build && \
+    git clone -b v1.0 ${IPSECMB_REPO} && \
+    cd intel-ipsec-mb && \
+    CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y  && \
+    make install && \
+    make install PREFIX=/opt/dist
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     wget ca-certificates make gcc gawk autoconf automake libtool pkg-config && \
   rm -rf /var/lib/apt/lists/*
 

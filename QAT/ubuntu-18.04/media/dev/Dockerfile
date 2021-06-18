@@ -115,6 +115,22 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git make software-properties-common  && \
+  rm -rf /var/lib/apt/lists/*
+
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update && apt-get install -y gcc-9 g++-9
+
+ARG IPSECMB_REPO=https://github.com/intel/intel-ipsec-mb.git
+RUN cd /opt/build && \
+    git clone -b v1.0 ${IPSECMB_REPO} && \
+    cd intel-ipsec-mb && \
+    CC="gcc-9" CXX="g++-9" CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y  && \
+    make install && \
+    make install PREFIX=/opt/dist
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     wget ca-certificates make gcc gawk autoconf automake libtool pkg-config && \
   rm -rf /var/lib/apt/lists/*
 
