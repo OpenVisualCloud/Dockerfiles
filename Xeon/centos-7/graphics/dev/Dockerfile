@@ -46,8 +46,8 @@ RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
 RUN cd /opt/build && \
-    wget -O - ${CMAKE_REPO}/v3.19/cmake-3.19.4.tar.gz | tar xz && \
-    cd cmake-3.19.4 && \
+    wget -O - ${CMAKE_REPO}/v3.20/cmake-3.20.3.tar.gz | tar xz && \
+    cd cmake-3.20.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
     make -j$(nproc) && \
     make install
@@ -55,10 +55,10 @@ RUN cd /opt/build && \
 RUN yum install -y wget
 
 # build ISPC
-ARG ISPC_REPO=https://github.com/ispc/ispc/releases/download/v1.9.1/ispc-v1.9.1b-linux.tar.gz
+ARG ISPC_REPO=https://github.com/ispc/ispc/releases/download/v1.16.0/ispc-v1.16.0b-linux.tar.gz
 RUN cd /opt/build && \
   wget -O - ${ISPC_REPO} | tar xz
-ENV ISPC_EXECUTABLE=/opt/build/ispc-v1.9.1-linux/ispc
+ENV ISPC_EXECUTABLE=/opt/build/ispc-v1.16.0-linux/ispc
 
 RUN yum install -y wget gcc-c++ make git tbb-devel mesa-libGL-devel
 

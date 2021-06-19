@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(yasm.m4)
 
-DECLARE(`LIBX265_VER',3.3)
+DECLARE(`LIBX265_VER',3.4)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBX265_BUILD_DEPS',`libnuma-dev ifdef(`BUILD_CMAKE',,cmake) make')

@@ -47,8 +47,8 @@ RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
 RUN cd /opt/build && \
-    wget -O - ${CMAKE_REPO}/v3.19/cmake-3.19.4.tar.gz | tar xz && \
-    cd cmake-3.19.4 && \
+    wget -O - ${CMAKE_REPO}/v3.20/cmake-3.20.3.tar.gz | tar xz && \
+    cd cmake-3.20.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
     make -j$(nproc) && \
     make install
@@ -83,10 +83,10 @@ RUN cd /opt/build && \
 RUN yum install -y wget gcc-c++ autoconf libtool make automake
 
 # build libfdkaac
-ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz
+ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v2.0.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBFDKAAC_REPO} | tar xz && \
-    cd fdk-aac-0.1.6 && \
+    cd fdk-aac-2.0.2 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
     make -j$(nproc) && \
@@ -122,7 +122,7 @@ RUN yum install -y git make autoconf diffutils
 # build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd /opt/build && \
-    git clone ${LIBVPX_REPO} -b v1.8.2 --depth 1 && \
+    git clone ${LIBVPX_REPO} -b v1.10.0 --depth 1 && \
     cd libvpx && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
     make -j$(nproc) && \
@@ -158,10 +158,10 @@ RUN cd /opt/build/yasm-1.3.0 && \
 RUN yum install -y make numactl-devel libpciaccess-devel
 
 # build libx265
-ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.3.tar.gz
+ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBX265_REPO} | tar xz && \
-    cd x265-3.3/build/linux && \
+    cd x265-3.4/build/linux && \
     cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib64 ../../source && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -170,10 +170,10 @@ RUN cd /opt/build && \
 RUN yum install -y meson wget tar gcc-c++
 
 # build dav1d
-ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.7.1/dav1d-0.7.1.tar.gz
+ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.0/dav1d-0.9.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${DAV1D_REPO} | tar xz
-RUN cd /opt/build/dav1d-0.7.1 && \
+RUN cd /opt/build/dav1d-0.9.0 && \
   meson build --prefix=/usr/local --libdir /usr/local/lib64 --buildtype=plain && \
   cd build && \
   ninja install && \
@@ -198,7 +198,7 @@ RUN yum install -y wget tar gcc-c++ make git
 # build svt-hevc
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd /opt/build && \
-    git clone -b v1.5.0 --depth 1 ${SVT_HEVC_REPO}
+    git clone -b v1.5.1 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -208,10 +208,10 @@ RUN cd /opt/build/SVT-HEVC/Build/linux && \
 RUN yum install -y wget tar gcc-c++ make git 
 
 # build svt av1
-ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.6/SVT-AV1-v0.8.6.tar.gz
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.7/SVT-AV1-v0.8.7.tar.gz
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
-    mv SVT-AV1-v0.8.6 SVT-AV1 && \
+    mv SVT-AV1-v0.8.7 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -224,7 +224,7 @@ RUN yum install -y wget tar gcc-c++ make git devtoolset-9
 # build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd /opt/build && \
-    git clone ${SVT_VP9_REPO} -b v0.2.1 --depth 1 && \
+    git clone ${SVT_VP9_REPO} -b v0.2.2 --depth 1 && \
     cd SVT-VP9/Build/linux && \
     (. /opt/rh/devtoolset-9/enable && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) ) && \
@@ -234,10 +234,10 @@ RUN cd /opt/build && \
 RUN yum install -y gcc-c++ make wget
 
 # build gmmlib
-ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/intel-gmmlib-20.2.5.tar.gz
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/intel-gmmlib-21.1.3.tar.gz
 RUN cd /opt/build && \
   wget -O - ${GMMLIB_REPO} | tar xz
-RUN cd /opt/build/gmmlib-intel-gmmlib-20.2.5 && mkdir build && cd build && \
+RUN cd /opt/build/gmmlib-intel-gmmlib-21.1.3 && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -246,10 +246,10 @@ RUN cd /opt/build/gmmlib-intel-gmmlib-20.2.5 && mkdir build && cd build && \
 RUN yum install -y automake gcc libdrm-devel libtool make pkg-config wget which libX11-devel libXfixes-devel libXext-devel wayland-devel
 
 # build libva2
-ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.8.0.tar.gz
+ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.11.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${LIBVA2_REPO} | tar xz
-RUN cd /opt/build/libva-2.8.0 && \
+RUN cd /opt/build/libva-2.11.0 && \
   ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -258,10 +258,10 @@ RUN cd /opt/build/libva-2.8.0 && \
 RUN yum install -y gcc-c++ libpciaccess-devel make pkg-config wget devtoolset-9
 
 # build media driver
-ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-20.2.0.tar.gz
+ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-21.1.3.tar.gz
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
-RUN cd /opt/build/media-driver-intel-media-20.2.0 && mkdir build && cd build && \
+RUN cd /opt/build/media-driver-intel-media-21.1.3 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DENABLE_PRODUCTION_KMD=OFF .. && \
   make -j$(nproc) ) && \
   make install DESTDIR=/opt/dist && \
@@ -270,10 +270,10 @@ RUN cd /opt/build/media-driver-intel-media-20.2.0 && mkdir build && cd build && 
 RUN yum install -y gcc gcc-c++ make pkg-config wget devtoolset-9
 
 # build media sdk
-ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-20.2.1.tar.gz
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-21.1.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${MSDK_REPO} | tar xz
-RUN cd /opt/build/MediaSDK-intel-mediasdk-20.2.1 && \
+RUN cd /opt/build/MediaSDK-intel-mediasdk-21.1.3 && \
     mkdir -p build && cd build && \
     (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -288,11 +288,11 @@ RUN cd /opt/build/MediaSDK-intel-mediasdk-20.2.1 && \
 RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.1.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -310,42 +310,34 @@ RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
 RUN yum install -y wget patch libv4l-devel libass-devel freetype-devel
 
 # build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.4.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_REPO} | tar xz
 
-ARG FFMPEG_PATCH_SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1/archive/v0.8.4.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_PATCH_SVT_AV1_REPO} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.4 && \
-    patch -p1 < ../SVT-AV1-0.8.4/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch || true
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
-    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
-    patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
+#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.4 && \
+    cd /opt/build/FFmpeg-n4.4 && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
-ARG FFMPEG_PATCHES_RELEASE_VER=0.2
-ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
-ARG FFMPEG_PATCHES_PATH=/opt/build/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.4 && \
-    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
 
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
+RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9         --enable-libvmaf --enable-version3     --enable-libdav1d                     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc         --enable-libvmaf --enable-version3     --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.1/build && \
+RUN cd /opt/build/opencv-4.5.2/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -359,7 +351,7 @@ RUN cd /opt/build/opencv-4.5.1/build && \
     .. && \
   cd modules/videoio && \
   make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.1 /opt/dist/usr/local/lib64
+  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib64
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/include && \

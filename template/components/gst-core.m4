@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GSTCORE_VER',1.16.2)
+DECLARE(`GSTCORE_VER',1.19.1)
 
 ifelse(OS_NAME,ubuntu,`
 define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev')

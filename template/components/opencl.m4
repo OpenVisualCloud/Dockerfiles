@@ -35,10 +35,10 @@ ifelse(OS_NAME,ubuntu,`
 define(`OPENCL_BUILD_DEPS',`ca-certificates wget')
 define(`BUILD_OPENCL',`
 # build opencl
-ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/20.52.18783/intel-gmmlib_20.3.2_amd64.deb
-ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.5884/intel-igc-core_1.0.5884_amd64.deb
-ARG OPENCL_IGC_OCL_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.5884/intel-igc-opencl_1.0.5884_amd64.deb
-ARG OPENCL_INTEL_OCL_REPO=https://github.com/intel/compute-runtime/releases/download/20.52.18783/intel-opencl_20.52.18783_amd64.deb
+ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/21.23.20043/intel-gmmlib_21.1.3_amd64.deb
+ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.7423/intel-igc-core_1.0.7423_amd64.deb
+ARG OPENCL_IGC_OCL_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.7423/intel-igc-opencl_1.0.7423_amd64.deb
+ARG OPENCL_INTEL_OCL_REPO=https://github.com/intel/compute-runtime/releases/download/21.23.20043/intel-opencl_21.23.20043_amd64.deb
 
 RUN mkdir -p BUILD_HOME/opencl && \
     cd BUILD_HOME/opencl && \

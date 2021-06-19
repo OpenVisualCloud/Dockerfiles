@@ -65,7 +65,7 @@ RUN apt-get update && \
 # build srs
 ARG SRS_REPO=https://github.com/ossrs/srs.git
 RUN cd /opt/build && \
-    git clone -b v4.0.62 --depth 1 ${SRS_REPO} && \
+    git clone -b v4.0.123 --depth 1 ${SRS_REPO} && \
     cd srs/trunk && \
     sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=\/usr\/local\/ssl\/lib /" configure && \
     ./configure --prefix=/usr/local/srs \

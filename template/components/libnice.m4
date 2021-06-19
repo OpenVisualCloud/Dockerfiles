@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBNICE_VER',0.1.4)
+DECLARE(`LIBNICE_VER',0.1.18)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBNICE_BUILD_DEPS',`ca-certificates wget ifdef(`BUILD_CMAKE',,cmake) make gcc libglib2.0-dev patch')
