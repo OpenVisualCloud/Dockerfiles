@@ -383,9 +383,8 @@ RUN mkdir -p /opt/dist/opt/intel && \
 ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-0.15-20200726.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBJSONC_REPO} | tar xz && \
-    cd json-c-json-c-0.15-20200726 && \
-    sh autogen.sh && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
+    cd json-c-json-c-0.15-20200726 && mkdir build && cd build && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
@@ -562,35 +561,24 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_REPO} | tar xz
 
-
-ARG FFMPEG_MA_RELEASE_VER=0.5
-ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
-ARG FFMPEG_MA_PATH=/opt/build/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
-RUN cd /opt/build && wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
-RUN cp ${FFMPEG_MA_PATH}/docker/patch/opencv.pc /usr/local/lib/pkgconfig
-ARG CVDEF_H=/usr/local/include/opencv4/opencv2/core/cvdef.h
-RUN if [ -f "${CVDEF_H}" ]; then cp ${FFMPEG_MA_PATH}/docker/patch/cvdef.h ${CVDEF_H}; fi
-RUN cd /opt/build/FFmpeg-n4.4 && \
-    find ${FFMPEG_MA_PATH}/patches -type f -name "*.patch" -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
     cd /opt/build/FFmpeg-n4.4 && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
-ARG FFMPEG_PATCHES_RELEASE_VER=0.2
-ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
-ARG FFMPEG_PATCHES_PATH=/opt/build/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz && \
-    cd /opt/build/FFmpeg-n4.4 && \
-    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
 
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265                 --enable-libaom         --enable-libdav1d     --enable-librdkafka     --enable-libjson_c         --enable-libinference_engine_c_api --extra-cflags=-I$OPENVINO_IE_DIR/include --extra-ldflags=-L$OPENVINO_IE_DIR/lib/intel64     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265             --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 

@@ -43,7 +43,7 @@ DECLARE(`FFMPEG_ENABLE_VAAPI',ifdef(`BUILD_LIBVA2',FFMPEG_ENABLE_HWACCELS,false)
 DECLARE(`FFMPEG_ENABLE_X265',true)
 DECLARE(`FFMPEG_ENABLE_X264',true)
 DECLARE(`FFMPEG_FLV_PATCH',false)
-DECLARE(`FFMPEG_1TN_PATCH',false)
+DECLARE(`FFMPEG_1TN_PATCH',true)
 DECLARE(`FFMPEG_WARNING_AS_ERRORS',false)
 
 include(nasm.m4)
@@ -76,7 +76,7 @@ ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
-ifdef(`FFMPEG_FLV_PATCH',
+ifelse(FFMPEG_FLV_PATCH,true,
 ARG FFMPEG_PATCHES_RELEASE_VER=0.2
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
 ARG FFMPEG_PATCHES_PATH=BUILD_HOME/CDN-${FFMPEG_PATCHES_RELEASE_VER}
@@ -87,8 +87,8 @@ RUN cd BUILD_HOME && \
     find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 )dnl
 
-ifdef(`FFMPEG_1TN_PATCH',
-ARG FFMPEG_1TN_PATCH_REPO=https://patchwork.ffmpeg.org/patch/11625/raw
+ifelse(FFMPEG_1TN_PATCH,true,
+ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
 RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
 )dnl

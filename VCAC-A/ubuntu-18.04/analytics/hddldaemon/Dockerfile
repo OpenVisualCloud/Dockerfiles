@@ -85,6 +85,10 @@ RUN echo "ACCEPT_EULA=accept" > /opt/build/openvino/silent.cfg                  
 #Install OpenVino
 RUN /opt/build/openvino/l_openvino_toolkit_p_2021.3.394/install.sh --ignore-signature --cli-mode -s /opt/build/openvino/silent.cfg && rm -rf /opt/build/openvino
 
+#Create symlink to assure compatibility with components
+RUN cd /opt/intel/      &&\
+    ln -s openvino_2021 openvino
+
 ARG OPENVINO_IE_DIR=/opt/intel/openvino/deployment_tools/inference_engine
 
 ENV IE_PLUGINS_PATH=${OPENVINO_IE_DIR}/lib/intel64
