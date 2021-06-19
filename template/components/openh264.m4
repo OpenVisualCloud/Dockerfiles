@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENH264_VER',v1.7.4)
+DECLARE(`OPENH264_VER',v2.1.1)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENH264_BUILD_DEPS',`ca-certificates wget bzip2')

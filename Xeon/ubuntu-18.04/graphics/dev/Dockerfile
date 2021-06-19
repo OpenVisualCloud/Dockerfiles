@@ -45,10 +45,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build ISPC
-ARG ISPC_REPO=https://github.com/ispc/ispc/releases/download/v1.9.1/ispc-v1.9.1b-linux.tar.gz
+ARG ISPC_REPO=https://github.com/ispc/ispc/releases/download/v1.16.0/ispc-v1.16.0b-linux.tar.gz
 RUN cd /opt/build && \
   wget -O - ${ISPC_REPO} | tar xz
-ENV ISPC_EXECUTABLE=/opt/build/ispc-v1.9.1-linux/ispc
+ENV ISPC_EXECUTABLE=/opt/build/ispc-v1.16.0-linux/ispc
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

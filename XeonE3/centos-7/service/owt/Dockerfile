@@ -60,8 +60,8 @@ RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
 RUN cd /opt/build && \
-    wget -O - ${CMAKE_REPO}/v3.19/cmake-3.19.4.tar.gz | tar xz && \
-    cd cmake-3.19.4 && \
+    wget -O - ${CMAKE_REPO}/v3.20/cmake-3.20.3.tar.gz | tar xz && \
+    cd cmake-3.20.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
     make -j$(nproc) && \
     make install
@@ -69,10 +69,10 @@ RUN cd /opt/build && \
 RUN yum install -y wget tar gcc-c++ make libtool autoconf
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1j.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1j && \
+    cd openssl-OpenSSL_1_1_1k && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -99,7 +99,7 @@ RUN yum install -y wget tar gcc-c++ make git
 # build svt-hevc
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd /opt/build && \
-    git clone -b v1.5.0 --depth 1 ${SVT_HEVC_REPO}
+    git clone -b v1.5.1 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -109,10 +109,10 @@ RUN cd /opt/build/SVT-HEVC/Build/linux && \
 RUN yum install -y wget gcc-c++ autoconf libtool make automake
 
 # build libfdkaac
-ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz
+ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v2.0.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBFDKAAC_REPO} | tar xz && \
-    cd fdk-aac-0.1.6 && \
+    cd fdk-aac-2.0.2 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
     make -j$(nproc) && \
@@ -136,7 +136,7 @@ RUN yum install -y git make autoconf diffutils
 # build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd /opt/build && \
-    git clone ${LIBVPX_REPO} -b v1.8.2 --depth 1 && \
+    git clone ${LIBVPX_REPO} -b v1.10.0 --depth 1 && \
     cd libvpx && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
     make -j$(nproc) && \
@@ -159,11 +159,11 @@ RUN cd /opt/build && \
 RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.1.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -181,10 +181,10 @@ RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
 RUN yum install -y gcc-c++ make wget
 
 # build gmmlib
-ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/intel-gmmlib-20.2.5.tar.gz
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/intel-gmmlib-21.1.3.tar.gz
 RUN cd /opt/build && \
   wget -O - ${GMMLIB_REPO} | tar xz
-RUN cd /opt/build/gmmlib-intel-gmmlib-20.2.5 && mkdir build && cd build && \
+RUN cd /opt/build/gmmlib-intel-gmmlib-21.1.3 && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -193,10 +193,10 @@ RUN cd /opt/build/gmmlib-intel-gmmlib-20.2.5 && mkdir build && cd build && \
 RUN yum install -y automake gcc libdrm-devel libtool make pkg-config wget which libX11-devel libXfixes-devel libXext-devel wayland-devel
 
 # build libva2
-ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.8.0.tar.gz
+ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.11.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${LIBVA2_REPO} | tar xz
-RUN cd /opt/build/libva-2.8.0 && \
+RUN cd /opt/build/libva-2.11.0 && \
   ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -205,10 +205,10 @@ RUN cd /opt/build/libva-2.8.0 && \
 RUN yum install -y gcc-c++ libpciaccess-devel make pkg-config wget devtoolset-9
 
 # build media driver
-ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-20.2.0.tar.gz
+ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-21.1.3.tar.gz
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
-RUN cd /opt/build/media-driver-intel-media-20.2.0 && mkdir build && cd build && \
+RUN cd /opt/build/media-driver-intel-media-21.1.3 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DENABLE_PRODUCTION_KMD=OFF .. && \
   make -j$(nproc) ) && \
   make install DESTDIR=/opt/dist && \
@@ -217,10 +217,10 @@ RUN cd /opt/build/media-driver-intel-media-20.2.0 && mkdir build && cd build && 
 RUN yum install -y gcc gcc-c++ make pkg-config wget devtoolset-9
 
 # build media sdk
-ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-20.2.1.tar.gz
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-21.1.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${MSDK_REPO} | tar xz
-RUN cd /opt/build/MediaSDK-intel-mediasdk-20.2.1 && \
+RUN cd /opt/build/MediaSDK-intel-mediasdk-21.1.3 && \
     mkdir -p build && cd build && \
     (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -236,7 +236,7 @@ RUN yum install -y gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool lib
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2021.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2021.3-doc-update --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
@@ -280,7 +280,7 @@ ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
 
 ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
 ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
+ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
 
 RUN cd /opt/build && \
   mkdir -p ${CUSTOM_IE_DIR}/include && \
@@ -329,44 +329,34 @@ RUN { \
 RUN yum install -y wget patch libass-devel 
 
 # build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.4.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_REPO} | tar xz
 
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
-    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
-ARG FFMPEG_MA_RELEASE_VER=0.5
-ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
-ARG FFMPEG_MA_PATH=/opt/build/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
-RUN cd /opt/build && wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
-RUN cp ${FFMPEG_MA_PATH}/docker/patch/opencv.pc /usr/local/lib64/pkgconfig
-ARG CVDEF_H=/usr/local/include/opencv4/opencv2/core/cvdef.h
-RUN if [ -f "${CVDEF_H}" ]; then cp ${FFMPEG_MA_PATH}/docker/patch/cvdef.h ${CVDEF_H}; fi
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
-    find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
+#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.4 && \
+    cd /opt/build/FFmpeg-n4.4 && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
-ARG FFMPEG_PATCHES_RELEASE_VER=0.2
-ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
-ARG FFMPEG_PATCHES_PATH=/opt/build/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.4 && \
-    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
 
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
+RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264             --enable-libsvthevc                             --enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR         && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264             --enable-libsvthevc                 && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.1/build && \
+RUN cd /opt/build/opencv-4.5.2/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -380,15 +370,15 @@ RUN cd /opt/build/opencv-4.5.1/build && \
     .. && \
   cd modules/videoio && \
   make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.1 /opt/dist/usr/local/lib64
+  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib64
 
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel
 
 # build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.16.2.tar.gz
+ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.19.1.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTCORE_REPO} | tar xz
-RUN cd /opt/build/gstreamer-1.16.2 && \
+RUN cd /opt/build/gstreamer-1.19.1 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
     -Dbenchmarks=disabled \
@@ -404,10 +394,10 @@ RUN cd /opt/build/gstreamer-1.16.2 && \
 RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel alsa-lib-devel 
 
 # build gst-plugin-base
-ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.16.2.tar.gz
+ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.19.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${GSTBASE_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-base-1.16.2 && \
+RUN cd /opt/build/gst-plugins-base-1.19.1 && \
   meson build \
     --prefix=/usr/local \
     --libdir=/usr/local/lib64 \
@@ -430,10 +420,10 @@ RUN cd /opt/build/gst-plugins-base-1.16.2 && \
 RUN yum install -y git meson wget tar gcc-c++ glib2-devel bison flex gdk-pixbuf2-devel 
 
 # build gst-plugin-good
-ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.16.2.tar.gz
+ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.19.1.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTGOOD_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-good-1.16.2 && \
+RUN cd /opt/build/gst-plugins-good-1.19.1 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
     -Dexamples=disabled \
@@ -453,10 +443,10 @@ RUN cd /opt/build/gst-plugins-good-1.16.2 && \
 RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel libcurl-devel librtmp-devel devtoolset-9 
 
 # build gst-plugin-bad
-ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.16.2.tar.gz
+ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.19.1.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTBAD_REPO} | tar xz && \
-    cd gst-plugins-bad-1.16.2 && \
+    cd gst-plugins-bad-1.19.1 && \
     (. /opt/rh/devtoolset-9/enable && meson build \
       --prefix=/usr/local \
       --libdir=/usr/local/lib64 \
@@ -479,10 +469,10 @@ RUN cd /opt/build && \
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex 
 
 # build gst-plugin-ugly
-ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.16.2.tar.gz
+ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.19.1.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTUGLY_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-ugly-1.16.2 && \
+RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
     -Ddoc=disabled \
@@ -495,10 +485,10 @@ RUN cd /opt/build/gst-plugins-ugly-1.16.2 && \
 RUN yum install -y wget tar gcc-c++ meson
 
 # build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.16.2.tar.gz
+ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.19.1.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTLIBAV_REPO} | tar xz
-RUN cd /opt/build/gst-libav-1.16.2 && \
+RUN cd /opt/build/gst-libav-1.19.1 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
     -Dgtk_doc=disabled && \
@@ -513,7 +503,7 @@ RUN yum install -y git ocl-icd-devel opencl-headers pkg-config ca-certificates p
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=/usr/local/lib64
-RUN git clone -b v1.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b v1.4.1 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
     git submodule update --init && \
     sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
@@ -573,7 +563,7 @@ RUN cd /opt/build/gst-python-1.16.2 && \
 RUN yum install -y python-devel
 
 # build boost
-ARG BOOST_REPO=http://iweb.dl.sourceforge.net/project/boost/boost/1.65.0/boost_1_65_0.tar.bz2
+ARG BOOST_REPO=http://iweb.dl.sourceforge.net/project/boost/boost/1.76.0/boost_1_76_0.tar.bz2
 RUN cd /opt/build && \
   wget -O - ${BOOST_REPO} | tar jx
 RUN cd /opt/build/boost_1_65_0 && \
@@ -659,11 +649,11 @@ RUN wget -O /usr/include/json.hpp ${JSONHPP_REPO}
 RUN yum install -y wget xz-utils
 
 # build node
-ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
+ARG NODE_REPO=https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz
 RUN cd /opt/build && \
     wget -O - ${NODE_REPO} | tar xJ && \
-    cp node-v10.21.0-linux-x64/* /usr/local -rf && \
-    rm -rf node-v10.21.0-linux-x64
+    cp node-v10.24.1-linux-x64/* /usr/local -rf && \
+    rm -rf node-v10.24.1-linux-x64
 
 RUN yum install -y wget gcc make pkg-config 
 
@@ -812,7 +802,7 @@ ENV DISPLAY=:0.0
 
 ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
 ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
+ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
 ENV GST_PLUGIN_PATH=/usr/local/lib64/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib64/gstreamer-1.0/gst-plugin-scanner
 
@@ -827,11 +817,11 @@ ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0/
 RUN python3 -m pip install numpy
 
 # install node
-ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
+ARG NODE_REPO=https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz
 RUN cd /usr/local && \
     wget -O - ${NODE_REPO} | tar xJ && \
-    cp -r node-v10.21.0-linux-x64/* . && \
-    rm -rf node-v10.21.0-linux-x64
+    cp -r node-v10.24.1-linux-x64/* . && \
+    rm -rf node-v10.24.1-linux-x64
 
 # install OWT
 RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \

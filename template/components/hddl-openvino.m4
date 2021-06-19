@@ -30,9 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENVINO_VER',2021.2)
-DECLARE(`OPENVINO_BUNDLE',l_openvino_toolkit_p_2020.4.287)
-DECLARE(`OPENVINO_BUILD_NO',16803)
+DECLARE(`OPENVINO_BUNDLE',l_openvino_toolkit_p_2021.3.394)
+DECLARE(`OPENVINO_BUILD_NO',17662)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENVINO_BUILD_DEPS',`cpio')
@@ -64,6 +63,10 @@ RUN echo "ACCEPT_EULA=accept" > BUILD_HOME/openvino/silent.cfg                  
 
 #Install OpenVino
 RUN BUILD_HOME/openvino/OPENVINO_BUNDLE/install.sh --ignore-signature --cli-mode -s BUILD_HOME/openvino/silent.cfg && rm -rf BUILD_HOME/openvino
+
+#Create symlink to assure compatibility with components
+RUN cd /opt/intel/      &&\
+    ln -s openvino_2021 openvino
 
 ARG OPENVINO_IE_DIR=/opt/intel/openvino/deployment_tools/inference_engine
 

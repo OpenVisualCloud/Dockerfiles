@@ -78,10 +78,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build libfdkaac
-ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz
+ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v2.0.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBFDKAAC_REPO} | tar xz && \
-    cd fdk-aac-0.1.6 && \
+    cd fdk-aac-2.0.2 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared && \
     make -j$(nproc) && \
@@ -126,7 +126,7 @@ RUN apt-get update && \
 # build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd /opt/build && \
-    git clone ${LIBVPX_REPO} -b v1.8.2 --depth 1 && \
+    git clone ${LIBVPX_REPO} -b v1.10.0 --depth 1 && \
     cd libvpx && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
     make -j$(nproc) && \
@@ -171,10 +171,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build libx265
-ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.3.tar.gz
+ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBX265_REPO} | tar xz && \
-    cd x265-3.3/build/linux && \
+    cd x265-3.4/build/linux && \
     cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib ../../source && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -189,7 +189,7 @@ RUN apt-get update && \
 ARG MESON_REPO=https://github.com/mesonbuild/meson
 RUN git clone ${MESON_REPO}; \
     cd meson; \
-    git checkout 0.53.1; \
+    git checkout 0.58.1; \
     python3 setup.py install;
 
 RUN apt-get update && \
@@ -198,10 +198,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build dav1d
-ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.7.1/dav1d-0.7.1.tar.gz
+ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.0/dav1d-0.9.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${DAV1D_REPO} | tar xz
-RUN cd /opt/build/dav1d-0.7.1 && \
+RUN cd /opt/build/dav1d-0.9.0 && \
   meson build --prefix=/usr/local --libdir /usr/local/lib --buildtype=plain && \
   cd build && \
   ninja install && \
@@ -232,7 +232,7 @@ RUN apt-get update && \
 # build svt-hevc
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd /opt/build && \
-    git clone -b v1.5.0 --depth 1 ${SVT_HEVC_REPO}
+    git clone -b v1.5.1 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -245,10 +245,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build svt av1
-ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.6/SVT-AV1-v0.8.6.tar.gz
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.7/SVT-AV1-v0.8.7.tar.gz
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
-    mv SVT-AV1-v0.8.6 SVT-AV1 && \
+    mv SVT-AV1-v0.8.7 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -264,7 +264,7 @@ RUN apt-get update && \
 # build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd /opt/build && \
-    git clone ${SVT_VP9_REPO} -b v0.2.1 --depth 1 && \
+    git clone ${SVT_VP9_REPO} -b v0.2.2 --depth 1 && \
     cd SVT-VP9/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -277,11 +277,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.1.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -302,37 +302,29 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.4.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_REPO} | tar xz
 
-ARG FFMPEG_PATCH_SVT_AV1_REPO=https://github.com/AOMediaCodec/SVT-AV1/archive/v0.8.4.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_PATCH_SVT_AV1_REPO} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.4 && \
-    patch -p1 < ../SVT-AV1-0.8.4/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1.patch || true
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
-    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
-    patch -p1 < ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch || true
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
+#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
-ARG FFMPEG_PATCHES_RELEASE_VER=0.2
-ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
-ARG FFMPEG_PATCHES_PATH=/opt/build/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.4 && \
-    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
 
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
+RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libsvtvp9         --enable-libvmaf --enable-version3     --enable-libdav1d                     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc         --enable-libvmaf --enable-version3     --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.1/build && \
+RUN cd /opt/build/opencv-4.5.2/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -346,7 +338,7 @@ RUN cd /opt/build/opencv-4.5.1/build && \
     .. && \
   cd modules/videoio && \
   make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.1 /opt/dist/usr/local/lib
+  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/include && \

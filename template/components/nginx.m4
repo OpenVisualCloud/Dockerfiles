@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`NGINX_VER',1.18.0)
+DECLARE(`NGINX_VER',1.19.9)
 
 ifelse(OS_NAME,ubuntu,`
 define(`NGINX_BUILD_DEPS',`ca-certificates gcc libpcre3-dev libxslt1-dev make wget zlib1g-dev ifdef(`BUILD_OPENSSL',,libssl-dev)')
