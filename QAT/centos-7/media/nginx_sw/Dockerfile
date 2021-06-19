@@ -98,6 +98,30 @@ RUN cd /opt/build && \
     make install && \
     (mkdir -p /usr/local/lib64/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib64/pkgconfig/)
 
+RUN yum install -y wget cmake3 make python devtoolset-9
+
+
+ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/ippcp_2021.2.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
+    mkdir -p ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/build && \
+    cd ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/build && \
+    (. /opt/rh/devtoolset-9/enable && CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" cmake3 -DOPENSSL_INCLUDE_DIR=/usr/local/ssl/include -DOPENSSL_LIBRARIES=/usr/local/ssl/lib -DOPENSSL_ROOT_DIR=/usr/local/ssl .. && \
+    make -j8 )  && \
+    make install && \
+    make install DESTDIR=/opt/dist
+
+RUN yum install -y git make devtoolset-9
+
+
+ARG IPSECMB_REPO=https://github.com/intel/intel-ipsec-mb.git
+RUN cd /opt/build && \
+    git clone -b v1.0 ${IPSECMB_REPO} && \
+    cd intel-ipsec-mb && \
+    (. /opt/rh/devtoolset-9/enable && CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y )  && \
+    make install && \
+    make install PREFIX=/opt/dist
+
 RUN yum install -y wget make gcc gawk autoconf automake libtool pkg-config
 
 # load qat-engine
@@ -107,7 +131,7 @@ RUN cd /opt/build && \
     cd QAT_Engine* && \
     ./autogen.sh && \
     export PERL5LIB="$(ls -1 -d /opt/build/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE " --enable-qat_hw --with-qat_hw_dir=/opt/intel/QAT && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE -IBUILD_HOME/ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/include" --enable-multibuff_offload --enable-multibuff_ecx --enable-qat_sw && \
     make -j8 && \
     make install && \
     tar cf - /usr/local/ssl | (cd /opt/dist && tar xf -)

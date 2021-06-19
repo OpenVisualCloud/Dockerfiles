@@ -490,10 +490,10 @@ RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
     cp -r /opt/build/gst-video-analytics/python/* /opt/dist/opt/intel/dl_streamer/python
 
 RUN yum install -y wget tar gcc-c++ glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel meson
-ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.16.2.tar.xz
+ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.19.1.tar.xz
 RUN cd /opt/build && \
     wget -O - ${GSTPYTHON_REPO} | tar xJ
-RUN cd /opt/build/gst-python-1.16.2 && \
+RUN cd /opt/build/gst-python-1.19.1 && \
 #WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
 
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \

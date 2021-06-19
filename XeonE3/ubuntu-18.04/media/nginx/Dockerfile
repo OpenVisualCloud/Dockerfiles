@@ -71,10 +71,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build nginx
-ARG NGINX_REPO=https://nginx.org/download/nginx-1.19.9.tar.gz
+ARG NGINX_REPO=https://nginx.org/download/nginx-1.21.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_REPO} | tar xz && \
-    cd nginx-1.19.9 && \
+    cd nginx-1.21.0 && \
     ./configure --prefix=/var/www \
         --sbin-path=/usr/local/sbin/nginx --modules-path=/usr/local/lib/nginx/modules \
         --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/www/log/error.log \

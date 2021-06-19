@@ -538,10 +538,10 @@ RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates tar g++ wget gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin libpython3-dev libpython3-stdlib libpython3-all-dev  && \
   rm -rf /var/lib/apt/lists/*
-ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.16.2.tar.xz
+ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.19.1.tar.xz
 RUN cd /opt/build && \
     wget -O - ${GSTPYTHON_REPO} | tar xJ
-RUN cd /opt/build/gst-python-1.16.2 && \
+RUN cd /opt/build/gst-python-1.19.1 && \
 #WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
 
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \

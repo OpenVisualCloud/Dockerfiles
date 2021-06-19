@@ -1,9 +1,12 @@
 
 include(begin.m4)
+include(ubuntu.m4)
 include(nasm.m4)
 include(qat-core.m4)
 include(qat-zip.m4)
 include(openssl.m4)
+include(qat-cryptomb.m4)
+include(ipsecmb.m4)
 include(qat-engine.m4)
 include(nginx-flv.m4)
 include(nginx-upload.m4)
@@ -13,8 +16,6 @@ include(end.m4)
 
 PREAMBLE
 FROM OS_NAME:OS_VERSION AS build
-include(centos-repo.m4)
-INSTALL_CENTOS_REPO(epel-release centos-release-scl)
 
 BUILD_ALL()dnl
 CLEANUP()dnl
@@ -25,6 +26,6 @@ LABEL Vendor="Intel Corporation"
 WORKDIR /home
 
 # Install
-INSTALL_CENTOS_REPO(epel-release)
+UPGRADE_UBUNTU_COMPONENTS()
 INSTALL_ALL(runtime,build)
 
