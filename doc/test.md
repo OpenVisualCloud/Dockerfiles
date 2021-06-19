@@ -45,6 +45,7 @@
 | Platform: QAT | Ubuntu 18.04 LTS | Ubuntu 20.04 LTS | CentOS-7 |
 |-----|:---:|:---:|:---:|
 | media-nginx | V | V | V |
+| media-nginx_sw | V | V | V |
 | media-dev | V | V | V |
 
 
