@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`BOOST_VER',1.65.0)
+DECLARE(`BOOST_VER',1.76.0)
 
 ifelse(OS_NAME,centos,`
 define(`BOOST_BUILD_DEPS',`python-devel')
@@ -38,7 +38,7 @@ define(`BOOST_BUILD_DEPS',`python-devel')
 
 define(`BUILD_BOOST',`
 # build boost
-ARG BOOST_REPO=http://iweb.dl.sourceforge.net/project/boost/boost/BOOST_VER/boost_1_65_0.tar.bz2
+ARG BOOST_REPO=http://iweb.dl.sourceforge.net/project/boost/boost/BOOST_VER/boost_1_76_0.tar.bz2
 RUN cd BUILD_HOME && \
   wget -O - ${BOOST_REPO} | tar jx
 RUN cd BUILD_HOME/boost_1_65_0 && \

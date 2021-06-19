@@ -1,0 +1,5 @@
+set(image "qat_media_nginxsw_centos7")
+set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/qat.tar.gz")
+include(image)
+include(nginx-tests)
+include(qat-tests)

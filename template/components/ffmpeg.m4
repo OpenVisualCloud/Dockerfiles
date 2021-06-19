@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`FFMPEG_VER',n4.2.4)
+DECLARE(`FFMPEG_VER',n4.4)
 DECLARE(`FFMPEG_ENABLE_GPL',true)
 DECLARE(`FFMPEG_ENABLE_LIBASS',true)
 DECLARE(`FFMPEG_ENABLE_LIBFREETYPE',true)
@@ -42,7 +42,8 @@ DECLARE(`FFMPEG_ENABLE_LIBMFX',ifdef(`BUILD_MSDK',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_VAAPI',ifdef(`BUILD_LIBVA2',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_X265',true)
 DECLARE(`FFMPEG_ENABLE_X264',true)
-DECLARE(`FFMPEG_FLV_PATCH',true)
+DECLARE(`FFMPEG_FLV_PATCH',false)
+DECLARE(`FFMPEG_1TN_PATCH',true)
 DECLARE(`FFMPEG_WARNING_AS_ERRORS',false)
 
 include(nasm.m4)
@@ -69,14 +70,13 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${FFMPEG_REPO} | tar xz
 
-ifdef(`BUILD_SVT_AV1',`FFMPEG_PATCH_SVT_AV1(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
-ifdef(`FFMPEG_FLV_PATCH',
+ifelse(FFMPEG_FLV_PATCH,true,
 ARG FFMPEG_PATCHES_RELEASE_VER=0.2
 ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
 ARG FFMPEG_PATCHES_PATH=BUILD_HOME/CDN-${FFMPEG_PATCHES_RELEASE_VER}
@@ -86,6 +86,13 @@ RUN cd BUILD_HOME && \
     cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
 )dnl
+
+ifelse(FFMPEG_1TN_PATCH,true,
+ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
+)dnl
+
 
 RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-static --disable-doc --disable-htmlpages \
@@ -109,14 +116,9 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifelse(FFMPEG_ENABLE_X265,true,--enable-libx265 )dnl
     ifdef(`BUILD_SVT_AV1',--enable-libsvtav1 )dnl
     ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc )dnl
-    ifdef(`BUILD_SVT_VP9',--enable-libsvtvp9 )dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
     ifdef(`BUILD_LIBVMAF',--enable-libvmaf --enable-version3 )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl
-    ifdef(`BUILD_LIBRDKAFKA',--enable-librdkafka )dnl
-    ifdef(`BUILD_LIBJSONC',--enable-libjson_c )dnl
-    ifdef(`BUILD_DLDT',--enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR )dnl
-    ifdef(`BUILD_OPENVINO',--enable-libinference_engine_c_api --extra-cflags=-I$OPENVINO_IE_DIR/include --extra-ldflags=-L$OPENVINO_IE_DIR/lib/intel64 )dnl
     && make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
