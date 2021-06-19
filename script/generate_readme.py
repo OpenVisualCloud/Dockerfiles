@@ -46,8 +46,6 @@ included_subs = {
                 "svt" : ["[SVT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/svt.md)"],
                 "owt" : ["[OWT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt.md)"],
                 "owt360" : ["[OWT360](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt360.md)"],
-                "ospray" : ["[OSPRay](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ospray.md)"],
-                "ospray-mpi" : ["[OSPRay-MPI](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ospray-mpi.md)"],
                 "ffmpeg" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)"],
                 "gst" : ["[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"],
                 "dev" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)","[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"]
@@ -76,8 +74,6 @@ included_subs = {
                 "svt" : ["[SVT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/svt.md)"],
                 "owt" : ["[OWT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt.md)"],
                 "owt360" : ["[OWT360](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt360.md)"],
-                "ospray" : ["[OSPRay](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ospray.md)"],
-                "ospray-mpi" : ["[OSPRay-MPI](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ospray-mpi.md)"],
                 "ffmpeg" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)"],
                 "gst" : ["[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"],
                 "dev" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)","[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"]
@@ -133,8 +129,6 @@ license_subs = {
                 "opencv" : ["|OpenCV|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "openssl" : ["|OpenSSL|Apache License 2.0|"],
                 "openvino" : ["|OpenVINO|End User License Agreement for the Intel(R) Software Development Products|"],
-                "ospray" : ["|ospray|Apache License v2.0|"],
-                "ospray-mpi" : ["|ospray|Apache License v2.0|"],
                 "owt360" : ["|owt-server|Apache License v2.0|","|owt-sdk|Apache License v2.0|","|owt-deps-webrtc|BSD 3-clause License|"],
                 "owt" : ["|owt-server|Apache License v2.0|","|owt-sdk|Apache License v2.0|","|owt-deps-webrtc|BSD 3-clause License|"],
                 "owt-gst-base" : ["|gst plugins base|GNU Lesser General Public License v2.1 or later|"],
@@ -157,7 +151,7 @@ license_subs = {
                }
 
 # M4 files for which no license is needed
-license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat-core', 'transform360', 'yasm', 'libva-utils', 'ospray-example_san-miguel', 'ospray-example_xfrog','libusb','begin','end','ubuntu', 'centos-repo','ipsecmb','meson','boost','vcaca-gst-gva']
+license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat-core', 'transform360', 'yasm', 'libva-utils', 'libusb','begin','end','ubuntu', 'centos-repo','ipsecmb','meson','boost','vcaca-gst-gva']
 
 # Find image platform / OS / image type / image name from file path
 def parse_ingredients(path):
@@ -288,8 +282,6 @@ def create_readme(path, path_components):
             my_file.write("Included what are in FFmpeg & GStreamer media analytics images. ")
         if image_type=="media":
             my_file.write("Included what are in FFmpeg or GStreamer media creation and delivery images . ")
-        if image_type=="graphics":
-            my_file.write("This image is for Intel OSPRay C++ application development. ")
         if image_platform=="XeonE3" or image_platform=="SG1" or image_platform=="VCAC-A":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
@@ -327,12 +319,6 @@ def create_readme(path, path_components):
             my_file.write("Docker image optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. ")
         if image_os=="XeonE3":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
-        my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
-    elif image_type=="graphics":
-        if image_name=="ospray":
-            my_file.write("Docker images optimized for Intel OSPRay. Included the Intel OSPRay ray tracing engine and examples. ")
-        if image_name=="ospray-mpi":
-            my_file.write("Docker images optimized for Intel OSPRay and multi-host connections. Included the Intel OSPRay ray tracing engine with multi-host connections via MPI. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
 
     my_file.write("\n\n")
