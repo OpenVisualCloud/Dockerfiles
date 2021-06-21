@@ -1,4 +1,6 @@
-This docker image is part of Open Visual Cloud software stacks. Optimized for NGINX web server with compute-intensive operations acceleration with Intel® QuickAssist Technology (Intel® QAT).The docker image can be used in the FROM field of a downstream Dockerfile.
+This docker image is part of Open Visual Cloud software stacks. Optimized for NGINX web server with compute-intensive operations acceleration with Intel® QuickAssist Technology (Intel® QAT).The docker image can be used in the FROM field of a downstream Dockerfile.i
+This Image implements Software Implementation of [QAT-Engine](https://github.com/intel/QAT_Engine).
+Refer to [Nginx image](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/QAT/centos-7/media/nginx) for Hardware Implementation. 
 
 ## Supported tags and respective Dockerfile links
  - [qat-centos-7-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/QAT/centos-7/media/dev/Dockerfile)

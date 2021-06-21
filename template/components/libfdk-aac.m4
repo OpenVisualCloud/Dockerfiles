@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBFDKAAC_VER',0.1.6)
+DECLARE(`LIBFDKAAC_VER',2.0.2)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBFDKAAC_BUILD_DEPS',`ca-certificates wget g++ autoconf libtool autotools-dev automake make')

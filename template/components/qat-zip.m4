@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_ZIP_VER',v1.0.2)
+DECLARE(`QAT_ZIP_VER',v1.0.4)
 
 include(qat-core.m4)
 

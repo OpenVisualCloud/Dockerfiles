@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBJSONC_VER',0.13.1-20180305)
+DECLARE(`LIBJSONC_VER',0.15-20200726)
 
 #ifelse(OS_NAME,ubuntu,`
 #define(`LIBJSONC_BUILD_DEPS',`ca-certificates wget autoconf libtool make')
@@ -44,9 +44,8 @@ define(`BUILD_LIBJSONC',`
 ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-LIBJSONC_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${LIBJSONC_REPO} | tar xz && \
-    cd json-c-json-c-LIBJSONC_VER && \
-    sh autogen.sh && \
-    ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
+    cd json-c-json-c-LIBJSONC_VER && mkdir build && cd build && \
+    cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR .. && \
     make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install

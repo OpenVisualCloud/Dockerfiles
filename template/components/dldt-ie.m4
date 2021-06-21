@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 include(opencv.m4)
 
-DECLARE(`DLDT_VER',2021.2)
+DECLARE(`DLDT_VER',2021.3-doc-update)
 DECLARE(`DLDT_WARNING_AS_ERRORS',false)
 
 ifelse(OS_NAME,ubuntu,`
@@ -93,7 +93,7 @@ ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
 
 ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
 ENV TBB_DIR=BUILD_PREFIX/openvino/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=BUILD_PREFIX/openvino/inference-engine/cmake
+ENV ngraph_DIR=BUILD_PREFIX/openvino/deployment_tools/ngraph/cmake
 
 RUN cd BUILD_HOME && \
   mkdir -p ${CUSTOM_IE_DIR}/include && \
@@ -150,7 +150,7 @@ RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.s
 define(`ENV_VARS_DLDT',`
 ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
 ENV TBB_DIR=BUILD_PREFIX/openvino/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=BUILD_PREFIX/openvino/inference-engine/cmake
+ENV ngraph_DIR=BUILD_PREFIX/openvino/deployment_tools/ngraph/cmake
 ')
 
 define(`FFMPEG_PATCH_ANALYTICS',
