@@ -303,7 +303,7 @@ RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     .. && \
-  make -j "$(nproc)" && \
+  make -j $(nproc) && \
   make install DESTDIR=/opt/dist && \
   make install
 
@@ -593,7 +593,7 @@ RUN cd /opt/build/opencv-4.5.2/build && \
     -DBUILD_TESTS=OFF \
     .. && \
   cd modules/videoio && \
-  make -j "$(nproc)" && \
+  make -j $(nproc) && \
   cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib
 
 RUN apt-get update && \
