@@ -152,7 +152,7 @@ RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
 RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
-  cmake3 \
+  (. /opt/rh/devtoolset-9/enable && cmake3 \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DCMAKE_INSTALL_LIBDIR=lib64 \
@@ -162,7 +162,7 @@ RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     .. && \
-  make -j "$(nproc)" && \
+  make -j $(nproc) ) && \
   make install DESTDIR=/opt/dist && \
   make install
 
@@ -304,7 +304,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 
 RUN cd /opt/build/opencv-4.5.2/build && \
   rm -rf ./* && \
-  cmake3 \
+  (. /opt/rh/devtoolset-9/enable && cmake3 \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DCMAKE_INSTALL_LIBDIR=lib64 \
@@ -315,8 +315,8 @@ RUN cd /opt/build/opencv-4.5.2/build && \
     -DBUILD_TESTS=OFF \
     .. && \
   cd modules/videoio && \
-  make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib64
+  make -j $(nproc) && \
+  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib64 )
 
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel
 
