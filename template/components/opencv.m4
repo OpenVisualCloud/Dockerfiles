@@ -40,6 +40,9 @@ ifelse(OS_NAME,centos,`
 define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget python36-numpy ccache eigen3-devel')
 ')
 
+ ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j $(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,` )') && \
+
 define(`BUILD_OPENCV',`
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/OPENCV_VER.tar.gz
@@ -47,7 +50,7 @@ RUN cd BUILD_HOME && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
 RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
-  ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
+  ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
     -DCMAKE_INSTALL_LIBDIR=patsubst(BUILD_LIBDIR,BUILD_PREFIX/) \
@@ -57,7 +60,7 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     .. && \
-  make -j "$(nproc)" && \
+  make -j $(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,` )') && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
 ')
@@ -65,7 +68,7 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
 define(`REBUILD_OPENCV_VIDEOIO',`
 RUN cd BUILD_HOME/opencv-OPENCV_VER/build && \
   rm -rf ./* && \
-  ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
+  ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
     -DCMAKE_INSTALL_LIBDIR=patsubst(BUILD_LIBDIR,BUILD_PREFIX/) \
@@ -76,8 +79,8 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER/build && \
     -DBUILD_TESTS=OFF \
     .. && \
   cd modules/videoio && \
-  make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.OPENCV_VER defn(`BUILD_DESTDIR',`BUILD_LIBDIR')
+  make -j $(nproc) && \
+  cp -f ../../lib/libopencv_videoio.so.OPENCV_VER defn(`BUILD_DESTDIR',`BUILD_LIBDIR')ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 ')
 
 REG(OPENCV)
