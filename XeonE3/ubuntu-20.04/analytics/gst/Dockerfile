@@ -196,7 +196,19 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config && \
+    python3-pip ninja-build python3-setuptools && \
+  rm -rf /var/lib/apt/lists/*
+
+# build meson
+ARG MESON_REPO=https://github.com/mesonbuild/meson
+RUN git clone ${MESON_REPO}; \
+    cd meson; \
+    git checkout 0.58.1; \
+    python3 setup.py install;
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ wget pkg-config && \
   rm -rf /var/lib/apt/lists/*
 
 # build dav1d
@@ -465,7 +477,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-core
@@ -487,7 +499,7 @@ RUN cd /opt/build/gstreamer-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ gobjc wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev libx11-xcb-dev && \
+    ca-certificates tar g++ gobjc wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev libx11-xcb-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-base
@@ -516,7 +528,7 @@ RUN cd /opt/build/gst-plugins-base-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev  && \
+    git ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-good
@@ -542,7 +554,7 @@ RUN cd /opt/build/gst-plugins-good-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev openssl libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev openssl libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-bad
@@ -571,7 +583,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libglib2.0-dev flex bison  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-ugly
@@ -639,7 +651,7 @@ RUN cd /opt/build/opencv-4.5.2/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget meson && \
+    ca-certificates tar g++ wget  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-libav
@@ -656,7 +668,7 @@ RUN cd /opt/build/gst-libav-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates meson tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison  && \
+    ca-certificates tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison  && \
   rm -rf /var/lib/apt/lists/*
 
 # patch gst-vaapi with gst-video-analytics patch
@@ -690,7 +702,7 @@ RUN cd /opt/build/gstreamer-vaapi-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget meson && \
+    ca-certificates tar g++ wget  && \
   rm -rf /var/lib/apt/lists/*
 
 RUN cd /opt/build/SVT-HEVC/gstreamer-plugin && \
