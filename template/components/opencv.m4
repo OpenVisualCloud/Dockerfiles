@@ -37,11 +37,8 @@ define(`OPENCV_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ 
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget python36-numpy ccache eigen3-devel')
+define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget python36-numpy ccache eigen3-devel ifelse(OS_VERSION,7,devtoolset-9)')
 ')
-
- ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,` )') && \
 
 define(`BUILD_OPENCV',`
 # build opencv

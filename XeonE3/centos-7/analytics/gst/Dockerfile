@@ -82,19 +82,6 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget gcc-c++ autoconf libtool make automake
-
-# build libfdkaac
-ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v2.0.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${LIBFDKAAC_REPO} | tar xz && \
-    cd fdk-aac-2.0.2 && \
-    ./autogen.sh && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
-    make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
 RUN yum install -y wget autoconf libtool make
 
 # build libopus
@@ -274,7 +261,7 @@ RUN cd /opt/build/media-driver-intel-media-21.1.3 && mkdir build && cd build && 
   make install DESTDIR=/opt/dist && \
   make install
 
-RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel
+RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
@@ -491,7 +478,7 @@ RUN cd /opt/build && \
       -Drtmp=enabled \
       -Dx265=enabled \
       -Drsvg=disabled \
-      -Dfdkaac=enabled \
+      -Dfdkaac=disabled \
     && cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install )
@@ -538,7 +525,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2             --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 

@@ -105,22 +105,6 @@ RUN cd /opt/build/SVT-HEVC/Build/linux && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget g++ autoconf libtool autotools-dev automake make && \
-  rm -rf /var/lib/apt/lists/*
-
-# build libfdkaac
-ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v2.0.2.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${LIBFDKAAC_REPO} | tar xz && \
-    cd fdk-aac-2.0.2 && \
-    ./autogen.sh && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared && \
-    make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget tar g++ make bzip2 && \
   rm -rf /var/lib/apt/lists/*
 
@@ -311,7 +295,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264             --enable-libsvthevc                 && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib             --enable-libvpx         --enable-libx264             --enable-libsvthevc                 && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -334,11 +318,11 @@ RUN cd /opt/build/opencv-4.5.2/build && \
 
 
 # build 360scvp
-ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v1.4.0.tar.gz
+ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v1.0.0.tar.gz
 ENV PYTHONIOENCODING=UTF-8
 RUN cd /opt/build && \
     wget -O - ${SCVP_REPO} | tar xz  && \
-    cd Immersive-Video-Sample-1.4.0/src/360SCVP && \
+    cd Immersive-Video-Sample-1.0.0/src/360SCVP && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib ../ && \
