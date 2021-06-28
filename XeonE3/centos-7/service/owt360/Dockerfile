@@ -210,7 +210,7 @@ RUN cd /opt/build/MediaSDK-intel-mediasdk-21.1.3 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel
+RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
@@ -375,11 +375,11 @@ RUN cd /opt/build/opencv-4.5.2/build && \
 
 
 # build 360scvp
-ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v1.4.0.tar.gz
+ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v1.0.0.tar.gz
 ENV PYTHONIOENCODING=UTF-8
 RUN cd /opt/build && \
     wget -O - ${SCVP_REPO} | tar xz  && \
-    cd Immersive-Video-Sample-1.4.0/src/360SCVP && \
+    cd Immersive-Video-Sample-1.0.0/src/360SCVP && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 ../ && \

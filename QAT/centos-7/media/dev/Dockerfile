@@ -131,7 +131,7 @@ RUN cd /opt/build && \
     cd QAT_Engine* && \
     ./autogen.sh && \
     export PERL5LIB="$(ls -1 -d /opt/build/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE -IBUILD_HOME/ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/include" --enable-multibuff_offload --enable-multibuff_ecx --enable-qat_sw && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE -I/opt/build/ipp-crypto-ippcp_2021.2/sources/ippcp/crypto_mb/include" --enable-multibuff_offload --enable-multibuff_ecx --enable-qat_sw && \
     make -j8 && \
     make install && \
     tar cf - /usr/local/ssl | (cd /opt/dist && tar xf -)
