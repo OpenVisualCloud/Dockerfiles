@@ -285,7 +285,7 @@ RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.3 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel
+RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz

@@ -334,11 +334,11 @@ RUN cd /opt/build/opencv-4.5.2/build && \
 
 
 # build 360scvp
-ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v1.4.0.tar.gz
+ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v1.0.0.tar.gz
 ENV PYTHONIOENCODING=UTF-8
 RUN cd /opt/build && \
     wget -O - ${SCVP_REPO} | tar xz  && \
-    cd Immersive-Video-Sample-1.4.0/src/360SCVP && \
+    cd Immersive-Video-Sample-1.0.0/src/360SCVP && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib ../ && \
