@@ -562,7 +562,7 @@ RUN cd /opt/build/gst-python-1.19.1 && \
 RUN yum install -y python-devel
 
 # build boost
-ARG BOOST_REPO=http://iweb.dl.sourceforge.net/project/boost/boost/1.76.0/boost_1_76_0.tar.bz2
+ARG BOOST_REPO=http://iweb.dl.sourceforge.net/project/boost/boost/1.65.0/boost_1_65_0.tar.bz2
 RUN cd /opt/build && \
   wget -O - ${BOOST_REPO} | tar jx
 RUN cd /opt/build/boost_1_65_0 && \
