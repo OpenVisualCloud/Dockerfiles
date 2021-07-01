@@ -127,7 +127,7 @@ RUN cd /opt/build && \
     cd intel-ipsec-mb && \
     CC="gcc-9" CXX="g++-9" CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y  && \
     make install && \
-    make install PREFIX=/opt/dist
+    make install PREFIX=/opt/dist\/usr/local 
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
