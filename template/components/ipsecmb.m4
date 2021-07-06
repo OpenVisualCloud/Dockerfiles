@@ -51,7 +51,7 @@ RUN cd BUILD_HOME && \
     cd intel-ipsec-mb && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,CC="gcc-9" CXX="g++-9" )CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
     make install && \
-    make install PREFIX=BUILD_DESTDIR
+    make install ifelse(OS_NAME,ubuntu,PREFIX=BUILD_DESTDIR\BUILD_PREFIX,PREFIX=BUILD_DESTDIR) 
 ')
 
 REG(IPSECMB)

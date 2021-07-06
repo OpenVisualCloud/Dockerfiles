@@ -120,7 +120,7 @@ RUN cd /opt/build && \
     cd intel-ipsec-mb && \
     (. /opt/rh/devtoolset-9/enable && CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y )  && \
     make install && \
-    make install PREFIX=/opt/dist
+    make install PREFIX=/opt/dist 
 
 RUN yum install -y wget make gcc gawk autoconf automake libtool pkg-config
 
