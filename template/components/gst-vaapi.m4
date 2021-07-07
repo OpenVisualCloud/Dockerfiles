@@ -35,7 +35,7 @@ include(gst-plugins-bad.m4)
 ifelse(OS_NAME,ubuntu,`
 define(`GSTVAAPI_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev)')
 
-define(`GSTVAAPI_INSTALL_DEPS',`libdrm2 libglib2.0-0 libpciaccess0 libgl1-mesa-glx ifdef(`ENABLE_INTEL_GFX_REPO',libva2 libva-drm2 libva-x11-2 libva-wayland2)')
+define(`GSTVAAPI_INSTALL_DEPS',`libdrm2 libglib2.0-0 libpciaccess0 libgl1-mesa-glx ifdef(`ENABLE_INTEL_GFX_REPO',libva2 libva-drm2 libva-x11-2 libva-wayland2)' ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,libgles2))
 ')
 
 ifelse(OS_NAME,centos,`
