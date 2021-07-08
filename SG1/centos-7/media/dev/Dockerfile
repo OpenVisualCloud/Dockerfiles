@@ -273,7 +273,7 @@ RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.3 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget patch libv4l-devel libass-devel freetype-devel
+RUN yum install -y wget patch libx264-devel x265-devel libv4l-devel libass-devel freetype-devel
 
 # build ffmpeg
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
@@ -323,7 +323,7 @@ RUN yum install -y -q epel-release && rm -rf /var/yum/cache/*
 
 
 # Install
-RUN yum install -y bash libdrm libX11 libXfixes libXext libwayland-client libv4l libass
+RUN yum install -y bash libdrm libX11 libXfixes libXext libwayland-client libx264-static x265 libv4l libass
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig

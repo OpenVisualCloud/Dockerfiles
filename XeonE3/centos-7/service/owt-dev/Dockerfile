@@ -325,7 +325,7 @@ RUN { \
   mkdir -p /opt/dist/usr/local/lib64/pkgconfig && \
   cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib64/pkgconfig
 
-RUN yum install -y wget patch libass-devel 
+RUN yum install -y wget patch x265-devel libass-devel 
 
 # build ffmpeg
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
@@ -783,7 +783,7 @@ RUN yum install -y -q dnf
 RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && \
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
-RUN yum install -y libdrm libX11 libXfixes libXext libwayland-client gtk3 numactl ocl-icd libass glib2 gobject-introspection mesa-libEGL alsa-lib gdk-pixbuf2 librtmp python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base wget xz-utils rabbitmq-server boost-system boost-thread log4cxx glib2-devel freetype
+RUN yum install -y libdrm libX11 libXfixes libXext libwayland-client gtk3 numactl ocl-icd x265 libass glib2 gobject-introspection mesa-libEGL alsa-lib gdk-pixbuf2 librtmp python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base wget xz-utils rabbitmq-server boost-system boost-thread log4cxx glib2-devel freetype
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
 COPY --from=build /opt/dist /

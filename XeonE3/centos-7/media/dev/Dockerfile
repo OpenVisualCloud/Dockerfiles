@@ -386,7 +386,7 @@ RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y wget patch libv4l-devel libass-devel freetype-devel
+RUN yum install -y wget patch libx264-devel x265-devel libv4l-devel libass-devel freetype-devel
 
 # build ffmpeg
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz

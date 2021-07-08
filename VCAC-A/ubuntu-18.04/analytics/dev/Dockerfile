@@ -524,7 +524,7 @@ RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential ca-certificates wget patch libv4l-dev libass-dev  && \
+    build-essential ca-certificates wget patch libx264-dev libx265-dev libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
@@ -714,7 +714,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libusb-1.0-0-dev libboost-filesystem1.65.1 libboost-system1.65.1 libboost-program-options1.65.1 libjson-c3 libglib2.0-0 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libx265-142 libde265-0 libx264-155 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9 python3-numpy python3-gi python3-gi-cairo python3-dev ocl-icd-opencl-dev libglib2.0-dev && \
+    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libusb-1.0-0-dev libboost-filesystem1.65.1 libboost-system1.65.1 libboost-program-options1.65.1 libjson-c3 libglib2.0-0 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libx265-142 libde265-0 libx264-155 libxcb-shape0 libxcb-xfixes0 lib264-152 libx265- libv4l-0 libass9 python3-numpy python3-gi python3-gi-cairo python3-dev ocl-icd-opencl-dev libglib2.0-dev && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /

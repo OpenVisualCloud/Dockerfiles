@@ -354,7 +354,7 @@ RUN { \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential ca-certificates wget patch libass-dev  && \
+    build-essential ca-certificates wget patch libx265-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
@@ -844,7 +844,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
+    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libx265- libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
   rm -rf /var/lib/apt/lists/*
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 

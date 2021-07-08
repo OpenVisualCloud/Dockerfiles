@@ -324,7 +324,7 @@ RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.3 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential ca-certificates wget patch libv4l-dev libass-dev  && \
+    build-essential ca-certificates wget patch libx264-dev libx265-dev libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
@@ -375,7 +375,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
+    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libxcb-shape0 libxcb-xfixes0 lib264-152 libx265- libv4l-0 libass9  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
