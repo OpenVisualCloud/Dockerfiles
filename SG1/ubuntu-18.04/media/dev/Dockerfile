@@ -324,7 +324,7 @@ RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.3 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential ca-certificates wget patch libx264-dev libx265-dev libv4l-dev libass-dev  && \
+    build-essential ca-certificates wget patch libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
@@ -352,7 +352,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
     --extra-cflags=-w         --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wldnl
-    --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -375,7 +375,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libxcb-shape0 libxcb-xfixes0 lib264-152 libx265- libv4l-0 libass9  && \
+    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /

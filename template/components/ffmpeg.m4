@@ -39,8 +39,6 @@ DECLARE(`FFMPEG_ENABLE_V4L2',true)
 DECLARE(`FFMPEG_ENABLE_HWACCELS',ifdef(`ENABLE_INTEL_GFX_REPO',true,ifdef(`BUILD_LIBVA2',true,false)))
 DECLARE(`FFMPEG_ENABLE_LIBMFX',ifdef(`BUILD_MSDK',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_VAAPI',ifdef(`BUILD_LIBVA2',FFMPEG_ENABLE_HWACCELS,false))
-DECLARE(`FFMPEG_ENABLE_X265',true)
-DECLARE(`FFMPEG_ENABLE_X264',true)
 DECLARE(`FFMPEG_FLV_PATCH',false)
 DECLARE(`FFMPEG_1TN_PATCH',true)
 DECLARE(`FFMPEG_WARNING_AS_ERRORS',false)
@@ -110,8 +108,8 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifdef(`BUILD_LIBOPUS',--enable-libopus )dnl
     ifdef(`BUILD_LIBVPX',--enable-libvpx ,--disable-libvpx )dnl
     ifdef(`BUILD_LIBVORBIS',--enable-libvorbis )dnl
-    ifelse(FFMPEG_ENABLE_X264,true,--enable-gpl --enable-libx264 )dnl
-    ifelse(FFMPEG_ENABLE_X265,true,--enable-gpl --enable-libx265 )dnl
+    ifdef(`BUILD_LIBX264',--enable-gpl --enable-libx264 )dnl
+    ifdef(`BUILD_LIBX265',--enable-gpl --enable-libx265 )dnl
     ifdef(`BUILD_SVT_AV1',--enable-libsvtav1 )dnl
     ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc )dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl

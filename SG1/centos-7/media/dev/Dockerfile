@@ -273,7 +273,7 @@ RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.3 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget patch libx264-devel x265-devel libv4l-devel libass-devel freetype-devel
+RUN yum install -y wget patch libv4l-devel libass-devel freetype-devel
 
 # build ffmpeg
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
@@ -300,7 +300,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
     --extra-cflags=-w         --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wldnl
-    --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -323,7 +323,7 @@ RUN yum install -y -q epel-release && rm -rf /var/yum/cache/*
 
 
 # Install
-RUN yum install -y bash libdrm libX11 libXfixes libXext libwayland-client libx264-static x265 libv4l libass
+RUN yum install -y bash libdrm libX11 libXfixes libXext libwayland-client libv4l libass
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
