@@ -31,7 +31,6 @@ dnl
 include(begin.m4)
 
 DECLARE(`FFMPEG_VER',n4.4)
-DECLARE(`FFMPEG_ENABLE_GPL',true)
 DECLARE(`FFMPEG_ENABLE_LIBASS',true)
 DECLARE(`FFMPEG_ENABLE_LIBFREETYPE',true)
 DECLARE(`FFMPEG_ENABLE_X11',false)
@@ -98,7 +97,6 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
     ifelse(FFMPEG_WARNING_AS_ERRORS,false,--extra-cflags=-w )dnl
-    ifelse(FFMPEG_ENABLE_GPL,true,--enable-gpl )dnl
     ifelse(FFMPEG_ENABLE_NONFREE,true,--enable-nonfree )dnl
     ifelse(FFMPEG_ENABLE_LIBASS,true,--enable-libass )dnl
     ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,--enable-libfreetype )dnl
@@ -112,8 +110,8 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifdef(`BUILD_LIBOPUS',--enable-libopus )dnl
     ifdef(`BUILD_LIBVPX',--enable-libvpx ,--disable-libvpx )dnl
     ifdef(`BUILD_LIBVORBIS',--enable-libvorbis )dnl
-    ifelse(FFMPEG_ENABLE_X264,true,--enable-libx264 )dnl
-    ifelse(FFMPEG_ENABLE_X265,true,--enable-libx265 )dnl
+    ifelse(FFMPEG_ENABLE_X264,true,--enable-gpl --enable-libx264 )dnl
+    ifelse(FFMPEG_ENABLE_X265,true,--enable-gpl --enable-libx265 )dnl
     ifdef(`BUILD_SVT_AV1',--enable-libsvtav1 )dnl
     ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc )dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
