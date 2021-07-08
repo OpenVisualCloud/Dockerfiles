@@ -107,7 +107,7 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifelse(FFMPEG_ENABLE_LIBMFX,true,--enable-libmfx )dnl
     ifelse(FFMPEG_ENABLE_VAAPI,true,--enable-vaapi ,--disable-vaapi )dnl
     ifelse(FFMPEG_ENABLE_V4L2,true,--enable-libv4l2 --enable-indev=v4l2 )dnl
-    ifdef(`BUILD_OPENSSL',--enable-openssl --extra-ldflags=-Wl`,'-rpath=BUILD_PREFIX/ssl/lib )dnl
+    ifdef(`BUILD_OPENSSL',ifelse(FFMPEG_OPENSSL_NOBIND,true,,--enable-openssl --extra-ldflags=-Wl`,'-rpath=BUILD_PREFIX/ssl/lib ))dnl
     ifdef(`BUILD_LIBFDKAAC',--enable-libfdk-aac )dnl
     ifdef(`BUILD_LIBOPUS',--enable-libopus )dnl
     ifdef(`BUILD_LIBVPX',--enable-libvpx ,--disable-libvpx )dnl
