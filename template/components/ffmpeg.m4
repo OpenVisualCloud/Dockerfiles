@@ -51,14 +51,14 @@ dnl For more information about optional configurations for this ffmpeg component
 dnl https://github.com/FFmpeg/FFmpeg/blob/master/configure
 
 ifelse(OS_NAME,ubuntu,`
-define(`FFMPEG_BUILD_DEPS',`build-essential ca-certificates wget patch ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,true,libx264-dev)) ifdef(`BUILD_LIBX265',,ifelse(FFMPEG_ENABLE_X265,true,libx265-dev)) ifelse(FFMPEG_ENABLE_V4L2,true,libv4l-dev) ifelse(FFMPEG_ENABLE_LIBASS,true,libass-dev) ifelse(FFMPEG_LIBFREETYPE,true,libfreetype6-dev) ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev)')
+define(`FFMPEG_BUILD_DEPS',`build-essential ca-certificates wget patch ifelse(FFMPEG_ENABLE_V4L2,true,libv4l-dev) ifelse(FFMPEG_ENABLE_LIBASS,true,libass-dev) ifelse(FFMPEG_LIBFREETYPE,true,libfreetype6-dev) ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev)')
 
-define(`FFMPEG_INSTALL_DEPS',`libxcb-shape0 libxcb-xfixes0 ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,true,lib264-ifelse(OS_VERSION,18.04,152,155))) ifdef(`BUILD_LIBX265',,ifelse(FFMPEG_ENABLE_X265,true,libx265-ifelse(OS_VERSION,146,179))) ifelse(FFMPEG_ENABLE_V4L2,true,libv4l-0) ifelse(FFMPEG_ENABLE_LIBASS,true,libass9) ifdef(`ENABLE_INTEL_GFX_REPO',libva2)')
+define(`FFMPEG_INSTALL_DEPS',`libxcb-shape0 libxcb-xfixes0 ifelse(FFMPEG_ENABLE_V4L2,true,libv4l-0) ifelse(FFMPEG_ENABLE_LIBASS,true,libass9) ifdef(`ENABLE_INTEL_GFX_REPO',libva2)')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`FFMPEG_BUILD_DEPS',`wget patch ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,true,libx264-devel)) ifdef(`BUILD_LIBX265',,ifelse(FFMPEG_ENABLE_X265,true,x265-devel)) ifelse(FFMPEG_ENABLE_V4L2,true,libv4l-devel) ifelse(FFMPEG_ENABLE_LIBASS,true,libass-devel) ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,freetype-devel)')
-define(`FFMPEG_INSTALL_DEPS',`ifdef(`BUILD_LIBX264',,ifelse(FFMPEG_ENABLE_X264,true,libx264-static)) ifdef(`BUILD_LIBX265',,ifelse(FFMPEG_ENABLE_X265,true,x265)) ifelse(FFMPEG_ENABLE_V4L2,true,libv4l) ifelse(FFMPEG_ENABLE_LIBASS,true,libass)')
+define(`FFMPEG_BUILD_DEPS',`wget patch ifelse(FFMPEG_ENABLE_V4L2,true,libv4l-devel) ifelse(FFMPEG_ENABLE_LIBASS,true,libass-devel) ifelse(FFMPEG_ENABLE_LIBFREETYPE,true,freetype-devel)')
+define(`FFMPEG_INSTALL_DEPS',`ifelse(FFMPEG_ENABLE_V4L2,true,libv4l) ifelse(FFMPEG_ENABLE_LIBASS,true,libass)')
 ')
 
 define(`BUILD_FFMPEG',`
@@ -103,7 +103,7 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifelse(FFMPEG_ENABLE_LIBMFX,true,--enable-libmfx )dnl
     ifelse(FFMPEG_ENABLE_VAAPI,true,--enable-vaapi ,--disable-vaapi )dnl
     ifelse(FFMPEG_ENABLE_V4L2,true,--enable-libv4l2 --enable-indev=v4l2 )dnl
-    ifdef(`BUILD_OPENSSL',ifelse(FFMPEG_OPENSSL_NOBIND,true,,--enable-openssl --extra-ldflags=-Wl`,'-rpath=BUILD_PREFIX/ssl/lib ))dnl
+    ifdef(`BUILD_OPENSSL',ifelse(FFMPEG_OPENSSL_NOBIND,true,,`--enable-openssl --extra-ldflags=-Wl`,'-rpath=BUILD_PREFIX/ssl/lib '))dnl
     ifdef(`BUILD_LIBFDKAAC',--enable-libfdk-aac )dnl
     ifdef(`BUILD_LIBOPUS',--enable-libopus )dnl
     ifdef(`BUILD_LIBVPX',--enable-libvpx ,--disable-libvpx )dnl
