@@ -82,6 +82,21 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
+RUN yum install -y wget tar gcc-c++ make libtool autoconf
+
+# build openssl
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${OPENSSL_REPO} | tar xz && \
+    cd openssl-OpenSSL_1_1_1k && \
+    ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
+    make depend && \
+    make -s V=0 && \
+    make install DESTDIR=/opt/dist && \
+    (cd /opt/dist && mkdir -p ./usr/local/lib64/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib64/pkgconfig/) && \
+    make install && \
+    (mkdir -p /usr/local/lib64/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib64/pkgconfig/)
+
 RUN yum install -y wget gcc-c++ autoconf libtool make automake
 
 # build libfdkaac
@@ -143,18 +158,17 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y git make autoconf diffutils
+RUN yum install -y meson wget tar gcc-c++
 
-# build libx264
-ARG LIBX264_REPO=https://github.com/mirror/x264
+# build dav1d
+ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.0/dav1d-0.9.0.tar.gz
 RUN cd /opt/build && \
-    git clone ${LIBX264_REPO} -b stable --depth 1 && \
-    cd x264 && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 \
-        --enable-shared && \
-    make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
+  wget -O - ${DAV1D_REPO} | tar xz
+RUN cd /opt/build/dav1d-0.9.0 && \
+  meson build --prefix=/usr/local --libdir /usr/local/lib64 --buildtype=plain && \
+  cd build && \
+  ninja install && \
+  DESTDIR=/opt/dist ninja install
 
 RUN yum install -y wget tar gcc-c++ make
 
@@ -168,30 +182,6 @@ RUN cd /opt/build/yasm-1.3.0 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 && \
     make -j $(nproc) && \
     make install
-
-RUN yum install -y make numactl-devel libpciaccess-devel
-
-# build libx265
-ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.4.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${LIBX265_REPO} | tar xz && \
-    cd x265-3.4/build/linux && \
-    cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib64 ../../source && \
-    make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
-RUN yum install -y meson wget tar gcc-c++
-
-# build dav1d
-ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.0/dav1d-0.9.0.tar.gz
-RUN cd /opt/build && \
-  wget -O - ${DAV1D_REPO} | tar xz
-RUN cd /opt/build/dav1d-0.9.0 && \
-  meson build --prefix=/usr/local --libdir /usr/local/lib64 --buildtype=plain && \
-  cd build && \
-  ninja install && \
-  DESTDIR=/opt/dist ninja install
 
 RUN yum install -y wget tar gcc-c++ make git 
 
@@ -438,7 +428,7 @@ RUN cd /opt/build/gst-plugins-good-1.19.1 && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel openssl libcurl-devel librtmp-devel mjpegtools libde265-devel devtoolset-9 
+RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel libcurl-devel librtmp-devel mjpegtools x265-devel libde265-devel devtoolset-9 
 
 # build gst-plugin-bad
 ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.19.1.tar.gz
@@ -464,7 +454,7 @@ RUN cd /opt/build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install )
 
-RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex 
+RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex libx264-devel
 
 # build gst-plugin-ugly
 ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.19.1.tar.gz
@@ -501,7 +491,8 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w         --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wldnl
+    --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -661,6 +652,8 @@ RUN cd /opt/build/gst-python-1.19.1 && \
 # cleanup
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
 
 FROM centos:7
@@ -675,7 +668,7 @@ RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-releas
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
 # Install
-RUN yum install -y bash numactl-libs libpciaccess gtk3 numactl ocl-icd glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup openssl librtmp mjpegtools libde265 libv4l libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base 
+RUN yum install -y bash gtk3 numactl ocl-icd glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup librtmp mjpegtools x265 libde265 libx264-static libv4l libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base 
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
 COPY --from=build /opt/dist /

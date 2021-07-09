@@ -5,6 +5,8 @@ foreach(test ${tests})
     #Do not add the gst_fdkaac test if the flag BUILD_FDKAAC is OFF
     elseif(${image} MATCHES "vcaca" AND ${name} MATCHES "(svt|hevc|av1?)")
     #Do not add svt test for VCACA DEV image
+    elseif(${image} MATCHES "dev" AND ${name} MATCHES "(x264|x265?)")
+    #Do not add svt test for VCACA DEV image
     else()
     add_test(test_${image}_${name} "${CMAKE_CURRENT_SOURCE_DIR}/shell.sh" "/mnt/${name}.sh" "${image}")
     endif()
