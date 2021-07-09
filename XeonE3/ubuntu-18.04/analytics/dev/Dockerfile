@@ -576,7 +576,7 @@ RUN cd /opt/build/gst-plugins-good-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libcurl4-gnutls-dev librtmp-dev mjpegtools libx265-dev libde265-dev  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-bad
@@ -596,7 +596,7 @@ RUN cd /opt/build && \
       -Dintrospection=enabled \
       -Dgst_player_tests=false \
       -Drtmp=enabled \
-      -Dx265=enabled \
+      -Dx265=disabled \
       -Drsvg=disabled \
       -Dfdkaac=enabled \
     && cd build && \
@@ -605,7 +605,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libx264-dev && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-ugly
@@ -617,7 +617,7 @@ RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
     --prefix=/usr/local --buildtype=plain \
     -Ddoc=disabled \
     -Dgtk_doc=disabled \
-    -Dx264=enabled \
+    -Dx264=disabled \
     && cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -651,8 +651,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w         --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wldnl
-    --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w         --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -881,7 +880,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 libnuma1 ocl-icd-libopencl1 libglib2.0-0 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libx265-142 libde265-0 libx264-155 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9 python3-gi python3-gi-cairo python3-dev python3-numpy libglib2.0-dev && \
+    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 libnuma1 ocl-icd-libopencl1 libglib2.0-0 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libde265-0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9 python3-gi python3-gi-cairo python3-dev python3-numpy libglib2.0-dev && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
