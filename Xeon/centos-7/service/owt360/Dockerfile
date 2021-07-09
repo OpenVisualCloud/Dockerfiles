@@ -261,7 +261,7 @@ RUN { \
   mkdir -p /opt/dist/usr/local/lib64/pkgconfig && \
   cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib64/pkgconfig
 
-RUN yum install -y wget patch x265-devel libass-devel 
+RUN yum install -y wget patch libass-devel 
 
 # build ffmpeg
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
@@ -531,7 +531,7 @@ RUN yum install -y -q dnf
 RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && \
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
-RUN yum install -y gtk3 numactl ocl-icd x265 libass wget xz-utils rabbitmq-server boost-system boost-thread log4cxx glib2 freetype
+RUN yum install -y gtk3 numactl ocl-icd libass wget xz-utils rabbitmq-server boost-system boost-thread log4cxx glib2 freetype
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig

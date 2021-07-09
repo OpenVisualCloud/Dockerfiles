@@ -5,6 +5,8 @@ foreach(test ${tests})
     #Do not add svt test for VCACA DEV image
     elseif(${image} MATCHES "analytics" AND ${name} STREQUAL "ffmpeg_vmaf")
     #Do not add vmaf test for analytics image
+    elseif(${image} MATCHES "dev" AND ${name} MATCHES "(1dns|x265|x264?)")
+    #Do not add vmaf test for analytics image
     else()
     add_test(test_${image}_${name} "${CMAKE_CURRENT_SOURCE_DIR}/shell.sh" "/mnt/${name}.sh" "${image}")
     endif()
