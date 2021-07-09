@@ -73,6 +73,24 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make libtool autoconf && \
+  rm -rf /var/lib/apt/lists/*
+
+# build openssl
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${OPENSSL_REPO} | tar xz && \
+    cd openssl-OpenSSL_1_1_1k && \
+    ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
+    make depend && \
+    make -s V=0 && \
+    make install DESTDIR=/opt/dist && \
+    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
+    make install && \
+    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget g++ autoconf libtool autotools-dev automake make && \
   rm -rf /var/lib/apt/lists/*
 
@@ -149,53 +167,6 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git cmake make autoconf && \
-  rm -rf /var/lib/apt/lists/*
-
-# build libx264
-ARG LIBX264_REPO=https://github.com/mirror/x264
-RUN cd /opt/build && \
-    git clone ${LIBX264_REPO} -b stable --depth 1 && \
-    cd x264 && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib \
-        --enable-shared && \
-    make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget tar g++ make && \
-  rm -rf /var/lib/apt/lists/*
-
-# build yasm
-ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${YASM_REPO} | tar xz
-RUN cd /opt/build/yasm-1.3.0 && \
-    # TODO remove the line below whether no other component inside this project requires it.
-    # `sed -i "s/) ytasm.*/)/" Makefile.in' && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-    make -j $(nproc) && \
-    make install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libnuma-dev cmake make && \
-  rm -rf /var/lib/apt/lists/*
-
-# build libx265
-ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.4.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${LIBX265_REPO} | tar xz && \
-    cd x265-3.4/build/linux && \
-    cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib ../../source && \
-    make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     python3-pip ninja-build python3-setuptools && \
   rm -rf /var/lib/apt/lists/*
 
@@ -220,6 +191,22 @@ RUN cd /opt/build/dav1d-0.9.0 && \
   cd build && \
   ninja install && \
   DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make && \
+  rm -rf /var/lib/apt/lists/*
+
+# build yasm
+ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${YASM_REPO} | tar xz
+RUN cd /opt/build/yasm-1.3.0 && \
+    # TODO remove the line below whether no other component inside this project requires it.
+    # `sed -i "s/) ytasm.*/)/" Makefile.in' && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
+    make -j $(nproc) && \
+    make install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -575,7 +562,7 @@ RUN cd /opt/build/gst-plugins-good-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev openssl libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libcurl4-gnutls-dev librtmp-dev mjpegtools libx265-dev libde265-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-bad
@@ -604,7 +591,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libx264-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-ugly
@@ -650,7 +637,8 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-libx264     --enable-libx265     --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w         --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wldnl
+    --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -862,6 +850,9 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/include
+RUN rm -rf /opt/dist/usr/local/ssl/share/man
+RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 RUN cd /opt/dist/usr/local/openvino/inference-engine && \
     rm -rf /opt/dist/usr/local/lib/pkgconfig/openvino.pc \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
@@ -876,7 +867,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libnuma1 libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 ocl-icd-libopencl1 libglib2.0-0 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 openssl libcurl3-gnutls librtmp1 mjpegtools libde265-0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9 libgles2 python3-gi python3-gi-cairo python3-dev python3-numpy libglib2.0-dev && \
+    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 libnuma1 ocl-icd-libopencl1 libglib2.0-0 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libx265-179 libde265-0 libx264-155 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9 libgles2 python3-gi python3-gi-cairo python3-dev python3-numpy libglib2.0-dev && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /

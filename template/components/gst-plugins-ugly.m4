@@ -43,15 +43,15 @@ dnl To manage this please refer to them by using the `BUILD_*` m4 definition in 
 DECLARE(`GST_X264ENC',true)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GSTUGLY_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison ifelse(GST_X264ENC,true,ifdef(`BUILD_LIBX264',,libx264-dev))')
+define(`GSTUGLY_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison')
 
-define(`GSTUGLY_INSTALL_DEPS',`libglib2.0-0 ifelse(GST_X264ENC,true,ifdef(`BUILD_LIBX264',,libx264-155))')
+define(`GSTUGLY_INSTALL_DEPS',`libglib2.0-0')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`GSTUGLY_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex ifelse(GST_X264ENC,true,ifdef(`BUILD_LIBX264',,libx264-devel))')
+define(`GSTUGLY_BUILD_DEPS',`ifdef(`BUILD_MESON',,meson) wget tar gcc-c++ glib2-devel bison flex')
 
-define(`GSTUGLY_INSTALL_DEPS',`glib2 ifelse(GST_X264ENC,true,ifdef(`BUILD_LIBX264',,libx264-static))')
+define(`GSTUGLY_INSTALL_DEPS',`glib2')
 ')
 
 define(`BUILD_GSTUGLY',`
@@ -64,7 +64,7 @@ RUN cd BUILD_HOME/gst-plugins-ugly-GSTCORE_VER && \
     --prefix=BUILD_PREFIX --buildtype=plain \
     -Ddoc=disabled \
     -Dgtk_doc=disabled \
-    -Dx264=ifelse(GST_X264ENC,true,enabled,disabled) \
+    -Dx264=ifdef(`BUILD_LIBX264',enabled,disabled) \
     && cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install
