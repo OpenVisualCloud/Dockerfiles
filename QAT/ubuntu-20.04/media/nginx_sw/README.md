@@ -3,14 +3,14 @@ This Image implements Software Implementation of [QAT-Engine](https://github.com
 Refer to [Nginx image](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/QAT/ubuntu-20.04/media/nginx) for Hardware Implementation.
 
 ## Supported tags and respective Dockerfile links
- - [qat-ubuntu-2004-media-nginx](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/QAT/ubuntu-20.04/media/nginx/Dockerfile)
+ - [qat-ubuntu-2004-media-nginx_sw](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/QAT/ubuntu-20.04/media/nginx_sw/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
   Intel&reg; QAT platform, Ubuntu 20.04
 
 - #### Usage instructions:
-  [NGINX](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/nginx.md)	
+  [NGINX](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/nginx.md)
 
 
 - #### Getting started with Dockerfiles:
@@ -45,7 +45,7 @@ This docker installs third party components licensed under various open source l
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
 |OpenCV|BSD 3-clause "New" or "Revised" License|
-|FFmpeg|GNU Lesser General Public License v2.1 or later|
+|FFmpeg|GNU General Public License v2.0 or later|
 
 
 More license information can be found in [components source package](https://github.com/OpenVisualCloud/Dockerfiles-Resources).   

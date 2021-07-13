@@ -27,11 +27,10 @@ This docker installs third party components licensed under various open source l
 |CentOS| [Various](https://hub.docker.com/_/centos) |
 |libogg|BSD 3-clause "New" or "Revised" License|
 |libvorbis|BSD 3-clause "New" or "Revised" License|
+|OpenSSL|Apache License 2.0|
 |Opus Interactive Audio Codec|BSD 3-clause "New" or "Revised" License|
 |libvpx|BSD 3-clause "New" or "Revised" License|
 |Aomedia AV1 Codec Library|BSD 2-clause "Simplified" License|
-|x264|GNU General Public License v2.0 or later|
-|x265|GNU General Public License v2.0 or later|
 |dav1d|BSD 2-clause "Simplified" License|
 |Intel SVT-HEVC|BSD-2-Clause Plus Patent License|
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
@@ -47,6 +46,7 @@ This docker installs third party components licensed under various open source l
 |gst libav|GNU Library General Public License Version 2.1 or later|
 |gst svt|GNU Lesser General Public License v2.1 or later|
 |OpenCV|BSD 3-clause "New" or "Revised" License|
+|paho.mqtt.c|Eclipse Public License - v 2.0|
 |gst video analytics|MIT License|
 |gst python|GNU Library General Public License Version 2.1|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|

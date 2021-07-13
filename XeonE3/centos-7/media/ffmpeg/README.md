@@ -40,8 +40,7 @@ This docker installs third party components licensed under various open source l
 |Intel media driver | MIT License|
 |Intel media SDK|MIT License|
 |OpenCV|BSD 3-clause "New" or "Revised" License|
-|FFmpeg|GNU Lesser General Public License v2.1 or later|
-
+|FFmpeg|GNU General Public License v2.0 or later|
 
 More license information can be found in [components source package](https://github.com/OpenVisualCloud/Dockerfiles-Resources).   
 As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses and potential fees for all software contained within. We will have no indemnity or warranty coverage from suppliers.

@@ -44,7 +44,7 @@ This docker installs third party components licensed under various open source l
 |OpenVINO|Apache License v2.0|
 |json-c|MIT License|
 |librdkafka|BSD 2-clause "Simplified" License|
-|FFmpeg|GNU Lesser General Public License v2.1 or later|
+|FFmpeg|GNU General Public License v2.0 or later|
 
 
 More license information can be found in [components source package](https://github.com/OpenVisualCloud/Dockerfiles-Resources).   

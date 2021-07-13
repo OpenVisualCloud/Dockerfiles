@@ -27,12 +27,12 @@ This docker installs third party components licensed under various open source l
 |Ubuntu| [Various](https://hub.docker.com/_/ubuntu) |
 |libogg|BSD 3-clause "New" or "Revised" License|
 |libvorbis|BSD 3-clause "New" or "Revised" License|
+|OpenSSL|Apache License 2.0|
 |Opus Interactive Audio Codec|BSD 3-clause "New" or "Revised" License|
 |libvpx|BSD 3-clause "New" or "Revised" License|
 |Aomedia AV1 Codec Library|BSD 2-clause "Simplified" License|
-|x264|GNU General Public License v2.0 or later|
-|x265|GNU General Public License v2.0 or later|
 |dav1d|BSD 2-clause "Simplified" License|
+|libvmaf|BSD-2-Clause Plus Patent License|
 |Intel SVT-HEVC|BSD-2-Clause Plus Patent License|
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
