@@ -6,7 +6,7 @@ foreach(test ${tests})
     elseif(${image} MATCHES "vcaca" AND ${name} MATCHES "(svt|hevc|av1?)")
     #Do not add svt test for VCACA DEV image
     elseif(${image} MATCHES "dev" AND ${name} MATCHES "(x264|x265?)")
-    #Do not add svt test for VCACA DEV image
+    #Do not add GPL component test for DEV images
     else()
     add_test(test_${image}_${name} "${CMAKE_CURRENT_SOURCE_DIR}/shell.sh" "/mnt/${name}.sh" "${image}")
     endif()
