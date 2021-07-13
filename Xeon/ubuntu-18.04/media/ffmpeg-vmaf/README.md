@@ -8,7 +8,7 @@ This docker image is part of Open Visual Cloud software stacks. Optimized for th
   Intel&reg; Xeon&reg; platform, Ubuntu 18.04
 
 - #### Usage instructions:
-  [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)
+  [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	
 
 
 - #### Getting started with Dockerfiles:
