@@ -47,6 +47,7 @@ This docker installs third party components licensed under various open source l
 |gst libav|GNU Library General Public License Version 2.1 or later|
 |gst svt|GNU Lesser General Public License v2.1 or later|
 |OpenCV|BSD 3-clause "New" or "Revised" License|
+|paho.mqtt.c|Eclipse Public License - v 2.0|
 |gst video analytics|MIT License|
 |gst python|GNU Library General Public License Version 2.1|
 
