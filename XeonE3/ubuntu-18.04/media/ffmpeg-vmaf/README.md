@@ -1,14 +1,14 @@
-This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included FFmpeg and codecs such as opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
+This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included FFmpeg and codecs such as opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. It also includes libvmaf for video quality assessment.Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-ubuntu-1804-media-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/XeonE3/ubuntu-18.04/media/ffmpeg/Dockerfile)
+ - [xeone3-ubuntu-1804-media-ffmpeg-vmaf](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/XeonE3/ubuntu-18.04/media/ffmpeg-vmaf/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
   Intel&reg; Xeon&reg; E3 platform, Ubuntu 18.04
 
 - #### Usage instructions:
-  [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	
+  [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)
 
 
 - #### Getting started with Dockerfiles:
@@ -32,6 +32,7 @@ This docker installs third party components licensed under various open source l
 |x264|GNU General Public License v2.0 or later|
 |x265|GNU General Public License v2.0 or later|
 |dav1d|BSD 2-clause "Simplified" License|
+|libvmaf|BSD-2-Clause Plus Patent License|
 |Intel SVT-HEVC|BSD-2-Clause Plus Patent License|
 |Intel SVT-AV1|BSD-2-Clause Plus Patent License|
 |Intel SVT-VP9|BSD-2-Clause Plus Patent License|
@@ -40,7 +41,7 @@ This docker installs third party components licensed under various open source l
 |Intel media driver | MIT License|
 |Intel media SDK|MIT License|
 |OpenCV|BSD 3-clause "New" or "Revised" License|
-|FFmpeg|GNU Lesser General Public License v2.1 or later|
+|FFmpeg|GNU General Public License v3.0 or later|
 
 
 More license information can be found in [components source package](https://github.com/OpenVisualCloud/Dockerfiles-Resources).   

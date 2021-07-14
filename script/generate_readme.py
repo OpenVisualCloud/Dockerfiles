@@ -47,6 +47,7 @@ included_subs = {
                 "owt" : ["[OWT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt.md)"],
                 "owt360" : ["[OWT360](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt360.md)"],
                 "ffmpeg" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)"],
+                "ffmpeg-vmaf" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)"],
                 "gst" : ["[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"],
                 "dev" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)","[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"]
                 }
@@ -116,6 +117,7 @@ license_subs = {
                 "libvpx" : ["|libvpx|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "libx264" : ["|x264|GNU General Public License v2.0 or later|"],
                 "libx265" : ["|x265|GNU General Public License v2.0 or later|"],
+                "libvmaf" : ["|libvmaf|BSD-2-Clause Plus Patent License|"],
                 "media-driver" : ["|Intel media driver | MIT License|"],
                 "media-driver.sg1" : ["|Intel media driver | MIT License|"],
                 "msdk" : ["|Intel media SDK|MIT License|"],
@@ -169,8 +171,12 @@ def url_generator(local_path, image_name, image_type, image_os, image_platform):
 
 # Generate links to docs of included components
 def included_components(image_name):
+    print("Included Components")
+    print(image_name)
     included_holder = ''
     if image_name in included_subs:
+        print("Inside IF")
+        print(image_name)
         included_holder += "- #### Usage instructions:\n  "
         for comp in included_subs[image_name]:
             included_holder += comp
@@ -180,6 +186,8 @@ def included_components(image_name):
     
 # Generate quick reference part of README
 def quick_reference(local_path, image_name, image_type, image_os, image_platform):
+    print("In quick_reference")
+    print(image_name)
     text_holder = "## Quick reference\n"
     text_holder += "- #### Supported platform and OS\n"
     text_holder += "  Intel&reg; "+platform_subs[image_platform]+", "+os_subs[image_os]
@@ -270,6 +278,8 @@ def create_readme(path, path_components):
     my_file = open(path+"/README.md","w")
     my_file.write("This docker image is part of Open Visual Cloud software stacks. ")
     image_name = path_components[3]
+    print("In Create Readme")
+    print(image_name)
     image_type = path_components[2]
     image_os = path_components[1]
     image_platform = path_components[0]
@@ -302,6 +312,8 @@ def create_readme(path, path_components):
             my_file.write("Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. ")
         if image_name=="ffmpeg":
             my_file.write("Included FFmpeg and codecs such as opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. ")
+        if image_name=="ffmpeg-vmaf":
+            my_file.write("Included FFmpeg and codecs such as opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. It also includes libvmaf for video quality assessment.")
         if image_name=="nginx":
             my_file.write("Optimized for NGINX web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy. ")
         if image_name=="svt":
