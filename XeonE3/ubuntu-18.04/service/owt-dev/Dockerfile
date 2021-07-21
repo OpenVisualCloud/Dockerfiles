@@ -521,7 +521,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-ugly

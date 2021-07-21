@@ -428,7 +428,7 @@ RUN cd /opt/build/gst-plugins-good-1.19.1 && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel libcurl-devel librtmp-devel mjpegtools x265-devel libde265-devel devtoolset-9 
+RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel libcurl-devel librtmp-devel mjpegtools libde265-devel devtoolset-9 
 
 # build gst-plugin-bad
 ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.19.1.tar.gz
@@ -447,14 +447,14 @@ RUN cd /opt/build && \
       -Dintrospection=enabled \
       -Dgst_player_tests=false \
       -Drtmp=enabled \
-      -Dx265=enabled \
+      -Dx265=disabled \
       -Drsvg=disabled \
       -Dfdkaac=enabled \
     && cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install )
 
-RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex libx264-devel
+RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex
 
 # build gst-plugin-ugly
 ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.19.1.tar.gz
@@ -465,7 +465,7 @@ RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
     --prefix=/usr/local --buildtype=plain \
     -Ddoc=disabled \
     -Dgtk_doc=disabled \
-    -Dx264=enabled \
+    -Dx264=disabled \
     && cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -491,8 +491,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w         --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wldnl
-    --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w         --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -668,7 +667,7 @@ RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-releas
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
 # Install
-RUN yum install -y bash gtk3 numactl ocl-icd glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup librtmp mjpegtools x265 libde265 libx264-static libv4l libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base 
+RUN yum install -y bash gtk3 numactl ocl-icd glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup librtmp mjpegtools libde265 libv4l libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base 
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
 COPY --from=build /opt/dist /

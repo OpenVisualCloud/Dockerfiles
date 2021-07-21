@@ -412,7 +412,7 @@ RUN cd /opt/build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install )
 
-RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex 
+RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex
 
 # build gst-plugin-ugly
 ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.19.1.tar.gz
