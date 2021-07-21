@@ -42,7 +42,10 @@ define(`YASM_BUILD_DEPS',`wget tar gcc-c++ make')
 
 define(`BUILD_YASM',`
 # build yasm
-ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
+# ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
+# At the time of 21.6 Release, yasm official site above had certificate problem, hence pulling from Dockerfiles-Resources.
+ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+
 RUN cd BUILD_HOME && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd BUILD_HOME/yasm-YASM_VER && \
