@@ -1,4 +1,5 @@
 
+
 Enhance security and compression performance in cloud, networking, big data, and storage applications — for data in motion and at rest. Now you can accelerate compute-intensive operations with Intel<sup>&reg;</sup> QuickAssist Technology (Intel QAT).   
 
 This document describes the system setup to use Intel QAT within docker containers.
@@ -77,7 +78,7 @@ The table lists the available docker images:
 |:-:|---|---|
 |media-dev|[centos-7/media/dev](centos-7/media/dev)<br>[ubuntu-18.04/media/dev](ubuntu-18.04/media/dev)<br>[ubuntu-20.04/media/dev](ubuntu-20.04/media/dev)|[openvisualcloud/qat-centos7-media-dev](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-dev)<br>[openvisualcloud/qat-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-dev)<br>[openvisualcloud/qat-ubuntu2004-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-dev)|
 |media-nginx|[centos-7/media/nginx](centos-7/media/nginx)<br>[ubuntu-18.04/media/nginx](ubuntu-18.04/media/nginx)<br>[ubuntu-20.04/media/nginx](ubuntu-20.04/media/nginx)|[openvisualcloud/qat-centos7-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx)<br>[openvisualcloud/qat-ubuntu1804-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-nginx)<br>[openvisualcloud/qat-ubuntu2004-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx)|
-|media-nginx_sw|[centos-7/media/nginx_sw](centos-7/media/nginx_sw)<br>[ubuntu-18.04/media/nginx_sw](ubuntu-18.04/media/nginx_sw)<br>[ubuntu-20.04/media/nginx_sw](ubuntu-20.04/media/nginx_sw)||
+|media-nginx_sw|[centos-7/media/nginx_sw](centos-7/media/nginx_sw)<br>[ubuntu-18.04/media/nginx_sw](ubuntu-18.04/media/nginx_sw)<br>[ubuntu-20.04/media/nginx_sw](ubuntu-20.04/media/nginx_sw)|[openvisualcloud/qat-centos7-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx_sw)<br>[openvisualcloud/qat-ubuntu1804-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-nginx_sw)<br>[openvisualcloud/qat-ubuntu2004-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx_sw)|
 
 The docker images **must** run with the following devices attached:  
 - `/dev/hugepages`: The hugepage kernel pages.  
@@ -105,4 +106,5 @@ To access the mounted [devices](#run-docker-images), the user must have the acce
 - [QATzip](https://github.com/intel/QATzip)   
 - [QATengine](https://github.com/intel/QAT_Engine)   
 - [Async Mode Nginx](https://github.com/intel/asynch_mode_nginx)  
+
 
