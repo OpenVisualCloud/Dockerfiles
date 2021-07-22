@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Included what are in FFmpeg & GStreamer media analytics images. Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-ubuntu-1804-analytics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/XeonE3/ubuntu-18.04/analytics/dev/Dockerfile)
+ - [xeone3-ubuntu-1804-analytics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/XeonE3/ubuntu-18.04/analytics/dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS

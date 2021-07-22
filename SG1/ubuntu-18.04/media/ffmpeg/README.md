@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included FFmpeg and codecs such as opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [sg1-ubuntu-1804-media-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/SG1/ubuntu-18.04/media/ffmpeg/Dockerfile)
+ - [sg1-ubuntu-1804-media-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/SG1/ubuntu-18.04/media/ffmpeg/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS

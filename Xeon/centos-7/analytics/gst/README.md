@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery GStreamer image, inferencing engine and video analytics plugins. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-centos-7-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/Xeon/centos-7/analytics/gst/Dockerfile)
+ - [xeon-centos-7-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/Xeon/centos-7/analytics/gst/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS

@@ -3,7 +3,7 @@ This Image implements Software Implementation of [QAT-Engine](https://github.com
 Refer to [Nginx image](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/QAT/centos-7/media/nginx) for Hardware Implementation.
 
 ## Supported tags and respective Dockerfile links
- - [qat-centos-7-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/QAT/centos-7/media/dev/Dockerfile)
+ - [qat-centos-7-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/QAT/centos-7/media/dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
