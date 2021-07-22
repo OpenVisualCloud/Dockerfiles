@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-ubuntu-2004-media-svt](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/Xeon/ubuntu-20.04/media/svt/Dockerfile)
+ - [xeon-ubuntu-2004-media-svt](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/Xeon/ubuntu-20.04/media/svt/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS

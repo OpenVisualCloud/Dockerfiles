@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Optimized for NGINX web server that can be used for serving web content, load balancing, HTTP caching, or a reverse proxy. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-ubuntu-2004-media-nginx](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/Xeon/ubuntu-20.04/media/nginx/Dockerfile)
+ - [xeon-ubuntu-2004-media-nginx](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/Xeon/ubuntu-20.04/media/nginx/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS

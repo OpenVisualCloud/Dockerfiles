@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Image with SRS high efficiency, stable and simple RTMP/HLS/FLV streaming cluster. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-centos-7-media-srs](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/Xeon/centos-7/media/srs/Dockerfile)
+ - [xeon-centos-7-media-srs](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/Xeon/centos-7/media/srs/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
