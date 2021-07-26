@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-define(`GMMLIB_VER',intel-media-sg1-pv1.2)
+define(`GMMLIB_VER',intel-media-sg1-pv1.3)
 define(`GMMLIB_SRC_REPO',https://github.com/VCDP/gmmlib/archive/GMMLIB_VER.tar.gz)
 include(gmmlib.m4)
 

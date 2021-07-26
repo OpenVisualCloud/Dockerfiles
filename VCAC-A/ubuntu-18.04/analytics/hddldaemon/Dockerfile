@@ -44,7 +44,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build libusb
-ARG LIBUSB_REPO=https://github.com/libusb/libusb/archive/v1.0.22.tar.gz
+ARG LIBUSB_REPO=https://github.com/libusb/libusb/archive/v1.0.24.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBUSB_REPO} | tar xz && \
     cd libusb* && \
@@ -61,13 +61,13 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # Install OpenVINO - Closed source dldt
-ARG OPENVINO_REPO=http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz
+ARG OPENVINO_REPO=http://registrationcenter-download.intel.com/akdlm/irc_nas/17662/l_openvino_toolkit_p_2021.3.394.tgz
 
 #Download and unpack OpenVino
 RUN mkdir /opt/build/openvino
 RUN wget ${OPENVINO_REPO} -P /opt/build/openvino
-RUN if [ -f /opt/build/openvino/l_openvino_toolkit_p_2020.4.287.tgz ]; \
-    then tar xzvf /opt/build/openvino/l_openvino_toolkit_p_2020.4.287.tgz -C /opt/build/openvino && rm /opt/build/openvino/l_openvino_toolkit_p_2020.4.287.tgz; \
+RUN if [ -f /opt/build/openvino/l_openvino_toolkit_p_2021.3.394.tgz ]; \
+    then tar xzvf /opt/build/openvino/l_openvino_toolkit_p_2021.3.394.tgz -C /opt/build/openvino && rm /opt/build/openvino/l_openvino_toolkit_p_2021.3.394.tgz; \
     else echo "Please prepare the OpenVino installation bundle"; \
 fi
 
@@ -83,7 +83,11 @@ RUN echo "ACCEPT_EULA=accept" > /opt/build/openvino/silent.cfg                  
     echo "SIGNING_ENABLED=no" >> /opt/build/openvino/silent.cfg
 
 #Install OpenVino
-RUN /opt/build/openvino/l_openvino_toolkit_p_2020.4.287/install.sh --ignore-signature --cli-mode -s /opt/build/openvino/silent.cfg && rm -rf /opt/build/openvino
+RUN /opt/build/openvino/l_openvino_toolkit_p_2021.3.394/install.sh --ignore-signature --cli-mode -s /opt/build/openvino/silent.cfg && rm -rf /opt/build/openvino
+
+#Create symlink to assure compatibility with components
+RUN cd /opt/intel/      &&\
+    ln -s openvino_2021 openvino
 
 ARG OPENVINO_IE_DIR=/opt/intel/openvino/deployment_tools/inference_engine
 

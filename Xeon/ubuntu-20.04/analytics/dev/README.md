@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Included what are in FFmpeg & GStreamer media analytics images. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-ubuntu-2004-analytics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/Xeon/ubuntu-20.04/analytics/dev/Dockerfile)
+ - [xeon-ubuntu-2004-analytics-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/Xeon/ubuntu-20.04/analytics/dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -27,11 +27,10 @@ This docker installs third party components licensed under various open source l
 |Ubuntu| [Various](https://hub.docker.com/_/ubuntu) |
 |libogg|BSD 3-clause "New" or "Revised" License|
 |libvorbis|BSD 3-clause "New" or "Revised" License|
+|OpenSSL|Apache License 2.0|
 |Opus Interactive Audio Codec|BSD 3-clause "New" or "Revised" License|
 |libvpx|BSD 3-clause "New" or "Revised" License|
 |Aomedia AV1 Codec Library|BSD 2-clause "Simplified" License|
-|x264|GNU General Public License v2.0 or later|
-|x265|GNU General Public License v2.0 or later|
 |dav1d|BSD 2-clause "Simplified" License|
 |json-c|MIT License|
 |librdkafka|BSD 2-clause "Simplified" License|
@@ -47,6 +46,7 @@ This docker installs third party components licensed under various open source l
 |gst libav|GNU Library General Public License Version 2.1 or later|
 |gst svt|GNU Lesser General Public License v2.1 or later|
 |OpenCV|BSD 3-clause "New" or "Revised" License|
+|paho.mqtt.c|Eclipse Public License - v 2.0|
 |gst video analytics|MIT License|
 |gst python|GNU Library General Public License Version 2.1|
 |FFmpeg|GNU Lesser General Public License v2.1 or later|

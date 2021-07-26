@@ -37,6 +37,7 @@ define(`OWT_SDK_BRANCH',master)
 define(`OWT_SDK_VER',d727af2927731ff16214d73f57964a992258636d)
 define(`OWT_WEBRTC_BRANCH',59-server)
 define(`OWT_WEBRTC_VER',c2aa290cfe4f63d5bfbb6540122a5e6bf2783187)
+define(`LIBNICE_PATCH_VER',4.3.1)
 include(owt.m4)
 
 include(end.m4)dnl

@@ -1,5 +1,8 @@
 file(GLOB tests "${DockerFiles_SOURCE_DIR}/test/nginx_*.sh")
 foreach(test ${tests})
     get_filename_component(name ${test} NAME_WE)
+    if(${image} MATCHES "dev" AND ${name} MATCHES "(rtmp|hls|dash?)")
+    else()
     add_test(test_${image}_${name} "${CMAKE_CURRENT_SOURCE_DIR}/shell.sh" "/mnt/${name}.sh" "${image}")
+    endif()
 endforeach()

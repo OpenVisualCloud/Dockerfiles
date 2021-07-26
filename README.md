@@ -6,12 +6,6 @@
 
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
 
----
-
-### <b>Join Hackathon [Open Your Mind to Endless Possibilities](https://software.seek.intel.com/OpenVisualCloudHackathon-contest)<br>Registration: Jan 11 - March 12, 2021</b>   
-
----
-
 
 This repository hosts docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.
 
@@ -42,10 +36,7 @@ The software stack images provide ready to use software stacks for application d
 
 - **Cloud Gaming and Graphics**
 
-| Image | Description |
-| :-----: | :----- |
-| [ospray](doc/ospray.md) | <p>Docker images optimized for Intel OSPRay. Included the Intel OSPRay ray tracing engine and examples. See [`doc/ospray.md`](doc/ospray.md) for additional details.</p>|
-| [ospray-mpi](doc/ospray-mpi.md) | <p>Docker images optimized for Intel OSPRay and multi-host connections. Included the Intel OSPRay ray tracing engine with multi-host connections via MPI. See [`doc/ospray-mpi.md`](doc/ospray-mpi.md) for additional details.</p>|
+Ospray images are discontinued from release v21.6. Please refer to older releases for all images targeted for Cloud Gaming and Graphics.
 
 ### Development Images:
 
@@ -56,7 +47,6 @@ The development images enable C++ application compilation, debugging (with the d
 | media | <p>Docker images for FFmpeg or GStreamer C++ application development. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-media-dev)<br>docker pull [openvisualcloud/xeon-ubuntu2004-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-media-dev)<br>docker pull [openvisualcloud/xeon-centos7-media-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos7-media-dev)|
 | analytics | <p>Docker images for FFmpeg or GStreamer C++ application development, with Intel OpenVINO inference engine and the model optimizer. See [`doc/ffmpeg.md`](doc/ffmpeg.md) and [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-analytics-dev)<br>docker pull [openvisualcloud/xeon-ubuntu2004-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-analytics-dev)<br>docker pull [openvisualcloud/xeon-centos7-analytics-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos7-analytics-dev)|
 | service | <p>Docker images for Open WebRTC Toolkit (OWT) C++ application development.. See [`doc/owt.md`](doc/owt.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu1804-service-owt-dev](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu1804-service-owt-dev)<br>docker pull [openvisualcloud/xeon-centos7-service-owt-dev](https://hub.docker.com/r/openvisualcloud/xeon-centos7-service-owt-dev)<br>|
-| graphics | <p>Docker image for Intel OSPRay C++ application development. See [`doc/ospray-mpi.md`](doc/ospray-mpi.md) for additional details.</p>|
 
 ### Service Images:
 

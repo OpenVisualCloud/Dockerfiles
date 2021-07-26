@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Docker image optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-centos-7-service-owt360](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/XeonE3/centos-7/service/owt360/Dockerfile)
+ - [xeone3-centos-7-service-owt360](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/XeonE3/centos-7/service/owt360/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
@@ -35,7 +35,7 @@ This docker installs third party components licensed under various open source l
 |Intel media SDK|MIT License|
 |OpenCV|BSD 3-clause "New" or "Revised" License|
 |OpenVINO|Apache License v2.0|
-|FFmpeg|GNU Lesser General Public License v2.1 or later|
+|FFmpeg|GNU General Public License v2.0 or later|
 |360SCVP|BSD 3-clause "New" or "Revised" License|
 |owt-server|Apache License v2.0|
 |owt-sdk|Apache License v2.0|

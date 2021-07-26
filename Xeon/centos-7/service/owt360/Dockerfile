@@ -58,10 +58,10 @@ ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 RUN yum install -y wget tar gcc-c++ make libtool autoconf
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1i.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1i && \
+    cd openssl-OpenSSL_1_1_1k && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -73,7 +73,10 @@ RUN cd /opt/build && \
 RUN yum install -y wget tar gcc-c++ make
 
 # build yasm
-ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
+# ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
+# At the time of 21.6 Release, yasm official site above had certificate problem, hence pulling from Dockerfiles-Resources.
+ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
 RUN cd /opt/build/yasm-1.3.0 && \
@@ -88,7 +91,7 @@ RUN yum install -y wget tar gcc-c++ make git cmake3
 # build svt-hevc
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
 RUN cd /opt/build && \
-    git clone -b v1.5.0 --depth 1 ${SVT_HEVC_REPO}
+    git clone -b v1.5.1 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
     cmake3 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -98,10 +101,10 @@ RUN cd /opt/build/SVT-HEVC/Build/linux && \
 RUN yum install -y wget gcc-c++ autoconf libtool make automake
 
 # build libfdkaac
-ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz
+ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v2.0.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBFDKAAC_REPO} | tar xz && \
-    cd fdk-aac-0.1.6 && \
+    cd fdk-aac-2.0.2 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
     make -j$(nproc) && \
@@ -125,7 +128,7 @@ RUN yum install -y git cmake make autoconf diffutils
 # build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd /opt/build && \
-    git clone ${LIBVPX_REPO} -b v1.8.2 --depth 1 && \
+    git clone ${LIBVPX_REPO} -b v1.10.0 --depth 1 && \
     cd libvpx && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
     make -j$(nproc) && \
@@ -145,15 +148,15 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y cmake3 gcc gcc-c++ make wget python36-numpy ccache eigen3-devel
+RUN yum install -y cmake3 gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.1.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
-  cmake3 \
+RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
+  (. /opt/rh/devtoolset-9/enable && cmake3 \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DCMAKE_INSTALL_LIBDIR=lib64 \
@@ -163,7 +166,7 @@ RUN cd /opt/build/opencv-4.5.1 && mkdir build && cd build && \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     .. && \
-  make -j "$(nproc)" && \
+  make -j $(nproc) ) && \
   make install DESTDIR=/opt/dist && \
   make install
 
@@ -171,7 +174,7 @@ RUN yum install -y cmake3 gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libt
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2021.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2021.3-doc-update --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
@@ -215,7 +218,7 @@ ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
 
 ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
 ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
+ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
 
 RUN cd /opt/build && \
   mkdir -p ${CUSTOM_IE_DIR}/include && \
@@ -264,41 +267,31 @@ RUN { \
 RUN yum install -y wget patch libass-devel 
 
 # build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.2.4.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_REPO} | tar xz
 
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
-    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
-ARG FFMPEG_MA_RELEASE_VER=0.5
-ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
-ARG FFMPEG_MA_PATH=/opt/build/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
-RUN cd /opt/build && wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
-RUN cp ${FFMPEG_MA_PATH}/docker/patch/opencv.pc /usr/local/lib64/pkgconfig
-ARG CVDEF_H=/usr/local/include/opencv4/opencv2/core/cvdef.h
-RUN if [ -f "${CVDEF_H}" ]; then cp ${FFMPEG_MA_PATH}/docker/patch/cvdef.h ${CVDEF_H}; fi
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
-    find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
+#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
-ARG FFMPEG_PATCHES_RELEASE_VER=0.2
-ARG FFMPEG_PATCHES_RELEASE_URL=https://github.com/VCDP/CDN/archive/v${FFMPEG_PATCHES_RELEASE_VER}.tar.gz
-ARG FFMPEG_PATCHES_PATH=/opt/build/CDN-${FFMPEG_PATCHES_RELEASE_VER}
 
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_PATCHES_RELEASE_URL} | tar xz && \
-    cd /opt/build/FFmpeg-n4.2.4 && \
-    find ${FFMPEG_PATCHES_PATH}/FFmpeg_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
+ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
 
-RUN cd /opt/build/FFmpeg-n4.2.4 && \
+RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-gpl     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi         --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac         --enable-libvpx         --enable-libx264             --enable-libsvthevc                         --enable-libinference_engine_c_api --extra-cflags=-I$CUSTOM_IE_DIR/include --extra-ldflags=-L$CUSTOM_IE_LIBDIR         && make -j$(nproc) && \
+    --extra-cflags=-w         --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264             --enable-libsvthevc                 && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.1/build && \
+RUN cd /opt/build/opencv-4.5.2/build && \
   rm -rf ./* && \
-  cmake3 \
+  (. /opt/rh/devtoolset-9/enable && cmake3 \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DCMAKE_INSTALL_LIBDIR=lib64 \
@@ -309,8 +302,8 @@ RUN cd /opt/build/opencv-4.5.1/build && \
     -DBUILD_TESTS=OFF \
     .. && \
   cd modules/videoio && \
-  make -j "$(nproc)" && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.1 /opt/dist/usr/local/lib64
+  make -j $(nproc) && \
+  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib64 )
 
 
 
@@ -377,6 +370,7 @@ RUN cd /opt/build/libnice-0.1.4 && \
     patch -p1 < owt-server-4.3.1/scripts/patches/libnice014-startcheck.patch
 
 
+
 RUN cd /opt/build/libnice-0.1.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 && \
     make -j$(nproc) -s V=0 && \
@@ -405,11 +399,11 @@ RUN wget -O /usr/include/json.hpp ${JSONHPP_REPO}
 RUN yum install -y wget xz-utils
 
 # build node
-ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
+ARG NODE_REPO=https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz
 RUN cd /opt/build && \
     wget -O - ${NODE_REPO} | tar xJ && \
-    cp node-v10.21.0-linux-x64/* /usr/local -rf && \
-    rm -rf node-v10.21.0-linux-x64
+    cp node-v10.24.1-linux-x64/* /usr/local -rf && \
+    rm -rf node-v10.24.1-linux-x64
 
 RUN yum install -y wget gcc make pkg-config 
 
@@ -467,7 +461,8 @@ RUN mkdir -p /opt/build/owt-server/third_party/webrtc && \
 ARG OWT_SDK_REPO=https://github.com/open-webrtc-toolkit/owt-client-javascript.git
 RUN cd /opt/build && \
     git clone -b master ${OWT_SDK_REPO} && \
-    cd owt-client-javascript/scripts && git reset --hard d727af2927731ff16214d73f57964a992258636d && \
+    cd owt-client-javascript/scripts && \
+    git reset --hard d727af2927731ff16214d73f57964a992258636d && \
     npm install && grunt 
     
 # Get quic
@@ -547,7 +542,7 @@ RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
 ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
 ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=/usr/local/openvino/inference-engine/cmake
+ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
 
 # install DLDT
 ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
@@ -555,11 +550,11 @@ ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 
 # install node
-ARG NODE_REPO=https://nodejs.org/dist/v10.21.0/node-v10.21.0-linux-x64.tar.xz
+ARG NODE_REPO=https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz
 RUN cd /usr/local && \
     wget -O - ${NODE_REPO} | tar xJ && \
-    cp -r node-v10.21.0-linux-x64/* . && \
-    rm -rf node-v10.21.0-linux-x64
+    cp -r node-v10.24.1-linux-x64/* . && \
+    rm -rf node-v10.24.1-linux-x64
 
 # install OWT
 RUN echo "[mongodb-org-3.6]" >> /etc/yum.repos.d/mongodb-org-3.6.repo && \
