@@ -103,7 +103,7 @@ RUN mkdir -p BUILD_DESTDIR/opt/intel/dl_streamer/python && \
 ')
 
 define(`INSTALL_GVA',
-ENV LD_LIBRARY_PATH=BUILD_LIBDIR/gstreamer-1.0/
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:BUILD_LIBDIR/gstreamer-1.0/
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:BUILD_LIBDIR/girepository-1.0/ 
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:BUILD_LIBDIR/gstreamer-1.0/
