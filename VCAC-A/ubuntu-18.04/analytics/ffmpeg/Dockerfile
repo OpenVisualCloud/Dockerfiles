@@ -344,7 +344,10 @@ ARG OPENVINO_IE_DIR=/opt/intel/openvino/deployment_tools/inference_engine
 
 ENV IE_PLUGINS_PATH=${OPENVINO_IE_DIR}/lib/intel64
 ENV HDDL_INSTALL_DIR=${OPENVINO_IE_DIR}/external/hddl
-ENV InferenceEngine_DIR=${OPENVINO_IE_DIR}/share
+ENV InferenceEngine_DIR=/opt/intel/openvino/deploymet_tools/inference_engine/share
+ENV TBB_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/cmake
+ENV ngraph_DIR=/opt/intel/openvino/deployment_tools/ngraph/cmake
+
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:${OPENVINO_IE_DIR}/external/gna/lib:${OPENVINO_IE_DIR}/external/mkltiny_lnx/lib:${OPENVINO_IE_DIR}/external/omp/lib:${OPENVINO_IE_DIR}/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 #Remove components of OpenVino that are not needed
