@@ -291,7 +291,7 @@ RUN { \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential ca-certificates wget patch libass-dev  && \
+    build-essential ca-certificates wget patch git libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
@@ -305,6 +305,12 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 #ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
+ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
+
+RUN cd /opt/build && \
+    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
+    cd /opt/build/FFmpeg-n4.4 && \
+    patch -p1 < /opt/build/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
 
 ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
 RUN cd /opt/build/FFmpeg-n4.4 && \
@@ -801,7 +807,7 @@ ENV GST_PLUGIN_SCANNER=/usr/local/lib/gstreamer-1.0/gst-plugin-scanner
 ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
-ENV LD_LIBRARY_PATH=/usr/local/lib/gstreamer-1.0/
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/gstreamer-1.0/
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/girepository-1.0/ 
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/

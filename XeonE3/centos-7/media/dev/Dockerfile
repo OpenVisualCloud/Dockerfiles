@@ -389,7 +389,7 @@ RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y wget patch libv4l-devel libass-devel freetype-devel
+RUN yum install -y wget patch git libv4l-devel libass-devel freetype-devel
 
 # build ffmpeg
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
@@ -407,6 +407,12 @@ RUN cd /opt/build && \
     cd /opt/build/FFmpeg-n4.4 && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
+ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
+
+RUN cd /opt/build && \
+    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
+    cd /opt/build/FFmpeg-n4.4 && \
+    patch -p1 < /opt/build/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
 
 ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
 RUN cd /opt/build/FFmpeg-n4.4 && \

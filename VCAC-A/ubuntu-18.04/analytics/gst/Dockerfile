@@ -338,7 +338,10 @@ ARG OPENVINO_IE_DIR=/opt/intel/openvino/deployment_tools/inference_engine
 
 ENV IE_PLUGINS_PATH=${OPENVINO_IE_DIR}/lib/intel64
 ENV HDDL_INSTALL_DIR=${OPENVINO_IE_DIR}/external/hddl
-ENV InferenceEngine_DIR=${OPENVINO_IE_DIR}/share
+ENV InferenceEngine_DIR=/opt/intel/openvino/deploymet_tools/inference_engine/share
+ENV TBB_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/cmake
+ENV ngraph_DIR=/opt/intel/openvino/deployment_tools/ngraph/cmake
+
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/ngraph/lib:/opt/intel/opencl:$HDDL_INSTALL_DIR/lib:${OPENVINO_IE_DIR}/external/gna/lib:${OPENVINO_IE_DIR}/external/mkltiny_lnx/lib:${OPENVINO_IE_DIR}/external/omp/lib:${OPENVINO_IE_DIR}/external/tbb/lib:/opt/intel/openvino/openvx/lib:$IE_PLUGINS_PATH
 
 #Remove components of OpenVino that are not needed
@@ -535,7 +538,7 @@ RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential ca-certificates wget patch libv4l-dev libass-dev  && \
+    build-essential ca-certificates wget patch git libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
@@ -552,6 +555,12 @@ RUN cd /opt/build && \
     cd /opt/build/FFmpeg-n4.4 && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
+ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
+
+RUN cd /opt/build && \
+    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
+    cd /opt/build/FFmpeg-n4.4 && \
+    patch -p1 < /opt/build/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
 
 ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
 RUN cd /opt/build/FFmpeg-n4.4 && \
