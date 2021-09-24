@@ -58,10 +58,10 @@ ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 RUN yum install -y wget tar gcc-c++ make libtool autoconf
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1l.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1k && \
+    cd openssl-OpenSSL_1_1_1l && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \

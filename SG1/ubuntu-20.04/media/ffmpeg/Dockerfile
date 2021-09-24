@@ -238,7 +238,7 @@ RUN apt-get update && \
 # build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd /opt/build && \
-    git clone ${SVT_VP9_REPO} -b v0.2.2 --depth 1 && \
+    git clone ${SVT_VP9_REPO} -b v0.3.0 --depth 1 && \
     cd SVT-VP9/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \

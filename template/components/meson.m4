@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`MESON_VER',0.58.1)
+DECLARE(`MESON_VER',0.59.1)
 
 define(`MESON_BUILD_DEPS',`python3-pip ninja-build python3-setuptools')
 
