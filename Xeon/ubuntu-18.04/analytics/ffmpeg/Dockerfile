@@ -302,7 +302,7 @@ RUN apt-get update && \
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2021.4 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2021.4.1 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 

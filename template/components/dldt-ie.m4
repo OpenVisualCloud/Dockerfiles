@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 include(opencv.m4)
 
-DECLARE(`DLDT_VER',2021.4)
+DECLARE(`DLDT_VER',2021.4.1)
 DECLARE(`DLDT_WARNING_AS_ERRORS',false)
 
 ifelse(OS_NAME,ubuntu,`
