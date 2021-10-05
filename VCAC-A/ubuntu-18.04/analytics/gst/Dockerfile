@@ -306,13 +306,13 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # Install OpenVINO - Closed source dldt
-ARG OPENVINO_REPO=http://registrationcenter-download.intel.com/akdlm/irc_nas/17662/l_openvino_toolkit_p_2021.3.394.tgz
+ARG OPENVINO_REPO=http://registrationcenter-download.intel.com/akdlm/irc_nas/17988/l_openvino_toolkit_p_2021.4.582.tgz
 
 #Download and unpack OpenVino
 RUN mkdir /opt/build/openvino
 RUN wget ${OPENVINO_REPO} -P /opt/build/openvino
-RUN if [ -f /opt/build/openvino/l_openvino_toolkit_p_2021.3.394.tgz ]; \
-    then tar xzvf /opt/build/openvino/l_openvino_toolkit_p_2021.3.394.tgz -C /opt/build/openvino && rm /opt/build/openvino/l_openvino_toolkit_p_2021.3.394.tgz; \
+RUN if [ -f /opt/build/openvino/l_openvino_toolkit_p_2021.4.582.tgz ]; \
+    then tar xzvf /opt/build/openvino/l_openvino_toolkit_p_2021.4.582.tgz -C /opt/build/openvino && rm /opt/build/openvino/l_openvino_toolkit_p_2021.4.582.tgz; \
     else echo "Please prepare the OpenVino installation bundle"; \
 fi
 
@@ -328,7 +328,7 @@ RUN echo "ACCEPT_EULA=accept" > /opt/build/openvino/silent.cfg                  
     echo "SIGNING_ENABLED=no" >> /opt/build/openvino/silent.cfg
 
 #Install OpenVino
-RUN /opt/build/openvino/l_openvino_toolkit_p_2021.3.394/install.sh --ignore-signature --cli-mode -s /opt/build/openvino/silent.cfg && rm -rf /opt/build/openvino
+RUN /opt/build/openvino/l_openvino_toolkit_p_2021.4.582/install.sh --ignore-signature --cli-mode -s /opt/build/openvino/silent.cfg && rm -rf /opt/build/openvino
 
 #Create symlink to assure compatibility with components
 RUN cd /opt/intel/      &&\
@@ -376,11 +376,11 @@ RUN cd /opt/build && \
 
 
 
-ARG KAFKA_VER=1.7.0
+ARG KAFKA_VER=1.8.0
 ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${KAFKA_VER}.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
-    cd librdkafka-1.7.0 && \
+    cd librdkafka-1.8.0 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -392,11 +392,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -573,7 +573,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.2/build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -587,7 +587,7 @@ RUN cd /opt/build/opencv-4.5.2/build && \
     .. && \
   cd modules/videoio && \
   make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib
+  cp -f ../../lib/libopencv_videoio.so.4.5.3 /opt/dist/usr/local/lib
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

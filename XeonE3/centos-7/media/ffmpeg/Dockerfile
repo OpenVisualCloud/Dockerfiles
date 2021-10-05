@@ -277,11 +277,11 @@ RUN cd /opt/build/MediaSDK-intel-mediasdk-21.1.3 && \
 RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -332,7 +332,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.2/build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1/build && \
   rm -rf ./* && \
   (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -346,7 +346,7 @@ RUN cd /opt/build/opencv-4.5.2/build && \
     .. && \
   cd modules/videoio && \
   make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib64 )
+  cp -f ../../lib/libopencv_videoio.so.4.5.3 /opt/dist/usr/local/lib64 )
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/include && \

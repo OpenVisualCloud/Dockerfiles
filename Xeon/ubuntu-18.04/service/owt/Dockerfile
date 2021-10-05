@@ -169,15 +169,81 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates g++ make wget && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gmmlib
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/intel-gmmlib-21.1.3.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${GMMLIB_REPO} | tar xz
+RUN cd /opt/build/gmmlib-intel-gmmlib-21.1.3 && mkdir build && cd build && \
+  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
+  make -j$(nproc) && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    automake ca-certificates gcc libdrm-dev libtool make pkg-config wget libx11-dev libxext-dev libxfixes-dev libwayland-dev && \
+  rm -rf /var/lib/apt/lists/*
+
+# build libva2
+ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.11.0.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${LIBVA2_REPO} | tar xz
+RUN cd /opt/build/libva-2.11.0 && \
+  ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib && \
+  make -j$(nproc) && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates g++ libpciaccess-dev make pkg-config wget && \
+  rm -rf /var/lib/apt/lists/*
+
+# build media driver
+ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-21.1.3.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${MEDIA_DRIVER_REPO} | tar xz
+RUN cd /opt/build/media-driver-intel-media-21.1.3 && mkdir build && cd build && \
+  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DENABLE_PRODUCTION_KMD=OFF .. && \
+  make -j$(nproc) && \
+  make install DESTDIR=/opt/dist && \
+  make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates gcc g++ make pkg-config wget && \
+  rm -rf /var/lib/apt/lists/*
+
+# build media sdk
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-21.1.3.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${MSDK_REPO} | tar xz
+RUN cd /opt/build/MediaSDK-intel-mediasdk-21.1.3 && \
+    mkdir -p build && cd build && \
+    cmake \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_LIBDIR=/usr/local/lib \
+    -DBUILD_SAMPLES=no \
+    -DBUILD_TUTORIALS=OFF \
+    .. && \
+    make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates gcc g++ make wget python3-numpy ccache libeigen3-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -199,7 +265,7 @@ RUN apt-get update && \
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2021.3-doc-update --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2021.4 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
@@ -225,69 +291,20 @@ RUN cd /opt/build/openvino && \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=OFF \
     -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
-    -DNGRAPH_COMPONENT_PREFIX=inference-engine/ \
     -DNGRAPH_UNIT_TEST_ENABLE=OFF \
     -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
-  make -C ngraph install && \
-  make -C ngraph install DESTDIR=/opt/dist && \
-  rm -rf ../bin/intel64/Release/lib/libgtest* && \
-  rm -rf ../bin/intel64/Release/lib/libgmock* && \
-  rm -rf ../bin/intel64/Release/lib/libmock* && \
-  rm -rf ../bin/intel64/Release/lib/libtest*
+  make install && \
+  make install DESTDIR=/opt/dist 
 
-ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
-ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
 
-ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
-ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
+ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
+ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/deployment_tools/inference_engine/
 
-RUN cd /opt/build && \
-  mkdir -p ${CUSTOM_IE_DIR}/include && \
-  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/include/* ${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/ie_bridges/c/include/* ${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/include/* /opt/dist/${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/ie_bridges/c/include/* /opt/dist/${CUSTOM_IE_DIR}/include && \
-  \
-  mkdir -p ${CUSTOM_IE_LIBDIR} && \
-  mkdir -p /opt/dist/${CUSTOM_IE_LIBDIR} && \
-  cp -r openvino/bin/intel64/Release/lib/* ${CUSTOM_IE_LIBDIR} && \
-  cp -r openvino/bin/intel64/Release/lib/* /opt/dist/${CUSTOM_IE_LIBDIR} && \
-  \
-  mkdir -p ${CUSTOM_IE_DIR}/src && \
-  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/src && \
-  cp -r openvino/inference-engine/src/* ${CUSTOM_IE_DIR}/src/ && \
-  cp -r openvino/inference-engine/src/* /opt/dist/${CUSTOM_IE_DIR}/src/ && \
-  \
-  mkdir -p ${CUSTOM_IE_DIR}/share && \
-  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/share && \
-  mkdir -p ${CUSTOM_IE_DIR}/external/ \
-  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/external && \
-  cp -r openvino/build/share/* ${CUSTOM_IE_DIR}/share/ && \
-  cp -r openvino/build/share/* /opt/dist/${CUSTOM_IE_DIR}/share/ && \
-  cp -r openvino/inference-engine/temp/tbb ${CUSTOM_IE_DIR}/external/ && \
-  cp -r openvino/inference-engine/temp/tbb /opt/dist/${CUSTOM_IE_DIR}/external/ && \
-  \
-  mkdir -p "${CUSTOM_IE_LIBDIR}/pkgconfig"
-
-RUN { \
-  echo "prefix=${CUSTOM_IE_DIR}"; \
-  echo "libdir=${CUSTOM_IE_LIBDIR}"; \
-  echo "includedir=${CUSTOM_IE_DIR}/include"; \
-  echo ""; \
-  echo "Name: DLDT"; \
-  echo "Description: Intel Deep Learning Deployment Toolkit"; \
-  echo "Version: 5.0"; \
-  echo ""; \
-  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_api"; \
-  echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
-  mkdir -p /opt/dist/usr/local/lib/pkgconfig && \
-  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib/pkgconfig
+ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/share
+ENV TBB_DIR=${IE_INSTALL_DIR}/external/tbb/cmake
+ENV ngraph_DIR=${OPENVINO_INSTALL_DIR}/deployment_tools/ngraph/cmake
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -304,6 +321,11 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 #ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
+    cd /opt/build/FFmpeg-n4.4 && \
+    patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
 ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
 
@@ -319,11 +341,11 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264             --enable-libsvthevc                 && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264             --enable-libsvthevc                 && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.2/build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -337,7 +359,7 @@ RUN cd /opt/build/opencv-4.5.2/build && \
     .. && \
   cd modules/videoio && \
   make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib
+  cp -f ../../lib/libopencv_videoio.so.4.5.3 /opt/dist/usr/local/lib
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -495,7 +517,7 @@ RUN cd /opt/build/gst-libav-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates libva-dev && \
+    git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-gva
@@ -503,10 +525,11 @@ RUN apt-get update && \
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=/usr/local/lib
-RUN git clone -b v1.4.1 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b v1.5.2 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
     git submodule update --init && \
     sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
+    sed -i "45,47d" CMakeLists.txt && \
     mkdir -p build && cd build && \
     cmake \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
@@ -678,7 +701,10 @@ ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd /opt/build && \
     git clone -b master ${OWT_REPO} && \
     cd owt-server && \
-    git reset --hard v5.0
+    git reset --hard v5.0.1
+
+
+
 
 # Prep OpenH264
 RUN mkdir -p /opt/build/owt-server/third_party/openh264 && \
@@ -775,7 +801,7 @@ RUN rm -rf /opt/dist/usr/local/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/include
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
-RUN cd /opt/dist/usr/local/openvino/inference-engine && \
+RUN cd /opt/dist/usr/local/openvino/deployment_tools/inference_engine && \
     rm -rf /opt/dist/usr/local/lib/pkgconfig/openvino.pc \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
@@ -790,21 +816,25 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
+    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
+ENV LIBVA_DRIVERS_PATH=/usr/local/lib/dri
+ENV LIBVA_DRIVER_NAME=iHD
+ENV DISPLAY=:0.0
 
-ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
-ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
+ENV InferenceEngine_DIR=/usr/local/openvino/deployment_tools/inference-engine/share
+ENV TBB_DIR=/usr/local/openvino/deployment_tools/inference-engine/external/tbb/cmake
 ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/deployment_tools/ngraph/lib/
 ENV GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib/gstreamer-1.0/gst-plugin-scanner
 
 # install DLDT
-ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
+ARG CUSTOM_IE_DIR=/usr/local/openvino/deployment_tools/inference_engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/gstreamer-1.0/

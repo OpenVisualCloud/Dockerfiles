@@ -30,7 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENCV_VER',4.5.2)
+DECLARE(`OPENCV_VER',4.5.3-openvino-2021.4.1)
+DECLARE(`OPENCV_VER_TRUNC',4.5.3)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENCV_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ make wget python3-numpy ccache libeigen3-dev')
@@ -77,7 +78,7 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER/build && \
     .. && \
   cd modules/videoio && \
   make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.OPENCV_VER defn(`BUILD_DESTDIR',`BUILD_LIBDIR')ifelse(OS_NAME:OS_VERSION,centos:7,` )')
+  cp -f ../../lib/libopencv_videoio.so.OPENCV_VER_TRUNC defn(`BUILD_DESTDIR',`BUILD_LIBDIR')ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 ')
 
 REG(OPENCV)
