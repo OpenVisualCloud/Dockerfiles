@@ -192,7 +192,7 @@ RUN apt-get update && \
 ARG MESON_REPO=https://github.com/mesonbuild/meson
 RUN git clone ${MESON_REPO}; \
     cd meson; \
-    git checkout 0.58.1; \
+    git checkout 0.59.1; \
     python3 setup.py install;
 
 RUN apt-get update && \
@@ -250,7 +250,7 @@ RUN apt-get update && \
 # build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd /opt/build && \
-    git clone ${SVT_VP9_REPO} -b v0.2.2 --depth 1 && \
+    git clone ${SVT_VP9_REPO} -b v0.3.0 --depth 1 && \
     cd SVT-VP9/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \

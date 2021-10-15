@@ -46,8 +46,8 @@ RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
 RUN cd /opt/build && \
-    wget -O - ${CMAKE_REPO}/v3.20/cmake-3.20.3.tar.gz | tar xz && \
-    cd cmake-3.20.3 && \
+    wget -O - ${CMAKE_REPO}/v3.21/cmake-3.21.3.tar.gz | tar xz && \
+    cd cmake-3.21.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
     make -j$(nproc) && \
     make install
@@ -212,7 +212,7 @@ RUN yum install -y wget tar gcc-c++ make git devtoolset-9
 # build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd /opt/build && \
-    git clone ${SVT_VP9_REPO} -b v0.2.2 --depth 1 && \
+    git clone ${SVT_VP9_REPO} -b v0.3.0 --depth 1 && \
     cd SVT-VP9/Build/linux && \
     (. /opt/rh/devtoolset-9/enable && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) ) && \

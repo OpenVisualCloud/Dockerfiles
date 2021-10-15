@@ -46,8 +46,8 @@ RUN apt-get update && \
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
 RUN cd /opt/build && \
-    wget -O - ${CMAKE_REPO}/v3.20/cmake-3.20.3.tar.gz | tar xz && \
-    cd cmake-3.20.3 && \
+    wget -O - ${CMAKE_REPO}/v3.21/cmake-3.21.3.tar.gz | tar xz && \
+    cd cmake-3.21.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
     make -j$(nproc) && \
     make install
@@ -154,7 +154,7 @@ RUN apt-get update && \
 # build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd /opt/build && \
-    git clone ${LIBAOM_REPO} -b v3.1.1 --depth 1 && \
+    git clone ${LIBAOM_REPO} -b v3.1.2 --depth 1 && \
     cd aom/build && \
     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib .. && \
     make -j$(nproc) && \
@@ -220,7 +220,7 @@ RUN apt-get update && \
 ARG MESON_REPO=https://github.com/mesonbuild/meson
 RUN git clone ${MESON_REPO}; \
     cd meson; \
-    git checkout 0.58.1; \
+    git checkout 0.59.1; \
     python3 setup.py install;
 
 RUN apt-get update && \
@@ -278,7 +278,7 @@ RUN apt-get update && \
 # build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd /opt/build && \
-    git clone ${SVT_VP9_REPO} -b v0.2.2 --depth 1 && \
+    git clone ${SVT_VP9_REPO} -b v0.3.0 --depth 1 && \
     cd SVT-VP9/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -321,10 +321,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencl
-ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/21.23.20043/intel-gmmlib_21.1.3_amd64.deb
-ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.7423/intel-igc-core_1.0.7423_amd64.deb
-ARG OPENCL_IGC_OCL_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.7423/intel-igc-opencl_1.0.7423_amd64.deb
-ARG OPENCL_INTEL_OCL_REPO=https://github.com/intel/compute-runtime/releases/download/21.23.20043/intel-opencl_21.23.20043_amd64.deb
+ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/21.37.20939/intel-gmmlib_21.2.1_amd64.deb
+ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.8517/intel-igc-core_1.0.8517_amd64.deb
+ARG OPENCL_IGC_OCL_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.8517/intel-igc-opencl_1.0.8517_amd64.deb
+ARG OPENCL_INTEL_OCL_REPO=https://github.com/intel/compute-runtime/releases/download/21.37.20939/intel-opencl_21.37.20939_amd64.deb
 
 RUN mkdir -p /opt/build/opencl && \
     cd /opt/build/opencl && \

@@ -59,8 +59,8 @@ RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
 RUN cd /opt/build && \
-    wget -O - ${CMAKE_REPO}/v3.20/cmake-3.20.3.tar.gz | tar xz && \
-    cd cmake-3.20.3 && \
+    wget -O - ${CMAKE_REPO}/v3.21/cmake-3.21.3.tar.gz | tar xz && \
+    cd cmake-3.21.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
     make -j$(nproc) && \
     make install
@@ -68,10 +68,10 @@ RUN cd /opt/build && \
 RUN yum install -y wget tar gcc-c++ make libtool autoconf
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1l.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1k && \
+    cd openssl-OpenSSL_1_1_1l && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \

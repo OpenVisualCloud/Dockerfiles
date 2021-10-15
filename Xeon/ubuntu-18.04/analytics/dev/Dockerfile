@@ -46,8 +46,8 @@ RUN apt-get update && \
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
 RUN cd /opt/build && \
-    wget -O - ${CMAKE_REPO}/v3.20/cmake-3.20.3.tar.gz | tar xz && \
-    cd cmake-3.20.3 && \
+    wget -O - ${CMAKE_REPO}/v3.21/cmake-3.21.3.tar.gz | tar xz && \
+    cd cmake-3.21.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
     make -j$(nproc) && \
     make install
@@ -91,10 +91,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1l.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1k && \
+    cd openssl-OpenSSL_1_1_1l && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -172,7 +172,7 @@ RUN apt-get update && \
 # build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd /opt/build && \
-    git clone ${LIBAOM_REPO} -b v3.1.1 --depth 1 && \
+    git clone ${LIBAOM_REPO} -b v3.1.2 --depth 1 && \
     cd aom/build && \
     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib .. && \
     make -j$(nproc) && \
@@ -188,7 +188,7 @@ RUN apt-get update && \
 ARG MESON_REPO=https://github.com/mesonbuild/meson
 RUN git clone ${MESON_REPO}; \
     cd meson; \
-    git checkout 0.58.1; \
+    git checkout 0.59.1; \
     python3 setup.py install;
 
 RUN apt-get update && \
@@ -265,7 +265,7 @@ RUN apt-get update && \
 # build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
 RUN cd /opt/build && \
-    git clone ${SVT_VP9_REPO} -b v0.2.2 --depth 1 && \
+    git clone ${SVT_VP9_REPO} -b v0.3.0 --depth 1 && \
     cd SVT-VP9/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \

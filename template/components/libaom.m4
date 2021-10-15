@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(nasm.m4)
 
-DECLARE(`LIBAOM_VER',3.1.1)
+DECLARE(`LIBAOM_VER',3.1.2)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBAOM_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make')
