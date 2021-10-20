@@ -51,12 +51,6 @@ RUN git clone -b DLDT_VER --depth 1 ${DLDT_REPO} BUILD_HOME/openvino && \
   cd BUILD_HOME/openvino && \
   git submodule update --init --recursive
 
-# TODO:
-# Perform make install of openvino instead of manually copying build artifacts.
-#
-# For now, only ngraph target is installed using make install (it auto-generates .cmake
-# files during install stage, so they can be later used by other projects).
-
 RUN cd BUILD_HOME/openvino && \
   ifelse(DLDT_WARNING_AS_ERRORS,false,`dnl
   sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
@@ -99,8 +93,8 @@ RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.s
 ')
 
 define(`ENV_VARS_DLDT',`
-ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/deployment_tools/inference-engine/share
-ENV TBB_DIR=BUILD_PREFIX/openvino/deployment_tools/inference-engine/external/tbb/cmake
+ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/deployment_tools/inference_engine/share
+ENV TBB_DIR=BUILD_PREFIX/openvino/deployment_tools/inference_engine/external/tbb/cmake
 ENV ngraph_DIR=BUILD_PREFIX/openvino/deployment_tools/ngraph/cmake
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_PREFIX/openvino/deployment_tools/ngraph/lib/
 ')

@@ -242,12 +242,6 @@ RUN git clone -b 2021.4.1 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
-# TODO:
-# Perform make install of openvino instead of manually copying build artifacts.
-#
-# For now, only ngraph target is installed using make install (it auto-generates .cmake
-# files during install stage, so they can be later used by other projects).
-
 RUN cd /opt/build/openvino && \
     sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
   mkdir build && cd build && \
@@ -757,8 +751,8 @@ ENV LIBVA_DRIVERS_PATH=/usr/local/lib64/dri
 ENV LIBVA_DRIVER_NAME=iHD
 ENV DISPLAY=:0.0
 
-ENV InferenceEngine_DIR=/usr/local/openvino/deployment_tools/inference-engine/share
-ENV TBB_DIR=/usr/local/openvino/deployment_tools/inference-engine/external/tbb/cmake
+ENV InferenceEngine_DIR=/usr/local/openvino/deployment_tools/inference_engine/share
+ENV TBB_DIR=/usr/local/openvino/deployment_tools/inference_engine/external/tbb/cmake
 ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/deployment_tools/ngraph/lib/
 ENV GST_PLUGIN_PATH=/usr/local/lib64/gstreamer-1.0
