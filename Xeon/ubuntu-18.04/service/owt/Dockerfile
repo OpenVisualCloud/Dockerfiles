@@ -169,72 +169,6 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates g++ make wget && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gmmlib
-ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/intel-gmmlib-21.1.3.tar.gz
-RUN cd /opt/build && \
-  wget -O - ${GMMLIB_REPO} | tar xz
-RUN cd /opt/build/gmmlib-intel-gmmlib-21.1.3 && mkdir build && cd build && \
-  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
-  make -j$(nproc) && \
-  make install DESTDIR=/opt/dist && \
-  make install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    automake ca-certificates gcc libdrm-dev libtool make pkg-config wget libx11-dev libxext-dev libxfixes-dev libwayland-dev && \
-  rm -rf /var/lib/apt/lists/*
-
-# build libva2
-ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.11.0.tar.gz
-RUN cd /opt/build && \
-  wget -O - ${LIBVA2_REPO} | tar xz
-RUN cd /opt/build/libva-2.11.0 && \
-  ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib && \
-  make -j$(nproc) && \
-  make install DESTDIR=/opt/dist && \
-  make install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates g++ libpciaccess-dev make pkg-config wget && \
-  rm -rf /var/lib/apt/lists/*
-
-# build media driver
-ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-21.1.3.tar.gz
-RUN cd /opt/build && \
-  wget -O - ${MEDIA_DRIVER_REPO} | tar xz
-RUN cd /opt/build/media-driver-intel-media-21.1.3 && mkdir build && cd build && \
-  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DENABLE_PRODUCTION_KMD=OFF .. && \
-  make -j$(nproc) && \
-  make install DESTDIR=/opt/dist && \
-  make install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates gcc g++ make pkg-config wget && \
-  rm -rf /var/lib/apt/lists/*
-
-# build media sdk
-ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-21.1.3.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${MSDK_REPO} | tar xz
-RUN cd /opt/build/MediaSDK-intel-mediasdk-21.1.3 && \
-    mkdir -p build && cd build && \
-    cmake \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DCMAKE_INSTALL_LIBDIR=/usr/local/lib \
-    -DBUILD_SAMPLES=no \
-    -DBUILD_TUTORIALS=OFF \
-    .. && \
-    make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates gcc g++ make wget python3-numpy ccache libeigen3-dev && \
   rm -rf /var/lib/apt/lists/*
 
@@ -315,11 +249,6 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 #ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
-    cd /opt/build/FFmpeg-n4.4 && \
-    patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
 ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
 
@@ -335,7 +264,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264             --enable-libsvthevc                 && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264             --enable-libsvthevc                 && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -511,7 +440,7 @@ RUN cd /opt/build/gst-libav-1.19.1 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates  && \
+    git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates libva-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-gva
@@ -697,6 +626,13 @@ RUN cd /opt/build && \
     cd owt-server && \
     git reset --hard v5.0.1
 
+#Patch OWT for Analytics
+
+ARG OWT_ANALYTICS_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/0002-fix-the-analytics-restart.patch
+
+RUN cd /opt/build/owt-server && \
+    wget ${OWT_ANALYTICS_PATCH} && \
+    git am 0002-fix-the-analytics-restart.patch
 
 
 
@@ -810,15 +746,12 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libdrm2 libx11-6 libxext6 libxfixes3 libwayland-client0 libpciaccess0 libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
+    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils rabbitmq-server mongodb libboost-system1.65.1 libboost-thread1.65.1 liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
-ENV LIBVA_DRIVERS_PATH=/usr/local/lib/dri
-ENV LIBVA_DRIVER_NAME=iHD
-ENV DISPLAY=:0.0
 
 ENV InferenceEngine_DIR=/usr/local/openvino/deployment_tools/inference_engine/share
 ENV TBB_DIR=/usr/local/openvino/deployment_tools/inference_engine/external/tbb/cmake
