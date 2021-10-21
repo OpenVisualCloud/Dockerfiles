@@ -383,10 +383,14 @@ RUN cd /opt/build && \
 #Patch OWT for Analytics
 
 ARG OWT_ANALYTICS_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/0002-fix-the-analytics-restart.patch
+ARG OWT_AVREAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
 
 RUN cd /opt/build/owt-server && \
     wget ${OWT_ANALYTICS_PATCH} && \
-    git am 0002-fix-the-analytics-restart.patch
+    wget ${OWT_AVREAD_PATCH} && \
+    git am 0002-fix-the-analytics-restart.patch && \
+    git am 0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
+
 
 
 
