@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 include(opencv.m4)
 
-DECLARE(`DLDT_VER',2021.3-doc-update)
+DECLARE(`DLDT_VER',2021.4.1)
 DECLARE(`DLDT_WARNING_AS_ERRORS',false)
 
 ifelse(OS_NAME,ubuntu,`
@@ -51,12 +51,6 @@ RUN git clone -b DLDT_VER --depth 1 ${DLDT_REPO} BUILD_HOME/openvino && \
   cd BUILD_HOME/openvino && \
   git submodule update --init --recursive
 
-# TODO:
-# Perform make install of openvino instead of manually copying build artifacts.
-#
-# For now, only ngraph target is installed using make install (it auto-generates .cmake
-# files during install stage, so they can be later used by other projects).
-
 RUN cd BUILD_HOME/openvino && \
   ifelse(DLDT_WARNING_AS_ERRORS,false,`dnl
   sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
@@ -75,82 +69,34 @@ RUN cd BUILD_HOME/openvino && \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=ifelse(DLDT_WARNING_AS_ERRORS,false,OFF,ON) \
     -DNGRAPH_WARNINGS_AS_ERRORS=ifelse(DLDT_WARNING_AS_ERRORS,false,OFF,ON) \
-    -DNGRAPH_COMPONENT_PREFIX=inference-engine/ \
     -DNGRAPH_UNIT_TEST_ENABLE=OFF \
     -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
-  make -C ngraph install && \
-  make -C ngraph install DESTDIR=BUILD_DESTDIR && \
-  rm -rf ../bin/intel64/Release/lib/libgtest* && \
-  rm -rf ../bin/intel64/Release/lib/libgmock* && \
-  rm -rf ../bin/intel64/Release/lib/libmock* && \
-  rm -rf ../bin/intel64/Release/lib/libtest*
+  make install && \
+  make install DESTDIR=BUILD_DESTDIR 
 
-ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/inference-engine
-ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
 
-ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
-ENV TBB_DIR=BUILD_PREFIX/openvino/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=BUILD_PREFIX/openvino/deployment_tools/ngraph/cmake
+ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
+ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/deployment_tools/inference_engine/
 
-RUN cd BUILD_HOME && \
-  mkdir -p ${CUSTOM_IE_DIR}/include && \
-  mkdir -p BUILD_DESTDIR/${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/include/* ${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/ie_bridges/c/include/* ${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/include/* BUILD_DESTDIR/${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/ie_bridges/c/include/* BUILD_DESTDIR/${CUSTOM_IE_DIR}/include && \
-  \
-  mkdir -p ${CUSTOM_IE_LIBDIR} && \
-  mkdir -p BUILD_DESTDIR/${CUSTOM_IE_LIBDIR} && \
-  cp -r openvino/bin/intel64/Release/lib/* ${CUSTOM_IE_LIBDIR} && \
-  cp -r openvino/bin/intel64/Release/lib/* BUILD_DESTDIR/${CUSTOM_IE_LIBDIR} && \
-  \
-  mkdir -p ${CUSTOM_IE_DIR}/src && \
-  mkdir -p BUILD_DESTDIR/${CUSTOM_IE_DIR}/src && \
-  cp -r openvino/inference-engine/src/* ${CUSTOM_IE_DIR}/src/ && \
-  cp -r openvino/inference-engine/src/* BUILD_DESTDIR/${CUSTOM_IE_DIR}/src/ && \
-  \
-  mkdir -p ${CUSTOM_IE_DIR}/share && \
-  mkdir -p BUILD_DESTDIR/${CUSTOM_IE_DIR}/share && \
-  mkdir -p ${CUSTOM_IE_DIR}/external/ \
-  mkdir -p BUILD_DESTDIR/${CUSTOM_IE_DIR}/external && \
-  cp -r openvino/build/share/* ${CUSTOM_IE_DIR}/share/ && \
-  cp -r openvino/build/share/* BUILD_DESTDIR/${CUSTOM_IE_DIR}/share/ && \
-  cp -r openvino/inference-engine/temp/tbb ${CUSTOM_IE_DIR}/external/ && \
-  cp -r openvino/inference-engine/temp/tbb BUILD_DESTDIR/${CUSTOM_IE_DIR}/external/ && \
-  \
-  mkdir -p "${CUSTOM_IE_LIBDIR}/pkgconfig"
-
-RUN { \
-  echo "prefix=${CUSTOM_IE_DIR}"; \
-  echo "libdir=${CUSTOM_IE_LIBDIR}"; \
-  echo "includedir=${CUSTOM_IE_DIR}/include"; \
-  echo ""; \
-  echo "Name: DLDT"; \
-  echo "Description: Intel Deep Learning Deployment Toolkit"; \
-  echo "Version: 5.0"; \
-  echo ""; \
-  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_api"; \
-  echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
-  mkdir -p defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig && \
-  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig
+ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/share
+ENV TBB_DIR=${IE_INSTALL_DIR}/external/tbb/cmake
+ENV ngraph_DIR=${OPENVINO_INSTALL_DIR}/deployment_tools/ngraph/cmake
 ')
 
 define(`INSTALL_DLDT',`
 # install DLDT
-ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/inference-engine
+ARG CUSTOM_IE_DIR=BUILD_PREFIX/openvino/deployment_tools/inference_engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 ')
 
 define(`ENV_VARS_DLDT',`
-ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/inference-engine/share
-ENV TBB_DIR=BUILD_PREFIX/openvino/inference-engine/external/tbb/cmake
+ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/deployment_tools/inference_engine/share
+ENV TBB_DIR=BUILD_PREFIX/openvino/deployment_tools/inference_engine/external/tbb/cmake
 ENV ngraph_DIR=BUILD_PREFIX/openvino/deployment_tools/ngraph/cmake
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_PREFIX/openvino/deployment_tools/ngraph/lib/
 ')
 
 define(`FFMPEG_PATCH_ANALYTICS',
@@ -167,7 +113,7 @@ RUN cd $1 && \
 
 define(`CLEANUP_DLDT',`dnl
 ifelse(CLEANUP_CC,yes,`dnl
-RUN cd defn(`BUILD_DESTDIR',`BUILD_PREFIX')/openvino/inference-engine && \
+RUN cd defn(`BUILD_DESTDIR',`BUILD_PREFIX')/openvino/deployment_tools/inference_engine && \
     rm -rf defn(`BUILD_DESTDIR',`BUILD_LIBDIR')/pkgconfig/openvino.pc \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
 ')dnl

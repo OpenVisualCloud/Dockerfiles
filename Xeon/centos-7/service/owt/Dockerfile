@@ -151,11 +151,11 @@ RUN cd /opt/build && \
 RUN yum install -y cmake3 gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake3 \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -186,15 +186,9 @@ RUN yum install -y cmake3 gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libt
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2021.3-doc-update --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2021.4.1 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
-
-# TODO:
-# Perform make install of openvino instead of manually copying build artifacts.
-#
-# For now, only ngraph target is installed using make install (it auto-generates .cmake
-# files during install stage, so they can be later used by other projects).
 
 RUN cd /opt/build/openvino && \
     sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
@@ -212,69 +206,20 @@ RUN cd /opt/build/openvino && \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=OFF \
     -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
-    -DNGRAPH_COMPONENT_PREFIX=inference-engine/ \
     -DNGRAPH_UNIT_TEST_ENABLE=OFF \
     -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
-  make -C ngraph install && \
-  make -C ngraph install DESTDIR=/opt/dist && \
-  rm -rf ../bin/intel64/Release/lib/libgtest* && \
-  rm -rf ../bin/intel64/Release/lib/libgmock* && \
-  rm -rf ../bin/intel64/Release/lib/libmock* && \
-  rm -rf ../bin/intel64/Release/lib/libtest*
+  make install && \
+  make install DESTDIR=/opt/dist 
 
-ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
-ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-ENV CUSTOM_DLDT=${CUSTOM_IE_DIR}
 
-ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
-ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
-ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
+ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
+ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/deployment_tools/inference_engine/
 
-RUN cd /opt/build && \
-  mkdir -p ${CUSTOM_IE_DIR}/include && \
-  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/include/* ${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/ie_bridges/c/include/* ${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/include/* /opt/dist/${CUSTOM_IE_DIR}/include && \
-  cp -r openvino/inference-engine/ie_bridges/c/include/* /opt/dist/${CUSTOM_IE_DIR}/include && \
-  \
-  mkdir -p ${CUSTOM_IE_LIBDIR} && \
-  mkdir -p /opt/dist/${CUSTOM_IE_LIBDIR} && \
-  cp -r openvino/bin/intel64/Release/lib/* ${CUSTOM_IE_LIBDIR} && \
-  cp -r openvino/bin/intel64/Release/lib/* /opt/dist/${CUSTOM_IE_LIBDIR} && \
-  \
-  mkdir -p ${CUSTOM_IE_DIR}/src && \
-  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/src && \
-  cp -r openvino/inference-engine/src/* ${CUSTOM_IE_DIR}/src/ && \
-  cp -r openvino/inference-engine/src/* /opt/dist/${CUSTOM_IE_DIR}/src/ && \
-  \
-  mkdir -p ${CUSTOM_IE_DIR}/share && \
-  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/share && \
-  mkdir -p ${CUSTOM_IE_DIR}/external/ \
-  mkdir -p /opt/dist/${CUSTOM_IE_DIR}/external && \
-  cp -r openvino/build/share/* ${CUSTOM_IE_DIR}/share/ && \
-  cp -r openvino/build/share/* /opt/dist/${CUSTOM_IE_DIR}/share/ && \
-  cp -r openvino/inference-engine/temp/tbb ${CUSTOM_IE_DIR}/external/ && \
-  cp -r openvino/inference-engine/temp/tbb /opt/dist/${CUSTOM_IE_DIR}/external/ && \
-  \
-  mkdir -p "${CUSTOM_IE_LIBDIR}/pkgconfig"
-
-RUN { \
-  echo "prefix=${CUSTOM_IE_DIR}"; \
-  echo "libdir=${CUSTOM_IE_LIBDIR}"; \
-  echo "includedir=${CUSTOM_IE_DIR}/include"; \
-  echo ""; \
-  echo "Name: DLDT"; \
-  echo "Description: Intel Deep Learning Deployment Toolkit"; \
-  echo "Version: 5.0"; \
-  echo ""; \
-  echo "Libs: -L\${libdir} -linference_engine -linference_engine_c_api"; \
-  echo "Cflags: -I\${includedir}"; \
-  } > ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc && \
-  mkdir -p /opt/dist/usr/local/lib64/pkgconfig && \
-  cp ${CUSTOM_IE_LIBDIR}/pkgconfig/openvino.pc /opt/dist/usr/local/lib64/pkgconfig
+ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/share
+ENV TBB_DIR=${IE_INSTALL_DIR}/external/tbb/cmake
+ENV ngraph_DIR=${OPENVINO_INSTALL_DIR}/deployment_tools/ngraph/cmake
 
 RUN yum install -y wget patch git libass-devel 
 
@@ -312,7 +257,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.2/build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1/build && \
   rm -rf ./* && \
   (. /opt/rh/devtoolset-9/enable && cmake3 \
     -DCMAKE_BUILD_TYPE=Release \
@@ -326,7 +271,7 @@ RUN cd /opt/build/opencv-4.5.2/build && \
     .. && \
   cd modules/videoio && \
   make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib64 )
+  cp -f ../../lib/libopencv_videoio.so.4.5.3 /opt/dist/usr/local/lib64 )
 
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel
 
@@ -459,10 +404,11 @@ RUN yum install -y cmake3 git ocl-icd-devel opencl-headers pkg-config ca-certifi
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=/usr/local/lib64
-RUN git clone -b v1.4.1 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b v1.5.2 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
     git submodule update --init && \
     sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
+    sed -i "45,47d" CMakeLists.txt && \
     mkdir -p build && cd build && \
     cmake3 \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
@@ -633,7 +579,21 @@ ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd /opt/build && \
     git clone -b master ${OWT_REPO} && \
     cd owt-server && \
-    git reset --hard v5.0
+    git reset --hard v5.0.1
+
+#Patch OWT for Analytics
+
+ARG OWT_ANALYTICS_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/0002-fix-the-analytics-restart.patch
+ARG OWT_AVREAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
+
+RUN cd /opt/build/owt-server && \
+    wget ${OWT_ANALYTICS_PATCH} && \
+    wget ${OWT_AVREAD_PATCH} && \
+    git am 0002-fix-the-analytics-restart.patch && \
+    git am 0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
+
+
+
 
 # Prep OpenH264
 RUN mkdir -p /opt/build/owt-server/third_party/openh264 && \
@@ -730,7 +690,7 @@ RUN rm -rf /opt/dist/usr/local/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/include
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
-RUN cd /opt/dist/usr/local/openvino/inference-engine && \
+RUN cd /opt/dist/usr/local/openvino/deployment_tools/inference_engine && \
     rm -rf /opt/dist/usr/local/lib64/pkgconfig/openvino.pc \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
@@ -756,14 +716,15 @@ ENV LIBVA_DRIVERS_PATH=/usr/local/lib64/dri
 ENV LIBVA_DRIVER_NAME=iHD
 ENV DISPLAY=:0.0
 
-ENV InferenceEngine_DIR=/usr/local/openvino/inference-engine/share
-ENV TBB_DIR=/usr/local/openvino/inference-engine/external/tbb/cmake
+ENV InferenceEngine_DIR=/usr/local/openvino/deployment_tools/inference_engine/share
+ENV TBB_DIR=/usr/local/openvino/deployment_tools/inference_engine/external/tbb/cmake
 ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/deployment_tools/ngraph/lib/
 ENV GST_PLUGIN_PATH=/usr/local/lib64/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib64/gstreamer-1.0/gst-plugin-scanner
 
 # install DLDT
-ARG CUSTOM_IE_DIR=/usr/local/openvino/inference-engine
+ARG CUSTOM_IE_DIR=/usr/local/openvino/deployment_tools/inference_engine
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64/gstreamer-1.0/

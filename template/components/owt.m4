@@ -32,7 +32,7 @@ include(begin.m4)
 
 DECLARE(`OWT_360',false)
 DECLARE(`OWT_BRANCH', master)
-DECLARE(`OWT_VER',v5.0)
+DECLARE(`OWT_VER',v5.0.1)
 DECLARE(`OWT_LICODE_VER',8b4692c88f1fc24dedad66b4f40b1f3d804b50ca)
 DECLARE(`OWT_WEBRTC_BRANCH',59-server)
 DECLARE(`OWT_WEBRTC_VER',)
@@ -84,6 +84,22 @@ RUN cd BUILD_HOME && \
     git clone -b OWT_BRANCH ${OWT_REPO} && \
     cd owt-server && \
     git reset --hard OWT_VER
+
+ifdef(`BUILD_DLDT',
+ifdef(`BUILD_MSDK',,
+#Patch OWT for Analytics
+
+ARG OWT_ANALYTICS_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/0002-fix-the-analytics-restart.patch
+ARG OWT_AVREAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
+
+RUN cd BUILD_HOME/owt-server && \
+    wget ${OWT_ANALYTICS_PATCH} && \
+    wget ${OWT_AVREAD_PATCH} && \
+    git am 0002-fix-the-analytics-restart.patch && \
+    git am 0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
+
+)
+)
 
 # Prep OpenH264
 RUN mkdir -p BUILD_HOME/owt-server/third_party/openh264 && \
