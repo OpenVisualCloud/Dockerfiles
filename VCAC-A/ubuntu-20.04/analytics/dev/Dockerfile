@@ -77,10 +77,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1l.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1k && \
+    cd openssl-OpenSSL_1_1_1l && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -158,7 +158,7 @@ RUN apt-get update && \
 # build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd /opt/build && \
-    git clone ${LIBAOM_REPO} -b v3.1.1 --depth 1 && \
+    git clone ${LIBAOM_REPO} -b v3.1.2 --depth 1 && \
     cd aom/build && \
     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib .. && \
     make -j$(nproc) && \
@@ -174,7 +174,7 @@ RUN apt-get update && \
 ARG MESON_REPO=https://github.com/mesonbuild/meson
 RUN git clone ${MESON_REPO}; \
     cd meson; \
-    git checkout 0.58.1; \
+    git checkout 0.59.1; \
     python3 setup.py install;
 
 RUN apt-get update && \
@@ -228,10 +228,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencl
-ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/21.23.20043/intel-gmmlib_21.1.3_amd64.deb
-ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.7423/intel-igc-core_1.0.7423_amd64.deb
-ARG OPENCL_IGC_OCL_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.7423/intel-igc-opencl_1.0.7423_amd64.deb
-ARG OPENCL_INTEL_OCL_REPO=https://github.com/intel/compute-runtime/releases/download/21.23.20043/intel-opencl_21.23.20043_amd64.deb
+ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/21.37.20939/intel-gmmlib_21.2.1_amd64.deb
+ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.8517/intel-igc-core_1.0.8517_amd64.deb
+ARG OPENCL_IGC_OCL_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.8517/intel-igc-opencl_1.0.8517_amd64.deb
+ARG OPENCL_INTEL_OCL_REPO=https://github.com/intel/compute-runtime/releases/download/21.37.20939/intel-opencl_21.37.20939_amd64.deb
 
 RUN mkdir -p /opt/build/opencl && \
     cd /opt/build/opencl && \
@@ -281,13 +281,13 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # Install OpenVINO - Closed source dldt
-ARG OPENVINO_REPO=http://registrationcenter-download.intel.com/akdlm/irc_nas/17662/l_openvino_toolkit_p_2021.3.394.tgz
+ARG OPENVINO_REPO=http://registrationcenter-download.intel.com/akdlm/irc_nas/17988/l_openvino_toolkit_p_2021.4.582.tgz
 
 #Download and unpack OpenVino
 RUN mkdir /opt/build/openvino
 RUN wget ${OPENVINO_REPO} -P /opt/build/openvino
-RUN if [ -f /opt/build/openvino/l_openvino_toolkit_p_2021.3.394.tgz ]; \
-    then tar xzvf /opt/build/openvino/l_openvino_toolkit_p_2021.3.394.tgz -C /opt/build/openvino && rm /opt/build/openvino/l_openvino_toolkit_p_2021.3.394.tgz; \
+RUN if [ -f /opt/build/openvino/l_openvino_toolkit_p_2021.4.582.tgz ]; \
+    then tar xzvf /opt/build/openvino/l_openvino_toolkit_p_2021.4.582.tgz -C /opt/build/openvino && rm /opt/build/openvino/l_openvino_toolkit_p_2021.4.582.tgz; \
     else echo "Please prepare the OpenVino installation bundle"; \
 fi
 
@@ -303,7 +303,7 @@ RUN echo "ACCEPT_EULA=accept" > /opt/build/openvino/silent.cfg                  
     echo "SIGNING_ENABLED=no" >> /opt/build/openvino/silent.cfg
 
 #Install OpenVino
-RUN /opt/build/openvino/l_openvino_toolkit_p_2021.3.394/install.sh --ignore-signature --cli-mode -s /opt/build/openvino/silent.cfg && rm -rf /opt/build/openvino
+RUN /opt/build/openvino/l_openvino_toolkit_p_2021.4.582/install.sh --ignore-signature --cli-mode -s /opt/build/openvino/silent.cfg && rm -rf /opt/build/openvino
 
 #Create symlink to assure compatibility with components
 RUN cd /opt/intel/      &&\
@@ -351,11 +351,11 @@ RUN cd /opt/build && \
 
 
 
-ARG KAFKA_VER=1.7.0
+ARG KAFKA_VER=1.8.0
 ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${KAFKA_VER}.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
-    cd librdkafka-1.7.0 && \
+    cd librdkafka-1.8.0 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -367,11 +367,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.2.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.1.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.2 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -548,7 +548,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.2/build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -562,7 +562,7 @@ RUN cd /opt/build/opencv-4.5.2/build && \
     .. && \
   cd modules/videoio && \
   make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.2 /opt/dist/usr/local/lib
+  cp -f ../../lib/libopencv_videoio.so.4.5.3 /opt/dist/usr/local/lib
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

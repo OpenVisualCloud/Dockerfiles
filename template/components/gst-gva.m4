@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GVA_VER',v1.4.1)
+DECLARE(`GVA_VER',v1.5.2)
 
 DECLARE(`GVA_WITH_DRM',no)
 DECLARE(`GVA_WITH_X11',no)
@@ -65,6 +65,7 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
     cd BUILD_HOME/gst-video-analytics && \
     git submodule update --init && \
     sed -i `"195s/) {/||g_strrstr(name, \"image\")) {/"' gst/elements/gvapython/python_callback.cpp && \
+    sed -i "45,47d" CMakeLists.txt && \
     mkdir -p build && cd build && \
     ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
