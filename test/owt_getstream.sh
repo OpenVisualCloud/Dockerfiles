@@ -7,7 +7,7 @@ case "$1" in
 esac
 
 #HOTFIX1
-echo 'NODENAME=rabbit@localhost' > /etc/rabbitmq/rabbitmq-env.conf
+echo 'NODENAME=rabbit@localhost' >> /etc/rabbitmq/rabbitmq-env.conf
 
 /home/launch.sh
 
