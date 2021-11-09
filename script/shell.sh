@@ -15,7 +15,7 @@ if [[ -z $TRAVIS && -z $JENKINS_URL ]]; then DOCKER_IT="-it"; else DOCKER_IT="";
 
 TEST="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)/../test/"
 
-if [[ $IMAGE == *analytics* ]] || [[ $IMAGE == *nginx* ]] || [[ $IMAGE == *owt* ]]; then
+if [[ $IMAGE == *analytics* ]] || [[ $IMAGE == *nginx* ]]; then
     HOST_NETWORK="--network=host $HOST_NETWORK"
 fi
 
