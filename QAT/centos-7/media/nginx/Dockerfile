@@ -74,7 +74,7 @@ RUN mkdir -p /opt/intel /opt/dist/opt/intel && \
 RUN yum install -y wget make gcc zlib-devel
 
 # load qat-zip
-ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.0.4.tar.gz
+ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.0.6.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_ZIP_REPO} | tar xz && \
     cd QATzip* && \
@@ -101,7 +101,7 @@ RUN cd /opt/build && \
 RUN yum install -y wget make gcc gawk autoconf automake libtool pkg-config
 
 # load qat-engine
-ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.6.tar.gz
+ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.8.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
@@ -137,7 +137,7 @@ RUN cd /opt/build && \
 
 RUN yum install -y wget pcre-devel zlib-devel libxslt-devel 
 
-ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.5.tar.gz
+ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.6.tar.gz
 RUN wget -O - ${QAT_NGINX_REPO} | tar xz && cd asynch_mode_nginx* && \
     ./configure --with-ld-opt="-Wl,-rpath=/usr/local/ssl/lib,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib64,-rpath=/opt/intel/QAT/build -L/usr/local/ssl/lib -L/opt/intel/QATzip/lib64 -lqatzip -lz" \
         --with-cc-opt="-DNGX_SECURE_MEM -I/usr/local/ssl/include -I/opt/intel/QATzip/include -I/opt/intel/QAT/quickassist/include/dc -I/opt/intel/QAT/quickassist/include -Wno-error=deprecated-declarations" \

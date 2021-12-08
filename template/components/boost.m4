@@ -36,6 +36,10 @@ ifelse(OS_NAME,centos,`
 define(`BOOST_BUILD_DEPS',`python-devel')
 ')
 
+ifelse(OS_NAME,ubuntu,`
+define(`BOOST_BUILD_DEPS',`python-dev')
+')
+
 define(`BUILD_BOOST',`
 # build boost
 ARG BOOST_REPO=http://iweb.dl.sourceforge.net/project/boost/boost/BOOST_VER/boost_1_65_0.tar.bz2

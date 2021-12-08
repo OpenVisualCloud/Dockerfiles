@@ -6,8 +6,8 @@ This document describes the system setup to use Intel QAT within docker containe
 
 ### Install Driver and Service:
 
- - Follow the [instructions](https://01.org/sites/default/files/downloads//336212-intelrquickassisttechnology-gsgrev008c.pdf) to install the supported OS, kernel, Intel QAT driver and service on the host. 
- - For CentOS 7, get the Linux driver package from [here](https://downloadcenter.intel.com/download/30178). Please check [01.org](https://01.org/intel-quickassist-technology) page for updated driver package if available. Continue following commands under Centos 7:
+ - Follow the [instructions](https://01.org/sites/default/files/downloads//336212intelqat-gsg009.pdf) to install the supported OS, kernel, Intel QAT driver and service on the host. 
+ - For CentOS 7, get the Linux driver package from [here](https://www.intel.com/content/www/us/en/download/19734/intel-quickassist-technology-driver-for-linux-hw-version-1-7.html). Please check [01.org](https://01.org/intel-quickassist-technology) page for updated driver package if available. Continue following commands under Centos 7:
 
 ```bash
 tar -zxof <QAT Driver package downloaded above>
@@ -89,7 +89,7 @@ The docker images **must** run with the following devices attached:
 For example, run the following script to start the NGINX Ubuntu image:   
 
 ```bash
-docker run -v /dev/hugepages:/dev/hugepages $(ls -1 /dev/uio* /dev/qat_* /dev/usdm_drv | sed 's/\(.*\)/--device=\1:\1/') -it openvisualcloud/qat-ubuntu1804-media-nginx
+docker run --cap-add=IPC_LOCK -v /dev/hugepages:/dev/hugepages $(ls -1 /dev/uio* /dev/qat_* /dev/usdm_drv | sed 's/\(.*\)/--device=\1:\1/') -it openvisualcloud/qat-ubuntu1804-media-nginx
 ```
 
 ### Run Docker Images as Non-Root:
