@@ -277,11 +277,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.1.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -294,7 +294,7 @@ RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
     .. && \
   make -j $(nproc) && \
   make install DESTDIR=/opt/dist && \
-  make install
+  make install 
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -303,7 +303,7 @@ RUN apt-get update && \
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2021.4.1 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2021.4.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
@@ -520,7 +520,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1/build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -628,7 +628,7 @@ RUN apt-get update && \
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=/usr/local/lib
-RUN git clone -b v1.5.2 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b v1.5.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
     git submodule update --init && \
     sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
@@ -655,7 +655,7 @@ RUN git clone -b v1.5.2 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
         .. \
     && make -j $(nproc) \
     && make install \
-    && make install DESTDIR=/opt/dist
+    && make install DESTDIR=/opt/dist 
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0/:/usr/local/lib/
 
 RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/gstreamer-1.0/.
