@@ -306,13 +306,13 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # Install OpenVINO - Closed source dldt
-ARG OPENVINO_REPO=http://registrationcenter-download.intel.com/akdlm/irc_nas/17988/l_openvino_toolkit_p_2021.4.582.tgz
+ARG OPENVINO_REPO=http://registrationcenter-download.intel.com/akdlm/irc_nas/18319/l_openvino_toolkit_p_2021.4.752.tgz
 
 #Download and unpack OpenVino
 RUN mkdir /opt/build/openvino
 RUN wget ${OPENVINO_REPO} -P /opt/build/openvino
-RUN if [ -f /opt/build/openvino/l_openvino_toolkit_p_2021.4.582.tgz ]; \
-    then tar xzvf /opt/build/openvino/l_openvino_toolkit_p_2021.4.582.tgz -C /opt/build/openvino && rm /opt/build/openvino/l_openvino_toolkit_p_2021.4.582.tgz; \
+RUN if [ -f /opt/build/openvino/l_openvino_toolkit_p_2021.4.752.tgz ]; \
+    then tar xzvf /opt/build/openvino/l_openvino_toolkit_p_2021.4.752.tgz -C /opt/build/openvino && rm /opt/build/openvino/l_openvino_toolkit_p_2021.4.752.tgz; \
     else echo "Please prepare the OpenVino installation bundle"; \
 fi
 
@@ -328,7 +328,7 @@ RUN echo "ACCEPT_EULA=accept" > /opt/build/openvino/silent.cfg                  
     echo "SIGNING_ENABLED=no" >> /opt/build/openvino/silent.cfg
 
 #Install OpenVino
-RUN /opt/build/openvino/l_openvino_toolkit_p_2021.4.582/install.sh --ignore-signature --cli-mode -s /opt/build/openvino/silent.cfg && rm -rf /opt/build/openvino
+RUN /opt/build/openvino/l_openvino_toolkit_p_2021.4.752/install.sh --ignore-signature --cli-mode -s /opt/build/openvino/silent.cfg && rm -rf /opt/build/openvino
 
 #Create symlink to assure compatibility with components
 RUN cd /opt/intel/      &&\
@@ -392,11 +392,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.1.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -409,7 +409,7 @@ RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
     .. && \
   make -j $(nproc) && \
   make install DESTDIR=/opt/dist && \
-  make install
+  make install 
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -573,7 +573,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1/build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \

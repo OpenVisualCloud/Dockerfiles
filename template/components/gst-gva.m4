@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GVA_VER',v1.5.2)
+DECLARE(`GVA_VER',v1.5.3)
 
 DECLARE(`GVA_WITH_DRM',no)
 DECLARE(`GVA_WITH_X11',no)
@@ -67,7 +67,7 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
     sed -i `"195s/) {/||g_strrstr(name, \"image\")) {/"' gst/elements/gvapython/python_callback.cpp && \
     sed -i "45,47d" CMakeLists.txt && \
     mkdir -p build && cd build && \
-    ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
         -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
         -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
@@ -88,7 +88,7 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
         .. \
     && make -j $(nproc) \
     && make install \
-    && make install DESTDIR=BUILD_DESTDIR
+    && make install DESTDIR=BUILD_DESTDIR ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_LIBDIR/gstreamer-1.0/:/usr/local/lib/
 
 RUN cp -r  BUILD_HOME/gst-video-analytics/build/intel64/Release/lib/* BUILD_LIBDIR/gstreamer-1.0/.
