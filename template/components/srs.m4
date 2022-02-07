@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`SRS_VER',v4.0.161)
+DECLARE(`SRS_VER',v4.0-b4)
 DECLARE(`SRS_ENABLE_HDS',on)
 
 ifelse(OS_NAME,ubuntu,`
@@ -61,7 +61,6 @@ RUN cd BUILD_HOME && \
         --nasm=ifdef(BUILD_NASM,on,off) \
         --srt=ifdef(BUILD_LIBSRT,on,off) \
         --rtc=on \
-        --gb28181=on \
         --extra-flags=$(pkg-config --cflags openssl) \
         --jobs=$(nproc) && \
     make -j$(nproc) && touch research/api-server/static-dir/crossdomain.xml && \

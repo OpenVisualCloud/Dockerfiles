@@ -65,7 +65,7 @@ RUN apt-get update && \
 # build srs
 ARG SRS_REPO=https://github.com/ossrs/srs.git
 RUN cd /opt/build && \
-    git clone -b v4.0.161 --depth 1 ${SRS_REPO} && \
+    git clone -b v4.0-b4 --depth 1 ${SRS_REPO} && \
     cd srs/trunk && \
     sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=\/usr\/local\/ssl\/lib /" configure && \
     ./configure --prefix=/usr/local/srs \
@@ -79,7 +79,6 @@ RUN cd /opt/build && \
         --nasm=off \
         --srt=off \
         --rtc=on \
-        --gb28181=on \
         --extra-flags=$(pkg-config --cflags openssl) \
         --jobs=$(nproc) && \
     make -j$(nproc) && touch research/api-server/static-dir/crossdomain.xml && \
