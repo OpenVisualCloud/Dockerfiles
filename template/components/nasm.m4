@@ -37,7 +37,7 @@ define(`NASM_BUILD_DEPS',`ca-certificates wget tar g++ make bzip2')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`NASM_BUILD_DEPS',`wget tar gcc-c++ make bzip2')
+define(`NASM_BUILD_DEPS',`ca-certificates wget tar gcc-c++ make bzip2')
 ')
 
 define(`BUILD_NASM',`

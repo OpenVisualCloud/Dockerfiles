@@ -105,7 +105,7 @@ RUN cd /opt/build && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget tar gcc-c++ make bzip2
+RUN yum install -y ca-certificates wget tar gcc-c++ make bzip2
 
 # build nasm
 ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
