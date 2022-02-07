@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 include(opencv.m4)
 
-DECLARE(`DLDT_VER',2021.4.1)
+DECLARE(`DLDT_VER',2021.4.2)
 DECLARE(`DLDT_WARNING_AS_ERRORS',false)
 
 ifelse(OS_NAME,ubuntu,`
@@ -56,7 +56,7 @@ RUN cd BUILD_HOME/openvino && \
   sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
 ')dnl
   mkdir build && cd build && \
-  ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
+  ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
     -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX/openvino \
     -DENABLE_CPPLINT=OFF \
     -DENABLE_GNA=OFF \
@@ -74,7 +74,7 @@ RUN cd BUILD_HOME/openvino && \
     .. && \
   make -j $(nproc) && \
   make install && \
-  make install DESTDIR=BUILD_DESTDIR 
+  make install DESTDIR=BUILD_DESTDIR ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 
 
 ARG OPENVINO_INSTALL_DIR=/usr/local/openvino

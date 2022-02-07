@@ -162,11 +162,11 @@ RUN cd /opt/build && \
 RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.1.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -177,9 +177,9 @@ RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     .. && \
-  make -j $(nproc) ) && \
+  make -j $(nproc) && \
   make install DESTDIR=/opt/dist && \
-  make install
+  make install  )
 
 RUN yum install -y gcc-c++ make wget
 
@@ -239,14 +239,14 @@ RUN yum install -y gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool lib
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2021.4.1 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2021.4.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
 RUN cd /opt/build/openvino && \
     sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
   mkdir build && cd build && \
-  cmake \
+  (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
     -DENABLE_CPPLINT=OFF \
     -DENABLE_GNA=OFF \
@@ -264,7 +264,7 @@ RUN cd /opt/build/openvino && \
     .. && \
   make -j $(nproc) && \
   make install && \
-  make install DESTDIR=/opt/dist 
+  make install DESTDIR=/opt/dist  )
 
 
 ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
@@ -310,7 +310,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1/build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2/build && \
   rm -rf ./* && \
   (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -457,13 +457,13 @@ RUN yum install -y git ocl-icd-devel opencl-headers pkg-config ca-certificates p
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=/usr/local/lib64
-RUN git clone -b v1.5.2 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b v1.5.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
     git submodule update --init && \
     sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
     sed -i "45,47d" CMakeLists.txt && \
     mkdir -p build && cd build && \
-    cmake \
+    (. /opt/rh/devtoolset-9/enable && cmake \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
         -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
         -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -484,7 +484,7 @@ RUN git clone -b v1.5.2 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
         .. \
     && make -j $(nproc) \
     && make install \
-    && make install DESTDIR=/opt/dist
+    && make install DESTDIR=/opt/dist  )
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0/:/usr/local/lib/
 
 RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0/.

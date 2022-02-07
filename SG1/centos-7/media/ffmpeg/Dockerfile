@@ -277,11 +277,11 @@ RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.3 && \
 RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.1.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -292,9 +292,9 @@ RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1 && mkdir build && cd build && \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     .. && \
-  make -j $(nproc) ) && \
+  make -j $(nproc) && \
   make install DESTDIR=/opt/dist && \
-  make install
+  make install  )
 
 RUN yum install -y wget patch git libv4l-devel libass-devel freetype-devel
 
@@ -332,7 +332,7 @@ RUN cd /opt/build/FFmpeg-n4.4 && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.1/build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2/build && \
   rm -rf ./* && \
   (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_BUILD_TYPE=Release \

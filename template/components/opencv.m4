@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENCV_VER',4.5.3-openvino-2021.4.1)
+DECLARE(`OPENCV_VER',4.5.3-openvino-2021.4.2)
 DECLARE(`OPENCV_VER_TRUNC',4.5.3)
 
 ifelse(OS_NAME,ubuntu,`
@@ -58,9 +58,9 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     .. && \
-  make -j $(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,` )') && \
+  make -j $(nproc) && \
   make install DESTDIR=BUILD_DESTDIR && \
-  make install
+  make install ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 ')
 
 define(`REBUILD_OPENCV_VIDEOIO',`
