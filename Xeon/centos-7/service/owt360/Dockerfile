@@ -380,18 +380,6 @@ RUN cd /opt/build && \
     cd owt-server && \
     git reset --hard 101203f28f7901cd50c1341b5ad8c87247f500d6
 
-#Patch OWT for Analytics
-
-ARG OWT_ANALYTICS_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/0002-fix-the-analytics-restart.patch
-ARG OWT_AVREAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
-
-RUN cd /opt/build/owt-server && \
-    wget ${OWT_ANALYTICS_PATCH} && \
-    wget ${OWT_AVREAD_PATCH} && \
-    git am 0002-fix-the-analytics-restart.patch && \
-    git am 0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
-
-
 
 
 # Prep OpenH264
