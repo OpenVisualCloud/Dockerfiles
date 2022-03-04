@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included FFmpeg and codecs such as opus, ogg, vorbis, x264, x265, vp8/9, av1 and SVT-HEVC. It also includes libvmaf for video quality assessment.The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeon-ubuntu-1804-media-ffmpeg-vmaf](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/Xeon/ubuntu-18.04/media/ffmpeg-vmaf/Dockerfile)
+ - [xeon-ubuntu-1804-media-ffmpeg-vmaf](https://github.com/OpenVisualCloud/Dockerfiles/blob/v22.3/Xeon/ubuntu-18.04/media/ffmpeg-vmaf/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
