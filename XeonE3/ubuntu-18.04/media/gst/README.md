@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for the media creation and delivery use case. Included gstreamer and audio and video plugins that can be connected to process audio and video content, such as creating, converting, transcoding. Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-ubuntu-1804-media-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/XeonE3/ubuntu-18.04/media/gst/Dockerfile)
+ - [xeone3-ubuntu-1804-media-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/v22.3/XeonE3/ubuntu-18.04/media/gst/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS

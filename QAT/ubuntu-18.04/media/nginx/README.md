@@ -3,7 +3,7 @@ This Image implements Hardware Implementation of [QAT-Engine](https://github.com
 Refer to [Nginx SW image](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/QAT/ubuntu-18.04/media/nginx_sw) or [Development image](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/QAT/ubuntu-18.04/media/dev) for Software Implementation.
 
 ## Supported tags and respective Dockerfile links
- - [qat-ubuntu-1804-media-nginx](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/QAT/ubuntu-18.04/media/nginx/Dockerfile)
+ - [qat-ubuntu-1804-media-nginx](https://github.com/OpenVisualCloud/Dockerfiles/blob/v22.3/QAT/ubuntu-18.04/media/nginx/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
