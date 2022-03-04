@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [vcac-a-ubuntu-2004-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/VCAC-A/ubuntu-20.04/analytics/ffmpeg/Dockerfile)
+ - [vcac-a-ubuntu-2004-analytics-ffmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/v22.3/VCAC-A/ubuntu-20.04/analytics/ffmpeg/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
