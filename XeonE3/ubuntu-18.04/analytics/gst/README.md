@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery GStreamer image, inferencing engine and video analytics plugins. Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [xeone3-ubuntu-1804-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.6/XeonE3/ubuntu-18.04/analytics/gst/Dockerfile)
+ - [xeone3-ubuntu-1804-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/v22.3/XeonE3/ubuntu-18.04/analytics/gst/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS

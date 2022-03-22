@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - xeon-ubuntu-2004-service-owt-dev <<to be updated after release>>
+ - [xeon-ubuntu-2004-service-owt-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v22.3/Xeon/ubuntu-20.04/service/owt-dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
