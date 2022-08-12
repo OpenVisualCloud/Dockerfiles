@@ -30,12 +30,9 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-include(libva2.m4)
-include(gmmlib.m4)
-
-DECLARE(`MEDIA_DRIVER_VER',intel-media-22.1.1)
+DECLARE(`MEDIA_DRIVER_VER',intel-media-22.5.0)
 DECLARE(`MEDIA_DRIVER_SRC_REPO',https://github.com/intel/media-driver/archive/MEDIA_DRIVER_VER.tar.gz)
-DECLARE(`ENABLE_PRODUCTION_KMD',OFF)
+DECLARE(`ENABLE_PRODUCTION_KMD',ON)
 
 ifelse(OS_NAME,ubuntu,`
 define(`MEDIA_DRIVER_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) g++ libpciaccess-dev make pkg-config wget')

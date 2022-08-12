@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GMMLIB_VER',intel-gmmlib-22.0.1)
+DECLARE(`GMMLIB_VER',intel-gmmlib-22.1.7)
 DECLARE(`GMMLIB_SRC_REPO',https://github.com/intel/gmmlib/archive/refs/tags/GMMLIB_VER.tar.gz)
 
 ifelse(OS_NAME,ubuntu,`

@@ -30,7 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`FFMPEG_VER',n4.4)
+DECLARE(`FFMPEG_VER',n5.0.1)
+DECLARE(`FFMPEG_SHA',bea841a)
 DECLARE(`FFMPEG_ENABLE_LIBASS',true)
 DECLARE(`FFMPEG_ENABLE_LIBFREETYPE',true)
 DECLARE(`FFMPEG_ENABLE_X11',false)
@@ -62,34 +63,57 @@ define(`FFMPEG_INSTALL_DEPS',`ifelse(FFMPEG_ENABLE_V4L2,true,libv4l) ifelse(FFMP
 ')
 
 define(`BUILD_FFMPEG',`
-# build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
-RUN cd BUILD_HOME && \
-    wget -O - ${FFMPEG_REPO} | tar xz
 
-ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+# build ffmpeg
+#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
+RUN cd BUILD_HOME && \
+    git clone ${FFMPEG_REPO} && \
+    cd FFmpeg && \
+    git checkout FFMPEG_SHA 
+
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
 #ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg)')dnl
+ifdef(`BUILD_ONEVPL_DISP',`
+include(media-delivery.m4)
+
+RUN cd BUILD_HOME/FFmpeg && \
+    cp BUILD_HOME/media-delivery/patches/ffmpeg/* . && \
+    { set -e; \
+    for patch_file in $(find -iname "*.patch" | sort -n); do \
+    echo "Applying: ${patch_file}"; \
+    patch -p1 < ${patch_file}; \
+    done; }
+')dnl
 
 ifelse(FFMPEG_FLV_PATCH,true,
 ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
 
-RUN cd BUILD_HOME && \
-    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
-    cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-    patch -p1 < BUILD_HOME/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
+# TODO: Disabled as failed with custom SHA
+#RUN cd BUILD_HOME && \
+#    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
+#    #cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+#    cd BUILD_HOME/FFmpeg && \
+#    patch -p1 < BUILD_HOME/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
 )dnl
 
-ifelse(FFMPEG_1TN_PATCH,true,
-ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
-RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
-)dnl
+# TODO: Disabled as failed with custom SHA
+
+#ifelse(FFMPEG_1TN_PATCH,true,
+#ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+#RUN cd BUILD_HOME/FFmpeg && \
+#    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
+#)dnl
 
 
-RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd BUILD_HOME/FFmpeg && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
     ifelse(FFMPEG_WARNING_AS_ERRORS,false,--extra-cflags=-w )dnl
@@ -113,6 +137,7 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
     ifdef(`BUILD_LIBVMAF',--enable-libvmaf --enable-version3 )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl
+    ifdef(`BUILD_ONEVPL_DISP',--enable-libvpl )dnl
     && make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install

@@ -108,7 +108,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build nasm
-ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
+#ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
+# TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
+
+ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
@@ -265,10 +268,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build media sdk
-ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-21.1.3.tar.gz
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-22.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${MSDK_REPO} | tar xz
-RUN cd /opt/build/MediaSDK-intel-mediasdk-21.1.3 && \
+RUN cd /opt/build/MediaSDK-intel-mediasdk-22.3.0 && \
     mkdir -p build && cd build && \
     cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -396,35 +399,50 @@ RUN apt-get update && \
     build-essential ca-certificates wget patch git libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
-# build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_REPO} | tar xz
 
+# build ffmpeg
+#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
+RUN cd /opt/build && \
+    git clone ${FFMPEG_REPO} && \
+    cd FFmpeg && \
+    git checkout bea841a 
+
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
-    cd /opt/build/FFmpeg-n4.4 && \
+    cd /opt/build/FFmpeg && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
 ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
 
-RUN cd /opt/build && \
-    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
-    cd /opt/build/FFmpeg-n4.4 && \
-    patch -p1 < /opt/build/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
+# TODO: Disabled as failed with custom SHA
+#RUN cd BUILD_HOME && \
+#    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
+#    #cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+#    cd BUILD_HOME/FFmpeg && \
+#    patch -p1 < BUILD_HOME/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
 
-ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
-RUN cd /opt/build/FFmpeg-n4.4 && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
+# TODO: Disabled as failed with custom SHA
 
-RUN cd /opt/build/FFmpeg-n4.4 && \
+#ifelse(FFMPEG_1TN_PATCH,true,
+#ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+#RUN cd BUILD_HOME/FFmpeg && \
+#    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
+#)dnl
+
+
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265                     --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265                     --enable-libdav1d         && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 

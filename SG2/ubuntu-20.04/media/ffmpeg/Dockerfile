@@ -109,7 +109,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build nasm
-ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
+#ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
+# TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
+
+ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
@@ -219,10 +222,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build svt av1
-ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.7/SVT-AV1-v0.8.7.tar.gz
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.2.0/SVT-AV1-v1.2.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
-    mv SVT-AV1-v0.8.7 SVT-AV1 && \
+    mv SVT-AV1-v1.2.0 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -251,10 +254,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gmmlib
-ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/refs/tags/intel-gmmlib-22.0.1.tar.gz
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/refs/tags/intel-gmmlib-22.1.7.tar.gz
 RUN cd /opt/build && \
   wget -O - ${GMMLIB_REPO} | tar xz
-RUN cd /opt/build/gmmlib-intel-gmmlib-22.0.1 && mkdir build && cd build && \
+RUN cd /opt/build/gmmlib-intel-gmmlib-22.1.7 && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -266,14 +269,26 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build libva2
-ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.13.0.tar.gz
+ARG LIBVA2_REPO=https://github.com/intel/libva/archive/2.15.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${LIBVA2_REPO} | tar xz
-RUN cd /opt/build/libva-2.13.0 && \
+RUN cd /opt/build/libva-2.15.0 && \
   ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
   make install
+
+
+
+# build libva-utils
+ARG LIBVA_UTILS_REPO=https://github.com/intel/libva-utils/archive/2.15.0.tar.gz
+RUN cd /opt/build && \
+  wget -O - ${LIBVA_UTILS_REPO} | tar xz
+RUN cd /opt/build/libva-utils-2.15.0 && \
+  ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib && \
+  make -j$(nproc) && \
+  make install DESTDIR=/opt/dist && \
+  make install 
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -281,14 +296,67 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build media driver
-ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-22.1.1.tar.gz
+ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-22.5.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
-RUN cd /opt/build/media-driver-intel-media-22.1.1 && mkdir build && cd build && \
-  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DENABLE_PRODUCTION_KMD=OFF .. && \
+RUN cd /opt/build/media-driver-intel-media-22.5.0 && mkdir build && cd build && \
+  cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DENABLE_PRODUCTION_KMD=ON .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
   make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates gcc g++ make cmake pkg-config wget && \
+  rm -rf /var/lib/apt/lists/*
+
+# build onevpl runtime for GPU
+ARG ONEVPL_GPU_REPO=https://github.com/oneapi-src/oneVPL-intel-gpu/archive/refs/tags/intel-onevpl-22.5.0.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${ONEVPL_GPU_REPO} | tar xz
+RUN cd /opt/build/oneVPL-intel-gpu-intel-onevpl-22.5.0 && \
+    mkdir -p build && cd build && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_LIBDIR=/usr/local/lib \
+    -DBUILD_SAMPLES=MSDK_BUILD_SAMPLES \
+    -DBUILD_TUTORIALS=OFF \
+    .. && \
+    make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+
+
+
+# Patch with oneVPL patches
+RUN cd /opt/build && \
+   if [ ! -d "media-delivery" ]; then git clone https://github.com/intel/media-delivery && cd media-delivery && git checkout a07323e345df33a92189b281fbe6e3639b97d0e0; fi
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates gcc g++ make git cmake patch && \
+  rm -rf /var/lib/apt/lists/*
+
+# build onevpl dispatcher
+ARG ONEVPL_DISP_REPO=https://github.com/oneapi-src/oneVPL/archive/refs/tags/v2022.1.5.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${ONEVPL_DISP_REPO} | tar xz 
+RUN cd /opt/build/oneVPL-2022.1.5 && \
+    cp /opt/build/media-delivery/patches/libvpl2/* . && \
+    { set -e; \
+    for patch_file in $(find -iname "*.patch" | sort -n); do \
+    echo "Applying: ${patch_file}"; \
+    patch -p1 < ${patch_file}; \
+    done; } && \
+    mkdir -p build && cd build && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_LIBDIR=/usr/local/lib \
+    -DBUILD_SAMPLES=MSDK_BUILD_SAMPLES \
+    -DBUILD_TUTORIALS=OFF \
+    .. && \
+    make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -320,37 +388,62 @@ RUN apt-get update && \
     build-essential ca-certificates wget patch git libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
-# build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_REPO} | tar xz
 
-RUN cd /opt/build/FFmpeg-n4.4 && \
+# build ffmpeg
+#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
+RUN cd /opt/build && \
+    git clone ${FFMPEG_REPO} && \
+    cd FFmpeg && \
+    git checkout bea841a 
+
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+RUN cd /opt/build/FFmpeg && \
     patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 #ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
-    cd /opt/build/FFmpeg-n4.4 && \
+    cd /opt/build/FFmpeg && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
+
+
+
+RUN cd /opt/build/FFmpeg && \
+    cp /opt/build/media-delivery/patches/ffmpeg/* . && \
+    { set -e; \
+    for patch_file in $(find -iname "*.patch" | sort -n); do \
+    echo "Applying: ${patch_file}"; \
+    patch -p1 < ${patch_file}; \
+    done; }
 
 ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
 
-RUN cd /opt/build && \
-    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
-    cd /opt/build/FFmpeg-n4.4 && \
-    patch -p1 < /opt/build/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
+# TODO: Disabled as failed with custom SHA
+#RUN cd BUILD_HOME && \
+#    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
+#    #cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+#    cd BUILD_HOME/FFmpeg && \
+#    patch -p1 < BUILD_HOME/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
 
-ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
-RUN cd /opt/build/FFmpeg-n4.4 && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
+# TODO: Disabled as failed with custom SHA
 
-RUN cd /opt/build/FFmpeg-n4.4 && \
+#ifelse(FFMPEG_1TN_PATCH,true,
+#ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+#RUN cd BUILD_HOME/FFmpeg && \
+#    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
+#)dnl
+
+
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             --enable-libdav1d     --enable-libvpl     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -395,4 +488,7 @@ RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 ENV LIBVA_DRIVERS_PATH=/usr/local/lib/dri
 ENV LIBVA_DRIVER_NAME=iHD
 ENV DISPLAY=:0.0
+
+# Define ONEVPL lib dir
+ENV ONEVPL_SEARCH_PATH=/usr/local/lib
 

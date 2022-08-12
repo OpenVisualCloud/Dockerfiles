@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBVA2_VER',2.13.0)
+DECLARE(`LIBVA2_VER',2.15.0)
 DECLARE(`LIBVA2_SRC_REPO',https://github.com/intel/libva/archive/LIBVA2_VER.tar.gz)
 DECLARE(`LIBVA2_X11',true)
 DECLARE(`LIBVA2_WAYLAND',true)
@@ -41,11 +41,6 @@ define(`LIBVA2_BUILD_DEPS',`automake ca-certificates gcc libdrm-dev libtool make
 define(`LIBVA2_INSTALL_DEPS',`libdrm2 ifelse(LIBVA2_X11,true,libx11-6 libxext6 libxfixes3) ifelse(LIBVA2_WAYLAND,true,libwayland-client0)')
 ')
 
-ifelse(OS_NAME,centos,`
-define(`LIBVA2_BUILD_DEPS',`automake gcc libdrm-devel libtool make pkg-config wget which ifelse(LIBVA2_X11,true,libX11-devel libXfixes-devel libXext-devel) ifelse(LIBVA2_WAYLAND,true,wayland-devel)')
-
-define(`LIBVA2_INSTALL_DEPS',`libdrm ifelse(LIBVA2_X11,true,libX11 libXfixes libXext) ifelse(LIBVA2_WAYLAND,true,libwayland-client)')
-')
 
 define(`BUILD_LIBVA2',`
 # build libva2
