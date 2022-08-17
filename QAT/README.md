@@ -76,9 +76,9 @@ The table lists the available docker images:
 (*media-nginx* image uses QAT HW implementation & *dev/nginx_sw* images use QAT SW implmentation.)
 |Image|Dockerfile|Docker Image|
 |:-:|---|---|
-|media-dev|[centos-7/media/dev](centos-7/media/dev)<br>[ubuntu-18.04/media/dev](ubuntu-18.04/media/dev)<br>[ubuntu-20.04/media/dev](ubuntu-20.04/media/dev)|[openvisualcloud/qat-centos7-media-dev](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-dev)<br>[openvisualcloud/qat-ubuntu1804-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-dev)<br>[openvisualcloud/qat-ubuntu2004-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-dev)|
-|media-nginx|[centos-7/media/nginx](centos-7/media/nginx)<br>[ubuntu-18.04/media/nginx](ubuntu-18.04/media/nginx)<br>[ubuntu-20.04/media/nginx](ubuntu-20.04/media/nginx)|[openvisualcloud/qat-centos7-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx)<br>[openvisualcloud/qat-ubuntu1804-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-nginx)<br>[openvisualcloud/qat-ubuntu2004-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx)|
-|media-nginx_sw|[centos-7/media/nginx_sw](centos-7/media/nginx_sw)<br>[ubuntu-18.04/media/nginx_sw](ubuntu-18.04/media/nginx_sw)<br>[ubuntu-20.04/media/nginx_sw](ubuntu-20.04/media/nginx_sw)|[openvisualcloud/qat-centos7-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx_sw)<br>[openvisualcloud/qat-ubuntu1804-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-ubuntu1804-media-nginx_sw)<br>[openvisualcloud/qat-ubuntu2004-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx_sw)|
+|media-dev|[centos-7/media/dev](centos-7/media/dev)<br>[ubuntu-20.04/media/dev](ubuntu-20.04/media/dev)|[openvisualcloud/qat-centos7-media-dev](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-dev)<br>[openvisualcloud/qat-ubuntu2004-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-dev)|
+|media-nginx|[centos-7/media/nginx](centos-7/media/nginx)<br>[ubuntu-20.04/media/nginx](ubuntu-20.04/media/nginx)|[openvisualcloud/qat-centos7-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx)<br>[openvisualcloud/qat-ubuntu2004-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx)|
+|media-nginx_sw|[centos-7/media/nginx_sw](centos-7/media/nginx_sw)<br>[ubuntu-20.04/media/nginx_sw](ubuntu-20.04/media/nginx_sw)|[openvisualcloud/qat-centos7-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx_sw)<br>[openvisualcloud/qat-ubuntu2004-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx_sw)|
 
 The docker images **must** run with the following devices attached:  
 - `/dev/hugepages`: The hugepage kernel pages.  
@@ -89,12 +89,12 @@ The docker images **must** run with the following devices attached:
 For example, run the following script to start the NGINX Ubuntu image:   
 
 ```bash
-docker run --cap-add=IPC_LOCK -v /dev/hugepages:/dev/hugepages $(ls -1 /dev/uio* /dev/qat_* /dev/usdm_drv | sed 's/\(.*\)/--device=\1:\1/') -it openvisualcloud/qat-ubuntu1804-media-nginx
+docker run --cap-add=IPC_LOCK -v /dev/hugepages:/dev/hugepages $(ls -1 /dev/uio* /dev/qat_* /dev/usdm_drv | sed 's/\(.*\)/--device=\1:\1/') -it openvisualcloud/qat-ubuntu2004-media-nginx
 ```
 
 ### Run Docker Images as Non-Root:
 
-To access the mounted [devices](#run-docker-images), the user must have the access permission. The NGINX [sample](ubuntu-18.04/media/nginx/nginx.conf) configuration runs the NGINX instance as root: `user root`. To run NGINX as a non-root user, for example `nobody`, you need to create a `qat` group, the GID of which **must** match that of the `qat` group on the host. Then you can run NGINX as user `nobody` and group `qat`: `user nobody qat`.   
+To access the mounted [devices](#run-docker-images), the user must have the access permission. The NGINX [sample](ubuntu-20.04/media/nginx/nginx.conf) configuration runs the NGINX instance as root: `user root`. To run NGINX as a non-root user, for example `nobody`, you need to create a `qat` group, the GID of which **must** match that of the `qat` group on the host. Then you can run NGINX as user `nobody` and group `qat`: `user nobody qat`.   
 
 ### Known Limitations:   
 

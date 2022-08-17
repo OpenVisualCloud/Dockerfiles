@@ -66,7 +66,6 @@ RUN cd BUILD_HOME/gstreamer-vaapi-GSTCORE_VER && \
     --libdir=BUILD_LIBDIR \
     --libexecdir=BUILD_LIBDIR \
     --buildtype=release \
-    -Dgtk_doc=disabled \
     -Dexamples=disabled \
     -Dtests=disabled && \
   cd build && \

@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(nasm.m4)
 
-DECLARE(`LIBVMAF_VER',2.1.1)
+DECLARE(`LIBVMAF_VER',2.3.1)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBVMAF_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config ninja-build')

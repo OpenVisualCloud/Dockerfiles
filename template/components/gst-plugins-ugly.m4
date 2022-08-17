@@ -63,7 +63,6 @@ RUN cd BUILD_HOME/gst-plugins-ugly-GSTCORE_VER && \
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain \
     -Ddoc=disabled \
-    -Dgtk_doc=disabled \
     -Dx264=ifdef(`BUILD_LIBX264',enabled,disabled) \
     && cd build && \
     ninja install && \

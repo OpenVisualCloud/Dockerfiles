@@ -51,8 +51,7 @@ ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain \
     -Dpython=/usr/bin/python3 -Dlibpython-dir=ifelse(OS_NAME,centos,/usr/lib64/,/usr/lib/x86_64-linux-gnu/ ) \
-    -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides \
-    -Dgtk_doc=disabled && \
+    -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides && \
     cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install

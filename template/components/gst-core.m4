@@ -54,8 +54,7 @@ RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled && \
+    -Dintrospection=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install

@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(nasm.m4)
 
-DECLARE(`DAV1D_VER',0.9.0)
+DECLARE(`DAV1D_VER',0.9.2)
 
 ifelse(OS_NAME,ubuntu,`
 define(`DAV1D_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config')

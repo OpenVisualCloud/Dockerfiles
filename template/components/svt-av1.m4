@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(yasm.m4)
 
-DECLARE(`SVT_AV1_VER',v0.8.7)
+DECLARE(`SVT_AV1_VER',v1.2.0)
 
 include(yasm.m4)
 

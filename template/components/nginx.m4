@@ -30,11 +30,11 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`NGINX_VER',1.21.0)
+DECLARE(`NGINX_VER',1.22.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`NGINX_BUILD_DEPS',`ca-certificates gcc libpcre3-dev libxslt1-dev make wget zlib1g-dev ifdef(`BUILD_OPENSSL',,libssl-dev)')
-define(`NGINX_INSTALL_DEPS',`libpcre3 libxml2 libxslt1.1 zlib1g ifdef(`BUILD_OPENSSL',,libssl1.1)')
+define(`NGINX_INSTALL_DEPS',`libpcre3 libxml2 libxslt1.1 zlib1g ifdef(`BUILD_OPENSSL',,ifelse(OS_VERSION,20.04,libssl1.1,libssl3))')
 ')
 
 ifelse(OS_NAME,centos,`

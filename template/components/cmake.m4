@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`CMAKE_VER',3.21.3)
+DECLARE(`CMAKE_VER',3.23.3)
 
 ifelse(OS_NAME,ubuntu,`
 define(`CMAKE_BUILD_DEPS',`g++ ca-certificates wget make libcurl4-gnutls-dev zlib1g-dev')

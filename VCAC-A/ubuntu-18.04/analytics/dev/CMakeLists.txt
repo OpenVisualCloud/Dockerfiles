@@ -1,5 +1,0 @@
-set(image "vcaca_analytics_devel_ubuntu1804")
-include(image)
-include(ffmpeg-tests)
-include(gst-tests)
-include(dldt-gst-tests)

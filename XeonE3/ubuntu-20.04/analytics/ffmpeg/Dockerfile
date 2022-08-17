@@ -108,7 +108,9 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build nasm
-ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
+#ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
+# TODO: to revert to official nasm repo
+ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
@@ -125,7 +127,7 @@ RUN apt-get update && \
 # build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd /opt/build && \
-    git clone ${LIBVPX_REPO} -b v1.10.0 --depth 1 && \
+    git clone ${LIBVPX_REPO} -b v1.12.0 --depth 1 && \
     cd libvpx && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
     make -j$(nproc) && \
@@ -188,10 +190,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build dav1d
-ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.0/dav1d-0.9.0.tar.gz
+ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.2/dav1d-0.9.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${DAV1D_REPO} | tar xz
-RUN cd /opt/build/dav1d-0.9.0 && \
+RUN cd /opt/build/dav1d-0.9.2 && \
   meson build --prefix=/usr/local --libdir /usr/local/lib --buildtype=plain && \
   cd build && \
   ninja install && \
@@ -218,10 +220,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build svt av1
-ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.7/SVT-AV1-v0.8.7.tar.gz
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.2.0/SVT-AV1-v1.2.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
-    mv SVT-AV1-v0.8.7 SVT-AV1 && \
+    mv SVT-AV1-v1.2.0 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -250,10 +252,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gmmlib
-ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/intel-gmmlib-21.1.3.tar.gz
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/intel-gmmlib-22.1.7.tar.gz
 RUN cd /opt/build && \
   wget -O - ${GMMLIB_REPO} | tar xz
-RUN cd /opt/build/gmmlib-intel-gmmlib-21.1.3 && mkdir build && cd build && \
+RUN cd /opt/build/gmmlib-intel-gmmlib-22.1.7 && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -280,10 +282,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencl
-ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/21.37.20939/intel-gmmlib_21.2.1_amd64.deb
-ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.8517/intel-igc-core_1.0.8517_amd64.deb
-ARG OPENCL_IGC_OCL_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.8517/intel-igc-opencl_1.0.8517_amd64.deb
-ARG OPENCL_INTEL_OCL_REPO=https://github.com/intel/compute-runtime/releases/download/21.37.20939/intel-opencl_21.37.20939_amd64.deb
+ARG OPENCL_GMMLIB_REPO=https://github.com/intel/compute-runtime/releases/download/22.30.23789/libigdgmm12_22.1.3_amd64.deb
+ARG OPENCL_IGC_CORE_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.11485/intel-igc-core_1.0.11485_amd64.deb
+ARG OPENCL_IGC_OCL_REPO=https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.11485/intel-igc-opencl_1.0.11485_amd64.deb
+ARG OPENCL_INTEL_OCL_REPO=https://github.com/intel/compute-runtime/releases/download/22.30.23789/intel-opencl-icd_22.30.23789_amd64.deb
 
 RUN mkdir -p /opt/build/opencl && \
     cd /opt/build/opencl && \
@@ -297,10 +299,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build media driver
-ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-21.1.3.tar.gz
+ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-22.4.4.tar.gz
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
-RUN cd /opt/build/media-driver-intel-media-21.1.3 && mkdir build && cd build && \
+RUN cd /opt/build/media-driver-intel-media-22.4.4 && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DENABLE_PRODUCTION_KMD=OFF .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -312,10 +314,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build media sdk
-ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-21.1.3.tar.gz
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-22.4.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${MSDK_REPO} | tar xz
-RUN cd /opt/build/MediaSDK-intel-mediasdk-21.1.3 && \
+RUN cd /opt/build/MediaSDK-intel-mediasdk-22.4.4 && \
     mkdir -p build && cd build && \
     cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -333,11 +335,14 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
+ARG OPENCV_REPO=https://github.com/opencv/opencv
 RUN cd /opt/build && \
-  wget -O - ${OPENCV_REPO} | tar xz
+  git clone ${OPENCV_REPO} && \
+  cd opencv && \
+  git checkout 4.6.0 
+#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
+RUN cd /opt/build/opencv && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -359,17 +364,16 @@ RUN apt-get update && \
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2021.4.2 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2022.1.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
 RUN cd /opt/build/openvino && \
-    sed -i s/-Werror//g $(grep -ril Werror inference-engine/thirdparty/) && \
   mkdir build && cd build && \
   cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
     -DENABLE_CPPLINT=OFF \
-    -DENABLE_GNA=OFF \
+    -DDENABLE_INTEL_GNA=OFF \
     -DENABLE_VPU=OFF \
     -DENABLE_OPENCV=OFF \
     -DENABLE_MKL_DNN=ON \
@@ -388,19 +392,19 @@ RUN cd /opt/build/openvino && \
 
 
 ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
-ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/deployment_tools/inference_engine/
+ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/runtime/
 
-ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/share
-ENV TBB_DIR=${IE_INSTALL_DIR}/external/tbb/cmake
-ENV ngraph_DIR=${OPENVINO_INSTALL_DIR}/deployment_tools/ngraph/cmake
+ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/cmake
+ENV TBB_DIR=${IE_INSTALL_DIR}/3rdparty/tbb/cmake
+ENV ngraph_DIR=${IE_INSTALL_DIR}/cmake
 
 
 
-ARG KAFKA_VER=1.8.0
+ARG KAFKA_VER=1.9.2
 ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${KAFKA_VER}.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
-    cd librdkafka-1.8.0 && \
+    cd librdkafka-1.9.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -408,10 +412,10 @@ RUN cd /opt/build && \
 
 
 
-ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-0.15-20200726.tar.gz
+ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-0.16-20220414.tar.gz
 RUN cd /opt/build && \
     wget -O - ${LIBJSONC_REPO} | tar xz && \
-    cd json-c-json-c-0.15-20200726 && mkdir build && cd build && \
+    cd json-c-json-c-0.16-20220414 && mkdir build && cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
     make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
@@ -427,8 +431,7 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_REPO} | tar xz
 
-RUN cd /opt/build/FFmpeg-n4.4 && \
-    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
@@ -438,25 +441,17 @@ RUN cd /opt/build && \
     cd /opt/build/FFmpeg-n4.4 && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
-ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
 
-RUN cd /opt/build && \
-    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
-    cd /opt/build/FFmpeg-n4.4 && \
-    patch -p1 < /opt/build/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
 
-ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
-RUN cd /opt/build/FFmpeg-n4.4 && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
 
 RUN cd /opt/build/FFmpeg-n4.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1             --enable-libdav1d     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2/build && \
+RUN cd /opt/build/opencv/build && \
   rm -rf ./* && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
@@ -470,7 +465,7 @@ RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2/build && \
     .. && \
   cd modules/videoio && \
   make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.5.3 /opt/dist/usr/local/lib
+  cp -f ../../lib/libopencv_videoio.so.4.6.0 /opt/dist/usr/local/lib
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/include && \
@@ -478,7 +473,7 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
-RUN cd /opt/dist/usr/local/openvino/deployment_tools/inference_engine && \
+RUN cd /opt/dist/usr/local/openvino/runtime && \
     rm -rf /opt/dist/usr/local/lib/pkgconfig/openvino.pc \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
@@ -502,13 +497,13 @@ ENV LIBVA_DRIVERS_PATH=/usr/local/lib/dri
 ENV LIBVA_DRIVER_NAME=iHD
 ENV DISPLAY=:0.0
 
-ENV InferenceEngine_DIR=/usr/local/openvino/deployment_tools/inference_engine/share
-ENV TBB_DIR=/usr/local/openvino/deployment_tools/inference_engine/external/tbb/cmake
-ENV ngraph_DIR=/usr/local/openvino/deployment_tools/ngraph/cmake
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/deployment_tools/ngraph/lib/
+ENV InferenceEngine_DIR=/usr/local/openvino/runtime/cmake/
+ENV TBB_DIR=/usr/local/openvino/runtime/3rdparty/tbb/cmake
+ENV ngraph_DIR=/usr/local/openvino/runtime/cmake/
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/runtime/lib/
 
 # install DLDT
-ARG CUSTOM_IE_DIR=/usr/local/openvino/deployment_tools/inference_engine
-ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/lib/intel64
-RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/external/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
+ARG CUSTOM_IE_DIR=/usr/local/openvino/
+ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/runtime/lib/intel64
+RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/3rdparty/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
 

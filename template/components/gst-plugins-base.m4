@@ -70,7 +70,6 @@ RUN cd BUILD_HOME/gst-plugins-base-GSTCORE_VER && \
     -Dtests=disabled \
     -Ddoc=disabled \
     -Dintrospection=enabled \
-    -Dgtk_doc=disabled \
     -Dalsa=ifelse(GST_ALSA,true,enabled,disabled) \
     -Dpango=ifelse(GST_PANGO,true,enabled,disabled) \
     -Dtheora=ifelse(GST_THEORA,true,enabled,disabled) \

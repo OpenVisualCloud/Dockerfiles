@@ -67,7 +67,7 @@ define(`FFMPEG_ENABLE_X264',true)
 include(ffmpeg.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev ) git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev ) git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config patch')
 ')
 
 ifelse(OS_NAME,centos,`
@@ -94,8 +94,8 @@ ARG OWT_AVREAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfil
 RUN cd BUILD_HOME/owt-server && \
     wget ${OWT_ANALYTICS_PATCH} && \
     wget ${OWT_AVREAD_PATCH} && \
-    git am 0002-fix-the-analytics-restart.patch && \
-    git am 0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
+    patch -p1 < 0002-fix-the-analytics-restart.patch && \
+    patch -p1 < 0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
 
 )))
 
@@ -191,7 +191,7 @@ RUN cd BUILD_HOME/owt-server && \
 ')
 
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1) rabbitmq-server mongodb ifelse(OS_VERSION,18.04,libboost-system1.65.1,libboost-system1.71.0) ifelse(OS_VERSION,18.04,libboost-thread1.65.1,libboost-thread1.71.0) liblog4cxx10v5 libglib2.0-ifelse($1,devel,dev,0) libfreetype6 libsrtp2-1')
+define(`OWT_INSTALL_DEPS',`ifdef(`BUILD_OPENSSL',,libssl1.1) rabbitmq-server mongodb liblog4cxx10v5 libglib2.0-ifelse($1,devel,dev,0) libfreetype6 libsrtp2-1')
 ')
 
 ifelse(OS_NAME,centos,`

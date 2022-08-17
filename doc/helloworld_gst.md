@@ -12,11 +12,11 @@ docker run --rm hellogstreamer
 
 #### Dockerfile ####
 ```
-FROM openvisualcloud/xeon-ubuntu1804-dev:latest AS build
+FROM openvisualcloud/xeon-ubuntu2004-dev:latest AS build
 COPY main.cpp /main.cpp
 RUN gcc -I/usr/include -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include/ -I/usr/include/gstreamer-1.0 -o hellogst /main.cpp -lglib-2.0 -lgstreamer-1.0
 
-FROM openvisualcloud/xeon-ubuntu1804-analytics-gst:latest
+FROM openvisualcloud/xeon-ubuntu2004-analytics-gst:latest
 COPY --from=build /home/hellogst /home/hellogst
 RUN dd if=/dev/urandom bs=115200 count=300 of=/home/test.yuv
 ENTRYPOINT ["/home/hellogst"]
