@@ -250,7 +250,7 @@ RUN yum install -y gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool lib
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2022.1.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2022.2.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
@@ -374,7 +374,7 @@ RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 ENV InferenceEngine_DIR=/usr/local/openvino/runtime/cmake/
 ENV TBB_DIR=/usr/local/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/usr/local/openvino/runtime/cmake/
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/runtime/lib/
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/runtime/lib/:/usr/local/openvino/runtime/3rdparty/tbb/lib/
 
 # install DLDT
 ARG CUSTOM_IE_DIR=/usr/local/openvino/

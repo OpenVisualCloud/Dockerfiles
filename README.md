@@ -64,7 +64,6 @@ The project supports the following platforms and OS'es:
 | Supported Platforms | Supported OS'es |
 | :---: | :--- |
 | [Xeon](Xeon) | Ubuntu 20.04 LTS, CentOS 7 |
-| [Xeon E3](XeonE3) | Ubuntu 20.04 LTS, CentOS 7 |
 | [QAT](QAT) | Ubuntu 20.04 LTS, CentOS 7 |
 | [SG1](SG1) | Ubuntu 20.04 LTS, CentOS 7 |
 

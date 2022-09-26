@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GVA_VER',v1.5.3)
+DECLARE(`GVA_VER',v1.6)
 
 DECLARE(`GVA_WITH_DRM',no)
 DECLARE(`GVA_WITH_X11',no)
@@ -42,8 +42,6 @@ DECLARE(`GVA_ENABLE_PAHO_INST',ifdef(`BUILD_LIBPAHO',ON,OFF))
 DECLARE(`GVA_ENABLE_RDKAFKA_INST',ifdef(`BUILD_LIBRDKAFKA',ON,OFF))
 DECLARE(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',OFF)
 DECLARE(`GVA_ENABLE_VAAPI',ifdef(`BUILD_GSTVAAPI',ON,OFF))
-
-include(gst-plugins-base.m4)
 
 ifelse(OS_NAME,ubuntu,`
 define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates ifdef(`BUILD_LIBVA2',,libva-dev)')
@@ -64,8 +62,6 @@ ENV LIBRARY_PATH=BUILD_LIBDIR
 RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
     cd BUILD_HOME/gst-video-analytics && \
     git submodule update --init && \
-    sed -i `"195s/) {/||g_strrstr(name, \"image\")) {/"' gst/elements/gvapython/python_callback.cpp && \
-    sed -i "45,47d" CMakeLists.txt && \
     mkdir -p build && cd build && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
@@ -83,8 +79,6 @@ RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
         -Dwith_glx=GVA_WITH_GLX \
         -Dwith_wayland=GVA_WITH_WAYLAND \
         -Dwith_egl=GVA_WITH_EGL \
-        -DMQTT=ifelse(GVA_ENABLE_PAHO_INST,ON,1,0) \
-        -DKAFKA=ifelse(GVA_ENABLE_RDKAFKA_INST,ON,1,0) \
         .. \
     && make -j $(nproc) \
     && make install \

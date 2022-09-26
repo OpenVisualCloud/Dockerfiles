@@ -255,7 +255,7 @@ RUN yum install -y gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool lib
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2022.1.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2022.2.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
@@ -315,154 +315,20 @@ RUN cd /opt/build && \
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel
 
 # build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.19.1.tar.gz
+ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.20.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTCORE_REPO} | tar xz
-RUN cd /opt/build/gstreamer-1.19.1 && \
+RUN cd /opt/build/gstreamer-1.20.3 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
-    -Dbenchmarks=disabled \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dintrospection=enabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel libX11-devel libXv-devel libXt-devel alsa-lib-devel libpango1.0-dev pango-devel libtheora-devel libvisual-devel libegl1-mesa mesa-libGL-devel
-
-# build gst-plugin-base
-ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-  wget -O - ${GSTBASE_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-base-1.19.1 && \
-  meson build \
-    --prefix=/usr/local \
-    --libdir=/usr/local/lib64 \
-    --libexecdir=/usr/local/lib64 \
-    --buildtype=plain \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
     -Dintrospection=enabled \
-    -Dalsa=enabled \
-    -Dpango=enabled \
-    -Dtheora=enabled \
-    -Dlibvisual=enabled \
-    -Dgl=enabled \
-  && cd build && \
-  ninja install && \
-  DESTDIR=/opt/dist ninja install
-
-RUN yum install -y git meson wget tar gcc-c++ glib2-devel bison flex libX11-devel libXv-devel libXt-devel gdk-pixbuf2-devel libjpeg-turbo-devel libpng-devel zlib-devel libsoup-devel 
-
-# build gst-plugin-good
-ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTGOOD_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-good-1.19.1 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dgdk-pixbuf=enabled \
-    -Djpeg=enabled \
-    -Dpng=enabled \
-    -Disomp4=enabled \
-    -Dsoup=enabled \
-    -Dvpx=enabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel libcurl-devel librtmp-devel mjpegtools libde265-devel devtoolset-9 
-
-# build gst-plugin-bad
-ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTBAD_REPO} | tar xz && \
-    cd gst-plugins-bad-1.19.1 && \
-    (. /opt/rh/devtoolset-9/enable && meson build \
-      --prefix=/usr/local \
-      --libdir=/usr/local/lib64 \
-      --libexecdir=/usr/local/lib64 \
-      --buildtype=plain \
-      -Ddoc=disabled \
-      -Dexamples=disabled \
-      -Dtests=disabled \
-      -Dintrospection=enabled \
-      -Drtmp=enabled \
-      -Dx265=disabled \
-      -Drsvg=disabled \
-      -Dfdkaac=enabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install )
-
-RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex
-
-# build gst-plugin-ugly
-ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTUGLY_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Ddoc=disabled \
-    -Dx264=disabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y wget patch git libv4l-devel libass-devel freetype-devel
-
-# build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_REPO} | tar xz
-
-#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-
-
-
-
-RUN cd /opt/build/FFmpeg-n4.4 && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
-    --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
-RUN cd /opt/build/opencv/build && \
-  rm -rf ./* && \
-  (. /opt/rh/devtoolset-9/enable && cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DCMAKE_INSTALL_LIBDIR=lib64 \
-    -DOPENCV_GENERATE_PKGCONFIG=ON \
-    -DBUILD_DOCS=OFF \
-    -DBUILD_EXAMPLES=OFF \
-    -DBUILD_PERF_TESTS=OFF \
-    -DBUILD_TESTS=OFF \
-    .. && \
-  cd modules/videoio && \
-  make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.6.0 /opt/dist/usr/local/lib64 )
-
-RUN yum install -y wget tar gcc-c++ meson
-
-# build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTLIBAV_REPO} | tar xz
-RUN cd /opt/build/gst-libav-1.19.1 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain && \
+    -Dgtk_doc=disabled \
+    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
+    -Dlibsoup:sysprof=disabled \
+    -Dgpl=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -533,11 +399,9 @@ RUN yum install -y git ocl-icd-devel opencl-headers pkg-config ca-certificates p
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=/usr/local/lib64
-RUN git clone -b v1.5.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b v1.6 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
     git submodule update --init && \
-    sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
-    sed -i "45,47d" CMakeLists.txt && \
     mkdir -p build && cd build && \
     (. /opt/rh/devtoolset-9/enable && cmake \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
@@ -555,8 +419,6 @@ RUN git clone -b v1.5.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
         -Dwith_glx=no \
         -Dwith_wayland=no \
         -Dwith_egl=no \
-        -DMQTT=1 \
-        -DKAFKA=1 \
         .. \
     && make -j $(nproc) \
     && make install \
@@ -574,21 +436,43 @@ ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
     cp -r /opt/build/gst-video-analytics/python/* /opt/dist/opt/intel/dl_streamer/python
 
-RUN yum install -y wget tar gcc-c++ glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel meson
-ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.19.1.tar.xz
+RUN yum install -y wget patch git libv4l-devel libass-devel freetype-devel
+
+# build ffmpeg
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
 RUN cd /opt/build && \
-    wget -O - ${GSTPYTHON_REPO} | tar xJ
-RUN cd /opt/build/gst-python-1.19.1 && \
-#WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
+    wget -O - ${FFMPEG_REPO} | tar xz
 
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Dpython=/usr/bin/python3 -Dlibpython-dir=/usr/lib64/ \
-    -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
+
+
+
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
+    --disable-manpages --disable-podpages --disable-txtpages \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+RUN cd /opt/build/opencv/build && \
+  rm -rf ./* && \
+  (. /opt/rh/devtoolset-9/enable && cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_LIBDIR=lib64 \
+    -DOPENCV_GENERATE_PKGCONFIG=ON \
+    -DBUILD_DOCS=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_PERF_TESTS=OFF \
+    -DBUILD_TESTS=OFF \
+    .. && \
+  cd modules/videoio && \
+  make -j $(nproc) && \
+  cp -f ../../lib/libopencv_videoio.so.4.6.0 /opt/dist/usr/local/lib64 )
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
@@ -609,7 +493,7 @@ RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-releas
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
 # Install
-RUN yum install -y bash gtk3 numactl ocl-icd glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup librtmp mjpegtools libde265 libv4l libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base 
+RUN yum install -y bash gtk3 numactl ocl-icd glib2 gobject-introspection libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base libv4l
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
 COPY --from=build /opt/dist /
@@ -619,7 +503,7 @@ RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 ENV InferenceEngine_DIR=/usr/local/openvino/runtime/cmake/
 ENV TBB_DIR=/usr/local/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/usr/local/openvino/runtime/cmake/
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/runtime/lib/
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/runtime/lib/:/usr/local/openvino/runtime/3rdparty/tbb/lib/
 ENV GST_PLUGIN_PATH=/usr/local/lib64/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib64/gstreamer-1.0/gst-plugin-scanner
 
@@ -631,4 +515,3 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64/gstreamer-1.0/
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib64/girepository-1.0/ 
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0/
-RUN python3 -m pip install numpy

@@ -31,11 +31,11 @@ dnl
 include(begin.m4)
 include(opencv.m4)
 
-DECLARE(`DLDT_VER',2022.1.0)
+DECLARE(`DLDT_VER',2022.2.0)
 DECLARE(`DLDT_WARNING_AS_ERRORS',false)
 
 ifelse(OS_NAME,ubuntu,`
-define(`DLDT_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make python python-yaml xz-utils libnuma-dev ocl-icd-opencl-dev opencl-headers')
+define(`DLDT_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ git libboost-all-dev libgtk2.0-dev libgtk-3-dev libtool libusb-1.0-0-dev make xz-utils libnuma-dev ocl-icd-opencl-dev opencl-headers')
 define(`DLDT_INSTALL_DEPS',`libgtk-3-0 libnuma1 ocl-icd-libopencl1')
 ')
 
@@ -93,7 +93,7 @@ define(`ENV_VARS_DLDT',`
 ENV InferenceEngine_DIR=BUILD_PREFIX/openvino/runtime/cmake/
 ENV TBB_DIR=BUILD_PREFIX/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=BUILD_PREFIX/openvino/runtime/cmake/
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_PREFIX/openvino/runtime/lib/
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_PREFIX/openvino/runtime/lib/:BUILD_PREFIX/openvino/runtime/3rdparty/tbb/lib/
 ')
 
 define(`FFMPEG_PATCH_ANALYTICS',

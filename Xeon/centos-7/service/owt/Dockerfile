@@ -191,7 +191,7 @@ RUN yum install -y cmake3 gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libt
 
 # build dldt
 ARG DLDT_REPO=https://github.com/openvinotoolkit/openvino.git
-RUN git clone -b 2022.1.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
+RUN git clone -b 2022.2.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
   cd /opt/build/openvino && \
   git submodule update --init --recursive
 
@@ -271,17 +271,20 @@ RUN cd /opt/build/opencv/build && \
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel
 
 # build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.19.1.tar.gz
+ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.20.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTCORE_REPO} | tar xz
-RUN cd /opt/build/gstreamer-1.19.1 && \
+RUN cd /opt/build/gstreamer-1.20.3 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
-    -Dbenchmarks=disabled \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled && \
+    -Dintrospection=enabled \
+    -Dgtk_doc=disabled \
+    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
+    -Dlibsoup:sysprof=disabled \
+    -Dgpl=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -289,10 +292,10 @@ RUN cd /opt/build/gstreamer-1.19.1 && \
 RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel alsa-lib-devel 
 
 # build gst-plugin-base
-ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.19.1.tar.gz
+ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.20.3.tar.gz
 RUN cd /opt/build && \
   wget -O - ${GSTBASE_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-base-1.19.1 && \
+RUN cd /opt/build/gst-plugins-base-1.20.3 && \
   meson build \
     --prefix=/usr/local \
     --libdir=/usr/local/lib64 \
@@ -314,10 +317,10 @@ RUN cd /opt/build/gst-plugins-base-1.19.1 && \
 RUN yum install -y git meson wget tar gcc-c++ glib2-devel bison flex gdk-pixbuf2-devel 
 
 # build gst-plugin-good
-ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.19.1.tar.gz
+ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.20.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTGOOD_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-good-1.19.1 && \
+RUN cd /opt/build/gst-plugins-good-1.20.3 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
     -Dexamples=disabled \
@@ -336,10 +339,10 @@ RUN cd /opt/build/gst-plugins-good-1.19.1 && \
 RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel libcurl-devel librtmp-devel devtoolset-9 
 
 # build gst-plugin-bad
-ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.19.1.tar.gz
+ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.20.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTBAD_REPO} | tar xz && \
-    cd gst-plugins-bad-1.19.1 && \
+    cd gst-plugins-bad-1.20.3 && \
     (. /opt/rh/devtoolset-9/enable && meson build \
       --prefix=/usr/local \
       --libdir=/usr/local/lib64 \
@@ -360,10 +363,10 @@ RUN cd /opt/build && \
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex
 
 # build gst-plugin-ugly
-ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.19.1.tar.gz
+ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.20.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTUGLY_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
+RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
     -Ddoc=disabled \
@@ -375,10 +378,10 @@ RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
 RUN yum install -y wget tar gcc-c++ meson
 
 # build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.19.1.tar.gz
+ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.20.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTLIBAV_REPO} | tar xz
-RUN cd /opt/build/gst-libav-1.19.1 && \
+RUN cd /opt/build/gst-libav-1.20.3 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain && \
     cd build && \
@@ -392,11 +395,9 @@ RUN yum install -y cmake3 git ocl-icd-devel opencl-headers pkg-config ca-certifi
 ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
 # TODO: This is a workaround for a bug in dlstreamer_gst
 ENV LIBRARY_PATH=/usr/local/lib64
-RUN git clone -b v1.5.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b v1.6 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
     git submodule update --init && \
-    sed -i "195s/) {/||g_strrstr(name, \"image\")) {/" gst/elements/gvapython/python_callback.cpp && \
-    sed -i "45,47d" CMakeLists.txt && \
     mkdir -p build && cd build && \
     (. /opt/rh/devtoolset-9/enable && cmake3 \
         -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
@@ -414,8 +415,6 @@ RUN git clone -b v1.5.3 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
         -Dwith_glx=no \
         -Dwith_wayland=no \
         -Dwith_egl=no \
-        -DMQTT=0 \
-        -DKAFKA=0 \
         .. \
     && make -j $(nproc) \
     && make install \
@@ -434,10 +433,10 @@ RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
     cp -r /opt/build/gst-video-analytics/python/* /opt/dist/opt/intel/dl_streamer/python
 
 RUN yum install -y wget tar gcc-c++ glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel meson
-ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.19.1.tar.xz
+ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.20.3.tar.xz
 RUN cd /opt/build && \
     wget -O - ${GSTPYTHON_REPO} | tar xJ
-RUN cd /opt/build/gst-python-1.19.1 && \
+RUN cd /opt/build/gst-python-1.20.3 && \
 #WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
 
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
@@ -705,7 +704,7 @@ ENV DISPLAY=:0.0
 ENV InferenceEngine_DIR=/usr/local/openvino/runtime/cmake/
 ENV TBB_DIR=/usr/local/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/usr/local/openvino/runtime/cmake/
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/runtime/lib/
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/runtime/lib/:/usr/local/openvino/runtime/3rdparty/tbb/lib/
 ENV GST_PLUGIN_PATH=/usr/local/lib64/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib64/gstreamer-1.0/gst-plugin-scanner
 
