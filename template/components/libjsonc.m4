@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBJSONC_VER',0.15-20200726)
+DECLARE(`LIBJSONC_VER',0.16-20220414)
 
 #ifelse(OS_NAME,ubuntu,`
 #define(`LIBJSONC_BUILD_DEPS',`ca-certificates wget autoconf libtool make')

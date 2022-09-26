@@ -70,7 +70,6 @@ RUN cd BUILD_HOME/gst-plugins-good-GSTCORE_VER && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dgtk_doc=disabled \
     -Dgdk-pixbuf=ifelse(GST_GDKPIXBUF,true,enabled,disabled) \
     -Djpeg=ifelse(GST_JPEG,true,enabled,disabled) \
     -Dpng=ifelse(GST_PNG,true,enabled,disabled) \

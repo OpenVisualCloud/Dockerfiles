@@ -7,7 +7,7 @@ fi
 
 BUILD_VERSION="${1:-1.0}"
 OS_NAME="${2:-ubuntu}"
-OS_VERSION="${3:-18.04}"
+OS_VERSION="${3:-20.04}"
 BUILD_FDKAAC="${4:-ON}"
 DOCKER_PREFIX="${5:-openvisualcloud}"
 

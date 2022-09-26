@@ -55,7 +55,9 @@ ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 RUN yum install -y ca-certificates wget tar gcc-c++ make bzip2
 
 # build nasm
-ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
+#ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
+# TODO: to revert to official nasm repo
+ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
@@ -86,10 +88,10 @@ RUN cd /opt/build && \
 RUN yum install -y wget tar gcc-c++ make libtool autoconf
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1l.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1q.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1l && \
+    cd openssl-OpenSSL_1_1_1q && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -100,25 +102,23 @@ RUN cd /opt/build && \
 
 RUN yum install -y wget cmake3 make python devtoolset-9
 
-
 ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/ippcp_2021.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
     mkdir -p ipp-crypto-ippcp_2021.4/sources/ippcp/crypto_mb/build && \
     cd ipp-crypto-ippcp_2021.4/sources/ippcp/crypto_mb/build && \
-    (. /opt/rh/devtoolset-9/enable && CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" cmake3 -DOPENSSL_INCLUDE_DIR=/usr/local/ssl/include -DOPENSSL_LIBRARIES=/usr/local/ssl/lib -DOPENSSL_ROOT_DIR=/usr/local/ssl .. && \
+    (. /opt/rh/devtoolset-9/enable &&  CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" cmake3 -DOPENSSL_INCLUDE_DIR=/usr/local/ssl/include -DOPENSSL_LIBRARIES=/usr/local/ssl/lib -DOPENSSL_ROOT_DIR=/usr/local/ssl .. && \
     make -j8 )  && \
     make install && \
     make install DESTDIR=/opt/dist
 
 RUN yum install -y git make devtoolset-9
 
-
 ARG IPSECMB_REPO=https://github.com/intel/intel-ipsec-mb.git
 RUN cd /opt/build && \
     git clone -b v1.0 ${IPSECMB_REPO} && \
     cd intel-ipsec-mb && \
-    (. /opt/rh/devtoolset-9/enable && CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y )  && \
+    (. /opt/rh/devtoolset-9/enable &&  CFLAGS="-Wl,-rpath=/usr/local/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y )  && \
     make install && \
     make install PREFIX=/opt/dist 
 
@@ -138,16 +138,16 @@ RUN cd /opt/build && \
 
 RUN yum install -y wget patch
 
-ARG NGINX_FLV_PATCHES_REPO=https://github.com/VCDP/CDN/archive/v0.2.tar.gz
-ARG NGINX_FLV_PATCHES_PATH=/opt/build/CDN-0.2
+ARG NGINX_FLV_PATCHES_REPO=https://github.com/VCDP/CDN/archive/v0.4.tar.gz
+ARG NGINX_FLV_PATCHES_PATH=/opt/build/CDN-0.4
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_PATCHES_REPO} | tar xz
 
 # build nginx flv
-ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.9.tar.gz
+ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.10.tar.gz
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_REPO} | tar xz && \
-    cd nginx-http-flv-module-1.2.9 && \
+    cd nginx-http-flv-module-1.2.10 && \
     mkdir -p BUILD_DEST/var/www/html && \
     cp -f stat.xsl BUILD_DEST/var/www/html && \
     find ${NGINX_FLV_PATCHES_PATH}/Nginx-HTTP-FLV_patches -type f -name *.patch -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i
@@ -203,7 +203,7 @@ RUN wget -O - ${QAT_NGINX_REPO} | tar xz && cd asynch_mode_nginx* && \
         --with-http_stub_status_module \
         --with-stream \
         --with-stream_ssl_module \
-        --add-module=/opt/build/nginx-http-flv-module-1.2.9 \
+        --add-module=/opt/build/nginx-http-flv-module-1.2.10 \
         --add-module=/opt/build/nginx-upload-module-2.3.0 \
     && make -j8 && \
     make install DESTDIR=/opt/dist

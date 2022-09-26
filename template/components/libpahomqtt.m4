@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`LIBPAHO_VER',1.3.9)
+DECLARE(`LIBPAHO_VER',1.3.10)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBPAHO_BUILD_DEPS',`wget make libssl-dev uuid-dev')')

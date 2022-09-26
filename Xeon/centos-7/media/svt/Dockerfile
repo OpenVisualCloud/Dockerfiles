@@ -45,7 +45,9 @@ ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 RUN yum install -y ca-certificates wget tar gcc-c++ make bzip2
 
 # build nasm
-ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
+#ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
+# TODO: to revert to official nasm repo
+ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
@@ -59,7 +61,7 @@ RUN yum install -y git cmake3 make
 # build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd /opt/build && \
-    git clone ${LIBAOM_REPO} -b v3.1.2 --depth 1 && \
+    git clone ${LIBAOM_REPO} -b v3.4.0 --depth 1 && \
     cd aom/build && \
     cmake3 -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib64 .. && \
     make -j$(nproc) && \

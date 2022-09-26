@@ -3,7 +3,7 @@ include(begin.m4)
 include(svt-hevc.m4)
 include(svt-av1.m4)
 include(svt-vp9.m4)
-include(gst-plugins-base.m4)
+include(gst-core.m4)
 
 ifelse(OS_NAME,ubuntu,`
 define(`GSTSVT_BUILD_DEPS',`ca-certificates tar g++ wget ifdef(`BUILD_MESON',,meson)')

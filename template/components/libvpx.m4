@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(nasm.m4)
 
-DECLARE(`LIBVPX_VER',1.10.0)
+DECLARE(`LIBVPX_VER',1.12.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`LIBVPX_BUILD_DEPS',`git ifdef(`BUILD_CMAKE',,cmake) make autoconf')

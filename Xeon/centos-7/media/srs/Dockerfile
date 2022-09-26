@@ -42,10 +42,10 @@ ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 RUN yum install -y wget tar gcc-c++ make libtool autoconf
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1l.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1q.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1l && \
+    cd openssl-OpenSSL_1_1_1q && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -59,7 +59,7 @@ RUN yum install -y git gcc-c++ make unzip patch pkg-config
 # build srs
 ARG SRS_REPO=https://github.com/ossrs/srs.git
 RUN cd /opt/build && \
-    git clone -b v4.0-b4 --depth 1 ${SRS_REPO} && \
+    git clone -b v4.0-r1 --depth 1 ${SRS_REPO} && \
     cd srs/trunk && \
     sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=\/usr\/local\/ssl\/lib /" configure && \
     ./configure --prefix=/usr/local/srs \

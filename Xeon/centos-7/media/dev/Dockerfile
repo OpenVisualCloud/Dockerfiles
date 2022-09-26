@@ -50,8 +50,8 @@ RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
 RUN cd /opt/build && \
-    wget -O - ${CMAKE_REPO}/v3.21/cmake-3.21.3.tar.gz | tar xz && \
-    cd cmake-3.21.3 && \
+    wget -O - ${CMAKE_REPO}/v3.23/cmake-3.23.3.tar.gz | tar xz && \
+    cd cmake-3.23.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
     make -j$(nproc) && \
     make install
@@ -86,10 +86,10 @@ RUN cd /opt/build && \
 RUN yum install -y wget tar gcc-c++ make libtool autoconf
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1l.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1q.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1l && \
+    cd openssl-OpenSSL_1_1_1q && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
@@ -126,7 +126,9 @@ RUN cd /opt/build && \
 RUN yum install -y ca-certificates wget tar gcc-c++ make bzip2
 
 # build nasm
-ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2
+#ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
+# TODO: to revert to official nasm repo
+ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
@@ -140,7 +142,7 @@ RUN yum install -y git make autoconf diffutils
 # build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
 RUN cd /opt/build && \
-    git clone ${LIBVPX_REPO} -b v1.10.0 --depth 1 && \
+    git clone ${LIBVPX_REPO} -b v1.12.0 --depth 1 && \
     cd libvpx && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
     make -j$(nproc) && \
@@ -152,7 +154,7 @@ RUN yum install -y git make
 # build libaom
 ARG LIBAOM_REPO=https://aomedia.googlesource.com/aom
 RUN cd /opt/build && \
-    git clone ${LIBAOM_REPO} -b v3.1.2 --depth 1 && \
+    git clone ${LIBAOM_REPO} -b v3.4.0 --depth 1 && \
     cd aom/build && \
     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib64 .. && \
     make -j$(nproc) && \
@@ -162,10 +164,10 @@ RUN cd /opt/build && \
 RUN yum install -y meson wget tar gcc-c++
 
 # build dav1d
-ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.0/dav1d-0.9.0.tar.gz
+ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.2/dav1d-0.9.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${DAV1D_REPO} | tar xz
-RUN cd /opt/build/dav1d-0.9.0 && \
+RUN cd /opt/build/dav1d-0.9.2 && \
   meson build --prefix=/usr/local --libdir /usr/local/lib64 --buildtype=plain && \
   cd build && \
   ninja install && \
@@ -202,10 +204,10 @@ RUN cd /opt/build/SVT-HEVC/Build/linux && \
 RUN yum install -y wget tar gcc-c++ make git 
 
 # build svt av1
-ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v0.8.7/SVT-AV1-v0.8.7.tar.gz
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.2.0/SVT-AV1-v1.2.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
-    mv SVT-AV1-v0.8.7 SVT-AV1 && \
+    mv SVT-AV1-v1.2.0 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -228,154 +230,20 @@ RUN cd /opt/build && \
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel
 
 # build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.19.1.tar.gz
+ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.20.3.tar.gz
 RUN cd /opt/build && \
     wget -O - ${GSTCORE_REPO} | tar xz
-RUN cd /opt/build/gstreamer-1.19.1 && \
+RUN cd /opt/build/gstreamer-1.20.3 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
-    -Dbenchmarks=disabled \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel libX11-devel libXv-devel libXt-devel alsa-lib-devel libpango1.0-dev pango-devel libtheora-devel libvisual-devel libegl1-mesa mesa-libGL-devel
-
-# build gst-plugin-base
-ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-  wget -O - ${GSTBASE_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-base-1.19.1 && \
-  meson build \
-    --prefix=/usr/local \
-    --libdir=/usr/local/lib64 \
-    --libexecdir=/usr/local/lib64 \
-    --buildtype=plain \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
     -Dintrospection=enabled \
     -Dgtk_doc=disabled \
-    -Dalsa=enabled \
-    -Dpango=enabled \
-    -Dtheora=enabled \
-    -Dlibvisual=enabled \
-    -Dgl=enabled \
-  && cd build && \
-  ninja install && \
-  DESTDIR=/opt/dist ninja install
-
-RUN yum install -y git meson wget tar gcc-c++ glib2-devel bison flex libX11-devel libXv-devel libXt-devel gdk-pixbuf2-devel libjpeg-turbo-devel libpng-devel zlib-devel libsoup-devel 
-
-# build gst-plugin-good
-ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTGOOD_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-good-1.19.1 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled \
-    -Dgdk-pixbuf=enabled \
-    -Djpeg=enabled \
-    -Dpng=enabled \
-    -Disomp4=enabled \
-    -Dsoup=enabled \
-    -Dvpx=enabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel libcurl-devel librtmp-devel mjpegtools libde265-devel devtoolset-9 
-
-# build gst-plugin-bad
-ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTBAD_REPO} | tar xz && \
-    cd gst-plugins-bad-1.19.1 && \
-    (. /opt/rh/devtoolset-9/enable && meson build \
-      --prefix=/usr/local \
-      --libdir=/usr/local/lib64 \
-      --libexecdir=/usr/local/lib64 \
-      --buildtype=plain \
-      -Ddoc=disabled \
-      -Dexamples=disabled \
-      -Dgtk_doc=disabled \
-      -Dtests=disabled \
-      -Dintrospection=enabled \
-      -Dgst_player_tests=false \
-      -Drtmp=enabled \
-      -Dx265=disabled \
-      -Drsvg=disabled \
-      -Dfdkaac=enabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install )
-
-RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex
-
-# build gst-plugin-ugly
-ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTUGLY_REPO} | tar xz
-RUN cd /opt/build/gst-plugins-ugly-1.19.1 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Ddoc=disabled \
-    -Dgtk_doc=disabled \
-    -Dx264=disabled \
-    && cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN yum install -y wget patch git libv4l-devel libass-devel freetype-devel
-
-# build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${FFMPEG_REPO} | tar xz
-
-RUN cd /opt/build/FFmpeg-n4.4 && \
-    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
-#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-
-ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
-
-RUN cd /opt/build && \
-    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
-    cd /opt/build/FFmpeg-n4.4 && \
-    patch -p1 < /opt/build/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
-
-ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
-RUN cd /opt/build/FFmpeg-n4.4 && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
-
-RUN cd /opt/build/FFmpeg-n4.4 && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
-    --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
-RUN yum install -y wget tar gcc-c++ meson
-
-# build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.19.1.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTLIBAV_REPO} | tar xz
-RUN cd /opt/build/gst-libav-1.19.1 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain \
-    -Dgtk_doc=disabled && \
+    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
+    -Dlibsoup:sysprof=disabled \
+    -Dgpl=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -398,6 +266,28 @@ RUN cd /opt/build/SVT-VP9/gstreamer-plugin && \
     cd build && ninja install && \
     DESTDIR=/opt/dist ninja install
 
+RUN yum install -y wget patch git libv4l-devel libass-devel freetype-devel
+
+# build ffmpeg
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
+RUN cd /opt/build && \
+    wget -O - ${FFMPEG_REPO} | tar xz
+
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+
+
+
+
+RUN cd /opt/build/FFmpeg-n4.4 && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
+    --disable-manpages --disable-podpages --disable-txtpages \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
 # cleanup
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
@@ -416,7 +306,7 @@ RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-releas
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
 # Install
-RUN yum install -y bash glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup librtmp mjpegtools libde265 libv4l libass 
+RUN yum install -y bash glib2 gobject-introspection libv4l libass
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
 COPY --from=build /opt/dist /
