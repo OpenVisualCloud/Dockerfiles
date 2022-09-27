@@ -32,7 +32,7 @@ include(begin.m4)
 
 include(libva2.m4)
 
-DECLARE(`MSDK_VER',intel-mediasdk-21.1.3)
+DECLARE(`MSDK_VER',intel-mediasdk-22.4.4)
 DECLARE(`MSDK_SRC_REPO',https://github.com/Intel-Media-SDK/MediaSDK/archive/MSDK_VER.tar.gz)
 DECLARE(`MSDK_BUILD_SAMPLES',no)
 

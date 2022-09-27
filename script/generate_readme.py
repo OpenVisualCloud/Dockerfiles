@@ -10,33 +10,21 @@ REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/"
 #Platform to full name
 platform_subs = {
                 "Xeon" : "Xeon&reg; platform",
-                "XeonE3" : "Xeon&reg; E3 platform",
-                "VCA2" : "VCA2 platform",
                 "QAT" : "QAT platform",
-                "VCAC-A" : "VCAC-A platform",
                 "SG1": "SG1 platform"
                 }
 
 #When image is based on another OVC image, this is used to find path of inherited image
 path_subs = {
-                "xeone3-centos7-media-ffmpeg" : "XeonE3/centos-7/media/ffmpeg/",
-                "xeone3-ubuntu1804-media-ffmpeg" : "XeonE3/ubuntu-18.04/media/ffmpeg/",
-                "xeone3-ubuntu2004-media-ffmpeg" : "XeonE3/ubuntu-20.04/media/ffmpeg/",
-                "xeone3-centos7-media-dev" : "XeonE3/centos-7/media/dev/",
-                "xeone3-ubuntu1804-media-dev" : "XeonE3/ubuntu-18.04/media/dev/",
-                "xeone3-ubuntu2004-media-dev" : "XeonE3/ubuntu-20.04/media/dev/",
                 "xeon-centos7-media-ffmpeg" : "Xeon/centos-7/media/ffmpeg/",
-                "xeon-ubuntu1804-media-ffmpeg" : "Xeon/ubuntu-18.04/media/ffmpeg/",
                 "xeon-ubuntu2004-media-ffmpeg" : "Xeon/ubuntu-20.04/media/ffmpeg/",
                 "xeon-centos7-media-dev" : "Xeon/centos-7/media/dev/",
-                "xeon-ubuntu1804-media-dev" : "Xeon/ubuntu-18.04/media/dev/",
                 "xeon-ubuntu2004-media-dev" : "Xeon/ubuntu-20.04/media/dev/",
                 }
 
 #OS subs to their version detail 
 os_subs = {
                 "centos-7" : "CentOS-7",
-                "ubuntu-18.04" : "Ubuntu 18.04",
                 "ubuntu-20.04" : "Ubuntu 20.04"
           }
 
@@ -55,17 +43,14 @@ included_subs = {
 # License to be included based on m4 templates
 license_subs = {
                 "xeon-centos7-media-ffmpeg" : "Xeon/centos-7/media/ffmpeg/",
-                "xeon-ubuntu1804-media-ffmpeg" : "Xeon/ubuntu-18.04/media/ffmpeg/",
                 "xeon-ubuntu2004-media-ffmpeg" : "Xeon/ubuntu-20.04/media/ffmpeg/",
                 "xeon-centos7-media-dev" : "Xeon/centos-7/media/dev/",
-                "xeon-ubuntu1804-media-dev" : "Xeon/ubuntu-18.04/media/dev/",
                 "xeon-ubuntu2004-media-dev" : "Xeon/ubuntu-20.04/media/dev/"
                 }
 
 #OS subs to their version detail 
 os_subs = {
                 "centos-7" : "CentOS-7",
-                "ubuntu-18.04" : "Ubuntu 18.04",
                 "ubuntu-20.04" : "Ubuntu 20.04"
           }
 
@@ -149,7 +134,7 @@ license_subs = {
                }
 
 # M4 files for which no license is needed
-license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat-core', 'transform360', 'yasm', 'libva-utils', 'libusb','begin','end','ubuntu', 'centos-repo','ipsecmb','meson','boost','vcaca-gst-gva']
+license_exclude = ['automake', 'build-tools', 'build-tools-hddl', 'build-tools-hddl-layer', 'cleanup', 'cmake', 'install', 'install.pkgs', 'install.pkgs.owt', 'libfdk-aac', 'libmp3lame', 'nasm', 'nginx-cert', 'nginx-conf', 'qat-core', 'transform360', 'yasm', 'libva-utils', 'libusb','begin','end','ubuntu', 'centos-repo','ipsecmb','meson','boost']
 
 # Find image platform / OS / image type / image name from file path
 def parse_ingredients(path):
@@ -288,7 +273,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in FFmpeg & GStreamer media analytics images. ")
         if image_type=="media":
             my_file.write("Included what are in FFmpeg or GStreamer media creation and delivery images . ")
-        if image_platform=="XeonE3" or image_platform=="SG1" or image_platform=="VCAC-A":
+        if image_platform=="SG1":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="analytics":
@@ -299,7 +284,7 @@ def create_readme(path, path_components):
             my_file.write("Included what are in media delivery FFmpeg image, inferencing engine and video analytics plugins. ")
         if image_name=="hddldaemon":
             my_file.write("With OpenVINO HDDL daemon installed and configured. ")
-        if image_platform=="XeonE3" or image_platform=="SG1" or image_platform=="VCAC-A" and image_name!="hddldaemon":
+        if image_platform=="SG1" and image_name!="hddldaemon":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, opencl, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="media":
@@ -316,7 +301,7 @@ def create_readme(path, path_components):
             my_file.write("Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. ")
         if image_name=="srs":
             my_file.write("Image with SRS high efficiency, stable and simple RTMP/HLS/FLV streaming cluster. ")
-        if image_platform=="XeonE3" or image_platform=="SG1" or image_platform=="VCAC-A":
+        if image_platform=="SG1":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="service":
@@ -325,8 +310,6 @@ def create_readme(path, path_components):
             my_file.write("Optimized for video conferencing service based on the WebRTC technology and Open WebRTC Toolkit (OWT). Included conferencing modes: 1:N, N:N with video and audio processing nodes. ")
         if image_name=="owt360":
             my_file.write("Docker image optimized for ultra-high resolution immersive video low latency streaming, based on the WebRTC technology and the Open WebRTC Toolkit. Included SVT-HEVC tile-based 4K and 8K transcoding and field of view (FoV) adaptive streaming. ")
-        if image_os=="XeonE3":
-            my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
 
     my_file.write("\n\n")

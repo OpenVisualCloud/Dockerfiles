@@ -33,7 +33,7 @@ include(begin.m4)
 DECLARE(`QAT_CRYPTOMB_VER',ippcp_2021.4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ca-certificates ifdef(`BUILD_CMAKE',,cmake) make ifelse(OS_VERSION,18.04,software-properties-common,gcc g++) python ')
+define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ca-certificates ifdef(`BUILD_CMAKE',,cmake) make python ')
 ')
 
 ifelse(OS_NAME,centos,`
@@ -41,16 +41,12 @@ define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake3) make python 
 ')
 
 define(`BUILD_QAT_CRYPTOMB',`
-ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,`dnl
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
-    apt-get update && apt-get install -y gcc-9 g++-9
-')
 ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/QAT_CRYPTOMB_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
     mkdir -p ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/build && \
     cd ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/build && \
-    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,CC="gcc-9" CXX="g++-9" )CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DOPENSSL_INCLUDE_DIR=BUILD_PREFIX/ssl/include -DOPENSSL_LIBRARIES=BUILD_PREFIX/ssl/lib -DOPENSSL_ROOT_DIR=BUILD_PREFIX/ssl .. && \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ') CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DOPENSSL_INCLUDE_DIR=BUILD_PREFIX/ssl/include -DOPENSSL_LIBRARIES=BUILD_PREFIX/ssl/lib -DOPENSSL_ROOT_DIR=BUILD_PREFIX/ssl .. && \
     make -j8 ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
     make install && \
     make install DESTDIR=BUILD_DESTDIR

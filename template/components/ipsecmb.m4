@@ -33,7 +33,7 @@ include(begin.m4)
 DECLARE(`IPSECMB_VER',v1.0)
 
 ifelse(OS_NAME,ubuntu,`
-define(`IPSECMB_BUILD_DEPS',`git make ifelse(OS_VERSION,18.04,software-properties-common,gcc g++) ')
+define(`IPSECMB_BUILD_DEPS',`git make ')
 ')
 
 ifelse(OS_NAME,centos,`
@@ -41,15 +41,11 @@ define(`IPSECMB_BUILD_DEPS',`git make devtoolset-9')
 ')
 
 define(`BUILD_IPSECMB',`
-ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,`dnl
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
-    apt-get update && apt-get install -y gcc-9 g++-9
-')
 ARG IPSECMB_REPO=https://github.com/intel/intel-ipsec-mb.git
 RUN cd BUILD_HOME && \
     git clone -b IPSECMB_VER ${IPSECMB_REPO} && \
     cd intel-ipsec-mb && \
-    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifelse(OS_NAME:OS_VERSION,ubuntu:18.04,CC="gcc-9" CXX="g++-9" )CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
+    ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ') CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib" make -j SAFE_DATA=y SAFE_PARAM=y SAFE_LOOKUP=y ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
     make install && \
     make install ifelse(OS_NAME,ubuntu,PREFIX=BUILD_DESTDIR\BUILD_PREFIX,PREFIX=BUILD_DESTDIR) 
 ')

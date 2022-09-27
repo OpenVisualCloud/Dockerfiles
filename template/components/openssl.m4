@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENSSL_VER',1_1_1l)
+DECLARE(`OPENSSL_VER',1_1_1q)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENSSL_BUILD_DEPS',`ca-certificates wget tar g++ make libtool autoconf')

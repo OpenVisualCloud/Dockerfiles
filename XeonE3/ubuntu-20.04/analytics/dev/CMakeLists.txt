@@ -1,6 +1,0 @@
-set(image "xeone3_analytics_devel_ubuntu2004")
-include(image)
-include(ffmpeg-tests)
-include(dldt-ffmpeg-tests)
-include(gst-tests)
-include(dldt-gst-tests)

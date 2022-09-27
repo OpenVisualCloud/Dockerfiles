@@ -47,8 +47,7 @@ RUN cd BUILD_HOME && \
     wget -O - ${GSTORC_REPO} | tar xz
 RUN cd BUILD_HOME/orc-GST_ORC_VER && \
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
-    --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dgtk_doc=disabled && \
+    --prefix=BUILD_PREFIX --buildtype=plain && \
     cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install

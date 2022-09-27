@@ -39,8 +39,8 @@ DECLARE(`FFMPEG_ENABLE_V4L2',true)
 DECLARE(`FFMPEG_ENABLE_HWACCELS',ifdef(`ENABLE_INTEL_GFX_REPO',true,ifdef(`BUILD_LIBVA2',true,false)))
 DECLARE(`FFMPEG_ENABLE_LIBMFX',ifdef(`BUILD_MSDK',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_VAAPI',ifdef(`BUILD_LIBVA2',FFMPEG_ENABLE_HWACCELS,false))
-DECLARE(`FFMPEG_FLV_PATCH',true)
-DECLARE(`FFMPEG_1TN_PATCH',true)
+DECLARE(`FFMPEG_FLV_PATCH',false)
+DECLARE(`FFMPEG_1TN_PATCH',false)
 DECLARE(`FFMPEG_WARNING_AS_ERRORS',false)
 
 include(nasm.m4)
@@ -67,7 +67,7 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${FFMPEG_REPO} | tar xz
 
-ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
@@ -109,7 +109,6 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifdef(`BUILD_LIBX264',--enable-gpl --enable-libx264 )dnl
     ifdef(`BUILD_LIBX265',--enable-gpl --enable-libx265 )dnl
     ifdef(`BUILD_SVT_AV1',--enable-libsvtav1 )dnl
-    ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc )dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
     ifdef(`BUILD_LIBVMAF',--enable-libvmaf --enable-version3 )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl

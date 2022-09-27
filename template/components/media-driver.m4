@@ -33,7 +33,7 @@ include(begin.m4)
 include(libva2.m4)
 include(gmmlib.m4)
 
-DECLARE(`MEDIA_DRIVER_VER',intel-media-21.1.3)
+DECLARE(`MEDIA_DRIVER_VER',intel-media-22.4.4)
 DECLARE(`MEDIA_DRIVER_SRC_REPO',https://github.com/intel/media-driver/archive/MEDIA_DRIVER_VER.tar.gz)
 DECLARE(`ENABLE_PRODUCTION_KMD',OFF)
 
