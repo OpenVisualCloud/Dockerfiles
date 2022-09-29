@@ -281,6 +281,8 @@ RUN cd /opt/build/gstreamer-1.20.3 && \
     -Ddoc=disabled \
     -Dintrospection=enabled \
     -Dgtk_doc=disabled \
+    -Dpython=enabled \
+    -Dgst-python:libpython-dir=/usr/local/lib64 \
     -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
     -Dlibsoup:sysprof=disabled \
     -Dgpl=enabled && \
