@@ -33,7 +33,7 @@ include(begin.m4)
 DECLARE(`GSTCORE_VER',1.20.3)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev')
+define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev python3-dev')
 define(`GSTCORE_INSTALL_DEPS',`libglib2.0-0 libegl1')
 ')
 
