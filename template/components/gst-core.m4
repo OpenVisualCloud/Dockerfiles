@@ -55,6 +55,8 @@ RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
     -Ddoc=disabled \
     -Dintrospection=enabled \
     -Dgtk_doc=disabled \
+    -Dpython=enabled \
+    -Dgst-python:libpython-dir=BUILD_LIBDIR \
     -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
     -Dlibsoup:sysprof=disabled \
     -Dgpl=enabled && \
