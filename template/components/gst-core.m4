@@ -33,7 +33,7 @@ include(begin.m4)
 DECLARE(`GSTCORE_VER',1.20.3)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev')
+define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev python3-dev')
 define(`GSTCORE_INSTALL_DEPS',`libglib2.0-0 libegl1')
 ')
 
@@ -55,6 +55,8 @@ RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
     -Ddoc=disabled \
     -Dintrospection=enabled \
     -Dgtk_doc=disabled \
+    -Dpython=enabled \
+    -Dgst-python:libpython-dir=BUILD_LIBDIR \
     -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
     -Dlibsoup:sysprof=disabled \
     -Dgpl=enabled && \

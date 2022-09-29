@@ -205,6 +205,21 @@ RUN apt-get update && \
     ca-certificates wget tar g++ make cmake git && \
   rm -rf /var/lib/apt/lists/*
 
+# build svt-hevc
+ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
+RUN cd /opt/build && \
+    git clone -b v1.5.1 --depth 1 ${SVT_HEVC_REPO}
+RUN cd /opt/build/SVT-HEVC/Build/linux && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
+    make -j $(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates wget tar g++ make cmake git && \
+  rm -rf /var/lib/apt/lists/*
+
 # build svt av1
 ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.2.0/SVT-AV1-v1.2.0.tar.gz
 RUN cd /opt/build && \

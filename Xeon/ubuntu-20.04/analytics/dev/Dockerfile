@@ -354,7 +354,7 @@ ENV ngraph_DIR=${IE_INSTALL_DIR}/cmake
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev python3-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-core
@@ -369,6 +369,8 @@ RUN cd /opt/build/gstreamer-1.20.3 && \
     -Ddoc=disabled \
     -Dintrospection=enabled \
     -Dgtk_doc=disabled \
+    -Dpython=enabled \
+    -Dgst-python:libpython-dir=/usr/local/lib \
     -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
     -Dlibsoup:sysprof=disabled \
     -Dgpl=enabled && \
