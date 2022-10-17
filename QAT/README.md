@@ -1,20 +1,20 @@
 
 
-Enhance security and compression performance in cloud, networking, big data, and storage applications — for data in motion and at rest. Now you can accelerate compute-intensive operations with Intel<sup>&reg;</sup> QuickAssist Technology (Intel QAT).   
+Enhance security and compression performance in cloud, networking, big data, and storage applications — for data in motion and at rest. Now you can accelerate compute-intensive operations with Intel<sup>&reg;</sup> QuickAssist Technology (Intel QAT).
 
 This document describes the system setup to use Intel QAT within docker containers.
 
 ### Install Driver and Service:
 
- - Follow the [instructions](https://01.org/sites/default/files/downloads//336212intelqat-gsg009.pdf) to install the supported OS, kernel, Intel QAT driver and service on the host. 
- - For CentOS 7, get the Linux driver package from [here](https://www.intel.com/content/www/us/en/download/19734/intel-quickassist-technology-driver-for-linux-hw-version-1-7.html). Please check [01.org](https://01.org/intel-quickassist-technology) page for updated driver package if available. Continue following commands under Centos 7:
+ - Follow the [instructions](https://www.intel.com/content/www/us/en/content-details/710059/intel-quickassist-technology-software-for-linux-getting-started-guide-hw-version-1-7.html) to install the supported OS, kernel, Intel QAT driver and service on the host.
+ - For CentOS 7, get the Linux driver package from [here](https://www.intel.com/content/www/us/en/download/19734/intel-quickassist-technology-driver-for-linux-hw-version-1-7.html). Please check [IDZ](https://www.intel.com/content/www/us/en/developer/topic-technology/open/quick-assist-technology/resources.html?s=Newest) page for updated driver package if available. Continue following commands under Centos 7:
 
 ```bash
 tar -zxof <QAT Driver package downloaded above>
 sudo yum -y groupinstall "Development Tools"
 sudo yum -y install pciutils
 sudo yum -y install libudev-devel
-sudo yum -y install kernel-devel-$(uname -r) 
+sudo yum -y install kernel-devel-$(uname -r)
 sudo yum -y install gcc
 sudo yum -y install openssl-devel
 
@@ -23,7 +23,7 @@ make
 make install
 ```
 
-- Enable kernel hugepage support:  
+- Enable kernel hugepage support:
 
 ```bash
 echo 1024 | sudo tee /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
@@ -32,13 +32,13 @@ sudo systemctl restart qat_service
 
 ### Configure QATzip and QATengine:
 
-QATzip is a utility (`qzip`) for data compression. QATengine is a crypto engine that can be used in the openssl framework. The async mode NGINX requires both QATzip and QATengine.   
+QATzip is a utility (`qzip`) for data compression. QATengine is a crypto engine that can be used in the openssl framework. The async mode NGINX requires both QATzip and QATengine.
 
-While the docker images contain QATzip and QATengine, you **must** configure QATzip and QATengine on each host that the containers run. The QATzip configuration files are located at [QATzip/config_file](https://github.com/intel/QATzip/tree/master/config_file) and the QATengine configuration files are located at [QATengine/qat/config](https://github.com/intel/QAT_Engine/tree/master/qat/config). 
+While the docker images contain QATzip and QATengine, you **must** configure QATzip and QATengine on each host that the containers run. The QATzip configuration files are located at [QATzip/config_file](https://github.com/intel/QATzip/tree/master/config_file) and the QATengine configuration files are located at [QATengine/qat/config](https://github.com/intel/QAT_Engine/tree/master/qat/config).
 
-There are multiple versions of the configuration files optimized for different adapaters and usage scenarios. Select the ones that meet your adapter and usage pattern. Copy them to the `/etc` directory. Note that QATzip looks for `NumberDcInstances` and QATengine looks for `NumberCyInstances`. Thus you will need to merge the QATzip and QATengine configuration files together as you need both in NGINX.    
+There are multiple versions of the configuration files optimized for different adapaters and usage scenarios. Select the ones that meet your adapter and usage pattern. Copy them to the `/etc` directory. Note that QATzip looks for `NumberDcInstances` and QATengine looks for `NumberCyInstances`. Thus you will need to merge the QATzip and QATengine configuration files together as you need both in NGINX.
 
-For example, `/etc/c6xx_dev0.conf` might look similar to the following:  
+For example, `/etc/c6xx_dev0.conf` might look similar to the following:
 
 ```
 ##############################################
@@ -63,7 +63,7 @@ Cy0IsPolled = 1
 Cy0CoreAffinity = 1
 ```
 
-Finally, restart the `qat_service` to initialize the configuration files:   
+Finally, restart the `qat_service` to initialize the configuration files:
 
 ```bash
 sudo systemctl restart qat_service

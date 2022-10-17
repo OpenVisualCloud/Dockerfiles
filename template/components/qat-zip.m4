@@ -36,7 +36,7 @@ include(qat-core.m4)
 
 ifelse(OS_NAME,ubuntu,`
 define(`QAT_ZIP_BUILD_DEPS',`wget ca-certificates make gcc libzip-dev')
-define(`QAT_ZIP_INSTALL_DEPS',`libzip')
+define(`QAT_ZIP_INSTALL_DEPS',`libzip5')
 ')
 
 ifelse(OS_NAME,centos,`

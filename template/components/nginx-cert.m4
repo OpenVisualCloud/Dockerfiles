@@ -35,7 +35,7 @@ define(`NGINX_CERT_BUILD_DEPS',`openssl')
 define(`BUILD_NGINX_CERT',`
 # Generate a self-certificate for testing purpose
 RUN mkdir -p BUILD_DESTDIR/etc/nginx && \
-    printf "US\nOR\nPortland\nOregon\nData Center Group\nIntel Corporation\n%s\nnobody@intel.com\n" "$(hostname)" | openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout BUILD_DESTDIR/etc/nginx/cert.key -out BUILD_DESTDIR/etc/nginx/cert.crt && \
+    printf "US\nOR\nPortland\nOregon\nOpen Visual Cloud\nIntel Corporation\n%s\nnobody@intel.com\n" "$(hostname)" | openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout BUILD_DESTDIR/etc/nginx/cert.key -out BUILD_DESTDIR/etc/nginx/cert.crt && \
     chmod 640 BUILD_DESTDIR/etc/nginx/cert.key && \
     chmod 644 BUILD_DESTDIR/etc/nginx/cert.crt
 ')

@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_CRYPTOMB_VER',ippcp_2021.4)
+DECLARE(`QAT_CRYPTOMB_VER',ippcp_2021.6)
 
 ifelse(OS_NAME,ubuntu,`
 define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ca-certificates ifdef(`BUILD_CMAKE',,cmake) make python ')
