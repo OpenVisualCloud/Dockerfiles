@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_NGINX_VER',v0.4.6)
+DECLARE(`QAT_NGINX_VER',v0.4.7)
 
 ifelse(OS_NAME,ubuntu,`
 define(`QAT_NGINX_BUILD_DEPS',`wget ca-certificates libpcre3-dev zlib1g-dev libxslt1-dev ifdef(`BUILD_OPENSSL',,libssl-dev)')

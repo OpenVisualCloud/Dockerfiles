@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_ENGINE_VER',v0.6.8)
+DECLARE(`QAT_ENGINE_VER',v0.6.15)
 dnl CentOS QAT 1.7.0-470b06 only supports QAT engine version up to 0.5.43.
 dnl CentOS QAT 1.7.0-470b12 and above can support QAT engine version beyond 0.5.43.
 

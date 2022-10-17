@@ -103,7 +103,7 @@ RUN cd /opt/build && \
 RUN yum install -y wget make gcc gawk autoconf automake libtool pkg-config
 
 # load qat-engine
-ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.8.tar.gz
+ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.15.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
@@ -139,7 +139,7 @@ RUN cd /opt/build && \
 
 RUN yum install -y wget pcre-devel zlib-devel libxslt-devel 
 
-ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.6.tar.gz
+ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.7.tar.gz
 RUN wget -O - ${QAT_NGINX_REPO} | tar xz && cd asynch_mode_nginx* && \
     ./configure --with-ld-opt="-Wl,-rpath=/usr/local/ssl/lib,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib64,-rpath=/opt/intel/QAT/build -L/usr/local/ssl/lib -L/opt/intel/QATzip/lib64 -lqatzip -lz" \
         --with-cc-opt="-DNGX_SECURE_MEM -I/usr/local/ssl/include -I/opt/intel/QATzip/include -I/opt/intel/QAT/quickassist/include/dc -I/opt/intel/QAT/quickassist/include -Wno-error=deprecated-declarations" \
@@ -204,7 +204,7 @@ RUN yum install -y openssl
 
 # Generate a self-certificate for testing purpose
 RUN mkdir -p /opt/dist/etc/nginx && \
-    printf "US\nOR\nPortland\nOregon\nData Center Group\nIntel Corporation\n%s\nnobody@intel.com\n" "$(hostname)" | openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout /opt/dist/etc/nginx/cert.key -out /opt/dist/etc/nginx/cert.crt && \
+    printf "US\nOR\nPortland\nOregon\nOpen Visual Cloud\nIntel Corporation\n%s\nnobody@intel.com\n" "$(hostname)" | openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout /opt/dist/etc/nginx/cert.key -out /opt/dist/etc/nginx/cert.crt && \
     chmod 640 /opt/dist/etc/nginx/cert.key && \
     chmod 644 /opt/dist/etc/nginx/cert.crt
 
