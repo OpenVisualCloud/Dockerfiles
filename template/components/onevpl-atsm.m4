@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`ONEVPL_GPU_VER',intel-onevpl-22.5.0)
+DECLARE(`ONEVPL_GPU_VER',intel-onevpl-22.5.2)
 DECLARE(`ONEVPL_GPU_SRC_REPO',https://github.com/oneapi-src/oneVPL-intel-gpu/archive/refs/tags/ONEVPL_GPU_VER.tar.gz)
 DECLARE(`ONEVPL_GPU_BUILD_SAMPLES',no)
 

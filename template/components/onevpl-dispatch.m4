@@ -32,8 +32,8 @@ include(begin.m4)
 
 include(media-delivery.m4)
 
-DECLARE(`ONEVPL_DISP_VER',v2022.1.5)
-DECLARE(`ONEVPL_DISP_VER_TRUNC',2022.1.5)
+DECLARE(`ONEVPL_DISP_VER',v2022.2.0)
+DECLARE(`ONEVPL_DISP_VER_TRUNC',2022.2.0)
 DECLARE(`ONEVPL_DISP_SRC_REPO',https://github.com/oneapi-src/oneVPL/archive/refs/tags/ONEVPL_DISP_VER.tar.gz)
 DECLARE(`ONEVPL_DISP_BUILD_SAMPLES',no)
 

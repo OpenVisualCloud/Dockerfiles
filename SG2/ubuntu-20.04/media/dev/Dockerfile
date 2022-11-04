@@ -298,10 +298,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build media driver
-ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-22.5.0.tar.gz
+ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/intel-media-22.5.2.tar.gz
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
-RUN cd /opt/build/media-driver-intel-media-22.5.0 && mkdir build && cd build && \
+RUN cd /opt/build/media-driver-intel-media-22.5.2 && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DENABLE_PRODUCTION_KMD=ON .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -313,10 +313,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build onevpl runtime for GPU
-ARG ONEVPL_GPU_REPO=https://github.com/oneapi-src/oneVPL-intel-gpu/archive/refs/tags/intel-onevpl-22.5.0.tar.gz
+ARG ONEVPL_GPU_REPO=https://github.com/oneapi-src/oneVPL-intel-gpu/archive/refs/tags/intel-onevpl-22.5.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${ONEVPL_GPU_REPO} | tar xz
-RUN cd /opt/build/oneVPL-intel-gpu-intel-onevpl-22.5.0 && \
+RUN cd /opt/build/oneVPL-intel-gpu-intel-onevpl-22.5.2 && \
     mkdir -p build && cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DCMAKE_INSTALL_LIBDIR=/usr/local/lib \
@@ -332,7 +332,7 @@ RUN cd /opt/build/oneVPL-intel-gpu-intel-onevpl-22.5.0 && \
 
 # Patch with oneVPL patches
 RUN cd /opt/build && \
-   if [ ! -d "media-delivery" ]; then git clone https://github.com/intel/media-delivery && cd media-delivery && git checkout a07323e345df33a92189b281fbe6e3639b97d0e0; fi
+   if [ ! -d "media-delivery" ]; then git clone https://github.com/intel/media-delivery && cd media-delivery && git checkout v3; fi
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -340,10 +340,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build onevpl dispatcher
-ARG ONEVPL_DISP_REPO=https://github.com/oneapi-src/oneVPL/archive/refs/tags/v2022.1.5.tar.gz
+ARG ONEVPL_DISP_REPO=https://github.com/oneapi-src/oneVPL/archive/refs/tags/v2022.2.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${ONEVPL_DISP_REPO} | tar xz 
-RUN cd /opt/build/oneVPL-2022.1.5 && \
+RUN cd /opt/build/oneVPL-2022.2.0 && \
     cp /opt/build/media-delivery/patches/libvpl2/* . && \
     { set -e; \
     for patch_file in $(find -iname "*.patch" | sort -n); do \
@@ -372,14 +372,10 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
     git clone ${FFMPEG_REPO} && \
     cd FFmpeg && \
-    git checkout bea841a 
+    git checkout f6a36c7 
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-RUN cd /opt/build/FFmpeg && \
-    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
-#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
 #ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
 RUN cd /opt/build && \
@@ -397,30 +393,17 @@ RUN cd /opt/build/FFmpeg && \
     patch -p1 < ${patch_file}; \
     done; }
 
-ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
 
-# TODO: Disabled as failed with custom SHA
-#RUN cd BUILD_HOME && \
-#    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
-#    #cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-#    cd BUILD_HOME/FFmpeg && \
-#    patch -p1 < BUILD_HOME/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
-
-# TODO: Disabled as failed with custom SHA
-
-#ifelse(FFMPEG_1TN_PATCH,true,
-#ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-#RUN cd BUILD_HOME/FFmpeg && \
-#    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
-#)dnl
-
+RUN cd /opt/build/FFmpeg && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
 
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
 RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d     --enable-libvpl     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2             --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d     --enable-libvpl     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 

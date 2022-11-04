@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 
 DECLARE(`INTEL_MEDIADEL_REPO',https://github.com/intel/media-delivery)
-DECLARE(`INTEL_MEDIADEL_VER',a07323e345df33a92189b281fbe6e3639b97d0e0)
+DECLARE(`INTEL_MEDIADEL_VER',v3)
 
 define(`BUILD_MEDIADEL',`
 

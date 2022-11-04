@@ -31,7 +31,7 @@ dnl
 include(begin.m4)
 
 DECLARE(`FFMPEG_VER',n5.0.1)
-DECLARE(`FFMPEG_SHA',bea841a)
+DECLARE(`FFMPEG_SHA',f6a36c7)
 DECLARE(`FFMPEG_ENABLE_LIBASS',true)
 DECLARE(`FFMPEG_ENABLE_LIBFREETYPE',true)
 DECLARE(`FFMPEG_ENABLE_X11',false)
@@ -40,7 +40,6 @@ DECLARE(`FFMPEG_ENABLE_V4L2',true)
 DECLARE(`FFMPEG_ENABLE_HWACCELS',ifdef(`ENABLE_INTEL_GFX_REPO',true,ifdef(`BUILD_LIBVA2',true,false)))
 DECLARE(`FFMPEG_ENABLE_LIBMFX',ifdef(`BUILD_MSDK',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_VAAPI',ifdef(`BUILD_LIBVA2',FFMPEG_ENABLE_HWACCELS,false))
-DECLARE(`FFMPEG_FLV_PATCH',true)
 DECLARE(`FFMPEG_1TN_PATCH',true)
 DECLARE(`FFMPEG_WARNING_AS_ERRORS',false)
 
@@ -73,10 +72,7 @@ RUN cd BUILD_HOME && \
     git checkout FFMPEG_SHA 
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
-#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
 #ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg)')dnl
 ifdef(`BUILD_ONEVPL_DISP',`
@@ -91,25 +87,13 @@ RUN cd BUILD_HOME/FFmpeg && \
     done; }
 ')dnl
 
-ifelse(FFMPEG_FLV_PATCH,true,
-ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
 
-# TODO: Disabled as failed with custom SHA
-#RUN cd BUILD_HOME && \
-#    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
-#    #cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-#    cd BUILD_HOME/FFmpeg && \
-#    patch -p1 < BUILD_HOME/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
-)dnl
-
-# TODO: Disabled as failed with custom SHA
-
-#ifelse(FFMPEG_1TN_PATCH,true,
-#ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
+ifelse(FFMPEG_1TN_PATCH,true,
+ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-#RUN cd BUILD_HOME/FFmpeg && \
-#    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
-#)dnl
+RUN cd BUILD_HOME/FFmpeg && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
+)dnl
 
 
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
@@ -133,7 +117,6 @@ RUN cd BUILD_HOME/FFmpeg && \
     ifdef(`BUILD_LIBX264',--enable-gpl --enable-libx264 )dnl
     ifdef(`BUILD_LIBX265',--enable-gpl --enable-libx265 )dnl
     ifdef(`BUILD_SVT_AV1',--enable-libsvtav1 )dnl
-    ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc )dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
     ifdef(`BUILD_LIBVMAF',--enable-libvmaf --enable-version3 )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl
