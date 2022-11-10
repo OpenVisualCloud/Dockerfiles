@@ -61,16 +61,15 @@ define(`GSTGOOD_INSTALL_DEPS',`glib2 ifelse(GST_XLIB,true,libX11 libXv libXt) if
 
 define(`BUILD_GSTGOOD',`
 # build gst-plugin-good
-ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/GSTCORE_VER.tar.gz
+ARG GSTGOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-GSTCORE_VER.tar.xz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTGOOD_REPO} | tar xz
+    wget -O - ${GSTGOOD_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-plugins-good-GSTCORE_VER && \
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dgtk_doc=disabled \
     -Dgdk-pixbuf=ifelse(GST_GDKPIXBUF,true,enabled,disabled) \
     -Djpeg=ifelse(GST_JPEG,true,enabled,disabled) \
     -Dpng=ifelse(GST_PNG,true,enabled,disabled) \

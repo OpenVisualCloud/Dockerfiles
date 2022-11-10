@@ -30,33 +30,33 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-include(yasm.m4)
-
-DECLARE(`SVT_AV1_VER',v1.3.0)
-
-include(yasm.m4)
-
 ifelse(OS_NAME,ubuntu,`
-define(`SVT_AV1_BUILD_DEPS',`ca-certificates wget tar g++ make ifdef(`BUILD_CMAKE',,cmake) git')
+define(`MEDIA_DRIVER_PKG_BUILD_DEPS',`ca-certificates gpg-agent software-properties-common wget')
+define(`MEDIA_DRIVER_PKG_INSTALL_DEPS',`ca-certificates gpg-agent software-properties-common wget')
 ')
 
-ifelse(OS_NAME,centos,`
-define(`SVT_AV1_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmake3)')
-')
-define(`BUILD_SVT_AV1',`
-# build svt av1
-ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/SVT_AV1_VER/SVT-AV1-SVT_AV1_VER.tar.gz
-RUN cd BUILD_HOME && \
-    wget -O - ${SVT_AV1_REPO} | tar zx && \
-    mv SVT-AV1-SVT_AV1_VER SVT-AV1 && \
-    cd SVT-AV1/Build/linux && \
-    ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) && \
-    sed -i "s/SvtAv1dec/SvtAv1Dec/" SvtAv1Dec.pc && \
-    make install DESTDIR=BUILD_DESTDIR && \
-    make install
+define(`INTEL_GFX_URL',https://repositories.intel.com/graphics)
+
+define(`BUILD_MEDIA_DRIVER_PKG',`
+RUN wget -qO - INTEL_GFX_URL/intel-graphics.key | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu ifelse(OS_VERSION,20.04,focal,jammy) ifelse(OS_VERSION,20.04,main,arc)" | tee /etc/apt/sources.list.d/intel.gpu.ifelse(OS_VERSION,20.04,focal,jammy).list
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    intel-opencl-icd libvpl2 intel-level-zero-gpu level-zero-dev intel-media-va-driver-non-free && \
+  rm -rf /var/lib/apt/lists/*
 ')
 
-REG(SVT_AV1)
+define(`INSTALL_MEDIA_DRIVER_PKG',`
+RUN wget -qO - INTEL_GFX_URL/intel-graphics.key | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu ifelse(OS_VERSION,20.04,focal,jammy) ifelse(OS_VERSION,20.04,main,arc)" | tee /etc/apt/sources.list.d/intel.gpu.ifelse(OS_VERSION,20.04,focal,jammy).list
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    intel-opencl-icd libvpl2 intel-level-zero-gpu level-zero-dev intel-media-va-driver-non-free && \
+  rm -rf /var/lib/apt/lists/*
+')
+
+REG(MEDIA_DRIVER_PKG)
 
 include(end.m4)dnl

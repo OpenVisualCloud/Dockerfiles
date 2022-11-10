@@ -30,11 +30,11 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GSTCORE_VER',1.19.1)
+DECLARE(`GSTCORE_VER',1.20.3)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev')
-define(`GSTCORE_INSTALL_DEPS',`libglib2.0-0')
+define(`GSTCORE_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev python3-dev')
+define(`GSTCORE_INSTALL_DEPS',`libglib2.0-0 libegl1')
 ')
 
 ifelse(OS_NAME,centos,`
@@ -44,18 +44,16 @@ define(`GSTCORE_INSTALL_DEPS',`glib2 gobject-introspection')
 
 define(`BUILD_GSTCORE',`
 # build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/GSTCORE_VER.tar.gz
+ARG GSTCORE_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-GSTCORE_VER.tar.xz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTCORE_REPO} | tar xz
+    wget -O - ${GSTCORE_REPO} | tar xJ
 RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain \
-    -Dbenchmarks=disabled \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled && \
+    -Dintrospection=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install

@@ -62,7 +62,6 @@ define(`FFMPEG_INSTALL_DEPS',`ifelse(FFMPEG_ENABLE_V4L2,true,libv4l) ifelse(FFMP
 ')
 
 define(`BUILD_FFMPEG',`
-
 # build ffmpeg
 #ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
 ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
@@ -125,7 +124,9 @@ RUN cd BUILD_HOME/FFmpeg && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ifdef(`REBUILD_OPENCV_VIDEOIO',`dnl
+ifelse(index(IMAGE,`sg2'),-1,`
 REBUILD_OPENCV_VIDEOIO()dnl
+')dnl
 ')dnl
 ')
 

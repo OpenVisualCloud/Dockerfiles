@@ -57,6 +57,9 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
     -DBUILD_EXAMPLES=OFF \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
+    -DWITH_OPENEXR=OFF \
+    -DWITH_OPENJPEG=OFF \
+    -DWITH_JASPER=OFF \
     .. && \
   make -j $(nproc) && \
   make install DESTDIR=BUILD_DESTDIR && \
@@ -75,6 +78,9 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER/build && \
     -DBUILD_EXAMPLES=OFF \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
+    -DWITH_OPENEXR=OFF \
+    -DWITH_OPENJPEG=OFF \
+    -DWITH_JASPER=OFF \
     .. && \
   cd modules/videoio && \
   make -j $(nproc) && \

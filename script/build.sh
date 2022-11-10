@@ -19,7 +19,7 @@ fi
 
 for m4file in "${DIR}"/*.m4; do
     if [[ -f $m4file ]]; then
-        m4 -I "${DIR}/../../../../template/system" -I "${DIR}/../../../../template/components" -DOS_NAME=${OS_NAME} -DOS_VERSION=${OS_VERSION} -DBUILD_VERSION=${BUILD_VERSION} -DBUILD_FDKAAC=${BUILD_FDKAAC} "${m4file}" > "${m4file%\.m4}"
+        m4 -I "${DIR}/../../../../template/system" -I "${DIR}/../../../../template/components" -DIMAGE=${IMAGE} -DOS_NAME=${OS_NAME} -DOS_VERSION=${OS_VERSION} -DBUILD_VERSION=${BUILD_VERSION} -DBUILD_FDKAAC=${BUILD_FDKAAC} "${m4file}" > "${m4file%\.m4}"
     fi
 done || true
 
