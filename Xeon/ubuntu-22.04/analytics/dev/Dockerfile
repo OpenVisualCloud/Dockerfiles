@@ -127,7 +127,8 @@ RUN apt-get update && \
 
 # build nasm
 #ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
-# TODO: to revert to official nasm repo
+# TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
+
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
@@ -257,10 +258,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build svt av1
-ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.2.0/SVT-AV1-v1.2.0.tar.gz
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.3.0/SVT-AV1-v1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
-    mv SVT-AV1-v1.2.0 SVT-AV1 && \
+    mv SVT-AV1-v1.3.0 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -306,6 +307,9 @@ RUN cd /opt/build/opencv && mkdir build && cd build && \
     -DBUILD_EXAMPLES=OFF \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
+    -DWITH_OPENEXR=OFF \
+    -DWITH_OPENJPEG=OFF \
+    -DWITH_JASPER=OFF \
     .. && \
   make -j $(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -325,20 +329,26 @@ RUN git clone -b 2022.2.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
 RUN cd /opt/build/openvino && \
   mkdir build && cd build && \
   cmake \
+    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
     -DENABLE_CPPLINT=OFF \
     -DDENABLE_INTEL_GNA=OFF \
+    -DENABLE_INTEL_MYRIAD_COMMON=OFF \
+    -DENABLE_INTEL_MYRIAD=OFF \
+    -DENABLE_ONEDNN_FOR_GPU=ON \
     -DENABLE_VPU=OFF \
     -DENABLE_OPENCV=OFF \
     -DENABLE_MKL_DNN=ON \
     -DENABLE_CLDNN=ON \
     -DENABLE_SAMPLES=OFF \
     -DENABLE_TESTS=OFF \
+    -DENABLE_GAPI_TESTS=OFF \
+    -DENABLE_BEH_TESTS=OFF \
+    -DENABLE_FUNCTIONAL_TESTS=OFF \
+    -DENABLE_OV_CORE_UNIT_TESTS=OFF \
+    -DENABLE_OV_CORE_BACKEND_UNIT_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=OFF \
-    -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
-    -DNGRAPH_UNIT_TEST_ENABLE=OFF \
-    -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
   make install && \
@@ -349,6 +359,7 @@ ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
 ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/runtime/
 
 ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/cmake
+ENV OpenVINO_DIR=${IE_INSTALL_DIR}/cmake
 ENV TBB_DIR=${IE_INSTALL_DIR}/3rdparty/tbb/cmake
 ENV ngraph_DIR=${IE_INSTALL_DIR}/cmake
 
@@ -358,9 +369,9 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.20.3.tar.gz
+ARG GSTCORE_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTCORE_REPO} | tar xz
+    wget -O - ${GSTCORE_REPO} | tar xJ
 RUN cd /opt/build/gstreamer-1.20.3 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
@@ -384,9 +395,9 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-base
-ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.20.3.tar.gz
+ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.20.3.tar.xz
 RUN cd /opt/build && \
-  wget -O - ${GSTBASE_REPO} | tar xz
+  wget -O - ${GSTBASE_REPO} | tar xJ
 RUN cd /opt/build/gst-plugins-base-1.20.3 && \
   meson build \
     --prefix=/usr/local \
@@ -412,9 +423,9 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-good
-ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.20.3.tar.gz
+ARG GSTGOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTGOOD_REPO} | tar xz
+    wget -O - ${GSTGOOD_REPO} | tar xJ
 RUN cd /opt/build/gst-plugins-good-1.20.3 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
@@ -437,9 +448,9 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-bad
-ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.20.3.tar.gz
+ARG GSTBAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTBAD_REPO} | tar xz && \
+    wget -O - ${GSTBAD_REPO} | tar xJ && \
     cd gst-plugins-bad-1.20.3 && \
     meson build \
       --prefix=/usr/local \
@@ -450,6 +461,7 @@ RUN cd /opt/build && \
       -Dexamples=disabled \
       -Dtests=disabled \
       -Dintrospection=enabled \
+      -Dgpl=enabled \
       -Drtmp=enabled \
       -Dx265=disabled \
       -Drsvg=disabled \
@@ -464,13 +476,14 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-ugly
-ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.20.3.tar.gz
+ARG GSTUGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTUGLY_REPO} | tar xz
+    wget -O - ${GSTUGLY_REPO} | tar xJ
 RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
     -Ddoc=disabled \
+    -Dgpl=enabled \
     -Dx264=disabled \
     && cd build && \
     ninja install && \
@@ -482,24 +495,31 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
+#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
-    wget -O - ${FFMPEG_REPO} | tar xz
+    git clone ${FFMPEG_REPO} && \
+    cd FFmpeg && \
+    git checkout f6a36c7 
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
+#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
 
+ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
 
-
-RUN cd /opt/build/FFmpeg-n4.4 && \
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d         && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
+
 
 RUN cd /opt/build/opencv/build && \
   rm -rf ./* && \
@@ -512,6 +532,9 @@ RUN cd /opt/build/opencv/build && \
     -DBUILD_EXAMPLES=OFF \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
+    -DWITH_OPENEXR=OFF \
+    -DWITH_OPENJPEG=OFF \
+    -DWITH_JASPER=OFF \
     .. && \
   cd modules/videoio && \
   make -j $(nproc) && \
@@ -523,9 +546,9 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.20.3.tar.gz
+ARG GSTLIBAV_REPO=https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTLIBAV_REPO} | tar xz
+    wget -O - ${GSTLIBAV_REPO} | tar xJ
 RUN cd /opt/build/gst-libav-1.20.3 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain && \
@@ -600,16 +623,16 @@ RUN cd /opt/build/paho.mqtt.c-1.3.10 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    cmake git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates libva-dev && \
+    cmake git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates libva-dev curl gnupg2 software-properties-common && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-gva
 # formerly https://github.com/opencv/gst-video-analytics
-ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
-# TODO: This is a workaround for a bug in dlstreamer_gst
+ARG GVA_REPO=https://github.com/dlstreamer/dlstreamer
 ENV LIBRARY_PATH=/usr/local/lib
-RUN git clone -b v1.6 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b master $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
+    git checkout ec2748da5b577bbf510525f57eabde6c58efd589 && \
     git submodule update --init && \
     mkdir -p build && cd build && \
     cmake \
@@ -632,6 +655,7 @@ RUN git clone -b v1.6 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=/opt/dist 
+
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0/:/usr/local/lib/
 
 RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/gstreamer-1.0/.

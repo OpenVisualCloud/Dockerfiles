@@ -111,7 +111,8 @@ RUN yum install -y ca-certificates wget tar gcc-c++ make bzip2
 
 # build nasm
 #ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
-# TODO: to revert to official nasm repo
+# TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
+
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
@@ -213,10 +214,10 @@ RUN cd /opt/build/SVT-HEVC/Build/linux && \
 RUN yum install -y wget tar gcc-c++ make git 
 
 # build svt av1
-ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.2.0/SVT-AV1-v1.2.0.tar.gz
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.3.0/SVT-AV1-v1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
-    mv SVT-AV1-v1.2.0 SVT-AV1 && \
+    mv SVT-AV1-v1.3.0 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -256,6 +257,9 @@ RUN cd /opt/build/opencv && mkdir build && cd build && \
     -DBUILD_EXAMPLES=OFF \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
+    -DWITH_OPENEXR=OFF \
+    -DWITH_OPENJPEG=OFF \
+    -DWITH_JASPER=OFF \
     .. && \
   make -j $(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -272,20 +276,26 @@ RUN git clone -b 2022.2.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
 RUN cd /opt/build/openvino && \
   mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake \
+    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
     -DENABLE_CPPLINT=OFF \
     -DDENABLE_INTEL_GNA=OFF \
+    -DENABLE_INTEL_MYRIAD_COMMON=OFF \
+    -DENABLE_INTEL_MYRIAD=OFF \
+    -DENABLE_ONEDNN_FOR_GPU=ON \
     -DENABLE_VPU=OFF \
     -DENABLE_OPENCV=OFF \
     -DENABLE_MKL_DNN=ON \
     -DENABLE_CLDNN=ON \
     -DENABLE_SAMPLES=OFF \
     -DENABLE_TESTS=OFF \
+    -DENABLE_GAPI_TESTS=OFF \
+    -DENABLE_BEH_TESTS=OFF \
+    -DENABLE_FUNCTIONAL_TESTS=OFF \
+    -DENABLE_OV_CORE_UNIT_TESTS=OFF \
+    -DENABLE_OV_CORE_BACKEND_UNIT_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=OFF \
-    -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
-    -DNGRAPH_UNIT_TEST_ENABLE=OFF \
-    -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
   make install && \
@@ -296,6 +306,7 @@ ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
 ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/runtime/
 
 ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/cmake
+ENV OpenVINO_DIR=${IE_INSTALL_DIR}/cmake
 ENV TBB_DIR=${IE_INSTALL_DIR}/3rdparty/tbb/cmake
 ENV ngraph_DIR=${IE_INSTALL_DIR}/cmake
 
@@ -325,9 +336,9 @@ RUN cd /opt/build && \
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel
 
 # build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.20.3.tar.gz
+ARG GSTCORE_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTCORE_REPO} | tar xz
+    wget -O - ${GSTCORE_REPO} | tar xJ
 RUN cd /opt/build/gstreamer-1.20.3 && \
     meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
     --prefix=/usr/local --buildtype=plain \
@@ -404,15 +415,40 @@ RUN cd /opt/build/paho.mqtt.c-1.3.10 && \
   cp src/MQTTReasonCodes.h /opt/dist/usr/local/include/ && \
   cp src/MQTTSubscribeOpts.h /opt/dist/usr/local/include/; 
 
+RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel libX11-devel libXv-devel libXt-devel alsa-lib-devel libpango1.0-dev pango-devel libtheora-devel libvisual-devel libegl1-mesa mesa-libGL-devel
+
+# build gst-plugin-base
+ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.20.3.tar.xz
+RUN cd /opt/build && \
+  wget -O - ${GSTBASE_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-base-1.20.3 && \
+  meson build \
+    --prefix=/usr/local \
+    --libdir=/usr/local/lib64 \
+    --libexecdir=/usr/local/lib64 \
+    --buildtype=plain \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
+    -Dintrospection=enabled \
+    -Dalsa=enabled \
+    -Dpango=enabled \
+    -Dtheora=enabled \
+    -Dlibvisual=enabled \
+    -Dgl=enabled \
+  && cd build && \
+  ninja install && \
+  DESTDIR=/opt/dist ninja install
+
 RUN yum install -y git ocl-icd-devel opencl-headers pkg-config ca-certificates python36-gobject-devel python3-devel
 
 # build gst-plugin-gva
 # formerly https://github.com/opencv/gst-video-analytics
-ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
-# TODO: This is a workaround for a bug in dlstreamer_gst
+ARG GVA_REPO=https://github.com/dlstreamer/dlstreamer
 ENV LIBRARY_PATH=/usr/local/lib64
-RUN git clone -b v1.6 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b master $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
+    git checkout ec2748da5b577bbf510525f57eabde6c58efd589 && \
     git submodule update --init && \
     mkdir -p build && cd build && \
     (. /opt/rh/devtoolset-9/enable && cmake \
@@ -435,6 +471,7 @@ RUN git clone -b v1.6 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=/opt/dist  )
+
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/gstreamer-1.0/:/usr/local/lib/
 
 RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib64/gstreamer-1.0/.
@@ -471,7 +508,7 @@ RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-releas
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
 # Install
-RUN yum install -y bash numactl-libs libpciaccess gtk3 numactl ocl-icd glib2 gobject-introspection libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base
+RUN yum install -y bash numactl-libs libpciaccess gtk3 numactl ocl-icd glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig

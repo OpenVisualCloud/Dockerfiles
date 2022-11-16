@@ -29,8 +29,8 @@ dnl OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE US
 dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 define(`UBUNTU_CODENAME',`ifelse(
-$1,18.04,bionic,
 $1,20.04,focal,
+$1,22.04,jammy,
 `ERROR(`ubuntu codename not known for the $1 version')')')dnl
 
 define(`UPGRADE_UBUNTU_COMPONENTS',`dnl

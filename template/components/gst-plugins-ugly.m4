@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2022, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -56,13 +56,14 @@ define(`GSTUGLY_INSTALL_DEPS',`glib2')
 
 define(`BUILD_GSTUGLY',`
 # build gst-plugin-ugly
-ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/GSTCORE_VER.tar.gz
+ARG GSTUGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-GSTCORE_VER.tar.xz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTUGLY_REPO} | tar xz
+    wget -O - ${GSTUGLY_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-plugins-ugly-GSTCORE_VER && \
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain \
     -Ddoc=disabled \
+    -Dgpl=enabled \
     -Dx264=ifdef(`BUILD_LIBX264',enabled,disabled) \
     && cd build && \
     ninja install && \
