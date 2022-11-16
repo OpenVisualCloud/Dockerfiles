@@ -32,8 +32,8 @@ include(begin.m4)
 
 include(libva2.sg1.m4)
 
-define(`MSDK_VER',intel-media-sg1-pv1.3)
-define(`MSDK_SRC_REPO',https://github.com/VCDP/MediaSDK/archive/MSDK_VER.tar.gz)
+define(`MSDK_VER',intel-mediasdk-22.5.4)
+define(`MSDK_SRC_REPO',https://github.com/Intel-Media-SDK/MediaSDK/archive/MSDK_VER.tar.gz)
 include(msdk.m4)
 
 include(end.m4)dnl

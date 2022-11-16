@@ -30,8 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-define(`LIBVA2_VER',intel-media-sg1-pv1.3)
-define(`LIBVA2_SRC_REPO',https://github.com/VCDP/libva/archive/LIBVA2_VER.tar.gz)
+define(`LIBVA2_VER',2.16.0)
+define(`LIBVA2_SRC_REPO',https://github.com/intel/libva/archive/refs/tags/LIBVA2_VER.tar.gz)
 include(libva2.m4)
 
 include(end.m4)dnl

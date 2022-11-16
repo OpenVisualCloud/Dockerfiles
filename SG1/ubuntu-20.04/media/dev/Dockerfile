@@ -255,10 +255,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gmmlib
-ARG GMMLIB_REPO=https://github.com/VCDP/gmmlib/archive/intel-media-sg1-pv1.3.tar.gz
+ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/refs/tags/intel-gmmlib-22.3.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${GMMLIB_REPO} | tar xz
-RUN cd /opt/build/gmmlib-intel-media-sg1-pv1.3 && mkdir build && cd build && \
+RUN cd /opt/build/gmmlib-intel-gmmlib-22.3.0 && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -270,10 +270,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build libva2
-ARG LIBVA2_REPO=https://github.com/VCDP/libva/archive/intel-media-sg1-pv1.3.tar.gz
+ARG LIBVA2_REPO=https://github.com/intel/libva/archive/refs/tags/2.16.0.tar.gz
 RUN cd /opt/build && \
   wget -O - ${LIBVA2_REPO} | tar xz
-RUN cd /opt/build/libva-intel-media-sg1-pv1.3 && \
+RUN cd /opt/build/libva-2.16.0 && \
   ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -285,10 +285,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build media driver
-ARG MEDIA_DRIVER_REPO=https://github.com/VCDP/media-driver/archive/intel-media-sg1-pv1.3.tar.gz
+ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/refs/tags/intel-media-22.5.4.tar.gz
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
-RUN cd /opt/build/media-driver-intel-media-sg1-pv1.3 && mkdir build && cd build && \
+RUN cd /opt/build/media-driver-intel-media-22.5.4 && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DENABLE_PRODUCTION_KMD=ON .. && \
   make -j$(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -300,10 +300,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build media sdk
-ARG MSDK_REPO=https://github.com/VCDP/MediaSDK/archive/intel-media-sg1-pv1.3.tar.gz
+ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-22.5.4.tar.gz
 RUN cd /opt/build && \
     wget -O - ${MSDK_REPO} | tar xz
-RUN cd /opt/build/MediaSDK-intel-media-sg1-pv1.3 && \
+RUN cd /opt/build/MediaSDK-intel-mediasdk-22.5.4 && \
     mkdir -p build && cd build && \
     cmake \
     -DCMAKE_INSTALL_PREFIX=/usr/local \

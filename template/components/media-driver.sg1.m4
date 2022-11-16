@@ -33,8 +33,8 @@ include(begin.m4)
 include(libva2.sg1.m4)
 include(gmmlib.sg1.m4)
 
-define(`MEDIA_DRIVER_VER',intel-media-sg1-pv1.3)
-define(`MEDIA_DRIVER_SRC_REPO',https://github.com/VCDP/media-driver/archive/MEDIA_DRIVER_VER.tar.gz)
+define(`MEDIA_DRIVER_VER',intel-media-22.5.4)
+define(`MEDIA_DRIVER_SRC_REPO',https://github.com/intel/media-driver/archive/refs/tags/MEDIA_DRIVER_VER.tar.gz)
 define(`ENABLE_PRODUCTION_KMD',ON)
 include(media-driver.m4)
 
