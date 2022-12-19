@@ -287,7 +287,7 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
     git clone ${FFMPEG_REPO} && \
     cd FFmpeg && \
-    git checkout f6a36c7 
+    git checkout f6a36c7
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl

@@ -290,14 +290,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
-  git clone ${OPENCV_REPO} && \
-  cd opencv && \
-  git checkout 4.6.0 
-#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
+  wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -378,13 +375,7 @@ RUN cd /opt/build/gstreamer-1.20.3 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled \
-    -Dpython=enabled \
-    -Dgst-python:libpython-dir=/usr/local/lib \
-    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
-    -Dlibsoup:sysprof=disabled \
-    -Dgpl=enabled && \
+    -Dintrospection=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -491,73 +482,6 @@ RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential ca-certificates wget patch git libv4l-dev libass-dev  && \
-  rm -rf /var/lib/apt/lists/*
-
-# build ffmpeg
-#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
-RUN cd /opt/build && \
-    git clone ${FFMPEG_REPO} && \
-    cd FFmpeg && \
-    git checkout f6a36c7 
-
-#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
-#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-
-
-ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
-#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-RUN cd /opt/build/FFmpeg && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
-
-#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-RUN cd /opt/build/FFmpeg && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
-    --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d         && make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
-
-RUN cd /opt/build/opencv/build && \
-  rm -rf ./* && \
-  cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DCMAKE_INSTALL_LIBDIR=lib \
-    -DOPENCV_GENERATE_PKGCONFIG=ON \
-    -DBUILD_DOCS=OFF \
-    -DBUILD_EXAMPLES=OFF \
-    -DBUILD_PERF_TESTS=OFF \
-    -DBUILD_TESTS=OFF \
-    -DWITH_OPENEXR=OFF \
-    -DWITH_OPENJPEG=OFF \
-    -DWITH_JASPER=OFF \
-    .. && \
-  cd modules/videoio && \
-  make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.6.0 /opt/dist/usr/local/lib
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget  && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.20.3.tar.xz
-RUN cd /opt/build && \
-    wget -O - ${GSTLIBAV_REPO} | tar xJ
-RUN cd /opt/build/gst-libav-1.20.3 && \
-    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
-    --prefix=/usr/local --buildtype=plain && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates tar g++ wget  && \
   rm -rf /var/lib/apt/lists/*
 
@@ -636,22 +560,17 @@ RUN git clone -b master $GVA_REPO /opt/build/gst-video-analytics && \
     git submodule update --init && \
     mkdir -p build && cd build && \
     cmake \
-        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=ON \
-        -DENABLE_RDKAFKA_INSTALLATION=ON \
-        -DENABLE_VAAPI=OFF \
-        -DENABLE_VAS_TRACKER=ON \
-        -DENABLE_AUDIO_INFERENCE_ELEMENTS=OFF \
-        -Dwith_drm=no \
-        -Dwith_x11=no \
-        -Dwith_glx=no \
-        -Dwith_wayland=no \
-        -Dwith_egl=no \
-        .. \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_PAHO_INSTALLATION=ON \
+    -DENABLE_RDKAFKA_INSTALLATION=ON \
+    -DENABLE_VAAPI=OFF \
+    -DENABLE_AUDIO_INFERENCE_ELEMENTS=ON \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    .. \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=/opt/dist 
@@ -688,6 +607,39 @@ RUN cd /opt/build/gst-python-1.20.3 && \
     DESTDIR=/opt/dist ninja install
 
 
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    build-essential ca-certificates wget patch git libv4l-dev libass-dev  && \
+  rm -rf /var/lib/apt/lists/*
+
+# build ffmpeg
+#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
+RUN cd /opt/build && \
+    git clone ${FFMPEG_REPO} && \
+    cd FFmpeg && \
+    git checkout f6a36c7
+
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
+#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+
+
+ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
+
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
+    --disable-manpages --disable-podpages --disable-txtpages \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d         && make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+#REBUILD_OPENCV_VIDEOIO()dnl
+
 # cleanup
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
@@ -704,7 +656,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libglib2.0-0 libegl1 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libde265-0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9 python3-gi python3-gi-cairo python3-dev python3-numpy libglib2.0-dev && \
+    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libglib2.0-0 libegl1 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libde265-0 python3-gi python3-gi-cairo python3-dev python3-numpy libglib2.0-dev libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
   rm -rf /var/lib/apt/lists/*
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 

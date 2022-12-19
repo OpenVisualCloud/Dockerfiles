@@ -154,14 +154,11 @@ RUN cd /opt/build && \
 RUN yum install -y cmake3 gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
-  git clone ${OPENCV_REPO} && \
-  cd opencv && \
-  git checkout 4.6.0 
-#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
+  wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake3 \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -244,7 +241,7 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
     git clone ${FFMPEG_REPO} && \
     cd FFmpeg && \
-    git checkout f6a36c7 
+    git checkout n4.4.3
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
@@ -256,10 +253,7 @@ RUN cd /opt/build && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
 
-ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
-#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-RUN cd /opt/build/FFmpeg && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
+
 
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
 RUN cd /opt/build/FFmpeg && \
@@ -269,25 +263,7 @@ RUN cd /opt/build/FFmpeg && \
     make install DESTDIR=/opt/dist && \
     make install
 
-
-RUN cd /opt/build/opencv/build && \
-  rm -rf ./* && \
-  (. /opt/rh/devtoolset-9/enable && cmake3 \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DCMAKE_INSTALL_LIBDIR=lib64 \
-    -DOPENCV_GENERATE_PKGCONFIG=ON \
-    -DBUILD_DOCS=OFF \
-    -DBUILD_EXAMPLES=OFF \
-    -DBUILD_PERF_TESTS=OFF \
-    -DBUILD_TESTS=OFF \
-    -DWITH_OPENEXR=OFF \
-    -DWITH_OPENJPEG=OFF \
-    -DWITH_JASPER=OFF \
-    .. && \
-  cd modules/videoio && \
-  make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.6.0 /opt/dist/usr/local/lib64 )
+#REBUILD_OPENCV_VIDEOIO()dnl
 
 RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex gobject-introspection-devel
 
@@ -301,13 +277,7 @@ RUN cd /opt/build/gstreamer-1.20.3 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled \
-    -Dpython=enabled \
-    -Dgst-python:libpython-dir=/usr/local/lib64 \
-    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
-    -Dlibsoup:sysprof=disabled \
-    -Dgpl=enabled && \
+    -Dintrospection=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -400,19 +370,6 @@ RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN yum install -y wget tar gcc-c++ meson
-
-# build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.20.3.tar.xz
-RUN cd /opt/build && \
-    wget -O - ${GSTLIBAV_REPO} | tar xJ
-RUN cd /opt/build/gst-libav-1.20.3 && \
-    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
-    --prefix=/usr/local --buildtype=plain && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
 RUN yum install -y cmake3 git ocl-icd-devel opencl-headers pkg-config ca-certificates python36-gobject-devel python3-devel
 
 # build gst-plugin-gva
@@ -425,22 +382,17 @@ RUN git clone -b master $GVA_REPO /opt/build/gst-video-analytics && \
     git submodule update --init && \
     mkdir -p build && cd build && \
     (. /opt/rh/devtoolset-9/enable && cmake3 \
-        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=OFF \
-        -DENABLE_RDKAFKA_INSTALLATION=OFF \
-        -DENABLE_VAAPI=OFF \
-        -DENABLE_VAS_TRACKER=ON \
-        -DENABLE_AUDIO_INFERENCE_ELEMENTS=OFF \
-        -Dwith_drm=no \
-        -Dwith_x11=no \
-        -Dwith_glx=no \
-        -Dwith_wayland=no \
-        -Dwith_egl=no \
-        .. \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_PAHO_INSTALLATION=OFF \
+    -DENABLE_RDKAFKA_INSTALLATION=OFF \
+    -DENABLE_VAAPI=OFF \
+    -DENABLE_AUDIO_INFERENCE_ELEMENTS=ON \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    .. \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=/opt/dist  )

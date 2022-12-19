@@ -293,14 +293,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
-  git clone ${OPENCV_REPO} && \
-  cd opencv && \
-  git checkout 4.6.0 
-#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
+  wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -404,13 +401,7 @@ RUN cd /opt/build/gstreamer-1.20.3 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled \
-    -Dpython=enabled \
-    -Dgst-python:libpython-dir=/usr/local/lib \
-    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
-    -Dlibsoup:sysprof=disabled \
-    -Dgpl=enabled && \
+    -Dintrospection=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -628,22 +619,17 @@ RUN git clone -b master $GVA_REPO /opt/build/gst-video-analytics && \
     git submodule update --init && \
     mkdir -p build && cd build && \
     cmake \
-        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=ON \
-        -DENABLE_RDKAFKA_INSTALLATION=ON \
-        -DENABLE_VAAPI=ON \
-        -DENABLE_VAS_TRACKER=ON \
-        -DENABLE_AUDIO_INFERENCE_ELEMENTS=OFF \
-        -Dwith_drm=no \
-        -Dwith_x11=no \
-        -Dwith_glx=no \
-        -Dwith_wayland=no \
-        -Dwith_egl=no \
-        .. \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_PAHO_INSTALLATION=ON \
+    -DENABLE_RDKAFKA_INSTALLATION=ON \
+    -DENABLE_VAAPI=ON \
+    -DENABLE_AUDIO_INFERENCE_ELEMENTS=ON \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    .. \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=/opt/dist 

@@ -225,14 +225,11 @@ RUN cd /opt/build && \
 RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
-  git clone ${OPENCV_REPO} && \
-  cd opencv && \
-  git checkout 4.6.0 
-#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
+  wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -326,7 +323,7 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
     git clone ${FFMPEG_REPO} && \
     cd FFmpeg && \
-    git checkout f6a36c7 
+    git checkout f6a36c7
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
@@ -346,25 +343,7 @@ RUN cd /opt/build/FFmpeg && \
     make install DESTDIR=/opt/dist && \
     make install
 
-
-RUN cd /opt/build/opencv/build && \
-  rm -rf ./* && \
-  (. /opt/rh/devtoolset-9/enable && cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DCMAKE_INSTALL_LIBDIR=lib64 \
-    -DOPENCV_GENERATE_PKGCONFIG=ON \
-    -DBUILD_DOCS=OFF \
-    -DBUILD_EXAMPLES=OFF \
-    -DBUILD_PERF_TESTS=OFF \
-    -DBUILD_TESTS=OFF \
-    -DWITH_OPENEXR=OFF \
-    -DWITH_OPENJPEG=OFF \
-    -DWITH_JASPER=OFF \
-    .. && \
-  cd modules/videoio && \
-  make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.6.0 /opt/dist/usr/local/lib64 )
+#REBUILD_OPENCV_VIDEOIO()dnl
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/include && \

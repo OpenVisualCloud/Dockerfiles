@@ -41,7 +41,7 @@ DECLARE(`GVA_WITH_EGL',no)
 
 DECLARE(`GVA_ENABLE_PAHO_INST',ifdef(`BUILD_LIBPAHO',ON,OFF))
 DECLARE(`GVA_ENABLE_RDKAFKA_INST',ifdef(`BUILD_LIBRDKAFKA',ON,OFF))
-DECLARE(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',OFF)
+DECLARE(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',ON)
 DECLARE(`GVA_ENABLE_VAAPI',ifdef(`BUILD_MEDIA_DRIVER_PKG',ON,OFF))
 DECLARE(`GVA_ENABLE_WARNING_AS_ERRORS',OFF)
 include(gst-plugins-base.m4)
@@ -67,22 +67,17 @@ RUN git clone -b GVA_VER $GVA_REPO BUILD_HOME/gst-video-analytics && \
     git submodule update --init && \
     mkdir -p build && cd build && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
-        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-        -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=GVA_ENABLE_PAHO_INST \
-        -DENABLE_RDKAFKA_INSTALLATION=GVA_ENABLE_RDKAFKA_INST \
-        -DENABLE_VAAPI=GVA_ENABLE_VAAPI \
-        -DENABLE_VAS_TRACKER=ON \
-        -DENABLE_AUDIO_INFERENCE_ELEMENTS=GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS \
-        -Dwith_drm=GVA_WITH_DRM \
-        -Dwith_x11=GVA_WITH_X11 \
-        -Dwith_glx=GVA_WITH_GLX \
-        -Dwith_wayland=GVA_WITH_WAYLAND \
-        -Dwith_egl=GVA_WITH_EGL \
-        .. \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_PAHO_INSTALLATION=GVA_ENABLE_PAHO_INST \
+    -DENABLE_RDKAFKA_INSTALLATION=GVA_ENABLE_RDKAFKA_INST \
+    -DENABLE_VAAPI=GVA_ENABLE_VAAPI \
+    -DENABLE_AUDIO_INFERENCE_ELEMENTS=GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS \
+    -DTREAT_WARNING_AS_ERROR=GVA_ENABLE_WARNING_AS_ERRORS \
+    .. \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=BUILD_DESTDIR ifelse(OS_NAME:OS_VERSION,centos:7,` )')

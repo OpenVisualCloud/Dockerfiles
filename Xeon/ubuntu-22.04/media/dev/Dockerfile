@@ -277,13 +277,154 @@ RUN cd /opt/build/gstreamer-1.20.3 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
+    -Dintrospection=enabled && \
+    cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ gobjc wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev libx11-xcb-dev && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-base
+ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.20.3.tar.xz
+RUN cd /opt/build && \
+  wget -O - ${GSTBASE_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-base-1.20.3 && \
+  meson build \
+    --prefix=/usr/local \
+    --libdir=/usr/local/lib \
+    --libexecdir=/usr/local/lib \
+    --buildtype=plain \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
     -Dintrospection=enabled \
-    -Dgtk_doc=disabled \
-    -Dpython=enabled \
-    -Dgst-python:libpython-dir=/usr/local/lib \
-    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
-    -Dlibsoup:sysprof=disabled \
-    -Dgpl=enabled && \
+    -Dalsa=enabled \
+    -Dpango=enabled \
+    -Dtheora=enabled \
+    -Dlibvisual=enabled \
+    -Dgl=enabled \
+  && cd build && \
+  ninja install && \
+  DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev  && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-good
+ARG GSTGOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTGOOD_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-good-1.20.3 && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    --prefix=/usr/local --buildtype=plain \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
+    -Dgdk-pixbuf=enabled \
+    -Djpeg=enabled \
+    -Dpng=enabled \
+    -Disomp4=enabled \
+    -Dsoup=enabled \
+    -Dvpx=enabled \
+    && cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-bad
+ARG GSTBAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTBAD_REPO} | tar xJ && \
+    cd gst-plugins-bad-1.20.3 && \
+    meson build \
+      --prefix=/usr/local \
+      --libdir=/usr/local/lib \
+      --libexecdir=/usr/local/lib \
+      --buildtype=plain \
+      -Ddoc=disabled \
+      -Dexamples=disabled \
+      -Dtests=disabled \
+      -Dintrospection=enabled \
+      -Dgpl=enabled \
+      -Drtmp=enabled \
+      -Dx265=disabled \
+      -Drsvg=disabled \
+      -Dfdkaac=enabled \
+    && cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install 
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-ugly
+ARG GSTUGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTUGLY_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    --prefix=/usr/local --buildtype=plain \
+    -Ddoc=disabled \
+    -Dgpl=enabled \
+    -Dx264=disabled \
+    && cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    build-essential ca-certificates wget patch git libv4l-dev libass-dev  && \
+  rm -rf /var/lib/apt/lists/*
+
+# build ffmpeg
+#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
+RUN cd /opt/build && \
+    git clone ${FFMPEG_REPO} && \
+    cd FFmpeg && \
+    git checkout f6a36c7
+
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
+#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+
+
+ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
+    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
+
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
+    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
+    --disable-manpages --disable-podpages --disable-txtpages \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d         && make -j$(nproc) && \
+    make install DESTDIR=/opt/dist && \
+    make install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ wget  && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-libav
+ARG GSTLIBAV_REPO=https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTLIBAV_REPO} | tar xJ
+RUN cd /opt/build/gst-libav-1.20.3 && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    --prefix=/usr/local --buildtype=plain && \
     cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -309,37 +450,6 @@ RUN cd /opt/build/SVT-VP9/gstreamer-plugin && \
     cd build && ninja install && \
     DESTDIR=/opt/dist ninja install
 
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential ca-certificates wget patch git libv4l-dev libass-dev  && \
-  rm -rf /var/lib/apt/lists/*
-
-# build ffmpeg
-#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
-RUN cd /opt/build && \
-    git clone ${FFMPEG_REPO} && \
-    cd FFmpeg && \
-    git checkout f6a36c7 
-
-#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
-#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-
-
-ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
-#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-RUN cd /opt/build/FFmpeg && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
-
-#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-RUN cd /opt/build/FFmpeg && \
-    ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
-    --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d         && make -j$(nproc) && \
-    make install DESTDIR=/opt/dist && \
-    make install
-
 # cleanup
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
@@ -355,7 +465,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libglib2.0-0 libegl1 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
+    libglib2.0-0 libegl1 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libde265-0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
   rm -rf /var/lib/apt/lists/*
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 

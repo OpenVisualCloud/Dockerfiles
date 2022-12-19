@@ -240,14 +240,11 @@ RUN cd /opt/build && \
 RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
-  git clone ${OPENCV_REPO} && \
-  cd opencv && \
-  git checkout 4.6.0 
-#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
+  wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -345,14 +342,96 @@ RUN cd /opt/build/gstreamer-1.20.3 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled \
-    -Dpython=enabled \
-    -Dgst-python:libpython-dir=/usr/local/lib64 \
-    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
-    -Dlibsoup:sysprof=disabled \
-    -Dgpl=enabled && \
+    -Dintrospection=enabled && \
     cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel libX11-devel libXv-devel libXt-devel alsa-lib-devel libpango1.0-dev pango-devel libtheora-devel libvisual-devel libegl1-mesa mesa-libGL-devel
+
+# build gst-plugin-base
+ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.20.3.tar.xz
+RUN cd /opt/build && \
+  wget -O - ${GSTBASE_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-base-1.20.3 && \
+  meson build \
+    --prefix=/usr/local \
+    --libdir=/usr/local/lib64 \
+    --libexecdir=/usr/local/lib64 \
+    --buildtype=plain \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
+    -Dintrospection=enabled \
+    -Dalsa=enabled \
+    -Dpango=enabled \
+    -Dtheora=enabled \
+    -Dlibvisual=enabled \
+    -Dgl=enabled \
+  && cd build && \
+  ninja install && \
+  DESTDIR=/opt/dist ninja install
+
+RUN yum install -y git meson wget tar gcc-c++ glib2-devel bison flex libX11-devel libXv-devel libXt-devel gdk-pixbuf2-devel libjpeg-turbo-devel libpng-devel zlib-devel libsoup-devel 
+
+# build gst-plugin-good
+ARG GSTGOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTGOOD_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-good-1.20.3 && \
+    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
+    --prefix=/usr/local --buildtype=plain \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
+    -Dgdk-pixbuf=enabled \
+    -Djpeg=enabled \
+    -Dpng=enabled \
+    -Disomp4=enabled \
+    -Dsoup=enabled \
+    -Dvpx=enabled \
+    && cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN yum install -y meson wget tar glib2-devel bison flex gobject-introspection-devel openssl libcurl-devel librtmp-devel mjpegtools libde265-devel devtoolset-9 
+
+# build gst-plugin-bad
+ARG GSTBAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTBAD_REPO} | tar xJ && \
+    cd gst-plugins-bad-1.20.3 && \
+    (. /opt/rh/devtoolset-9/enable && meson build \
+      --prefix=/usr/local \
+      --libdir=/usr/local/lib64 \
+      --libexecdir=/usr/local/lib64 \
+      --buildtype=plain \
+      -Ddoc=disabled \
+      -Dexamples=disabled \
+      -Dtests=disabled \
+      -Dintrospection=enabled \
+      -Dgpl=enabled \
+      -Drtmp=enabled \
+      -Dx265=enabled \
+      -Drsvg=disabled \
+      -Dfdkaac=enabled \
+    && cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install )
+
+RUN yum install -y meson wget tar gcc-c++ glib2-devel bison flex
+
+# build gst-plugin-ugly
+ARG GSTUGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTUGLY_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
+    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
+    --prefix=/usr/local --buildtype=plain \
+    -Ddoc=disabled \
+    -Dgpl=enabled \
+    -Dx264=enabled \
+    && cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
@@ -415,31 +494,6 @@ RUN cd /opt/build/paho.mqtt.c-1.3.10 && \
   cp src/MQTTReasonCodes.h /opt/dist/usr/local/include/ && \
   cp src/MQTTSubscribeOpts.h /opt/dist/usr/local/include/; 
 
-RUN yum install -y meson wget tar gcc gcc-objc gcc-c++ glib2-devel bison flex gobject-introspection-devel libX11-devel libXv-devel libXt-devel alsa-lib-devel libpango1.0-dev pango-devel libtheora-devel libvisual-devel libegl1-mesa mesa-libGL-devel
-
-# build gst-plugin-base
-ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.20.3.tar.xz
-RUN cd /opt/build && \
-  wget -O - ${GSTBASE_REPO} | tar xJ
-RUN cd /opt/build/gst-plugins-base-1.20.3 && \
-  meson build \
-    --prefix=/usr/local \
-    --libdir=/usr/local/lib64 \
-    --libexecdir=/usr/local/lib64 \
-    --buildtype=plain \
-    -Dexamples=disabled \
-    -Dtests=disabled \
-    -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dalsa=enabled \
-    -Dpango=enabled \
-    -Dtheora=enabled \
-    -Dlibvisual=enabled \
-    -Dgl=enabled \
-  && cd build && \
-  ninja install && \
-  DESTDIR=/opt/dist ninja install
-
 RUN yum install -y git ocl-icd-devel opencl-headers pkg-config ca-certificates python36-gobject-devel python3-devel
 
 # build gst-plugin-gva
@@ -452,22 +506,17 @@ RUN git clone -b master $GVA_REPO /opt/build/gst-video-analytics && \
     git submodule update --init && \
     mkdir -p build && cd build && \
     (. /opt/rh/devtoolset-9/enable && cmake \
-        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=ON \
-        -DENABLE_RDKAFKA_INSTALLATION=ON \
-        -DENABLE_VAAPI=OFF \
-        -DENABLE_VAS_TRACKER=ON \
-        -DENABLE_AUDIO_INFERENCE_ELEMENTS=OFF \
-        -Dwith_drm=no \
-        -Dwith_x11=no \
-        -Dwith_glx=no \
-        -Dwith_wayland=no \
-        -Dwith_egl=no \
-        .. \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_PAHO_INSTALLATION=ON \
+    -DENABLE_RDKAFKA_INSTALLATION=ON \
+    -DENABLE_VAAPI=OFF \
+    -DENABLE_AUDIO_INFERENCE_ELEMENTS=ON \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    .. \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=/opt/dist  )
@@ -484,6 +533,22 @@ RUN mkdir -p /opt/intel/dl_streamer/python && \
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
     cp -r /opt/build/gst-video-analytics/python/* /opt/dist/opt/intel/dl_streamer/python
+
+RUN yum install -y wget tar gcc-c++ glib2-devel gtk-dock openblas python3 python36-gobject-devel python3-devel meson
+ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTPYTHON_REPO} | tar xJ
+RUN cd /opt/build/gst-python-1.20.3 && \
+#WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
+
+    meson build --libdir=/usr/local/lib64 --libexecdir=/usr/local/lib64 \
+    --prefix=/usr/local --buildtype=plain \
+    -Dpython=/usr/bin/python3 -Dlibpython-dir=/usr/lib64/ \
+    -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides && \
+    cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/include && \
@@ -508,7 +573,7 @@ RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-releas
     dnf install -y https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
 
 # Install
-RUN yum install -y bash numactl-libs libpciaccess gtk3 numactl ocl-icd glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base
+RUN yum install -y bash numactl-libs libpciaccess gtk3 numactl ocl-icd glib2 gobject-introspection mesa-libEGL libX11 libXv libXt alsa-lib pango libtheora libvisual mesa-libGL mesa-dri-drivers gdk-pixbuf2 libjpeg-turbo libpng zlib libsoup openssl librtmp mjpegtools libde265 libass python3-devel boost-regex python36-gobject python36-gobject-devel python36-gobject-base 
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
@@ -529,3 +594,4 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64/gstreamer-1.0/
 ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib64/girepository-1.0/ 
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib64/gstreamer-1.0/
+RUN python3 -m pip install numpy

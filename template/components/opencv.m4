@@ -30,9 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENCV_VER',4.6.0)
-DECLARE(`OPENCV_VER_TRUNC',4.6.0)
-DECLARE(`OPENCV_455_FFMPEG5_SUPPORT',5440fd6cb43ea65a056c46b691fcdab1a425e92d)
+DECLARE(`OPENCV_VER',4.5.3-openvino-2021.4.2)
+DECLARE(`OPENCV_VER_TRUNC',4.5.3)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENCV_BUILD_DEPS',`ca-certificates ifdef(`BUILD_CMAKE',,cmake) gcc g++ make wget python3-numpy ccache libeigen3-dev')
@@ -44,14 +43,11 @@ define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget p
 
 define(`BUILD_OPENCV',`
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/OPENCV_VER.tar.gz
 RUN cd BUILD_HOME && \
-  git clone ${OPENCV_REPO} && \
-  cd opencv && \
-  git checkout OPENCV_VER 
-#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
+  wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd BUILD_HOME/opencv && mkdir build && cd build && \
+RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
   ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
@@ -71,7 +67,7 @@ RUN cd BUILD_HOME/opencv && mkdir build && cd build && \
 ')
 
 define(`REBUILD_OPENCV_VIDEOIO',`
-RUN cd BUILD_HOME/opencv/build && \
+RUN cd BUILD_HOME/opencv-OPENCV_VER/build && \
   rm -rf ./* && \
   ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
     -DCMAKE_BUILD_TYPE=Release \

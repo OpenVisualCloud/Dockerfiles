@@ -290,14 +290,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
-  git clone ${OPENCV_REPO} && \
-  cd opencv && \
-  git checkout 4.6.0 
-#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
+  wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -378,14 +375,108 @@ RUN cd /opt/build/gstreamer-1.20.3 && \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled \
-    -Dpython=enabled \
-    -Dgst-python:libpython-dir=/usr/local/lib \
-    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
-    -Dlibsoup:sysprof=disabled \
-    -Dgpl=enabled && \
+    -Dintrospection=enabled && \
     cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ gobjc wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libx11-dev libxv-dev libxt-dev libasound2-dev libpango1.0-dev libtheora-dev libvisual-0.4-dev libgl1-mesa-dev libx11-xcb-dev && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-base
+ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.20.3.tar.xz
+RUN cd /opt/build && \
+  wget -O - ${GSTBASE_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-base-1.20.3 && \
+  meson build \
+    --prefix=/usr/local \
+    --libdir=/usr/local/lib \
+    --libexecdir=/usr/local/lib \
+    --buildtype=plain \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
+    -Dintrospection=enabled \
+    -Dalsa=enabled \
+    -Dpango=enabled \
+    -Dtheora=enabled \
+    -Dlibvisual=enabled \
+    -Dgl=enabled \
+  && cd build && \
+  ninja install && \
+  DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison libx11-dev libxv-dev libxt-dev libgdk-pixbuf2.0-dev libjpeg-turbo8-dev libpng-dev zlib1g-dev libsoup2.4-dev  && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-good
+ARG GSTGOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTGOOD_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-good-1.20.3 && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    --prefix=/usr/local --buildtype=plain \
+    -Dexamples=disabled \
+    -Dtests=disabled \
+    -Ddoc=disabled \
+    -Dgdk-pixbuf=enabled \
+    -Djpeg=enabled \
+    -Dpng=enabled \
+    -Disomp4=enabled \
+    -Dsoup=enabled \
+    -Dvpx=enabled \
+    && cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-bad
+ARG GSTBAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTBAD_REPO} | tar xJ && \
+    cd gst-plugins-bad-1.20.3 && \
+    meson build \
+      --prefix=/usr/local \
+      --libdir=/usr/local/lib \
+      --libexecdir=/usr/local/lib \
+      --buildtype=plain \
+      -Ddoc=disabled \
+      -Dexamples=disabled \
+      -Dtests=disabled \
+      -Dintrospection=enabled \
+      -Dgpl=enabled \
+      -Drtmp=enabled \
+      -Dx265=disabled \
+      -Drsvg=disabled \
+      -Dfdkaac=enabled \
+    && cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install 
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-ugly
+ARG GSTUGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTUGLY_REPO} | tar xJ
+RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    --prefix=/usr/local --buildtype=plain \
+    -Ddoc=disabled \
+    -Dgpl=enabled \
+    -Dx264=disabled \
+    && cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
 
@@ -456,6 +547,68 @@ RUN cd /opt/build/paho.mqtt.c-1.3.10 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    cmake git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates libva-dev curl gnupg2 software-properties-common && \
+  rm -rf /var/lib/apt/lists/*
+
+# build gst-plugin-gva
+# formerly https://github.com/opencv/gst-video-analytics
+ARG GVA_REPO=https://github.com/dlstreamer/dlstreamer
+ENV LIBRARY_PATH=/usr/local/lib
+RUN git clone -b master $GVA_REPO /opt/build/gst-video-analytics && \
+    cd /opt/build/gst-video-analytics && \
+    git checkout ec2748da5b577bbf510525f57eabde6c58efd589 && \
+    git submodule update --init && \
+    mkdir -p build && cd build && \
+    cmake \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_PAHO_INSTALLATION=ON \
+    -DENABLE_RDKAFKA_INSTALLATION=ON \
+    -DENABLE_VAAPI=OFF \
+    -DENABLE_AUDIO_INFERENCE_ELEMENTS=ON \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    .. \
+    && make -j $(nproc) \
+    && make install \
+    && make install DESTDIR=/opt/dist 
+
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0/:/usr/local/lib/
+
+RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/gstreamer-1.0/.
+RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /opt/dist//usr/local/lib/gstreamer-1.0/.
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
+
+RUN mkdir -p /opt/intel/dl_streamer/python && \
+    cp -r /opt/build/gst-video-analytics/python/* /opt/intel/dl_streamer/python
+
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+RUN mkdir -p /opt/dist/opt/intel/dl_streamer/python && \
+    cp -r /opt/build/gst-video-analytics/python/* /opt/dist/opt/intel/dl_streamer/python
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates tar g++ wget gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin libpython3-dev libpython3-stdlib libpython3-all-dev  && \
+  rm -rf /var/lib/apt/lists/*
+ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.20.3.tar.xz
+RUN cd /opt/build && \
+    wget -O - ${GSTPYTHON_REPO} | tar xJ
+RUN cd /opt/build/gst-python-1.20.3 && \
+#WORKAROUND: https://gitlab.freedesktop.org/gstreamer/gst-python/-/merge_requests/30/diffs
+sed -i "s/.*python\.dependency.*/pythonver \= python\.language_version\(\)\npython_dep \= dependency\(\'python-\@0\@-embed\'\.format\(pythonver\)\, version\: \'\>\=3\'\, required\: false\)\nif not python_dep\.found\(\)\n\tpython_dep \= python\.dependency\(required \: true\)\nendif/g" meson.build && \
+    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
+    --prefix=/usr/local --buildtype=plain \
+    -Dpython=/usr/bin/python3 -Dlibpython-dir=/usr/lib/x86_64-linux-gnu/  \
+    -Dpygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides && \
+    cd build && \
+    ninja install && \
+    DESTDIR=/opt/dist ninja install
+
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     build-essential ca-certificates wget patch git libv4l-dev libass-dev  && \
   rm -rf /var/lib/apt/lists/*
 
@@ -465,7 +618,7 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
     git clone ${FFMPEG_REPO} && \
     cd FFmpeg && \
-    git checkout f6a36c7 
+    git checkout f6a36c7
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
@@ -485,25 +638,7 @@ RUN cd /opt/build/FFmpeg && \
     make install DESTDIR=/opt/dist && \
     make install
 
-
-RUN cd /opt/build/opencv/build && \
-  rm -rf ./* && \
-  cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DCMAKE_INSTALL_LIBDIR=lib \
-    -DOPENCV_GENERATE_PKGCONFIG=ON \
-    -DBUILD_DOCS=OFF \
-    -DBUILD_EXAMPLES=OFF \
-    -DBUILD_PERF_TESTS=OFF \
-    -DBUILD_TESTS=OFF \
-    -DWITH_OPENEXR=OFF \
-    -DWITH_OPENJPEG=OFF \
-    -DWITH_JASPER=OFF \
-    .. && \
-  cd modules/videoio && \
-  make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.6.0 /opt/dist/usr/local/lib
+#REBUILD_OPENCV_VIDEOIO()dnl
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
@@ -521,7 +656,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libglib2.0-0 libegl1 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
+    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libglib2.0-0 libegl1 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libde265-0 python3-gi python3-gi-cairo python3-dev python3-numpy libglib2.0-dev libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
   rm -rf /var/lib/apt/lists/*
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
@@ -540,3 +675,8 @@ ENV GST_PLUGIN_SCANNER=/usr/local/lib/gstreamer-1.0/gst-plugin-scanner
 ARG CUSTOM_IE_DIR=/usr/local/openvino/
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/runtime/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/3rdparty/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/gstreamer-1.0/
+ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/girepository-1.0/ 
+ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
+ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
+
