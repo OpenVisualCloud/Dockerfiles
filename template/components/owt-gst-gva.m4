@@ -38,7 +38,7 @@ define(`GVA_WITH_EGL',no)
 
 define(`GVA_ENABLE_PAHO_INST',OFF)
 define(`GVA_ENABLE_RDKAFKA_INST',OFF)
-define(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',OFF)
+define(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',ON)
 include(gst-gva.m4)
 
 include(end.m4)dnl

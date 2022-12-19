@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`FFMPEG_VER',n5.0.1)
+DECLARE(`FFMPEG_VER',n4.4.3)
 DECLARE(`FFMPEG_SHA',f6a36c7)
 DECLARE(`FFMPEG_ENABLE_LIBASS',true)
 DECLARE(`FFMPEG_ENABLE_LIBFREETYPE',true)
@@ -69,7 +69,7 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd BUILD_HOME && \
     git clone ${FFMPEG_REPO} && \
     cd FFmpeg && \
-    git checkout FFMPEG_SHA 
+    git checkout ifelse(index(IMAGE,`owt'),-1,`FFMPEG_SHA',`FFMPEG_VER')
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
@@ -88,12 +88,12 @@ RUN cd BUILD_HOME/FFmpeg && \
 ')dnl
 
 
-ifelse(FFMPEG_1TN_PATCH,true,
+ifelse(index(IMAGE,`owt'),-1,ifelse(FFMPEG_1TN_PATCH,true,
 ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
 RUN cd BUILD_HOME/FFmpeg && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
-)dnl
+))dnl
 
 
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
@@ -126,7 +126,7 @@ RUN cd BUILD_HOME/FFmpeg && \
     make install
 ifdef(`REBUILD_OPENCV_VIDEOIO',`dnl
 ifelse(index(IMAGE,`sg2'),-1,`
-REBUILD_OPENCV_VIDEOIO()dnl
+#REBUILD_OPENCV_VIDEOIO()dnl
 ')dnl
 ')dnl
 ')
