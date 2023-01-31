@@ -42,7 +42,7 @@ DECLARE(`OWT_QUIC_VER',v0.1)
 DECLARE(`LIBNICE_PATCH_VER',5.0)
 
 # required components for OWT
-include(openssl.m4)
+#include(openssl.m4)
 define(`OPENH264_VER',v1.7.4)
 include(openh264.m4)
 define(`LIBRE_VER',v0.5.0)
