@@ -74,24 +74,6 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget tar g++ make libtool autoconf && \
-  rm -rf /var/lib/apt/lists/*
-
-# build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1q.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1q && \
-    ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
-    make depend && \
-    make -s V=0 && \
-    make install DESTDIR=/opt/dist && \
-    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
-    make install && \
-    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget g++ autoconf libtool autotools-dev automake make && \
   rm -rf /var/lib/apt/lists/*
 
@@ -337,7 +319,7 @@ RUN cd /opt/build/gst-plugins-good-1.20.3 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev openssl libcurl4-gnutls-dev librtmp-dev mjpegtools libde265-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-bad
@@ -393,23 +375,21 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
     git clone ${FFMPEG_REPO} && \
     cd FFmpeg && \
-    git checkout f6a36c7
+    git checkout n4.4.3
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
+RUN cd /opt/build/FFmpeg && \
+    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 #ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
 
-ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
-#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-RUN cd /opt/build/FFmpeg && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
+
 
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
 RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2     --enable-openssl --extra-ldflags=-Wl,-rpath=/usr/local/ssl/lib     --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libaom         --enable-libdav1d         && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis             --enable-libsvtav1     --enable-libsvthevc     --enable-libaom         --enable-libdav1d         && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -453,8 +433,6 @@ RUN cd /opt/build/SVT-VP9/gstreamer-plugin && \
 # cleanup
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
-RUN rm -rf /opt/dist/usr/local/ssl/share/man
-RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 
 FROM ubuntu:20.04
 LABEL Description="This is the base image for Gstreamer ubuntu 20.04"
@@ -465,7 +443,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libglib2.0-0 libegl1 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 libcurl3-gnutls librtmp1 mjpegtools libde265-0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
+    libglib2.0-0 libegl1 libx11-6 libxv1 libxt6 libasound2 libpangocairo-1.0-0 libcairo-gobject2 libtheora0 libvisual-0.4-0 libgl1-mesa-dri libgl1-mesa-glx libegl1-mesa libgdk-pixbuf2.0-0 libjpeg-turbo8 libpng16-16 zlib1g libsoup2.4-1 openssl libcurl3-gnutls librtmp1 mjpegtools libde265-0 libxcb-shape0 libxcb-xfixes0 libv4l-0 libass9  && \
   rm -rf /var/lib/apt/lists/*
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 

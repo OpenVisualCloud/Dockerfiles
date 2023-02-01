@@ -55,24 +55,6 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget tar g++ make libtool autoconf && \
-  rm -rf /var/lib/apt/lists/*
-
-# build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1q.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1q && \
-    ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
-    make depend && \
-    make -s V=0 && \
-    make install DESTDIR=/opt/dist && \
-    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
-    make install && \
-    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates wget tar g++ make && \
   rm -rf /var/lib/apt/lists/*
 
@@ -260,7 +242,8 @@ RUN cd /opt/build && \
     git checkout n4.4.3
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
+RUN cd /opt/build/FFmpeg && \
+    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 #ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
 
@@ -270,7 +253,7 @@ RUN cd /opt/build && \
 RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264                             && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264             --enable-libsvthevc                     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -363,7 +346,7 @@ RUN cd /opt/build/gst-plugins-good-1.20.3 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libcurl4-gnutls-dev librtmp-dev  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev openssl libcurl4-gnutls-dev librtmp-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-bad
@@ -588,7 +571,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config patch && \
+    libssl-dev git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config patch && \
   rm -rf /var/lib/apt/lists/*
 
 # Install npm modules
@@ -664,8 +647,6 @@ RUN mkdir -p /opt/build/owt-server/third_party/quic-lib && \
 
 # Build and pack owt
 RUN cd /opt/build/owt-server && \
-    sed -i "/cflags_cc/s/\[/[\"-Wl,rpath=\/usr\/local\/ssl\/lib\",/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
-    sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "s/--cflags glib-2.0/--cflags glib-2.0 gstreamer-1.0/" source/agent/analytics/videoGstPipeline/binding.pipeline.gyp && \
@@ -706,9 +687,6 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
-RUN rm -rf /opt/dist/usr/local/ssl/include
-RUN rm -rf /opt/dist/usr/local/ssl/share/man
-RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 RUN cd /opt/dist/usr/local/openvino/runtime && \
     rm -rf /opt/dist/usr/local/lib/pkgconfig/openvino.pc \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
@@ -724,7 +702,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libegl1 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils rabbitmq-server mongodb liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
+    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libegl1 libasound2 libgdk-pixbuf2.0-0 openssl libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils libssl1.1 rabbitmq-server mongodb liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /

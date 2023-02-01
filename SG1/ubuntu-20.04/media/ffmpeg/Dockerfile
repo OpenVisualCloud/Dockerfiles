@@ -353,10 +353,11 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
     git clone ${FFMPEG_REPO} && \
     cd FFmpeg && \
-    git checkout f6a36c7
+    git checkout n4.4.3
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
+RUN cd /opt/build/FFmpeg && \
+    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 #ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
 RUN cd /opt/build && \
@@ -365,16 +366,13 @@ RUN cd /opt/build && \
     patch -p1 < ../0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.patch || true
 
 
-ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
-#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-RUN cd /opt/build/FFmpeg && \
-    wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;
+
 
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
 RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1             --enable-libdav1d         && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             --enable-libdav1d         && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 

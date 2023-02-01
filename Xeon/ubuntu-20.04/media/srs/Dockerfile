@@ -41,25 +41,7 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget tar g++ make libtool autoconf && \
-  rm -rf /var/lib/apt/lists/*
-
-# build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1q.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1q && \
-    ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
-    make depend && \
-    make -s V=0 && \
-    make install DESTDIR=/opt/dist && \
-    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
-    make install && \
-    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ca-certificates g++ make unzip patch pkg-config  && \
+    git ca-certificates g++ make unzip patch pkg-config libssl-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build srs
@@ -93,9 +75,6 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
-RUN rm -rf /opt/dist/usr/local/ssl/include
-RUN rm -rf /opt/dist/usr/local/ssl/share/man
-RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 
 FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:latest
 LABEL Description="This is the base image for Media SRS ubuntu 20.04"
@@ -106,7 +85,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    bash  && \
+    bash openssl  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
