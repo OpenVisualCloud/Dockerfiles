@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -54,20 +54,26 @@ RUN git clone -b DLDT_VER --depth 1 ${DLDT_REPO} BUILD_HOME/openvino && \
 RUN cd BUILD_HOME/openvino && \
   mkdir build && cd build && \
   ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
+    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX/openvino \
     -DENABLE_CPPLINT=OFF \
     -DDENABLE_INTEL_GNA=OFF \
+    -DENABLE_INTEL_MYRIAD_COMMON=OFF \
+    -DENABLE_INTEL_MYRIAD=OFF \
+    -DENABLE_ONEDNN_FOR_GPU=ON \
     -DENABLE_VPU=OFF \
     -DENABLE_OPENCV=OFF \
     -DENABLE_MKL_DNN=ON \
     -DENABLE_CLDNN=ON \
     -DENABLE_SAMPLES=OFF \
     -DENABLE_TESTS=OFF \
+    -DENABLE_GAPI_TESTS=OFF \
+    -DENABLE_BEH_TESTS=OFF \
+    -DENABLE_FUNCTIONAL_TESTS=OFF \
+    -DENABLE_OV_CORE_UNIT_TESTS=OFF \
+    -DENABLE_OV_CORE_BACKEND_UNIT_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=ifelse(DLDT_WARNING_AS_ERRORS,false,OFF,ON) \
-    -DNGRAPH_WARNINGS_AS_ERRORS=ifelse(DLDT_WARNING_AS_ERRORS,false,OFF,ON) \
-    -DNGRAPH_UNIT_TEST_ENABLE=OFF \
-    -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
   make install && \
@@ -78,6 +84,7 @@ ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
 ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/runtime/
 
 ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/cmake
+ENV OpenVINO_DIR=${IE_INSTALL_DIR}/cmake
 ENV TBB_DIR=${IE_INSTALL_DIR}/3rdparty/tbb/cmake
 ENV ngraph_DIR=${IE_INSTALL_DIR}/cmake
 ')

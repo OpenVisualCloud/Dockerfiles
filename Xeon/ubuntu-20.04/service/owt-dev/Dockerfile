@@ -2,7 +2,7 @@
 
 # BSD 3-Clause License
 #
-# Copyright (c) 2021, Intel Corporation
+# Copyright (c) 2023, Intel Corporation
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -52,24 +52,6 @@ RUN cd /opt/build && \
     ./bootstrap --prefix=/usr/local --system-curl && \
     make -j$(nproc) && \
     make install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates wget tar g++ make libtool autoconf && \
-  rm -rf /var/lib/apt/lists/*
-
-# build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1q.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1q && \
-    ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
-    make depend && \
-    make -s V=0 && \
-    make install DESTDIR=/opt/dist && \
-    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
-    make install && \
-    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -128,7 +110,8 @@ RUN apt-get update && \
 
 # build nasm
 #ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
-# TODO: to revert to official nasm repo
+# TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
+
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
@@ -175,14 +158,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
-  git clone ${OPENCV_REPO} && \
-  cd opencv && \
-  git checkout 4.6.0 
-#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
+  wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -192,6 +172,9 @@ RUN cd /opt/build/opencv && mkdir build && cd build && \
     -DBUILD_EXAMPLES=OFF \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
+    -DWITH_OPENEXR=OFF \
+    -DWITH_OPENJPEG=OFF \
+    -DWITH_JASPER=OFF \
     .. && \
   make -j $(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -211,20 +194,26 @@ RUN git clone -b 2022.2.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
 RUN cd /opt/build/openvino && \
   mkdir build && cd build && \
   cmake \
+    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
     -DENABLE_CPPLINT=OFF \
     -DDENABLE_INTEL_GNA=OFF \
+    -DENABLE_INTEL_MYRIAD_COMMON=OFF \
+    -DENABLE_INTEL_MYRIAD=OFF \
+    -DENABLE_ONEDNN_FOR_GPU=ON \
     -DENABLE_VPU=OFF \
     -DENABLE_OPENCV=OFF \
     -DENABLE_MKL_DNN=ON \
     -DENABLE_CLDNN=ON \
     -DENABLE_SAMPLES=OFF \
     -DENABLE_TESTS=OFF \
+    -DENABLE_GAPI_TESTS=OFF \
+    -DENABLE_BEH_TESTS=OFF \
+    -DENABLE_FUNCTIONAL_TESTS=OFF \
+    -DENABLE_OV_CORE_UNIT_TESTS=OFF \
+    -DENABLE_OV_CORE_BACKEND_UNIT_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=OFF \
-    -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
-    -DNGRAPH_UNIT_TEST_ENABLE=OFF \
-    -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
   make install && \
@@ -235,6 +224,7 @@ ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
 ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/runtime/
 
 ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/cmake
+ENV OpenVINO_DIR=${IE_INSTALL_DIR}/cmake
 ENV TBB_DIR=${IE_INSTALL_DIR}/3rdparty/tbb/cmake
 ENV ngraph_DIR=${IE_INSTALL_DIR}/cmake
 
@@ -244,40 +234,30 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
+#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
-    wget -O - ${FFMPEG_REPO} | tar xz
+    git clone ${FFMPEG_REPO} && \
+    cd FFmpeg && \
+    git checkout n4.4.3
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+RUN cd /opt/build/FFmpeg && \
+    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
+#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
 
 
 
-RUN cd /opt/build/FFmpeg-n4.4 && \
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264                         && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264             --enable-libsvthevc                     && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv/build && \
-  rm -rf ./* && \
-  cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DCMAKE_INSTALL_LIBDIR=lib \
-    -DOPENCV_GENERATE_PKGCONFIG=ON \
-    -DBUILD_DOCS=OFF \
-    -DBUILD_EXAMPLES=OFF \
-    -DBUILD_PERF_TESTS=OFF \
-    -DBUILD_TESTS=OFF \
-    .. && \
-  cd modules/videoio && \
-  make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.6.0 /opt/dist/usr/local/lib
+#REBUILD_OPENCV_VIDEOIO()dnl
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -297,22 +277,16 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/1.20.3.tar.gz
+ARG GSTCORE_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTCORE_REPO} | tar xz
+    wget -O - ${GSTCORE_REPO} | tar xJ
 RUN cd /opt/build/gstreamer-1.20.3 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled \
-    -Dpython=enabled \
-    -Dgst-python:libpython-dir=/usr/local/lib \
-    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
-    -Dlibsoup:sysprof=disabled \
-    -Dgpl=enabled && \
+    -Dintrospection=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=/opt/dist ninja install
@@ -323,9 +297,9 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-base
-ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/1.20.3.tar.gz
+ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.20.3.tar.xz
 RUN cd /opt/build && \
-  wget -O - ${GSTBASE_REPO} | tar xz
+  wget -O - ${GSTBASE_REPO} | tar xJ
 RUN cd /opt/build/gst-plugins-base-1.20.3 && \
   meson build \
     --prefix=/usr/local \
@@ -351,9 +325,9 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-good
-ARG GSTGOOD_REPO=https://github.com/GStreamer/gst-plugins-good/archive/1.20.3.tar.gz
+ARG GSTGOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTGOOD_REPO} | tar xz
+    wget -O - ${GSTGOOD_REPO} | tar xJ
 RUN cd /opt/build/gst-plugins-good-1.20.3 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
@@ -372,13 +346,13 @@ RUN cd /opt/build/gst-plugins-good-1.20.3 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev libcurl4-gnutls-dev librtmp-dev  && \
+    ca-certificates tar g++ wget pkg-config libglib2.0-dev flex bison gobject-introspection libgirepository1.0-dev openssl libcurl4-gnutls-dev librtmp-dev  && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-bad
-ARG GSTBAD_REPO=https://github.com/GStreamer/gst-plugins-bad/archive/1.20.3.tar.gz
+ARG GSTBAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTBAD_REPO} | tar xz && \
+    wget -O - ${GSTBAD_REPO} | tar xJ && \
     cd gst-plugins-bad-1.20.3 && \
     meson build \
       --prefix=/usr/local \
@@ -389,6 +363,7 @@ RUN cd /opt/build && \
       -Dexamples=disabled \
       -Dtests=disabled \
       -Dintrospection=enabled \
+      -Dgpl=enabled \
       -Drtmp=enabled \
       -Dx265=disabled \
       -Drsvg=disabled \
@@ -403,13 +378,14 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-ugly
-ARG GSTUGLY_REPO=https://github.com/GStreamer/gst-plugins-ugly/archive/1.20.3.tar.gz
+ARG GSTUGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.20.3.tar.xz
 RUN cd /opt/build && \
-    wget -O - ${GSTUGLY_REPO} | tar xz
+    wget -O - ${GSTUGLY_REPO} | tar xJ
 RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
     meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
     --prefix=/usr/local --buildtype=plain \
     -Ddoc=disabled \
+    -Dgpl=enabled \
     -Dx264=enabled \
     && cd build && \
     ninja install && \
@@ -417,54 +393,34 @@ RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates tar g++ wget  && \
-  rm -rf /var/lib/apt/lists/*
-
-# build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/1.20.3.tar.gz
-RUN cd /opt/build && \
-    wget -O - ${GSTLIBAV_REPO} | tar xz
-RUN cd /opt/build/gst-libav-1.20.3 && \
-    meson build --libdir=/usr/local/lib --libexecdir=/usr/local/lib \
-    --prefix=/usr/local --buildtype=plain && \
-    cd build && \
-    ninja install && \
-    DESTDIR=/opt/dist ninja install
-
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates libva-dev && \
+    git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates libva-dev curl gnupg2 software-properties-common && \
   rm -rf /var/lib/apt/lists/*
 
 # build gst-plugin-gva
 # formerly https://github.com/opencv/gst-video-analytics
-ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
-# TODO: This is a workaround for a bug in dlstreamer_gst
+ARG GVA_REPO=https://github.com/dlstreamer/dlstreamer
 ENV LIBRARY_PATH=/usr/local/lib
-RUN git clone -b v1.6 --depth 1 $GVA_REPO /opt/build/gst-video-analytics && \
+RUN git clone -b master $GVA_REPO /opt/build/gst-video-analytics && \
     cd /opt/build/gst-video-analytics && \
+    git checkout ec2748da5b577bbf510525f57eabde6c58efd589 && \
     git submodule update --init && \
     mkdir -p build && cd build && \
     cmake \
-        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=OFF \
-        -DENABLE_RDKAFKA_INSTALLATION=OFF \
-        -DENABLE_VAAPI=OFF \
-        -DENABLE_VAS_TRACKER=ON \
-        -DENABLE_AUDIO_INFERENCE_ELEMENTS=OFF \
-        -Dwith_drm=no \
-        -Dwith_x11=no \
-        -Dwith_glx=no \
-        -Dwith_wayland=no \
-        -Dwith_egl=no \
-        .. \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_PAHO_INSTALLATION=OFF \
+    -DENABLE_RDKAFKA_INSTALLATION=OFF \
+    -DENABLE_VAAPI=OFF \
+    -DENABLE_AUDIO_INFERENCE_ELEMENTS=ON \
+    -DTREAT_WARNING_AS_ERROR=OFF \
+    .. \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=/opt/dist 
+
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/gstreamer-1.0/:/usr/local/lib/
 
 RUN cp -r  /opt/build/gst-video-analytics/build/intel64/Release/lib/* /usr/local/lib/gstreamer-1.0/.
@@ -615,7 +571,7 @@ RUN cd /opt/build && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config patch && \
+    libssl-dev git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config patch && \
   rm -rf /var/lib/apt/lists/*
 
 # Install npm modules
@@ -691,8 +647,6 @@ RUN mkdir -p /opt/build/owt-server/third_party/quic-lib && \
 
 # Build and pack owt
 RUN cd /opt/build/owt-server && \
-    sed -i "/cflags_cc/s/\[/[\"-Wl,rpath=\/usr\/local\/ssl\/lib\",/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
-    sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp && \
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "/lSvtHevcEnc/i\"<!@(pkg-config --libs SvtHevcEnc)\"," source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
     sed -i "s/--cflags glib-2.0/--cflags glib-2.0 gstreamer-1.0/" source/agent/analytics/videoGstPipeline/binding.pipeline.gyp && \
@@ -730,8 +684,6 @@ RUN cd /opt/build/owt-server && \
 # cleanup
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
-RUN rm -rf /opt/dist/usr/local/ssl/share/man
-RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
 
 FROM ubuntu:20.04
@@ -743,7 +695,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libegl1 libasound2 libgdk-pixbuf2.0-0 libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils rabbitmq-server mongodb liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
+    libgtk-3-0 libnuma1 ocl-icd-libopencl1 libxcb-shape0 libxcb-xfixes0 libass9 libglib2.0-0 libegl1 libasound2 libgdk-pixbuf2.0-0 openssl libcurl3-gnutls librtmp1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx python3-numpy libglib2.0-dev ca-certificates wget xz-utils libssl1.1 rabbitmq-server mongodb liblog4cxx10v5 libfreetype6 libsrtp2-1 && \
   rm -rf /var/lib/apt/lists/*
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 

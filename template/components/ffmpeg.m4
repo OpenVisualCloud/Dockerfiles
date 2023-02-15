@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`FFMPEG_VER',n4.4)
+DECLARE(`FFMPEG_VER',n4.4.3)
+DECLARE(`FFMPEG_SHA',f6a36c7)
 DECLARE(`FFMPEG_ENABLE_LIBASS',true)
 DECLARE(`FFMPEG_ENABLE_LIBFREETYPE',true)
 DECLARE(`FFMPEG_ENABLE_X11',false)
@@ -40,7 +41,7 @@ DECLARE(`FFMPEG_ENABLE_HWACCELS',ifdef(`ENABLE_INTEL_GFX_REPO',true,ifdef(`BUILD
 DECLARE(`FFMPEG_ENABLE_LIBMFX',ifdef(`BUILD_MSDK',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_ENABLE_VAAPI',ifdef(`BUILD_LIBVA2',FFMPEG_ENABLE_HWACCELS,false))
 DECLARE(`FFMPEG_FLV_PATCH',false)
-DECLARE(`FFMPEG_1TN_PATCH',false)
+DECLARE(`FFMPEG_1TN_PATCH',true)
 DECLARE(`FFMPEG_WARNING_AS_ERRORS',false)
 
 include(nasm.m4)
@@ -63,33 +64,40 @@ define(`FFMPEG_INSTALL_DEPS',`ifelse(FFMPEG_ENABLE_V4L2,true,libv4l) ifelse(FFMP
 
 define(`BUILD_FFMPEG',`
 # build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd BUILD_HOME && \
-    wget -O - ${FFMPEG_REPO} | tar xz
+    git clone ${FFMPEG_REPO} && \
+    cd FFmpeg && \
+    git checkout ifelse(index(IMAGE,`sg2'),-1,`FFMPEG_VER',`FFMPEG_SHA')
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
+#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg)')dnl
+ifdef(`BUILD_ONEVPL_DISP',`
+include(media-delivery.m4)
 
-ifelse(FFMPEG_FLV_PATCH,true,
-ARG FFMPEG_PATCHES_RELEASE_REPO=https://github.com/VCDP/CDN.git
+RUN cd BUILD_HOME/FFmpeg && \
+    cp BUILD_HOME/media-delivery/patches/ffmpeg/* . && \
+    { set -e; \
+    for patch_file in $(find -iname "*.patch" | sort -n); do \
+    echo "Applying: ${patch_file}"; \
+    patch -p1 < ${patch_file}; \
+    done; }
+')dnl
 
-RUN cd BUILD_HOME && \
-    git clone ${FFMPEG_PATCHES_RELEASE_REPO} && \
-    cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
-    patch -p1 < BUILD_HOME/CDN/FFmpeg_patches/0001-Add-SVT-HEVC-FLV-support-on-FFmpeg.patch;
-)dnl
 
-ifelse(FFMPEG_1TN_PATCH,true,
-ARG FFMPEG_1TN_PATCH_REPO=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfiles-Resources/master/n4.4-enhance_1tn_performance.patch
-RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+ifelse(index(IMAGE,`sg2'),-1,,ifelse(FFMPEG_1TN_PATCH,true,
+ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd BUILD_HOME/FFmpeg && \
     wget -O - ${FFMPEG_1TN_PATCH_REPO} | patch -p1;, 
-)dnl
+))dnl
 
 
-RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd BUILD_HOME/FFmpeg && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
     ifelse(FFMPEG_WARNING_AS_ERRORS,false,--extra-cflags=-w )dnl
@@ -109,14 +117,18 @@ RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
     ifdef(`BUILD_LIBX264',--enable-gpl --enable-libx264 )dnl
     ifdef(`BUILD_LIBX265',--enable-gpl --enable-libx265 )dnl
     ifdef(`BUILD_SVT_AV1',--enable-libsvtav1 )dnl
+    ifelse(index(IMAGE,`sg2'),-1,ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc ))dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
     ifdef(`BUILD_LIBVMAF',--enable-libvmaf --enable-version3 )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl
+    ifdef(`BUILD_ONEVPL_DISP',--enable-libvpl )dnl
     && make -j$(nproc) && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ifdef(`REBUILD_OPENCV_VIDEOIO',`dnl
-REBUILD_OPENCV_VIDEOIO()dnl
+ifelse(index(IMAGE,`sg2'),-1,`
+#REBUILD_OPENCV_VIDEOIO()dnl
+')dnl
 ')dnl
 ')
 

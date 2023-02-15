@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,8 @@ define(`NASM_BUILD_DEPS',`ca-certificates wget tar gcc-c++ make bzip2')
 define(`BUILD_NASM',`
 # build nasm
 #ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
-# TODO: to revert to official nasm repo
+# TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
+
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-NASM_VER.tar.bz2
 RUN cd BUILD_HOME && \
     wget -O - ${NASM_REPO} | tar xj && \

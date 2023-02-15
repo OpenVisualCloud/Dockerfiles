@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -44,22 +44,16 @@ define(`GSTCORE_INSTALL_DEPS',`glib2 gobject-introspection')
 
 define(`BUILD_GSTCORE',`
 # build gst-core
-ARG GSTCORE_REPO=https://github.com/GStreamer/gstreamer/archive/GSTCORE_VER.tar.gz
+ARG GSTCORE_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-GSTCORE_VER.tar.xz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTCORE_REPO} | tar xz
+    wget -O - ${GSTCORE_REPO} | tar xJ
 RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain \
     -Dexamples=disabled \
     -Dtests=disabled \
     -Ddoc=disabled \
-    -Dintrospection=enabled \
-    -Dgtk_doc=disabled \
-    -Dpython=enabled \
-    -Dgst-python:libpython-dir=BUILD_LIBDIR \
-    -Dcustom_subprojects="gst-libav,gst-plugins-base,gst-plugins-good,gst-plugins-bad,gst-plugins-ugly,gst-python" \
-    -Dlibsoup:sysprof=disabled \
-    -Dgpl=enabled && \
+    -Dintrospection=enabled && \
     cd build && \
     ninja install && \
     DESTDIR=BUILD_DESTDIR ninja install
