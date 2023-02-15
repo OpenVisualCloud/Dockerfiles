@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,8 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-define(`GMMLIB_VER',intel-media-sg1-pv1.3)
-define(`GMMLIB_SRC_REPO',https://github.com/VCDP/gmmlib/archive/GMMLIB_VER.tar.gz)
+define(`GMMLIB_VER',intel-gmmlib-22.3.0)
+define(`GMMLIB_SRC_REPO',https://github.com/intel/gmmlib/archive/refs/tags/GMMLIB_VER.tar.gz)
 include(gmmlib.m4)
 
 include(end.m4)dnl

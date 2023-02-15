@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,8 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`GVA_VER',v1.6)
+DECLARE(`GVA_VER',master)
+DECLARE(`GVA_VER_HASH',ec2748da5b577bbf510525f57eabde6c58efd589)
 
 DECLARE(`GVA_WITH_DRM',no)
 DECLARE(`GVA_WITH_X11',no)
@@ -40,11 +41,13 @@ DECLARE(`GVA_WITH_EGL',no)
 
 DECLARE(`GVA_ENABLE_PAHO_INST',ifdef(`BUILD_LIBPAHO',ON,OFF))
 DECLARE(`GVA_ENABLE_RDKAFKA_INST',ifdef(`BUILD_LIBRDKAFKA',ON,OFF))
-DECLARE(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',OFF)
-DECLARE(`GVA_ENABLE_VAAPI',ifdef(`BUILD_GSTVAAPI',ON,OFF))
+DECLARE(`GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS',ON)
+DECLARE(`GVA_ENABLE_VAAPI',ifdef(`BUILD_MEDIA_DRIVER_PKG',ON,OFF))
+DECLARE(`GVA_ENABLE_WARNING_AS_ERRORS',OFF)
+include(gst-plugins-base.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates ifdef(`BUILD_LIBVA2',,libva-dev)')
+define(`GVA_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) git ocl-icd-opencl-dev opencl-headers pkg-config libpython3-dev python-gi-dev ca-certificates ifdef(`BUILD_LIBVA2',,libva-dev) curl gnupg2 software-properties-common')
 define(`GVA_INSTALL_DEPS',`ocl-icd-libopencl1 python3-gi python3-gi-cairo python3-dev libgl1-mesa-glx ifdef(`ENABLE_INTEL_GFX_REPO',libva2 ifelse(GVA_WITH_DRM,yes,libva-drm2))')
 ')
 
@@ -56,33 +59,29 @@ define(`GVA_INSTALL_DEPS',`ocl-icd libass python3-devel boost-regex python36-gob
 define(`BUILD_GVA',`
 # build gst-plugin-gva
 # formerly https://github.com/opencv/gst-video-analytics
-ARG GVA_REPO=https://github.com/openvinotoolkit/dlstreamer_gst.git
-# TODO: This is a workaround for a bug in dlstreamer_gst
+ARG GVA_REPO=https://github.com/dlstreamer/dlstreamer
 ENV LIBRARY_PATH=BUILD_LIBDIR
-RUN git clone -b GVA_VER --depth 1 $GVA_REPO BUILD_HOME/gst-video-analytics && \
+RUN git clone -b GVA_VER $GVA_REPO BUILD_HOME/gst-video-analytics && \
     cd BUILD_HOME/gst-video-analytics && \
+    git checkout GVA_VER_HASH && \
     git submodule update --init && \
     mkdir -p build && cd build && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) \
-        -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
-        -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
-        -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DDISABLE_SAMPLES=ON \
-        -DENABLE_PAHO_INSTALLATION=GVA_ENABLE_PAHO_INST \
-        -DENABLE_RDKAFKA_INSTALLATION=GVA_ENABLE_RDKAFKA_INST \
-        -DENABLE_VAAPI=GVA_ENABLE_VAAPI \
-        -DENABLE_VAS_TRACKER=ON \
-        -DENABLE_AUDIO_INFERENCE_ELEMENTS=GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS \
-        -Dwith_drm=GVA_WITH_DRM \
-        -Dwith_x11=GVA_WITH_X11 \
-        -Dwith_glx=GVA_WITH_GLX \
-        -Dwith_wayland=GVA_WITH_WAYLAND \
-        -Dwith_egl=GVA_WITH_EGL \
-        .. \
+    -DVERSION_PATCH="$(git rev-list --count --first-parent HEAD)" \
+    -DGIT_INFO=git_"$(git rev-parse --short HEAD)" \
+    -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_SAMPLES=OFF \
+    -DENABLE_PAHO_INSTALLATION=GVA_ENABLE_PAHO_INST \
+    -DENABLE_RDKAFKA_INSTALLATION=GVA_ENABLE_RDKAFKA_INST \
+    -DENABLE_VAAPI=GVA_ENABLE_VAAPI \
+    -DENABLE_AUDIO_INFERENCE_ELEMENTS=GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS \
+    -DTREAT_WARNING_AS_ERROR=GVA_ENABLE_WARNING_AS_ERRORS \
+    .. \
     && make -j $(nproc) \
     && make install \
     && make install DESTDIR=BUILD_DESTDIR ifelse(OS_NAME:OS_VERSION,centos:7,` )')
+
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_LIBDIR/gstreamer-1.0/:/usr/local/lib/
 
 RUN cp -r  BUILD_HOME/gst-video-analytics/build/intel64/Release/lib/* BUILD_LIBDIR/gstreamer-1.0/.

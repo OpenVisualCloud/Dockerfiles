@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -57,9 +57,9 @@ define(`GSTBASE_INSTALL_DEPS',`glib2 mesa-libEGL gobject-introspection ifelse(GS
 
 define(`BUILD_GSTBASE',`
 # build gst-plugin-base
-ARG GSTBASE_REPO=https://github.com/GStreamer/gst-plugins-base/archive/GSTCORE_VER.tar.gz
+ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-GSTCORE_VER.tar.xz
 RUN cd BUILD_HOME && \
-  wget -O - ${GSTBASE_REPO} | tar xz
+  wget -O - ${GSTBASE_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-plugins-base-GSTCORE_VER && \
   meson build \
     --prefix=BUILD_PREFIX \

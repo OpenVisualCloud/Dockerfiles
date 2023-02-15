@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -32,8 +32,8 @@ include(begin.m4)
 
 include(libva2.sg1.m4)
 
-define(`MSDK_VER',intel-media-sg1-pv1.3)
-define(`MSDK_SRC_REPO',https://github.com/VCDP/MediaSDK/archive/MSDK_VER.tar.gz)
+define(`MSDK_VER',intel-mediasdk-22.5.4)
+define(`MSDK_SRC_REPO',https://github.com/Intel-Media-SDK/MediaSDK/archive/MSDK_VER.tar.gz)
 include(msdk.m4)
 
 include(end.m4)dnl

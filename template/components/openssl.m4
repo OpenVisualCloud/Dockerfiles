@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021-2021, Intel Corporation
+dnl Copyright (c) 2023-2021, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENSSL_VER',1_1_1q)
+DECLARE(`OPENSSL_VER',1_1_1s)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENSSL_BUILD_DEPS',`ca-certificates wget tar g++ make libtool autoconf')
