@@ -21,7 +21,7 @@
 | service-owt360 | - | - |
 
 | Platform: QAT | Ubuntu 20.04 LTS |
-|-----|:---:|:---:|
+|-----|:---:|
 | media-nginx | V |
 | media-nginx-sw | V |
 | media-dev | V |
