@@ -1,7 +1,6 @@
 
 include(begin.m4)
 include(ubuntu.m4)
-include(openssl.m4)
 include(srs.m4)
 include(end.m4)dnl
 

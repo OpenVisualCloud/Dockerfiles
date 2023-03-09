@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,6 @@ DECLARE(`OWT_QUIC_VER',v0.1)
 DECLARE(`LIBNICE_PATCH_VER',5.0)
 
 # required components for OWT
-include(openssl.m4)
 define(`OPENH264_VER',v1.7.4)
 include(openh264.m4)
 define(`LIBRE_VER',v0.5.0)

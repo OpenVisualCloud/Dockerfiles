@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -33,9 +33,9 @@ include(begin.m4)
 include(gst-plugins-bad.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`GSTVAAPI_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison ifdef(`ENABLE_INTEL_GFX_REPO',libva-dev)')
+define(`GSTVAAPI_BUILD_DEPS',`ca-certificates ifdef(`BUILD_MESON',,meson) tar g++ wget pkg-config libdrm-dev libglib2.0-dev libudev-dev flex bison libva-dev')
 
-define(`GSTVAAPI_INSTALL_DEPS',`libdrm2 libglib2.0-0 libpciaccess0 libgl1-mesa-glx ifdef(`ENABLE_INTEL_GFX_REPO',libva2 libva-drm2 libva-x11-2 libva-wayland2)' ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,libgles2))
+define(`GSTVAAPI_INSTALL_DEPS',`libdrm2 libglib2.0-0 libpciaccess0 libgl1-mesa-dev libva2 libva-drm2 libva-x11-2 libva-wayland2 ifelse(OS_NAME:OS_VERSION,ubuntu:20.04,libgles2)')
 ')
 
 ifelse(OS_NAME,centos,`
@@ -45,20 +45,20 @@ define(`GSTVAAPI_INSTALL_DEPS',`glib2 libdrm libpciaccess')
 
 define(`BUILD_GSTVAAPI',`
 # patch gst-vaapi with gst-video-analytics patch
-ARG GST_PLUGIN_VAAPI_PATCH_VER=v1.0.0
-ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/opencv/gst-video-analytics.git
+ARG GST_PLUGIN_VAAPI_PATCH_VER=ec2748da5b577bbf510525f57eabde6c58efd589
+ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/dlstreamer/dlstreamer
 
 # build gst-plugin-vaapi
-ARG GSTVAAPI_REPO=https://github.com/GStreamer/gstreamer-vaapi/archive/GSTCORE_VER.tar.gz
+ARG GSTVAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-GSTCORE_VER.tar.xz
 RUN cd BUILD_HOME && \
-  wget -O - ${GSTVAAPI_REPO} | tar xz
+  wget -O - ${GSTVAAPI_REPO} | tar xJ
 
 RUN cd BUILD_HOME/gstreamer-vaapi-GSTCORE_VER && \
   git clone ${GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS} && \
-  cd gst-video-analytics && git checkout ${GST_PLUGIN_VAAPI_PATCH_VER} && \
+  cd dlstreamer && git checkout ${GST_PLUGIN_VAAPI_PATCH_VER} && \
   cd .. && \
-  git apply gst-video-analytics/patches/gstreamer-vaapi/vasurface_qdata.patch && \
-  rm -fr gst-video-analytics
+  git apply dlstreamer/patches/gstreamer-vaapi/*.patch && \
+  rm -fr dlstreamer
 
 RUN cd BUILD_HOME/gstreamer-vaapi-GSTCORE_VER && \
   meson build \

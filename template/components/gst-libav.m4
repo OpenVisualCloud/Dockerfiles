@@ -1,6 +1,6 @@
 dnl BSD 3-Clause License
 dnl
-dnl Copyright (c) 2021, Intel Corporation
+dnl Copyright (c) 2023, Intel Corporation
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -43,9 +43,9 @@ define(`GSTLIBAV_BUILD_DEPS',`wget tar gcc-c++ ifdef(`BUILD_MESON',,meson)')
 
 define(`BUILD_GSTLIBAV',`
 # build gst-plugin-libav
-ARG GSTLIBAV_REPO=https://github.com/GStreamer/gst-libav/archive/GSTCORE_VER.tar.gz
+ARG GSTLIBAV_REPO=https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-GSTCORE_VER.tar.xz
 RUN cd BUILD_HOME && \
-    wget -O - ${GSTLIBAV_REPO} | tar xz
+    wget -O - ${GSTLIBAV_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-libav-GSTCORE_VER && \
     meson build --libdir=BUILD_LIBDIR --libexecdir=BUILD_LIBDIR \
     --prefix=BUILD_PREFIX --buildtype=plain && \

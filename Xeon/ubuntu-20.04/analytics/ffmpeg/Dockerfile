@@ -1,7 +1,7 @@
 
 # BSD 3-Clause License
 #
-# Copyright (c) 2021, Intel Corporation
+# Copyright (c) 2023, Intel Corporation
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -109,7 +109,8 @@ RUN apt-get update && \
 
 # build nasm
 #ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
-# TODO: to revert to official nasm repo
+# TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
+
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
@@ -220,10 +221,10 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build svt av1
-ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.2.0/SVT-AV1-v1.2.0.tar.gz
+ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.3.0/SVT-AV1-v1.3.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
-    mv SVT-AV1-v1.2.0 SVT-AV1 && \
+    mv SVT-AV1-v1.3.0 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
     make -j $(nproc) && \
@@ -252,14 +253,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build opencv
-ARG OPENCV_REPO=https://github.com/opencv/opencv
+ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
 RUN cd /opt/build && \
-  git clone ${OPENCV_REPO} && \
-  cd opencv && \
-  git checkout 4.6.0 
-#  git cherry-pick OPENCV_455_FFMPEG5_SUPPORT
+  wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
-RUN cd /opt/build/opencv && mkdir build && cd build && \
+RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -269,6 +267,9 @@ RUN cd /opt/build/opencv && mkdir build && cd build && \
     -DBUILD_EXAMPLES=OFF \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_TESTS=OFF \
+    -DWITH_OPENEXR=OFF \
+    -DWITH_OPENJPEG=OFF \
+    -DWITH_JASPER=OFF \
     .. && \
   make -j $(nproc) && \
   make install DESTDIR=/opt/dist && \
@@ -288,20 +289,26 @@ RUN git clone -b 2022.2.0 --depth 1 ${DLDT_REPO} /opt/build/openvino && \
 RUN cd /opt/build/openvino && \
   mkdir build && cd build && \
   cmake \
+    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/openvino \
     -DENABLE_CPPLINT=OFF \
     -DDENABLE_INTEL_GNA=OFF \
+    -DENABLE_INTEL_MYRIAD_COMMON=OFF \
+    -DENABLE_INTEL_MYRIAD=OFF \
+    -DENABLE_ONEDNN_FOR_GPU=ON \
     -DENABLE_VPU=OFF \
     -DENABLE_OPENCV=OFF \
     -DENABLE_MKL_DNN=ON \
     -DENABLE_CLDNN=ON \
     -DENABLE_SAMPLES=OFF \
     -DENABLE_TESTS=OFF \
+    -DENABLE_GAPI_TESTS=OFF \
+    -DENABLE_BEH_TESTS=OFF \
+    -DENABLE_FUNCTIONAL_TESTS=OFF \
+    -DENABLE_OV_CORE_UNIT_TESTS=OFF \
+    -DENABLE_OV_CORE_BACKEND_UNIT_TESTS=OFF \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=OFF \
-    -DNGRAPH_WARNINGS_AS_ERRORS=OFF \
-    -DNGRAPH_UNIT_TEST_ENABLE=OFF \
-    -DNGRAPH_TEST_UTIL_ENABLE=OFF \
     .. && \
   make -j $(nproc) && \
   make install && \
@@ -312,6 +319,7 @@ ARG OPENVINO_INSTALL_DIR=/usr/local/openvino
 ARG IE_INSTALL_DIR=${OPENVINO_INSTALL_DIR}/runtime/
 
 ENV InferenceEngine_DIR=${IE_INSTALL_DIR}/cmake
+ENV OpenVINO_DIR=${IE_INSTALL_DIR}/cmake
 ENV TBB_DIR=${IE_INSTALL_DIR}/3rdparty/tbb/cmake
 ENV ngraph_DIR=${IE_INSTALL_DIR}/cmake
 
@@ -344,40 +352,30 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build ffmpeg
-ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/n4.4.tar.gz
+#ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
+ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd /opt/build && \
-    wget -O - ${FFMPEG_REPO} | tar xz
+    git clone ${FFMPEG_REPO} && \
+    cd FFmpeg && \
+    git checkout n4.4.3
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_SVT_VP9',`FFMPEG_PATCH_SVT_VP9(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_DLDT',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
-#ifdef(`BUILD_OPENVINO',`FFMPEG_PATCH_ANALYTICS(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
+RUN cd /opt/build/FFmpeg && \
+    patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
+#ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 
 
 
 
-RUN cd /opt/build/FFmpeg-n4.4 && \
+#RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
+RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1             --enable-libdav1d     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             --enable-libdav1d         && make -j$(nproc) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN cd /opt/build/opencv/build && \
-  rm -rf ./* && \
-  cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DCMAKE_INSTALL_LIBDIR=lib \
-    -DOPENCV_GENERATE_PKGCONFIG=ON \
-    -DBUILD_DOCS=OFF \
-    -DBUILD_EXAMPLES=OFF \
-    -DBUILD_PERF_TESTS=OFF \
-    -DBUILD_TESTS=OFF \
-    .. && \
-  cd modules/videoio && \
-  make -j $(nproc) && \
-  cp -f ../../lib/libopencv_videoio.so.4.6.0 /opt/dist/usr/local/lib
+#REBUILD_OPENCV_VIDEOIO()dnl
 
 # cleanup
 RUN rm -rf /opt/dist/usr/local/include && \
