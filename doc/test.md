@@ -23,7 +23,7 @@
 | Platform: QAT | Ubuntu 20.04 LTS |
 |-----|:---:|:---:|
 | media-nginx | V |
-| media-nginx_sw | V |
+| media-nginx-sw | V |
 | media-dev | V |
 
 
