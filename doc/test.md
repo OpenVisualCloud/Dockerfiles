@@ -26,7 +26,6 @@
 | media-nginx-sw | V |
 | media-dev | V |
 
-
 | Platform: SG1 | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS | CentOS-7 |
 |-----|:---:|:---:|
 | media-ffmpeg | V | V | V |
