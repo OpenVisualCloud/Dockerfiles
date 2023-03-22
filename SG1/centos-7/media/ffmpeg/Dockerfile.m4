@@ -39,3 +39,4 @@ INSTALL_CENTOS_REPO(epel-release)
 # Install
 INSTALL_ALL(runtime,build)
 
+UPDATE_CENTOS_REPO()
