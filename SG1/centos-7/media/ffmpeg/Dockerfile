@@ -361,3 +361,20 @@ ENV LIBVA_DRIVER_NAME=iHD
 ENV DISPLAY=:0.0
 
 
+RUN yum update -y && \
+    yum install -y wget python3-pip gcc-c++ git && \
+    pip3 install meson ninja && \
+    wget https://github.com/GNOME/glib/archive/refs/tags/2.68.0.tar.gz && \
+    tar -zxf 2.68.0.tar.gz && \
+    cd glib-2.68.0 && \
+    rm -rf build && \
+    meson build --prefix=/usr --libdir=/usr/lib64 && \
+    ninja -C build && \
+    ninja -C build install && \
+    cd /home && \
+    rm -rf 2.68.0.tar.gz glib-2.68.0 && \
+    pip3 uninstall -y meson ninja && \
+    yum remove -y wget python3-pip gcc-c++ git && \
+    yum autoremove -y && \
+    rm -rf /var/yum/cache/* && \
+    rpm -e --nodeps python-libs python openssl-libs nss-tools nss-sysinit nss glib2

@@ -36,3 +36,5 @@ INSTALL_CENTOS_REPO(epel-release)
 
 # Install
 INSTALL_ALL(devel,build)dnl
+
+UPDATE_CENTOS_REPO()
