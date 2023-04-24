@@ -33,11 +33,11 @@ include(begin.m4)
 DECLARE(`QAT_CRYPTOMB_VER',ippcp_2021.6)
 
 ifelse(OS_NAME,ubuntu,`
-define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ca-certificates ifdef(`BUILD_CMAKE',,cmake) make python ')
+define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ca-certificates ifdef(`BUILD_CMAKE',,cmake) make python3')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake3) make python devtoolset-9')
+define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake3) make python3 devtoolset-9')
 ')
 
 define(`BUILD_QAT_CRYPTOMB',`
