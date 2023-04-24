@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENSSL_VER',1_1_1s)
+DECLARE(`OPENSSL_VER',3.1.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENSSL_BUILD_DEPS',`ca-certificates wget tar g++ make libtool autoconf')
@@ -42,17 +42,15 @@ define(`OPENSSL_BUILD_DEPS',`wget tar gcc-c++ make libtool autoconf')
 
 define(`BUILD_OPENSSL',`
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_`'OPENSSL_VER.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/releases/download/openssl-`'OPENSSL_VER/openssl-`'OPENSSL_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_`'OPENSSL_VER && \
+    cd openssl-`'OPENSSL_VER && \
     ./config no-ssl3 shared --prefix=BUILD_PREFIX/ssl --openssldir=BUILD_PREFIX/ssl -fPIC -Wl,-rpath=BUILD_PREFIX/ssl/lib && \
     make depend && \
     make -s V=0 && \
     make install DESTDIR=BUILD_DESTDIR && \
-    (cd BUILD_DESTDIR && mkdir -p .BUILD_LIBDIR/pkgconfig && mv .BUILD_PREFIX/ssl/lib/pkgconfig/*.pc .BUILD_LIBDIR/pkgconfig/) && \
-    make install && \
-    (mkdir -p BUILD_LIBDIR/pkgconfig && mv BUILD_PREFIX/ssl/lib/pkgconfig/*.pc BUILD_LIBDIR/pkgconfig/)
+    make install
 ')
 
 define(`CLEANUP_OPENSSL',`dnl
