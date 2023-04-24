@@ -1,11 +1,11 @@
 This docker image is part of Open Visual Cloud software stacks. This is development image aim towards enabling C++ application compilation, debugging (with the debugging, profiling tools) and optimization (with the optimization tools.) You can compile C++ applications with this image and then copy the applications to the corresponding deployment image. Included what are in FFmpeg or GStreamer media creation and delivery images . Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [sg1-ubuntu-2004-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v22.3/SG1/ubuntu-20.04/media/dev/Dockerfile)
+ - [sg1-ubuntu-2204-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v23.1/SG1/ubuntu-22.04/media/dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
-  Intel&reg; SG1 platform, Ubuntu 20.04
+  Intel&reg; SG1 platform, Ubuntu 22.04
 
 - #### Usage instructions:
   [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)	[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)	
@@ -27,7 +27,6 @@ This docker installs third party components licensed under various open source l
 |Ubuntu| [Various](https://hub.docker.com/_/ubuntu) |
 |libogg|BSD 3-clause "New" or "Revised" License|
 |libvorbis|BSD 3-clause "New" or "Revised" License|
-|OpenSSL|Apache License 2.0|
 |Opus Interactive Audio Codec|BSD 3-clause "New" or "Revised" License|
 |libvpx|BSD 3-clause "New" or "Revised" License|
 |Aomedia AV1 Codec Library|BSD 2-clause "Simplified" License|
