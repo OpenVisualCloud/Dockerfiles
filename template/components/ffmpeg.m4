@@ -69,7 +69,7 @@ ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg
 RUN cd BUILD_HOME && \
     git clone ${FFMPEG_REPO} && \
     cd FFmpeg && \
-    git checkout ifelse(index(IMAGE,`sg2'),-1,`FFMPEG_VER',`FFMPEG_SHA')
+    git checkout ifelse(index(IMAGE,`flex'),-1,`FFMPEG_VER',`FFMPEG_SHA')
 
 #ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ifdef(`BUILD_SVT_HEVC',`FFMPEG_PATCH_SVT_HEVC(BUILD_HOME/FFmpeg)')dnl
@@ -88,7 +88,7 @@ RUN cd BUILD_HOME/FFmpeg && \
 ')dnl
 
 
-ifelse(index(IMAGE,`sg2'),-1,,ifelse(FFMPEG_1TN_PATCH,true,
+ifelse(index(IMAGE,`flex'),-1,,ifelse(FFMPEG_1TN_PATCH,true,
 ARG FFMPEG_1TN_PATCH_REPO=https://github.com/spawlows/FFmpeg/commit/6e747101f5fc0c4fb56a178c8ba24fcee4917139.patch
 #RUN cd BUILD_HOME/FFmpeg-FFMPEG_VER && \
 RUN cd BUILD_HOME/FFmpeg && \
@@ -117,7 +117,7 @@ RUN cd BUILD_HOME/FFmpeg && \
     ifdef(`BUILD_LIBX264',--enable-gpl --enable-libx264 )dnl
     ifdef(`BUILD_LIBX265',--enable-gpl --enable-libx265 )dnl
     ifdef(`BUILD_SVT_AV1',--enable-libsvtav1 )dnl
-    ifelse(index(IMAGE,`sg2'),-1,ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc ))dnl
+    ifelse(index(IMAGE,`flex'),-1,ifdef(`BUILD_SVT_HEVC',--enable-libsvthevc ))dnl
     ifdef(`BUILD_LIBAOM',--enable-libaom )dnl
     ifdef(`BUILD_LIBVMAF',--enable-libvmaf --enable-version3 )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl
@@ -126,7 +126,7 @@ RUN cd BUILD_HOME/FFmpeg && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ifdef(`REBUILD_OPENCV_VIDEOIO',`dnl
-ifelse(index(IMAGE,`sg2'),-1,`
+ifelse(index(IMAGE,`flex'),-1,`
 #REBUILD_OPENCV_VIDEOIO()dnl
 ')dnl
 ')dnl
