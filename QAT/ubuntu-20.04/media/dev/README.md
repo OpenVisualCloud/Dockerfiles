@@ -1,9 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for NGINX web server with compute-intensive operations acceleration with Intel® QuickAssist Technology (Intel® QAT).The docker image can be used in the FROM field of a downstream Dockerfile.
-This Image implements Software Implementation of [QAT-Engine](https://github.com/intel/QAT_Engine).
-Refer to [Nginx image](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/QAT/ubuntu-20.04/media/nginx) for Hardware Implementation.
 
 ## Supported tags and respective Dockerfile links
- - [qat-ubuntu-2004-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v22.3/QAT/ubuntu-20.04/media/dev/Dockerfile)
+ - [qat-ubuntu-2004-media-dev](https://github.com/OpenVisualCloud/Dockerfiles/blob/v23.1/QAT/ubuntu-20.04/media/dev/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
