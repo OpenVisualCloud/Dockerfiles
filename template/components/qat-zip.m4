@@ -30,13 +30,13 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_ZIP_VER',v1.0.6)
+DECLARE(`QAT_ZIP_VER',v1.1.2)
 
 include(qat-core.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`QAT_ZIP_BUILD_DEPS',`wget ca-certificates make gcc libzip-dev')
-define(`QAT_ZIP_INSTALL_DEPS',`libzip5')
+define(`QAT_ZIP_BUILD_DEPS',`wget ca-certificates make gcc libzip-dev automake libtool liblz4-dev libssl-dev')
+define(`QAT_ZIP_INSTALL_DEPS',`ifelse(OS_VERSION,20.04,libzip5,libzip4)')
 ')
 
 ifelse(OS_NAME,centos,`
@@ -50,6 +50,7 @@ ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/QAT_ZIP_VER.tar.gz
 RUN cd BUILD_HOME && \
     wget -O - ${QAT_ZIP_REPO} | tar xz && \
     cd QATzip* && \
+    ./autogen.sh && \
     /bin/bash ./configure LDFLAGS="-Wl,-rpath=/opt/intel/QAT/build" --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/QATzip && \
     make -j8 && \
     make install && \

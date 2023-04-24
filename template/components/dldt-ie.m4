@@ -40,7 +40,7 @@ define(`DLDT_INSTALL_DEPS',`libgtk-3-0 libnuma1 ocl-icd-libopencl1')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`DLDT_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python python2-yamlordereddictloader xz numactl-devel ocl-icd-devel opencl-headers')
+define(`DLDT_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-g++ git boost-devel gtk2-devel gtk3-devel libtool libusb-devel make python3 python2-yamlordereddictloader xz numactl-devel ocl-icd-devel opencl-headers')
 define(`DLDT_INSTALL_DEPS',`gtk3 numactl ocl-icd')
 ')
 
