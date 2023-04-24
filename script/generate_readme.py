@@ -5,28 +5,23 @@ import re
 import os
 import sys
 
-REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/v21.3/"
+REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/v23.1/"
 
 #Platform to full name
 platform_subs = {
                 "Xeon" : "Xeon&reg; platform",
                 "QAT" : "QAT platform",
-                "SG1": "SG1 platform"
+                "SG1": "SG1 platform",
+                "Flex" : "Flex platform"
                 }
 
 #When image is based on another OVC image, this is used to find path of inherited image
 path_subs = {
-                "xeon-centos7-media-ffmpeg" : "Xeon/centos-7/media/ffmpeg/",
                 "xeon-ubuntu2004-media-ffmpeg" : "Xeon/ubuntu-20.04/media/ffmpeg/",
-                "xeon-centos7-media-dev" : "Xeon/centos-7/media/dev/",
+                "xeon-ubuntu2204-media-ffmpeg" : "Xeon/ubuntu-22.04/media/ffmpeg/",
                 "xeon-ubuntu2004-media-dev" : "Xeon/ubuntu-20.04/media/dev/",
+                "xeon-ubuntu2204-media-dev" : "Xeon/ubuntu-22.04/media/dev/"
                 }
-
-#OS subs to their version detail 
-os_subs = {
-                "centos-7" : "CentOS-7",
-                "ubuntu-20.04" : "Ubuntu 20.04"
-          }
 
 #included components links
 included_subs = {
@@ -40,38 +35,22 @@ included_subs = {
                 "dev" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)","[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"]
                 }
 
-# License to be included based on m4 templates
-license_subs = {
-                "xeon-centos7-media-ffmpeg" : "Xeon/centos-7/media/ffmpeg/",
-                "xeon-ubuntu2004-media-ffmpeg" : "Xeon/ubuntu-20.04/media/ffmpeg/",
-                "xeon-centos7-media-dev" : "Xeon/centos-7/media/dev/",
-                "xeon-ubuntu2004-media-dev" : "Xeon/ubuntu-20.04/media/dev/"
-                }
-
 #OS subs to their version detail 
 os_subs = {
                 "centos-7" : "CentOS-7",
-                "ubuntu-20.04" : "Ubuntu 20.04"
+                "ubuntu-20.04" : "Ubuntu 20.04",
+                "ubuntu-22.04" : "Ubuntu 22.04"
           }
-
-#included components links
-included_subs = {
-                "nginx" : ["[NGINX](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/nginx.md)"],
-                "svt" : ["[SVT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/svt.md)"],
-                "owt" : ["[OWT](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt.md)"],
-                "owt360" : ["[OWT360](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/owt360.md)"],
-                "ffmpeg" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)"],
-                "gst" : ["[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"],
-                "dev" : ["[FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md)","[GStreamer](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/gst.md)"]
-                }
 
 # License to be included based on m4 templates
 license_subs = {
                 "dav1d" : ["|dav1d|BSD 2-clause \"Simplified\" License|"],
                 "dldt-ie" : ["|OpenVINO|Apache License v2.0|"],
+                "dpdk" : ["|DPDK|BSD-3-Clause|"],
                 "ffmpeg" : ["|FFmpeg|GNU Lesser General Public License v2.1 or later|"],
                 "gmmlib" : ["|Intel Graphics Memory Management Library| MIT License|"],
                 "gmmlib.sg1" : ["|Intel Graphics Memory Management Library| MIT License|"],
+                "gmmlib.flex" : ["|Intel Graphics Memory Management Library| MIT License|"],
                 "gst-core" : ["|gstreamer|GNU Lesser General Public License v2.1 or later|"],
                 "gst-plugins-base" : ["|gst plugins base|GNU Lesser General Public License v2.1 or later|"],
                 "gst-plugins-bad" : ["|gst plugins bad|GNU Lesser General Public License v2.1 or later|"],
@@ -84,6 +63,7 @@ license_subs = {
                 "gst-gva" : ["|gst video analytics|MIT License|"],
                 "hddl-openvino" : ["|openvino|End User License Agreement for the Intel(R) Software Development Products|"],
                 "libaom" : ["|Aomedia AV1 Codec Library|BSD 2-clause \"Simplified\" License|"],
+                "imtl" : ["|Intel Media Transport Library|BSD 3-Clause 'New' or 'Revised' License|"],
                 "libdrm" : ["|libdrm|MIT license|"],
                 "libjsonc" : ["|json-c|MIT License|"],
                 "libnice014" : ["|libnice|GNU Lesser General Public License|"],
@@ -95,6 +75,8 @@ license_subs = {
                 "libsrtp2" : ["|libsrtp2|BSD 3-clause License|"],
                 "libva2" : ["|Intel libva| MIT License"],
                 "libva2.sg1" : ["|Intel libva| MIT License"],
+                "libva2.flex" : ["|Intel libva| MIT License"],
+                "libva-utils.flex" : ["|Intel libva| MIT License"],
                 "libvorbis" : ["|libvorbis|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "libvpx" : ["|libvpx|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "libx264" : ["|x264|GNU General Public License v2.0 or later|"],
@@ -102,12 +84,16 @@ license_subs = {
                 "libvmaf" : ["|libvmaf|BSD-2-Clause Plus Patent License|"],
                 "media-driver" : ["|Intel media driver | MIT License|"],
                 "media-driver.sg1" : ["|Intel media driver | MIT License|"],
+                "media-driver.flex" : ["|Intel media driver | MIT License|"],
+                "media-driver-pkg.flex" : ["|Intel media driver | MIT License|"],
                 "msdk" : ["|Intel media SDK|MIT License|"],
                 "msdk.sg1" : ["|Intel media SDK|MIT License|"],
                 "nginx-flv" : ["|nginx http flv|BSD 2-clause \"Simplified\" License|"],
                 "nginx" : ["|nginx|BSD 2-clause \"Simplified\" License|"],
                 "nginx-upload" : ["|nginx upload module|BSD 3-clause \"Simplified\" License|"],
                 "nodetools" : ["|nodejs| MIT Open Source License|"],
+                "onevpl-atsm": ["|Intel oneVPL GPU Runtime | MIT License|"],
+                "onevpl-dispatch": ["|Intel Video Processing Library | MIT License|"],
                 "opencl" : ["|Intel opencl | MIT License|"],
                 "opencv" : ["|OpenCV|BSD 3-clause \"New\" or \"Revised\" License|"],
                 "openssl" : ["|OpenSSL|Apache License 2.0|"],
@@ -147,7 +133,7 @@ def parse_ingredients(path):
 
 #method that generates URL placeholder for link to DOckerfiles
 def url_generator(local_path, image_name, image_type, image_os, image_platform):
-    url = ' - ['+image_platform.lower()+'-'+image_os.lower().replace('.','')+'-'+image_type.lower()+'-'+image_name.lower()+']('+REPO_LINK+local_path.split('Dockerfiles/')[1]+'/Dockerfile'+')'
+    url = ' - ['+image_platform.lower()+'-'+image_os.lower().replace('.','')+'-'+image_type.lower()+'-'+image_name.lower()+']('+REPO_LINK+local_path.split('dockerfiles/')[1]+'/Dockerfile'+')'
     return url
 
 # Generate links to docs of included components

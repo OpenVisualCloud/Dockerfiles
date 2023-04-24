@@ -257,7 +257,7 @@ RUN rm -rf /opt/dist/usr/local/ssl/include
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 
-FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:-n
+FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:23.6
 LABEL Description="This is the base image for QAT NGINX ubuntu 20.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home

@@ -32,7 +32,7 @@
 | media-ffmpeg | V | V | V |
 | media-dev | V | V | V |
 
-| Platform: SG2 | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS |
+| Platform: Flex | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS |
 |-----|:---:|:---:|
 | media-gst | V | V |
 | media-dev | V | V |

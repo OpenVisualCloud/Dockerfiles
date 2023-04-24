@@ -122,7 +122,7 @@ RUN rm -rf /opt/dist/usr/local/include && \
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
 
-FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:-n
+FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:23.6
 LABEL Description="This is the base image for NGINX+RTMP ubuntu 22.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
