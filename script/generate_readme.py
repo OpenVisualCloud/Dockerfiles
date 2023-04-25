@@ -5,7 +5,7 @@ import re
 import os
 import sys
 
-REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/v23.1/"
+REPO_LINK = "https://github.com/OpenVisualCloud/Dockerfiles/blob/v23.6/"
 
 #Platform to full name
 platform_subs = {
@@ -261,6 +261,8 @@ def create_readme(path, path_components):
             my_file.write("Included what are in FFmpeg or GStreamer media creation and delivery images . ")
         if image_platform=="SG1":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
+        if image_platform=="Flex":
+            my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="analytics":
         my_file.write("Optimized for Media Analytics. ")
@@ -287,7 +289,11 @@ def create_readme(path, path_components):
             my_file.write("Image with SVT (Scalable Video Technology) Encoder and decoders. Ready to use SVT apps to try AV1, HEVC, VP9 transcoders. ")
         if image_name=="srs":
             my_file.write("Image with SRS high efficiency, stable and simple RTMP/HLS/FLV streaming cluster. ")
+        if image_name=="imtl":
+            my_file.write("Image with IMTL for transmitting and receiving media data with high throughput and low latency. ")
         if image_platform=="SG1":
+            my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
+        if image_platform=="Flex":
             my_file.write("Also included Intel hardware accelaration software stack such as media SDK, media driver, gmmlib and libva. ")
         my_file.write("The docker image can be used in the FROM field of a downstream Dockerfile. ")
     elif image_type=="service":
