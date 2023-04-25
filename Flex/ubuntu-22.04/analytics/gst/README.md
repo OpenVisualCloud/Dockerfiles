@@ -1,7 +1,7 @@
 This docker image is part of Open Visual Cloud software stacks. Optimized for Media Analytics. Included what are in media delivery GStreamer image, inferencing engine and video analytics plugins. The docker image can be used in the FROM field of a downstream Dockerfile. 
 
 ## Supported tags and respective Dockerfile links
- - [flex-ubuntu-2204-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/v23.1/Flex/ubuntu-22.04/analytics/gst/Dockerfile)
+ - [flex-ubuntu-2204-analytics-gst](https://github.com/OpenVisualCloud/Dockerfiles/blob/v23.6/Flex/ubuntu-22.04/analytics/gst/Dockerfile)
 
 ## Quick reference
 - #### Supported platform and OS
