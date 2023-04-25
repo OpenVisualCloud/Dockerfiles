@@ -67,14 +67,15 @@ RUN mkdir -p /opt/intel /opt/dist/opt/intel && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    wget ca-certificates make gcc libzip-dev && \
+    wget ca-certificates make gcc libzip-dev automake libtool liblz4-dev libssl-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # load qat-zip
-ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.0.6.tar.gz
+ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.1.2.tar.gz
 RUN cd /opt/build && \
     wget -O - ${QAT_ZIP_REPO} | tar xz && \
     cd QATzip* && \
+    ./autogen.sh && \
     /bin/bash ./configure LDFLAGS="-Wl,-rpath=/opt/intel/QAT/build" --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/QATzip && \
     make -j8 && \
     make install && \
@@ -86,17 +87,15 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1s.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/releases/download/openssl-3.1.0/openssl-3.1.0.tar.gz
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1s && \
+    cd openssl-3.1.0 && \
     ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
     make depend && \
     make -s V=0 && \
     make install DESTDIR=/opt/dist && \
-    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
-    make install && \
-    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
+    make install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -148,7 +147,7 @@ RUN apt-get update && \
 
 ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.7.tar.gz
 RUN wget -O - ${QAT_NGINX_REPO} | tar xz && cd asynch_mode_nginx* && \
-    ./configure --with-ld-opt="-Wl,-rpath=/usr/local/ssl/lib,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib64,-rpath=/opt/intel/QAT/build -L/usr/local/ssl/lib -L/opt/intel/QATzip/lib64 -lqatzip -lz" \
+    ./configure --with-ld-opt="-Wl,-rpath=/usr/local/ssl/lib64,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib,-rpath=/opt/intel/QAT/build -L/usr/local/ssl/lib64 -L/opt/intel/QATzip/lib -lqatzip -lz" \
         --with-cc-opt="-DNGX_SECURE_MEM -I/usr/local/ssl/include -I/opt/intel/QATzip/include -I/opt/intel/QAT/quickassist/include/dc -I/opt/intel/QAT/quickassist/include -Wno-error=deprecated-declarations" \
         --add-dynamic-module=modules/nginx_qatzip_module \
         --add-dynamic-module=modules/nginx_qat_module \
