@@ -34,7 +34,7 @@ DECLARE(`IMTL_VER',22.11)
 
 ifelse(OS_NAME,ubuntu,`
 define(`IMTL_BUILD_DEPS',`sudo git g++ wget meson kmod ffmpeg unzip python3 python3-pip pkg-config libnuma-dev libjson-c-dev libpcap-dev libgtest-dev libsdl2-dev libsdl2-ttf-dev libssl-dev python3-pyelftools ninja-build pciutils iproute2')
-define(`IMTL_INSTALL_DEPS',`libnuma1 pciutils iproute2 libpcap0.8 libatomic1 kmod libsdl2-2.0-0 libsdl2-ttf-2.0-0')
+define(`IMTL_INSTALL_DEPS',`libnuma1 pciutils iproute2 libpcap0.8 libatomic1 kmod libsdl2-2.0-0 libsdl2-ttf-2.0-0 libstdc++6')
 ')
 
 define(`BUILD_IMTL',`
