@@ -2,16 +2,16 @@ FFmpeg is a set of open source tools for audio and video processing, such as cre
 
 ### Audio/Video Codecs:
 
-The FFmpeg docker images are compiled with the following audio and video codecs:
+The FFmpeg (n4.4.3) docker images are compiled with the following audio and video codecs:
 
 | Codec | Version | Codec | Version |
 |-------|:-------:|-------|:-------:|
 |fdk-acc|2.0.2|x265|3.4|
-|vpx|1.10.0|opus|1.3.1|
-|dav1d|0.9.0|ogg|1.3.5|
+|vpx|1.12.0|opus|1.3.1|
+|dav1d|0.9.2|ogg|1.3.5|
 |SVT-HEVC|v1.5.1|vorbis|1.3.7|
-|SVT-AV1|v0.8.7|x264|stable|
-|SVT-VP9*|v0.2.2|
+|SVT-AV1|v1.3.0|x264|stable|
+|SVT-VP9*|v0.3.0|   
 
 \* SVT-VP9 encoder app only. SVT-VP9 not yet available as a FFmpeg plugin. 
 
@@ -23,7 +23,7 @@ The FFmpeg builds included the following patches for feature enhancement, better
 |-------|-------------|
 |[11625](https://patchwork.ffmpeg.org/patch/11625/raw)|Enhance 1:N transcoding performance.|
 |[SVT-HEVC](https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-HEVC plugin|
-|[SVT-AV1](https://github.com/OpenVisualCloud/SVT-AV1/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-AV1 plugin|
+|[SVT-AV1](https://gitlab.com/AOMediaCodec/SVT-AV1/-/tree/master/ffmpeg_plugin)|Enable FFmpeg SVT-AV1 plugin|
 
 ### GPU Acceleration:
 
@@ -56,3 +56,4 @@ ffmpeg -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -i test.mp4 -f null /d
 ffmpeg -y -init_hw_device qsv=hw -filter_hw_device hw -f rawvideo -pix_fmt yuv420p -s:v 320x240 -i test.yuv -vf hwupload=extra_hw_frames=64,format=qsv -c:v h264_qsv -b:v 5M test.mp4
 ffmpeg -hwaccel qsv -c:v h264_qsv -i test.mp4 -f null /dev/null
 ```
+
