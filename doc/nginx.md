@@ -6,8 +6,8 @@ The NGINX builds included the following patches for feature enhancement, better 
 
 | Patch | Description |
 |-------|-------------|
-|[H.265 DASH](https://raw.githubusercontent.com/VCDP/CDN/master/0002-add-HEVC-support-for-dash.patch)|Support H.265 in NGINX DASH.|
-|[H.265 HLS](https://raw.githubusercontent.com/VCDP/CDN/master/0001-add-hevc-support-for-rtmp-and-hls.patch)|Support H.265 in NGINX RTMP/HLS.|
+|[H.265 DASH](https://raw.githubusercontent.com/VCDP/CDN/9f8d9967637f6f2dbdd95beed09ce32312b658a5/0002-add-HEVC-support-for-dash.patch)|Support H.265 in NGINX DASH.|
+|[H.265 HLS](https://raw.githubusercontent.com/VCDP/CDN/9f8d9967637f6f2dbdd95beed09ce32312b658a5/0001-add-hevc-support-for-rtmp-and-hls.patch)|Support H.265 in NGINX RTMP/HLS.|
 
 ### NGINX Modules
 
@@ -36,3 +36,4 @@ The default NGINX configuration exposes the following entry points:
 |1935|/stream|Publish/retrieve RTMP live streams.|
 |1935|/dash|Publish RTMP streams to generate DASH content.|
 |1935|/hls|Publish RTMP streams to generate HLS content.|
+
