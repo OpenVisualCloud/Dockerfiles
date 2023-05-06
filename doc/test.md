@@ -20,12 +20,11 @@
 | service-owt-dev | V | - |
 | service-owt360 | - | - |
 
-| Platform: QAT | Ubuntu 20.04 LTS |
-|-----|:---:|
-| media-nginx | V |
-| media-nginx_sw | V |
-| media-dev | V |
-
+| Platform: QAT | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS |
+|-----|:---:|:---:|
+| media-nginx | V | T |
+| media-nginx_sw | V | T |
+| media-dev | V | T |
 
 | Platform: SG1 | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS | CentOS-7 |
 |-----|:---:|:---:|:---:|
@@ -34,7 +33,7 @@
 
 | Platform: Flex | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS |
 |-----|:---:|:---:|
-| media-gst | V | V |
-| media-dev | V | V |
+| analytics-gst | V | V |
+| analytics-dev | V | V |
 | media-ffmpeg | V | V |
 | media-dev | V | V |
