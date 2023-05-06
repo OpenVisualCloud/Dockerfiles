@@ -13,6 +13,7 @@
 | media-svt | V | V |
 | media-srs | V | V |
 | media-dev | V | V |
+| media-imtl | V | V |
 | analytics-ffmpeg | V | V |
 | analytics-gst | V | V |
 | analytics-dev | V | V |
