@@ -139,7 +139,7 @@ WORKDIR /home
 RUN apt-get update && apt-get upgrade -y systemd
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libnuma1 pciutils iproute2 libpcap0.8 libatomic1 kmod libsdl2-2.0-0 libsdl2-ttf-2.0-0  && \
+    libnuma1 pciutils iproute2 libpcap0.8 libatomic1 kmod libsdl2-2.0-0 libsdl2-ttf-2.0-0 libstdc++6  && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/dist /
