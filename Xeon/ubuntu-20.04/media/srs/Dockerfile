@@ -49,7 +49,7 @@ ARG SRS_REPO=https://github.com/ossrs/srs.git
 RUN cd /opt/build && \
     git clone -b v4.0-r1 --depth 1 ${SRS_REPO} && \
     cd srs/trunk && \
-    sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=\/usr\/local\/ssl\/lib /" configure && \
+    sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=\/usr\/local\/ssl\/lib64 /" configure && \
     ./configure --prefix=/usr/local/srs \
         --hds=on \
         --ssl=on --https=on --sys-ssl=on \

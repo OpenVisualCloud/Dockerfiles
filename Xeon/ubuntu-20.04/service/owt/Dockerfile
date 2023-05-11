@@ -659,7 +659,7 @@ RUN cd /opt/build/owt-server && \
     npm install nan
 
 # Build and package
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/ssl/lib
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/ssl/lib64
 RUN cd /opt/build/owt-server && \
     ./scripts/build.js -t mcu-all -r -c &&\
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path /opt/build/owt-client-javascript/dist/samples/conference && \

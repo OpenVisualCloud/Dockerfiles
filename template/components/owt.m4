@@ -149,7 +149,7 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/quic-lib && \
 # Build and pack owt
 RUN cd BUILD_HOME/owt-server && \
 ifdef(`BUILD_OPENSSL',`dnl
-    sed -i "/cflags_cc/s/\[/[\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'/" ifelse(OWT_360,true, `source/agent/webrtc/webrtcLib/binding.gyp',`source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp') && \
+    sed -i "/cflags_cc/s/\[/[\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib64\"`,'/" ifelse(OWT_360,true, `source/agent/webrtc/webrtcLib/binding.gyp',`source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp') && \
     sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" ifelse(OWT_360,true, `source/agent/webrtc/webrtcLib/binding.gyp',`source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp') && \
 ')dnl
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
@@ -166,7 +166,7 @@ RUN cd BUILD_HOME/owt-server && \
     npm install nan
 
 # Build and package
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_LIBDIR:/usr/local/ssl/lib
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_LIBDIR:/usr/local/ssl/lib64
 RUN cd BUILD_HOME/owt-server && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable &&')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME:OS_VERSION,centos:7,`) ') &&\
     ./scripts/pack.js -t all --install-module --no-pseudo ifelse(OWT_360,true,--sample-path, --app-path) BUILD_HOME/owt-client-javascript/dist/samples/conference && \

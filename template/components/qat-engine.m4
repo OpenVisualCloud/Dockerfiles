@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_ENGINE_VER',v0.6.15)
+DECLARE(`QAT_ENGINE_VER',v0.6.19)
 dnl CentOS QAT 1.7.0-470b06 only supports QAT engine version up to 0.5.43.
 dnl CentOS QAT 1.7.0-470b12 and above can support QAT engine version beyond 0.5.43.
 
@@ -50,16 +50,16 @@ ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/QAT_ENGINE_VER.t
 RUN cd BUILD_HOME && \
     wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH=$}:BUILD_PREFIX/ssl/lib64 && \
     ./autogen.sh && \
-    export PERL5LIB="$(ls -1 -d BUILD_HOME/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=BUILD_PREFIX/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE ifdef(`BUILD_QAT_CRYPTOMB',-I`'BUILD_HOME/ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/include)" ifdef(`BUILD_QAT_CRYPTOMB',--enable-multibuff_offload --enable-multibuff_ecx --enable-qat_sw, --enable-qat_hw --with-qat_hw_dir=/opt/intel/QAT) && \
-    make -j8 && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$(ls -1 -d BUILD_HOME/openssl-*)" --with-openssl_install_dir=BUILD_PREFIX/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE ifdef(`BUILD_QAT_CRYPTOMB',-I`'BUILD_HOME/ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/include)" ifdef(`BUILD_QAT_CRYPTOMB',--enable-multibuff_offload --enable-multibuff_ecx --enable-qat_sw, --enable-qat_hw --with-qat_hw_dir=/opt/intel/QAT) && \
+    make -j$(nproc) && \
     make install && \
     tar cf - BUILD_PREFIX/ssl | (cd BUILD_DESTDIR && tar xf -)
 ')
 
 define(`QAT_ENGINE_ENV_VARS',`dnl
-ENV OPENSSL_ENGINES=BUILD_PREFIX/ssl/lib/engines-1.1
+ENV OPENSSL_ENGINES=BUILD_PREFIX/ssl/lib64/engines-3
 ')
 
 define(`INSTALL_QAT_ENGINE',`dnl
