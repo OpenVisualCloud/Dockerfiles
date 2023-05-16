@@ -23,9 +23,9 @@
 
 | Platform: QAT | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS |
 |-----|:---:|:---:|
-| media-nginx | V | T |
-| media-nginx_sw | V | T |
-| media-dev | V | T |
+| media-nginx | V | V |
+| media-nginx_sw | V | V |
+| media-dev | V | V |
 
 | Platform: SG1 | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS | CentOS-7 |
 |-----|:---:|:---:|:---:|
