@@ -252,6 +252,7 @@ RUN rm -rf /opt/dist/usr/local/share/man
 RUN rm -rf /opt/intel/QATzip/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM openvisualcloud/xeon-ubuntu2204-media-dev:23.6
 LABEL Description="This is the QAT development image for ubuntu 22.04"
@@ -272,4 +273,4 @@ RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/ssl/lib64
 RUN echo "/opt/intel/QAT/build" >> /etc/ld.so.conf.d/qat.conf && ldconfig
 
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

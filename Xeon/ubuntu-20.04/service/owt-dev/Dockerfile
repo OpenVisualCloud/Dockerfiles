@@ -685,6 +685,7 @@ RUN cd /opt/build/owt-server && \
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM ubuntu:20.04
 LABEL Description="This is the development image for the OWT service ubuntu 20.04"
@@ -726,4 +727,4 @@ RUN cd /usr/local && \
     wget -O - ${NODE_REPO} | tar xJ && \
     cp -r node-v10.24.1-linux-x64/* . && \
     rm -rf node-v10.24.1-linux-x64
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

@@ -341,6 +341,7 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM centos:7
 LABEL Description="This is the base image for FFMPEG centos 7"
@@ -378,3 +379,4 @@ RUN yum update -y && \
     yum autoremove -y && \
     rm -rf /var/yum/cache/* && \
     rpm -e --nodeps python-libs python openssl-libs nss-tools nss-sysinit nss glib2
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

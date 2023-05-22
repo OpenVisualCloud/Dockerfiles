@@ -411,6 +411,7 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM ubuntu:22.04
 LABEL Description="This is the base image for FFMPEG ubuntu 22.04"
@@ -433,4 +434,4 @@ ENV DISPLAY=:0.0
 
 # Define ONEVPL lib dir
 ENV ONEVPL_SEARCH_PATH=/usr/local/lib
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

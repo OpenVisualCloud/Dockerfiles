@@ -692,6 +692,7 @@ RUN cd /opt/dist/usr/local/openvino/runtime && \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
 RUN rm -rf /opt/dist/home/owt/analytics_agent/plugins
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM ubuntu:20.04
 LABEL Description="This is the base image for the OWT service ubuntu 20.04"
@@ -733,4 +734,4 @@ RUN cd /usr/local && \
     cp -r node-v10.24.1-linux-x64/* . && \
     rm -rf node-v10.24.1-linux-x64
 
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

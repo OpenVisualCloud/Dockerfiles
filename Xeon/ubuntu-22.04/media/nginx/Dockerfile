@@ -121,6 +121,7 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:23.6
 LABEL Description="This is the base image for NGINX+RTMP ubuntu 22.04"
@@ -138,4 +139,4 @@ COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
 
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

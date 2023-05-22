@@ -38,3 +38,4 @@ INSTALL_CENTOS_REPO(epel-release)
 INSTALL_ALL(devel,build)dnl
 
 UPDATE_CENTOS_REPO()
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

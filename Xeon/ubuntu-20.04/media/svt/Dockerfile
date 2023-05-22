@@ -78,6 +78,7 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:latest
 LABEL Description="This is the showcase image for SVT ubuntu 20.04"
@@ -91,4 +92,4 @@ RUN apt-get update && apt-get upgrade -y systemd
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

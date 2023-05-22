@@ -671,6 +671,7 @@ RUN cd /opt/build/FFmpeg && \
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM ubuntu:22.04
 LABEL Description="This is the development image for ubuntu 22.04 on Flex Series GPU"
@@ -714,3 +715,4 @@ ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/girepository-1.0/
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
 
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
