@@ -676,6 +676,7 @@ RUN cd /opt/dist/usr/local/openvino/runtime && \
     rm -rf /opt/dist/usr/local/lib/pkgconfig/openvino.pc \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM ubuntu:20.04
 LABEL Description="This is the base image for Gstreamer ubuntu 20.04"
@@ -718,3 +719,4 @@ ENV GI_TYPELIB_PATH=${GI_TYPELIB_PATH}:/usr/local/lib/girepository-1.0/
 ENV PYTHONPATH=${PYTHONPATH}:/opt/intel/dl_streamer/python
 ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
 
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

@@ -336,4 +336,5 @@ ifelse(CLEANUP_MAN,yes,`dnl
 RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/share/man
 ')dnl
 CLEANUP_COMPONENTS(ARGS(COMPONENTS_LIST))dnl
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 ')

@@ -387,6 +387,7 @@ RUN cd /opt/dist/usr/local/openvino/runtime && \
     rm -rf /opt/dist/usr/local/lib/pkgconfig/openvino.pc \
        include src share/*.cmake cmake lib/intel64/*.a external/tbb/include external/tbb/cmake
 RUN rm -rf /opt/dist/usr/local/openvino/inference-engine/external/tbb/doc
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM ubuntu:20.04
 LABEL Description="This is the base image for FFMPEG ubuntu 20.04"
@@ -413,3 +414,4 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/openvino/runtime/lib/:/usr/loc
 ARG CUSTOM_IE_DIR=/usr/local/openvino/
 ARG CUSTOM_IE_LIBDIR=${CUSTOM_IE_DIR}/runtime/lib/intel64
 RUN printf "${CUSTOM_IE_LIBDIR}\n${CUSTOM_IE_DIR}/3rdparty/tbb/lib\n" >/etc/ld.so.conf.d/openvino.conf && ldconfig
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

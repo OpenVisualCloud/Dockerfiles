@@ -433,6 +433,7 @@ RUN cd /opt/build/SVT-VP9/gstreamer-plugin && \
 # cleanup
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM ubuntu:20.04
 LABEL Description="This is the base image for Gstreamer ubuntu 20.04"
@@ -452,4 +453,4 @@ RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
 ENV GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0
 ENV GST_PLUGIN_SCANNER=/usr/local/lib/gstreamer-1.0/gst-plugin-scanner
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

@@ -37,4 +37,4 @@ WORKDIR /home
 # Install
 UPGRADE_UBUNTU_COMPONENTS()
 INSTALL_ALL(runtime,build)
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

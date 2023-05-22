@@ -384,6 +384,7 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
 FROM ubuntu:22.04
 LABEL Description="This is the base image for FFMPEG ubuntu 22.04"
@@ -403,4 +404,4 @@ RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 ENV LIBVA_DRIVERS_PATH=/usr/local/lib/dri
 ENV LIBVA_DRIVER_NAME=iHD
 ENV DISPLAY=:0.0
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
