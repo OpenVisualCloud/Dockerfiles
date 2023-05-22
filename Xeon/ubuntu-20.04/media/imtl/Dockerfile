@@ -65,10 +65,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build imtl
-ARG DPDK_REPO=https://github.com/DPDK/dpdk.git
-ARG IMTL_REPO=https://github.com/OpenVisualCloud/Media-Transport-Library.git
 ARG DPDK_VERSION=22.11
-ARG DPDK_ST_KAHAWAI=/opt/build/Media-Transport-Library
+ARG IMTL_VER=23.04
+ARG DPDK_REPO=https://github.com/DPDK/dpdk.git
+ARG IMTL_REPO=https://github.com/OpenVisualCloud/Media-Transport-Library/archive/refs/tags/v${IMTL_VER}.tar.gz
+ARG DPDK_ST_KAHAWAI=/opt/build/Media-Transport-Library-${IMTL_VER}
 ARG LIB_BUILD_DIR=${DPDK_ST_KAHAWAI}/build
 ARG APP_BUILD_DIR=${DPDK_ST_KAHAWAI}/build/app
 ARG TEST_BUILD_DIR=${DPDK_ST_KAHAWAI}/build/tests
@@ -79,7 +80,7 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
 RUN cd /opt/build && \
     rm -rf dpdk && \
     git clone ${DPDK_REPO} && \
-    git clone ${IMTL_REPO} && \
+    wget -O - ${IMTL_REPO} | tar xz  && \
     cd dpdk && \
     git checkout v${DPDK_VERSION} && \
     git switch -c v${DPDK_VERSION} && \

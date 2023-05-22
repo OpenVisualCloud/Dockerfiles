@@ -30,8 +30,6 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`IMTL_VER',22.11)
-
 ifelse(OS_NAME,ubuntu,`
 define(`IMTL_BUILD_DEPS',`sudo git g++ wget meson kmod ffmpeg unzip python3 python3-pip pkg-config libnuma-dev libjson-c-dev libpcap-dev libgtest-dev libsdl2-dev libsdl2-ttf-dev libssl-dev python3-pyelftools ninja-build pciutils iproute2')
 define(`IMTL_INSTALL_DEPS',`libnuma1 pciutils iproute2 libpcap0.8 libatomic1 kmod libsdl2-2.0-0 libsdl2-ttf-2.0-0 libstdc++6')
@@ -39,10 +37,11 @@ define(`IMTL_INSTALL_DEPS',`libnuma1 pciutils iproute2 libpcap0.8 libatomic1 kmo
 
 define(`BUILD_IMTL',`
 # build imtl
-ARG DPDK_REPO=https://github.com/DPDK/dpdk.git
-ARG IMTL_REPO=https://github.com/OpenVisualCloud/Media-Transport-Library.git
 ARG DPDK_VERSION=22.11
-ARG DPDK_ST_KAHAWAI=BUILD_HOME/Media-Transport-Library
+ARG IMTL_VER=23.04
+ARG DPDK_REPO=https://github.com/DPDK/dpdk.git
+ARG IMTL_REPO=https://github.com/OpenVisualCloud/Media-Transport-Library/archive/refs/tags/v${IMTL_VER}.tar.gz
+ARG DPDK_ST_KAHAWAI=BUILD_HOME/Media-Transport-Library-${IMTL_VER}
 ARG LIB_BUILD_DIR=${DPDK_ST_KAHAWAI}/build
 ARG APP_BUILD_DIR=${DPDK_ST_KAHAWAI}/build/app
 ARG TEST_BUILD_DIR=${DPDK_ST_KAHAWAI}/build/tests
@@ -53,7 +52,7 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_PREFIX/lib
 RUN cd BUILD_HOME && \
     rm -rf dpdk && \
     git clone ${DPDK_REPO} && \
-    git clone ${IMTL_REPO} && \
+    wget -O - ${IMTL_REPO} | tar xz  && \
     cd dpdk && \
     git checkout v${DPDK_VERSION} && \
     git switch -c v${DPDK_VERSION} && \
