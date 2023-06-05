@@ -75,7 +75,7 @@ RUN cd BUILD_HOME/openvino && \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=ifelse(DLDT_WARNING_AS_ERRORS,false,OFF,ON) \
     .. && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   make install && \
   make install DESTDIR=BUILD_DESTDIR ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 

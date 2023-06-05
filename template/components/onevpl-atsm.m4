@@ -54,7 +54,7 @@ RUN cd BUILD_HOME/oneVPL-intel-gpu-ONEVPL_GPU_VER && \
     -DBUILD_SAMPLES=MSDK_BUILD_SAMPLES \
     -DBUILD_TUTORIALS=OFF \
     .. && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

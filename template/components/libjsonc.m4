@@ -46,7 +46,7 @@ RUN cd BUILD_HOME && \
     wget -O - ${LIBJSONC_REPO} | tar xz && \
     cd json-c-json-c-LIBJSONC_VER && mkdir build && cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR .. && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

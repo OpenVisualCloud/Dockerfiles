@@ -57,7 +57,7 @@ RUN cd BUILD_HOME/MediaSDK-MSDK_VER && \
     -DBUILD_SAMPLES=MSDK_BUILD_SAMPLES \
     -DBUILD_TUTORIALS=OFF \
     .. && \
-    make -j$(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,`)') && \
+    make -j"$(nproc)"ifelse(OS_NAME:OS_VERSION,centos:7,`)') && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

@@ -80,7 +80,7 @@ ifdef(`BUILD_OPENSSL',`dnl
         --with-cc-opt="-I`'BUILD_PREFIX/ssl/include/" \
         --with-ld-opt="-L`'BUILD_PREFIX/ssl/lib64/ -Wl`,'-rpath=BUILD_PREFIX/ssl/lib64" \
 ')dnl
-    && make -j$(nproc) \
+    && make -j"$(nproc)" \
     && make install DESTDIR=BUILD_DESTDIR
 
 # NGINX Setup

@@ -51,7 +51,7 @@ RUN cd BUILD_HOME && \
     git clone -b SVT_HEVC_VER --depth 1 ${SVT_HEVC_REPO}
 RUN cd BUILD_HOME/SVT-HEVC/Build/linux && \
     ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

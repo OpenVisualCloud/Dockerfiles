@@ -52,7 +52,7 @@ RUN cd BUILD_HOME && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR \
     ifelse(LIBX264_GPL,true, ,--disable-gpl )dnl
     --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

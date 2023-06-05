@@ -64,7 +64,7 @@ ifelse(OWT_360,false,`dnl
 
 RUN cd BUILD_HOME/libnice-LIBNICE_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-    make -j$(nproc) -s V=0 && \
+    make -j"$(nproc)" -s V=0 && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

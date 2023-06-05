@@ -48,7 +48,7 @@ RUN cd BUILD_HOME && \
     cd openssl-`'OPENSSL_VER && \
     ./config shared --prefix=BUILD_PREFIX/ssl --openssldir=BUILD_PREFIX/ssl -fPIC -Wl,-rpath=BUILD_PREFIX/ssl/lib64 && \
     make depend && \
-    make -j$(nproc) -s V=0 && \
+    make -j"$(nproc)" -s V=0 && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')
