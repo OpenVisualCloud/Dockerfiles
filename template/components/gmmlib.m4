@@ -44,6 +44,7 @@ define(`GMMLIB_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ make wget')
 define(`BUILD_GMMLIB',`
 # build gmmlib
 ARG GMMLIB_REPO=GMMLIB_SRC_REPO
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${GMMLIB_REPO} | tar xz
 RUN cd BUILD_HOME/gmmlib-GMMLIB_VER && mkdir build && cd build && \

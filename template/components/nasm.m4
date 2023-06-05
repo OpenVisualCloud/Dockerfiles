@@ -46,6 +46,7 @@ define(`BUILD_NASM',`
 # TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
 
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-NASM_VER.tar.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-NASM_VER && \

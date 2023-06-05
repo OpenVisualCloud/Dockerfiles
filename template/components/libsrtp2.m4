@@ -43,6 +43,7 @@ define(`LIBSRTP2_BUILD_DEPS',`wget gcc make pkg-config ifdef(`BUILD_OPENSSL',,op
 define(`BUILD_LIBSRTP2',`
 # build libsrtp2
 ARG LIBSRTP2_REPO=https://github.com/cisco/libsrtp/archive/LIBSRTP2_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBSRTP2_REPO} | tar xz && \
     cd libsrtp-patsubst(LIBSRTP2_VER,v) && \

@@ -38,6 +38,7 @@ define(`MEDIA_DRIVER_PKG_INSTALL_DEPS',`ca-certificates gpg-agent software-prope
 define(`INTEL_GFX_URL',https://repositories.intel.com/graphics)
 
 define(`BUILD_MEDIA_DRIVER_PKG',`
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -qO - INTEL_GFX_URL/intel-graphics.key | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
 RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu ifelse(OS_VERSION,20.04,focal,jammy) ifelse(OS_VERSION,20.04,main,arc)" | tee /etc/apt/sources.list.d/intel.gpu.ifelse(OS_VERSION,20.04,focal,jammy).list
 
@@ -48,6 +49,7 @@ RUN apt-get update && \
 ')
 
 define(`INSTALL_MEDIA_DRIVER_PKG',`
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -qO - INTEL_GFX_URL/intel-graphics.key | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
 RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu ifelse(OS_VERSION,20.04,focal,jammy) ifelse(OS_VERSION,20.04,main,arc)" | tee /etc/apt/sources.list.d/intel.gpu.ifelse(OS_VERSION,20.04,focal,jammy).list
 

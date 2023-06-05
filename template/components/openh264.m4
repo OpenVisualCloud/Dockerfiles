@@ -44,6 +44,7 @@ define(`BUILD_OPENH264',`
 # Build OpenH264
 ARG OPENH264_SRC_REPO=https://github.com/cisco/openh264/archive/patsubst(OPENH264_VER,`.[0-9]*$',`.0').tar.gz
 ARG OPENH264_BIN_REPO=https://github.com/cisco/openh264/releases/download/patsubst(OPENH264_VER,`.[0-9]*$',`.0')/libopenh264-patsubst(OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0')-linux64.regexp(OPENH264_VER,`\([0-9]*\)$',`\1').so.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${OPENH264_SRC_REPO} | tar xz openh264-patsubst(OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0')/codec/api && \
     cd openh264-patsubst(OPENH264_VER,`v\([0-9]*\.[0-9]*\)\..*$',`\1.0') && \

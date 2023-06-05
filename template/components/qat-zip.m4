@@ -47,6 +47,7 @@ define(`QAT_ZIP_INSTALL_DEPS',`zlib')
 define(`BUILD_QAT_ZIP',`
 # load qat-zip
 ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/QAT_ZIP_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${QAT_ZIP_REPO} | tar xz && \
     cd QATzip* && \

@@ -42,6 +42,7 @@ define(`QAT_CRYPTOMB_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake3) make python3
 
 define(`BUILD_QAT_CRYPTOMB',`
 ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/QAT_CRYPTOMB_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
     mkdir -p ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/build && \

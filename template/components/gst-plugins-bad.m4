@@ -62,6 +62,7 @@ define(`GSTBAD_INSTALL_DEPS',`glib2 gobject-introspection ifelse(GST_CURLUSESSL,
 define(`BUILD_GSTBAD',`
 # build gst-plugin-bad
 ARG GSTBAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-GSTCORE_VER.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${GSTBAD_REPO} | tar xJ && \
     cd gst-plugins-bad-GSTCORE_VER && \

@@ -47,6 +47,7 @@ define(`MSDK_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc gcc-c++ make pkg-confi
 define(`BUILD_MSDK',`
 # build media sdk
 ARG MSDK_REPO=MSDK_SRC_REPO
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${MSDK_REPO} | tar xz
 RUN cd BUILD_HOME/MediaSDK-MSDK_VER && \

@@ -45,6 +45,7 @@ define(`ONEVPL_GPU_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc gcc-c++ make pkg
 define(`BUILD_ONEVPL_GPU',`
 # build onevpl runtime for GPU
 ARG ONEVPL_GPU_REPO=ONEVPL_GPU_SRC_REPO
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${ONEVPL_GPU_REPO} | tar xz
 RUN cd BUILD_HOME/oneVPL-intel-gpu-ONEVPL_GPU_VER && \

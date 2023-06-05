@@ -44,6 +44,7 @@ define(`BUILD_LIBOGG',`
 # build libogg
 ARG OGG_VER=LIBOGG_VER
 ARG LIBOGG_REPO=https://github.com/xiph/ogg/releases/download/v${OGG_VER}/libogg-LIBOGG_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd BUILD_HOME && \
     wget -O - ${LIBOGG_REPO} | tar xz && \

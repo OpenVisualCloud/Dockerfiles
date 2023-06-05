@@ -47,6 +47,7 @@ define(`LIBX265_INSTALL_DEPS',`numactl-libs libpciaccess')
 define(`BUILD_LIBX265',`
 # build libx265
 ARG LIBX265_REPO=https://github.com/videolan/x265/archive/LIBX265_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBX265_REPO} | tar xz && \
     cd x265-LIBX265_VER/build/linux && \

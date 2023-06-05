@@ -142,6 +142,7 @@ RUN cd BUILD_HOME && \
     
 # Get quic
 ARG OWT_QUIC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/OWT_QUIC_VER/dist.tgz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p BUILD_HOME/owt-server/third_party/quic-lib && \
     cd BUILD_HOME/owt-server/third_party/quic-lib && \
     wget -O - ${OWT_QUIC_REPO} | tar xz

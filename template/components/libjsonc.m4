@@ -42,6 +42,7 @@ DECLARE(`LIBJSONC_VER',0.16-20220414)
 
 define(`BUILD_LIBJSONC',`
 ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-LIBJSONC_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBJSONC_REPO} | tar xz && \
     cd json-c-json-c-LIBJSONC_VER && mkdir build && cd build && \

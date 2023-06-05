@@ -47,6 +47,7 @@ define(`QAT_ENGINE_BUILD_DEPS',`wget make gcc gawk autoconf automake libtool pkg
 define(`BUILD_QAT_ENGINE',`
 # load qat-engine
 ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/QAT_ENGINE_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \

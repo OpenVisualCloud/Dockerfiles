@@ -42,6 +42,7 @@ ifelse(OS_NAME,centos,dnl
 
 define(`BUILD_GSTPYTHON',
 ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-GSTCORE_VER.tar.xz
+`SHELL ["/bin/bash", "-o", "pipefail", "-c"]'
 RUN cd BUILD_HOME && \
     wget -O - ${GSTPYTHON_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-python-GSTCORE_VER && \

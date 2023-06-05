@@ -44,6 +44,7 @@ define(`BOOST_BUILD_DEPS',`python-dev')
 define(`BUILD_BOOST',`
 # build boost
 ARG BOOST_REPO=https://boostorg.jfrog.io/artifactory/main/release/BOOST_VER/source/BOOST_VER_UNDSCR.tar.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${BOOST_REPO} | tar jx
 RUN cd BUILD_HOME/BOOST_VER_UNDSCR && \
