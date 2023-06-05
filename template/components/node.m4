@@ -44,6 +44,7 @@ define(`NODE_BUILD_DEPS',`wget xz-utils')
 define(`BUILD_NODE',`
 # build node
 ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${NODE_REPO} | tar xJ && \
     cp node-NODE_VER-linux-x64/* BUILD_PREFIX -rf && \
@@ -63,6 +64,7 @@ define(`NODE_INSTALL_DEPS',`wget xz-utils')
 define(`INSTALL_NODE',`
 # install node
 ARG NODE_REPO=https://nodejs.org/dist/NODE_VER/node-NODE_VER-linux-x64.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_PREFIX && \
     wget -O - ${NODE_REPO} | tar xJ && \
     cp -r node-NODE_VER-linux-x64/* . && \

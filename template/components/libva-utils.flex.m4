@@ -48,6 +48,7 @@ DECLARE(`LIBVA_UTILS_SRC_REPO',https://github.com/intel/libva-utils/archive/LIBV
 define(`BUILD_LIBVA_UTILS',`
 # build libva-utils
 ARG LIBVA_UTILS_REPO=LIBVA_UTILS_SRC_REPO
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${LIBVA_UTILS_REPO} | tar xz
 RUN cd BUILD_HOME/libva-utils-LIBVA_UTILS_VER && \

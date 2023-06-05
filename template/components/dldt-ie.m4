@@ -103,17 +103,18 @@ ENV ngraph_DIR=BUILD_PREFIX/openvino/runtime/cmake/
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_PREFIX/openvino/runtime/lib/:BUILD_PREFIX/openvino/runtime/3rdparty/tbb/lib/
 ')
 
-define(`FFMPEG_PATCH_ANALYTICS',
+define(`FFMPEG_PATCH_ANALYTICS',`
 ARG FFMPEG_MA_RELEASE_VER=0.5
 ARG FFMPEG_MA_RELEASE_URL=https://github.com/VCDP/FFmpeg-patch/archive/v${FFMPEG_MA_RELEASE_VER}.tar.gz
 ARG FFMPEG_MA_PATH=BUILD_HOME/FFmpeg-patch-${FFMPEG_MA_RELEASE_VER}
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && wget -O - ${FFMPEG_MA_RELEASE_URL} | tar xz
 RUN cp ${FFMPEG_MA_PATH}/docker/patch/opencv.pc BUILD_LIBDIR/pkgconfig
 ARG CVDEF_H=/usr/local/include/opencv4/opencv2/core/cvdef.h
 RUN if [ -f "${CVDEF_H}" ]; then cp ${FFMPEG_MA_PATH}/docker/patch/cvdef.h ${CVDEF_H}; fi
 RUN cd $1 && \
     find ${FFMPEG_MA_PATH}/patches -type f -name '*.patch' -print0 | sort -z | xargs -t -0 -n 1 patch -p1 -i;
-)
+')
 
 define(`CLEANUP_DLDT',`dnl
 ifelse(CLEANUP_CC,yes,`dnl

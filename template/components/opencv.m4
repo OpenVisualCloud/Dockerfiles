@@ -44,6 +44,7 @@ define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget p
 define(`BUILD_OPENCV',`
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/OPENCV_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir

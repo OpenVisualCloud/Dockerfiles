@@ -43,6 +43,7 @@ define(`GSTORC_BUILD_DEPS',`wget tar gcc-c++ ifdef(`BUILD_MESON',,meson)')
 define(`BUILD_GSTORC',`
 # build gst-plugin-orc
 ARG GSTORC_REPO=https://github.com/GStreamer/orc/archive/GST_ORC_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${GSTORC_REPO} | tar xz
 RUN cd BUILD_HOME/orc-GST_ORC_VER && \

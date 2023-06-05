@@ -45,6 +45,7 @@ define(`GSTCORE_INSTALL_DEPS',`glib2 gobject-introspection')
 define(`BUILD_GSTCORE',`
 # build gst-core
 ARG GSTCORE_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-GSTCORE_VER.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${GSTCORE_REPO} | tar xJ
 RUN cd BUILD_HOME/gstreamer-GSTCORE_VER && \

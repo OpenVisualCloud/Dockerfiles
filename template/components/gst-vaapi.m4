@@ -50,6 +50,7 @@ ARG GST_PLUGIN_VAAPI_REPO_VIDEO_ANALYTICS=https://github.com/dlstreamer/dlstream
 
 # build gst-plugin-vaapi
 ARG GSTVAAPI_REPO=https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-GSTCORE_VER.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${GSTVAAPI_REPO} | tar xJ
 

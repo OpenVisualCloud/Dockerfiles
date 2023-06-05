@@ -44,11 +44,13 @@ define(`NGINX_FLV_BUILD_DEPS',`wget patch')
 define(`BUILD_NGINX_FLV',`
 ARG NGINX_FLV_PATCHES_REPO=https://github.com/VCDP/CDN/archive/`v'NGINX_FLV_PATCHES_VER.tar.gz
 ARG NGINX_FLV_PATCHES_PATH=BUILD_HOME/CDN-NGINX_FLV_PATCHES_VER
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${NGINX_FLV_PATCHES_REPO} | tar xz
 
 # build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/`v'NGINX_FLV_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${NGINX_FLV_REPO} | tar xz && \
     cd nginx-http-flv-module-NGINX_FLV_VER && \

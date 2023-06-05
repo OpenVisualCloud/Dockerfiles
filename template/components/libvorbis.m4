@@ -46,6 +46,7 @@ define(`BUILD_LIBVORBIS',`
 # build libvorbis
 ARG VORBIS_VER=LIBVORBIS_VER
 ARG LIBVORBIS_REPO=https://github.com/xiph/vorbis/releases/download/v${VORBIS_VER}/libvorbis-LIBVORBIS_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBVORBIS_REPO} | tar xz && \
     cd libvorbis-LIBVORBIS_VER && \

@@ -46,6 +46,7 @@ define(`BUILD_LIBVMAF',`
 # build VMAF
 ARG VMAF_VER=LIBVMAF_VER
 ARG LIBVMAF_REPO=https://github.com/Netflix/vmaf/archive/refs/tags/v${VMAF_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${LIBVMAF_REPO} | tar xz && ls
 RUN cd BUILD_HOME/vmaf-LIBVMAF_VER/libvmaf && \

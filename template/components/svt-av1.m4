@@ -46,6 +46,7 @@ define(`SVT_AV1_BUILD_DEPS',`wget tar gcc-c++ make git ifdef(`BUILD_CMAKE',,cmak
 define(`BUILD_SVT_AV1',`
 # build svt av1
 ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/SVT_AV1_VER/SVT-AV1-SVT_AV1_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
     mv SVT-AV1-SVT_AV1_VER SVT-AV1 && \

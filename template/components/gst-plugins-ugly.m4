@@ -57,6 +57,7 @@ define(`GSTUGLY_INSTALL_DEPS',`glib2')
 define(`BUILD_GSTUGLY',`
 # build gst-plugin-ugly
 ARG GSTUGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-GSTCORE_VER.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${GSTUGLY_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-plugins-ugly-GSTCORE_VER && \

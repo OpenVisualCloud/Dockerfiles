@@ -44,6 +44,7 @@ define(`GSTLIBAV_BUILD_DEPS',`wget tar gcc-c++ ifdef(`BUILD_MESON',,meson)')
 define(`BUILD_GSTLIBAV',`
 # build gst-plugin-libav
 ARG GSTLIBAV_REPO=https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-GSTCORE_VER.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${GSTLIBAV_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-libav-GSTCORE_VER && \

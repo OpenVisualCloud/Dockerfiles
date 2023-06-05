@@ -43,6 +43,7 @@ define(`OPENSSL_BUILD_DEPS',`wget tar gcc-c++ make libtool autoconf')
 define(`BUILD_OPENSSL',`
 # build openssl
 ARG OPENSSL_REPO=https://github.com/openssl/openssl/releases/download/openssl-`'OPENSSL_VER/openssl-`'OPENSSL_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
     cd openssl-`'OPENSSL_VER && \

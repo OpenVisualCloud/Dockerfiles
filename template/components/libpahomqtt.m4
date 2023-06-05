@@ -42,6 +42,7 @@ define(`BUILD_LIBPAHO',`
 # build libpahomqtt
 ARG PAHO_VER=LIBPAHO_VER
 ARG LIBPAHO_REPO=https://github.com/eclipse/paho.mqtt.c/archive/v${PAHO_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${LIBPAHO_REPO} | tar -xz
 RUN cd BUILD_HOME/paho.mqtt.c-LIBPAHO_VER && \

@@ -45,6 +45,7 @@ define(`NGINX_INSTALL_DEPS',`libxml2 libxslt pcre zlib ifdef(`BUILD_OPENSSL',,op
 define(`BUILD_NGINX',`
 # build nginx
 ARG NGINX_REPO=https://nginx.org/download/nginx-NGINX_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${NGINX_REPO} | tar xz && \
     cd nginx-NGINX_VER && \

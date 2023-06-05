@@ -58,6 +58,7 @@ define(`GSTBASE_INSTALL_DEPS',`glib2 mesa-libEGL gobject-introspection ifelse(GS
 define(`BUILD_GSTBASE',`
 # build gst-plugin-base
 ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-GSTCORE_VER.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${GSTBASE_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-plugins-base-GSTCORE_VER && \

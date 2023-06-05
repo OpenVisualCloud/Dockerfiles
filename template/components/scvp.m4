@@ -36,6 +36,7 @@ define(`BUILD_SCVP',`
 # build 360scvp
 ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v`'SCVP_VER.tar.gz
 ENV PYTHONIOENCODING=UTF-8
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${SCVP_REPO} | tar xz  && \
     cd Immersive-Video-Sample-SCVP_VER/src/360SCVP && \
