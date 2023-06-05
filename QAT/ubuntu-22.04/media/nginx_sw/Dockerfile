@@ -50,12 +50,13 @@ RUN apt-get update && \
 # TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
 
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-     make -j$(nproc) && \
+     make -j"$(nproc)" && \
      make install
 
 
@@ -72,6 +73,7 @@ RUN apt-get update && \
 
 # load qat-zip
 ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.1.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${QAT_ZIP_REPO} | tar xz && \
     cd QATzip* && \
@@ -88,12 +90,13 @@ RUN apt-get update && \
 
 # build openssl
 ARG OPENSSL_REPO=https://github.com/openssl/openssl/releases/download/openssl-3.0.7/openssl-3.0.7.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
     cd openssl-3.0.7 && \
     ./config shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib64 && \
     make depend && \
-    make -j$(nproc) -s V=0 && \
+    make -j"$(nproc)" -s V=0 && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -103,13 +106,14 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 ARG QAT_CRYPTOMB_REPO=https://github.com/intel/ipp-crypto/archive/ippcp_2021.7.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${QAT_CRYPTOMB_REPO} | tar xz && \
     mkdir -p ipp-crypto-ippcp_2021.7/sources/ippcp/crypto_mb/build && \
     cd ipp-crypto-ippcp_2021.7/sources/ippcp/crypto_mb/build && \
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ssl/lib64 && \
      CFLAGS="-Wl,-rpath=/usr/local/ssl/lib64" cmake -DOPENSSL_INCLUDE_DIR=/usr/local/ssl/include -DOPENSSL_LIBRARIES=/usr/local/ssl/lib64 -DOPENSSL_ROOT_DIR=/usr/local/ssl -DOPENSSL_CRYPTO_LIBRARY=/usr/local/ssl/lib64/libcrypto.so .. && \
-    make -j$(nproc)  && \
+    make -j"$(nproc)"  && \
     make install && \
     make install DESTDIR=/opt/dist
 
@@ -133,13 +137,14 @@ RUN apt-get update && \
 
 # load qat-engine
 ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.19.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH=$}:/usr/local/ssl/lib64 && \
     ./autogen.sh && \
     ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$(ls -1 -d /opt/build/openssl-*)" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE -I/opt/build/ipp-crypto-ippcp_2021.7/sources/ippcp/crypto_mb/include" --enable-multibuff_offload --enable-multibuff_ecx --enable-qat_sw && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install && \
     tar cf - /usr/local/ssl | (cd /opt/dist && tar xf -)
 
@@ -150,11 +155,13 @@ RUN apt-get update && \
 
 ARG NGINX_FLV_PATCHES_REPO=https://github.com/VCDP/CDN/archive/v0.4.tar.gz
 ARG NGINX_FLV_PATCHES_PATH=/opt/build/CDN-0.4
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_PATCHES_REPO} | tar xz
 
 # build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.10.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_REPO} | tar xz && \
     cd nginx-http-flv-module-1.2.10 && \
@@ -166,6 +173,7 @@ RUN cd /opt/build && \
 
 # build nginx upload
 ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
@@ -175,6 +183,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.5.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${QAT_NGINX_REPO} | tar xz && cd asynch_mode_nginx* && \
     ./configure --with-ld-opt="-Wl,-rpath=/usr/local/ssl/lib64,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib,-rpath=/opt/intel/QAT/build -L/usr/local/ssl/lib64 -L/opt/intel/QATzip/lib -lqatzip -lz" \
         --with-cc-opt="-DNGX_SECURE_MEM -I/usr/local/ssl/include -I/opt/intel/QATzip/include -I/opt/intel/QAT/quickassist/include/dc -I/opt/intel/QAT/quickassist/include -Wno-error=deprecated-declarations" \
@@ -241,6 +250,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # Generate a self-certificate for testing purpose
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p /opt/dist/etc/nginx && \
     printf "US\nOR\nPortland\nOregon\nOpen Visual Cloud\nIntel Corporation\n%s\nnobody@intel.com\n" "$(hostname)" | openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout /opt/dist/etc/nginx/cert.key -out /opt/dist/etc/nginx/cert.crt && \
     chmod 640 /opt/dist/etc/nginx/cert.key && \
