@@ -214,7 +214,7 @@ define(`APT_INSTALL',`RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ECHO($@) && \
   rm -rf /var/lib/apt/lists/*')
-define(`YUM_INSTALL',`RUN yum install -y ECHO($@)')
+define(`YUM_INSTALL',`RUN yum install -y ECHO($@) && yum clean all')
 
 # Expands into distro packages install command(s) for the packages specified
 # in arguments.
