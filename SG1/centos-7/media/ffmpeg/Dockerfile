@@ -42,85 +42,91 @@ RUN mkdir -p /opt/build && mkdir -p /opt/dist
 
 ENV PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 
-RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel
+RUN yum install -y wget gcc-c++ make libcurl-devel zlib-devel && yum clean all
 
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${CMAKE_REPO}/v3.23/cmake-3.23.3.tar.gz | tar xz && \
     cd cmake-3.23.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install
 
-RUN yum install -y wget make autoconf diffutils automake gcc-c++
+RUN yum install -y wget make autoconf diffutils automake gcc-c++ && yum clean all
 
 # build libogg
 ARG OGG_VER=1.3.5
 ARG LIBOGG_REPO=https://github.com/xiph/ogg/releases/download/v${OGG_VER}/libogg-1.3.5.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd /opt/build && \
     wget -O - ${LIBOGG_REPO} | tar xz && \
     cd libogg-1.3.5 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget make autoconf diffutils automake
+RUN yum install -y wget make autoconf diffutils automake && yum clean all
 
 # build libvorbis
 ARG VORBIS_VER=1.3.7
 ARG LIBVORBIS_REPO=https://github.com/xiph/vorbis/releases/download/v${VORBIS_VER}/libvorbis-1.3.7.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBVORBIS_REPO} | tar xz && \
     cd libvorbis-1.3.7 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget gcc-c++ autoconf libtool make automake
+RUN yum install -y wget gcc-c++ autoconf libtool make automake && yum clean all
 
 # build libfdkaac
 ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v2.0.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBFDKAAC_REPO} | tar xz && \
     cd fdk-aac-2.0.2 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget autoconf libtool make
+RUN yum install -y wget autoconf libtool make && yum clean all
 
 # build libopus
 ARG LIBOPUS_REPO=https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBOPUS_REPO} | tar xz && \
     cd opus-1.3.1 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y ca-certificates wget tar gcc-c++ make bzip2
+RUN yum install -y ca-certificates wget tar gcc-c++ make bzip2 && yum clean all
 
 # build nasm
 #ARG NASM_REPO=https://www.nasm.us/pub/nasm/releasebuilds/NASM_VER/nasm-NASM_VER.tar.bz2
 # TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
 
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 && \
-     make -j$(nproc) && \
+     make -j"$(nproc)" && \
      make install
 
-RUN yum install -y git make autoconf diffutils
+RUN yum install -y git make autoconf diffutils && yum clean all
 
 # build libvpx
 ARG LIBVPX_REPO=https://chromium.googlesource.com/webm/libvpx.git
@@ -128,11 +134,11 @@ RUN cd /opt/build && \
     git clone ${LIBVPX_REPO} -b v1.12.0 --depth 1 && \
     cd libvpx && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y git make autoconf diffutils
+RUN yum install -y git make autoconf diffutils && yum clean all
 
 # build libx264
 ARG LIBX264_REPO=https://github.com/mirror/x264
@@ -141,16 +147,17 @@ RUN cd /opt/build && \
     cd x264 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 \
         --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget tar gcc-c++ make
+RUN yum install -y wget tar gcc-c++ make && yum clean all
 
 # build yasm
 # ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
 # At the time of 21.6 Release, yasm official site above had certificate problem, hence pulling from Dockerfiles-Resources.
 ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
@@ -158,25 +165,27 @@ RUN cd /opt/build/yasm-1.3.0 && \
     # TODO remove the line below whether no other component inside this project requires it.
     # `sed -i "s/) ytasm.*/)/" Makefile.in' && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install
 
-RUN yum install -y make numactl-devel libpciaccess-devel
+RUN yum install -y make numactl-devel libpciaccess-devel && yum clean all
 
 # build libx265
 ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.4.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBX265_REPO} | tar xz && \
     cd x265-3.4/build/linux && \
     cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib64 ../../source && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y meson wget tar gcc-c++
+RUN yum install -y meson wget tar gcc-c++ && yum clean all
 
 # build dav1d
 ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.2/dav1d-0.9.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${DAV1D_REPO} | tar xz
 RUN cd /opt/build/dav1d-0.9.2 && \
@@ -185,7 +194,7 @@ RUN cd /opt/build/dav1d-0.9.2 && \
   ninja install && \
   DESTDIR=/opt/dist ninja install
 
-RUN yum install -y wget tar gcc-c++ make git 
+RUN yum install -y wget tar gcc-c++ make git  && yum clean all
 
 # build svt-hevc
 ARG SVT_HEVC_REPO=https://github.com/OpenVisualCloud/SVT-HEVC
@@ -193,25 +202,26 @@ RUN cd /opt/build && \
     git clone -b v1.5.1 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget tar gcc-c++ make git 
+RUN yum install -y wget tar gcc-c++ make git  && yum clean all
 
 # build svt av1
 ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.3.0/SVT-AV1-v1.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
     mv SVT-AV1-v1.3.0 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     sed -i "s/SvtAv1dec/SvtAv1Dec/" SvtAv1Dec.pc && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y wget tar gcc-c++ make git devtoolset-9
+RUN yum install -y wget tar gcc-c++ make git devtoolset-9 && yum clean all
 
 # build svt vp9
 ARG SVT_VP9_REPO=https://github.com/OpenVisualCloud/SVT-VP9
@@ -219,50 +229,54 @@ RUN cd /opt/build && \
     git clone ${SVT_VP9_REPO} -b v0.3.0 --depth 1 && \
     cd SVT-VP9/Build/linux && \
     (. /opt/rh/devtoolset-9/enable && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) ) && \
+    make -j "$(nproc)" ) && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y gcc-c++ make wget
+RUN yum install -y gcc-c++ make wget && yum clean all
 
 # build gmmlib
 ARG GMMLIB_REPO=https://github.com/intel/gmmlib/archive/refs/tags/intel-gmmlib-22.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${GMMLIB_REPO} | tar xz
 RUN cd /opt/build/gmmlib-intel-gmmlib-22.3.0 && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 .. && \
-  make -j$(nproc) && \
+  make -j"$(nproc)" && \
   make install DESTDIR=/opt/dist && \
   make install
 
-RUN yum install -y automake gcc libdrm-devel libtool make pkg-config wget which libX11-devel libXfixes-devel libXext-devel wayland-devel
+RUN yum install -y automake gcc libdrm-devel libtool make pkg-config wget which libX11-devel libXfixes-devel libXext-devel wayland-devel && yum clean all
 
 # build libva2
 ARG LIBVA2_REPO=https://github.com/intel/libva/archive/refs/tags/2.16.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${LIBVA2_REPO} | tar xz
 RUN cd /opt/build/libva-2.16.0 && \
   ./autogen.sh --prefix=/usr/local --libdir=/usr/local/lib64 && \
-  make -j$(nproc) && \
+  make -j"$(nproc)" && \
   make install DESTDIR=/opt/dist && \
   make install
 
-RUN yum install -y gcc-c++ libpciaccess-devel make pkg-config wget devtoolset-9
+RUN yum install -y gcc-c++ libpciaccess-devel make pkg-config wget devtoolset-9 && yum clean all
 
 # build media driver
 ARG MEDIA_DRIVER_REPO=https://github.com/intel/media-driver/archive/refs/tags/intel-media-22.5.4.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
 RUN cd /opt/build/media-driver-intel-media-22.5.4 && mkdir build && cd build && \
   (. /opt/rh/devtoolset-9/enable && cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib64 -DENABLE_PRODUCTION_KMD=ON .. && \
-  make -j$(nproc) ) && \
+  make -j"$(nproc)" ) && \
   make install DESTDIR=/opt/dist && \
   make install
 
-RUN yum install -y gcc gcc-c++ make pkg-config wget devtoolset-9
+RUN yum install -y gcc gcc-c++ make pkg-config wget devtoolset-9 && yum clean all
 
 # build media sdk
 ARG MSDK_REPO=https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-22.5.4.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${MSDK_REPO} | tar xz
 RUN cd /opt/build/MediaSDK-intel-mediasdk-22.5.4 && \
@@ -273,14 +287,15 @@ RUN cd /opt/build/MediaSDK-intel-mediasdk-22.5.4 && \
     -DBUILD_SAMPLES=no \
     -DBUILD_TUTORIALS=OFF \
     .. && \
-    make -j$(nproc)) && \
+    make -j"$(nproc)") && \
     make install DESTDIR=/opt/dist && \
     make install
 
-RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9
+RUN yum install -y gcc gcc-c++ make wget python36-numpy ccache eigen3-devel devtoolset-9 && yum clean all
 
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
@@ -298,11 +313,11 @@ RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
     -DWITH_OPENJPEG=OFF \
     -DWITH_JASPER=OFF \
     .. && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   make install DESTDIR=/opt/dist && \
   make install  )
 
-RUN yum install -y wget patch git libv4l-devel libass-devel freetype-devel
+RUN yum install -y wget patch git libv4l-devel libass-devel freetype-devel && yum clean all
 
 # build ffmpeg
 #ARG FFMPEG_REPO=https://github.com/FFmpeg/FFmpeg/archive/FFMPEG_VER.tar.gz
@@ -317,6 +332,7 @@ RUN cd /opt/build/FFmpeg && \
     patch -p1 < /opt/build/SVT-HEVC/ffmpeg_plugin/n4.4-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch || true
 #ifdef(`BUILD_LIBVA2',`FFMPEG_PATCH_VAAPI(BUILD_HOME/FFmpeg-FFMPEG_VER)')dnl
 ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
     cd /opt/build/FFmpeg && \
@@ -329,7 +345,7 @@ RUN cd /opt/build && \
 RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib64 --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             --enable-libdav1d         && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2         --enable-libmfx     --enable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             --enable-libdav1d         && make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -352,7 +368,7 @@ RUN yum install -y -q epel-release && rm -rf /var/yum/cache/*
 
 
 # Install
-RUN yum install -y numactl-libs libpciaccess libdrm libX11 libXfixes libXext libwayland-client libv4l libass
+RUN yum install -y numactl-libs libpciaccess libdrm libX11 libXfixes libXext libwayland-client libv4l libass && yum clean all
 
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
@@ -364,7 +380,7 @@ ENV DISPLAY=:0.0
 
 RUN yum update -y && \
     yum install -y wget python3-pip gcc-c++ git && \
-    pip3 install meson ninja && \
+    pip3 install --no-cache-dir meson ninja && \
     wget https://github.com/GNOME/glib/archive/refs/tags/2.68.0.tar.gz && \
     tar -zxf 2.68.0.tar.gz && \
     cd glib-2.68.0 && \

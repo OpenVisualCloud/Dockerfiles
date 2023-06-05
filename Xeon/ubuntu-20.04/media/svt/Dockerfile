@@ -49,12 +49,13 @@ RUN apt-get update && \
 # TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
 
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-     make -j$(nproc) && \
+     make -j"$(nproc)" && \
      make install
 
 RUN apt-get update && \
@@ -68,7 +69,7 @@ RUN cd /opt/build && \
     git clone ${LIBAOM_REPO} -b v3.4.0 --depth 1 && \
     cd aom/build && \
     cmake -DBUILD_SHARED_LIBS=ON -DENABLE_NASM=ON -DENABLE_TESTS=OFF -DENABLE_DOCS=OFF -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=lib .. && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 

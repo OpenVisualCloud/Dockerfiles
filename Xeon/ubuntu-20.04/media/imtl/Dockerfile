@@ -77,6 +77,7 @@ ARG PLUGINS_BUILD_DIR=${DPDK_ST_KAHAWAI}/build/plugins
 ARG LD_PRELOAD_BUILD_DIR=${DPDK_ST_KAHAWAI}/build/ld_preload
 ENV PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     rm -rf dpdk && \
     git clone ${DPDK_REPO} && \

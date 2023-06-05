@@ -46,11 +46,12 @@ RUN apt-get update && \
 
 # build cmake
 ARG CMAKE_REPO=https://cmake.org/files
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${CMAKE_REPO}/v3.23/cmake-3.23.3.tar.gz | tar xz && \
     cd cmake-3.23.3 && \
     ./bootstrap --prefix=/usr/local --system-curl && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install
 
 RUN apt-get update && \
@@ -62,6 +63,7 @@ RUN apt-get update && \
 # ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
 # At the time of 21.6 Release, yasm official site above had certificate problem, hence pulling from Dockerfiles-Resources.
 ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
@@ -69,7 +71,7 @@ RUN cd /opt/build/yasm-1.3.0 && \
     # TODO remove the line below whether no other component inside this project requires it.
     # `sed -i "s/) ytasm.*/)/" Makefile.in' && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install
 
 RUN apt-get update && \
@@ -83,7 +85,7 @@ RUN cd /opt/build && \
     git clone -b v1.5.1 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -94,12 +96,13 @@ RUN apt-get update && \
 
 # build libfdkaac
 ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v2.0.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBFDKAAC_REPO} | tar xz && \
     cd fdk-aac-2.0.2 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -113,12 +116,13 @@ RUN apt-get update && \
 # TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
 
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-     make -j$(nproc) && \
+     make -j"$(nproc)" && \
      make install
 
 RUN apt-get update && \
@@ -132,7 +136,7 @@ RUN cd /opt/build && \
     git clone ${LIBVPX_REPO} -b v1.12.0 --depth 1 && \
     cd libvpx && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -148,7 +152,7 @@ RUN cd /opt/build && \
     cd x264 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib \
         --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -159,6 +163,7 @@ RUN apt-get update && \
 
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
@@ -176,7 +181,7 @@ RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
     -DWITH_OPENJPEG=OFF \
     -DWITH_JASPER=OFF \
     .. && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   make install DESTDIR=/opt/dist && \
   make install 
 
@@ -215,7 +220,7 @@ RUN cd /opt/build/openvino && \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=OFF \
     .. && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   make install && \
   make install DESTDIR=/opt/dist 
 
@@ -253,7 +258,7 @@ RUN cd /opt/build/FFmpeg && \
 RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264             --enable-libsvthevc                     && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass         --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi             --enable-libfdk-aac         --enable-libvpx         --enable-gpl --enable-libx264             --enable-libsvthevc                     && make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -266,9 +271,9 @@ RUN apt-get update && \
 
 # build meson
 ARG MESON_REPO=https://github.com/mesonbuild/meson
-RUN git clone ${MESON_REPO}; \
-    cd meson; \
-    git checkout 0.63.0; \
+RUN git clone ${MESON_REPO} && \
+    cd meson && \
+    git checkout 0.63.0 && \
     python3 setup.py install;
 
 RUN apt-get update && \
@@ -278,6 +283,7 @@ RUN apt-get update && \
 
 # build gst-core
 ARG GSTCORE_REPO=https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.20.3.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${GSTCORE_REPO} | tar xJ
 RUN cd /opt/build/gstreamer-1.20.3 && \
@@ -298,6 +304,7 @@ RUN apt-get update && \
 
 # build gst-plugin-base
 ARG GSTBASE_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.20.3.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${GSTBASE_REPO} | tar xJ
 RUN cd /opt/build/gst-plugins-base-1.20.3 && \
@@ -326,6 +333,7 @@ RUN apt-get update && \
 
 # build gst-plugin-good
 ARG GSTGOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.20.3.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${GSTGOOD_REPO} | tar xJ
 RUN cd /opt/build/gst-plugins-good-1.20.3 && \
@@ -351,6 +359,7 @@ RUN apt-get update && \
 
 # build gst-plugin-bad
 ARG GSTBAD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.20.3.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${GSTBAD_REPO} | tar xJ && \
     cd gst-plugins-bad-1.20.3 && \
@@ -379,6 +388,7 @@ RUN apt-get update && \
 
 # build gst-plugin-ugly
 ARG GSTUGLY_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.20.3.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${GSTUGLY_REPO} | tar xJ
 RUN cd /opt/build/gst-plugins-ugly-1.20.3 && \
@@ -417,7 +427,7 @@ RUN git clone -b master $GVA_REPO /opt/build/gst-video-analytics && \
     -DENABLE_AUDIO_INFERENCE_ELEMENTS=ON \
     -DTREAT_WARNING_AS_ERROR=OFF \
     .. \
-    && make -j $(nproc) \
+    && make -j "$(nproc)" \
     && make install \
     && make install DESTDIR=/opt/dist 
 
@@ -439,6 +449,7 @@ RUN apt-get update && \
     ca-certificates tar g++ wget gtk-doc-tools uuid-dev python-gi-dev python3-dev libtool-bin libpython3-dev libpython3-stdlib libpython3-all-dev  && \
   rm -rf /var/lib/apt/lists/*
 ARG GSTPYTHON_REPO=https://gstreamer.freedesktop.org/src/gst-python/gst-python-1.20.3.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${GSTPYTHON_REPO} | tar xJ
 RUN cd /opt/build/gst-python-1.20.3 && \
@@ -460,6 +471,7 @@ RUN apt-get update && \
 
 # build boost
 ARG BOOST_REPO=https://boostorg.jfrog.io/artifactory/main/release/1.65.0/source/boost_1_65_0.tar.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${BOOST_REPO} | tar jx
 RUN cd /opt/build/boost_1_65_0 && \
@@ -475,6 +487,7 @@ RUN apt-get update && \
 # Build OpenH264
 ARG OPENH264_SRC_REPO=https://github.com/cisco/openh264/archive/v1.7.0.tar.gz
 ARG OPENH264_BIN_REPO=https://github.com/cisco/openh264/releases/download/v1.7.0/libopenh264-1.7.0-linux64.4.so.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${OPENH264_SRC_REPO} | tar xz openh264-1.7.0/codec/api && \
     cd openh264-1.7.0 && \
@@ -510,11 +523,13 @@ RUN apt-get update && \
 
 # build libnice
 ARG LIBNICE_REPO=http://nice.freedesktop.org/releases/libnice-0.1.4.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBNICE_REPO} | tar xz
 
 
 ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v5.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd /opt/build/libnice-0.1.4 && \
     wget -O - ${LIBNICE_PATCH_REPO} | tar xz && \
@@ -528,7 +543,7 @@ RUN cd /opt/build/libnice-0.1.4 && \
 
 RUN cd /opt/build/libnice-0.1.4 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-    make -j$(nproc) -s V=0 && \
+    make -j"$(nproc)" -s V=0 && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -539,12 +554,13 @@ RUN apt-get update && \
 
 # build usrsctp
 ARG USRSCTP_REPO=https://github.com/sctplab/usrsctp/archive/0.9.5.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${USRSCTP_REPO} | tar xz && \
     cd usrsctp-* && \
     ./bootstrap && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -564,6 +580,7 @@ RUN apt-get update && \
 
 # build node
 ARG NODE_REPO=https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NODE_REPO} | tar xJ && \
     cp node-v10.24.1-linux-x64/* /usr/local -rf && \
@@ -641,6 +658,7 @@ RUN cd /opt/build && \
     
 # Get quic
 ARG OWT_QUIC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/v0.1/dist.tgz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p /opt/build/owt-server/third_party/quic-lib && \
     cd /opt/build/owt-server/third_party/quic-lib && \
     wget -O - ${OWT_QUIC_REPO} | tar xz
@@ -729,6 +747,7 @@ ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
 
 # install node
 ARG NODE_REPO=https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /usr/local && \
     wget -O - ${NODE_REPO} | tar xJ && \
     cp -r node-v10.24.1-linux-x64/* . && \

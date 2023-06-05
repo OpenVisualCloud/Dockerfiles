@@ -61,9 +61,9 @@ RUN cd /opt/build && \
         --nasm=off \
         --srt=off \
         --rtc=on \
-        --extra-flags=$(pkg-config --cflags openssl) \
-        --jobs=$(nproc) && \
-    make -j$(nproc) && touch research/api-server/static-dir/crossdomain.xml && \
+        --extra-flags="$(pkg-config --cflags openssl)" \
+        --jobs="$(nproc)" && \
+    make -j"$(nproc)" && touch research/api-server/static-dir/crossdomain.xml && \
     make install DESTDIR=/opt/dist
 
 RUN echo /opt/dist

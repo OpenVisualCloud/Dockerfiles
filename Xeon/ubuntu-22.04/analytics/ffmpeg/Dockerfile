@@ -46,12 +46,13 @@ RUN apt-get update && \
 # build libogg
 ARG OGG_VER=1.3.5
 ARG LIBOGG_REPO=https://github.com/xiph/ogg/releases/download/v${OGG_VER}/libogg-1.3.5.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd /opt/build && \
     wget -O - ${LIBOGG_REPO} | tar xz && \
     cd libogg-1.3.5 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -63,11 +64,12 @@ RUN apt-get update && \
 # build libvorbis
 ARG VORBIS_VER=1.3.7
 ARG LIBVORBIS_REPO=https://github.com/xiph/vorbis/releases/download/v${VORBIS_VER}/libvorbis-1.3.7.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBVORBIS_REPO} | tar xz && \
     cd libvorbis-1.3.7 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -78,12 +80,13 @@ RUN apt-get update && \
 
 # build libfdkaac
 ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v2.0.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBFDKAAC_REPO} | tar xz && \
     cd fdk-aac-2.0.2 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -94,11 +97,12 @@ RUN apt-get update && \
 
 # build libopus
 ARG LIBOPUS_REPO=https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBOPUS_REPO} | tar xz && \
     cd opus-1.3.1 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -112,12 +116,13 @@ RUN apt-get update && \
 # TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
 
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-     make -j$(nproc) && \
+     make -j"$(nproc)" && \
      make install
 
 RUN apt-get update && \
@@ -131,7 +136,7 @@ RUN cd /opt/build && \
     git clone ${LIBVPX_REPO} -b v1.12.0 --depth 1 && \
     cd libvpx && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -147,7 +152,7 @@ RUN cd /opt/build && \
     cd x264 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib \
         --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -160,6 +165,7 @@ RUN apt-get update && \
 # ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
 # At the time of 21.6 Release, yasm official site above had certificate problem, hence pulling from Dockerfiles-Resources.
 ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd /opt/build && \
     wget -O - ${YASM_REPO} | tar xz
@@ -167,7 +173,7 @@ RUN cd /opt/build/yasm-1.3.0 && \
     # TODO remove the line below whether no other component inside this project requires it.
     # `sed -i "s/) ytasm.*/)/" Makefile.in' && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install
 
 RUN apt-get update && \
@@ -177,11 +183,12 @@ RUN apt-get update && \
 
 # build libx265
 ARG LIBX265_REPO=https://github.com/videolan/x265/archive/3.4.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBX265_REPO} | tar xz && \
     cd x265-3.4/build/linux && \
     cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_INSTALL_DIR=/usr/local/lib ../../source && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -192,6 +199,7 @@ RUN apt-get update && \
 
 # build dav1d
 ARG DAV1D_REPO=https://code.videolan.org/videolan/dav1d/-/archive/0.9.2/dav1d-0.9.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${DAV1D_REPO} | tar xz
 RUN cd /opt/build/dav1d-0.9.2 && \
@@ -211,7 +219,7 @@ RUN cd /opt/build && \
     git clone -b v1.5.1 --depth 1 ${SVT_HEVC_REPO}
 RUN cd /opt/build/SVT-HEVC/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -222,12 +230,13 @@ RUN apt-get update && \
 
 # build svt av1
 ARG SVT_AV1_REPO=https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.3.0/SVT-AV1-v1.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${SVT_AV1_REPO} | tar zx && \
     mv SVT-AV1-v1.3.0 SVT-AV1 && \
     cd SVT-AV1/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     sed -i "s/SvtAv1dec/SvtAv1Dec/" SvtAv1Dec.pc && \
     make install DESTDIR=/opt/dist && \
     make install
@@ -243,7 +252,7 @@ RUN cd /opt/build && \
     git clone ${SVT_VP9_REPO} -b v0.3.0 --depth 1 && \
     cd SVT-VP9/Build/linux && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib -DCMAKE_ASM_NASM_COMPILER=yasm ../.. && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -254,6 +263,7 @@ RUN apt-get update && \
 
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/4.5.3-openvino-2021.4.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
@@ -271,7 +281,7 @@ RUN cd /opt/build/opencv-4.5.3-openvino-2021.4.2 && mkdir build && cd build && \
     -DWITH_OPENJPEG=OFF \
     -DWITH_JASPER=OFF \
     .. && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   make install DESTDIR=/opt/dist && \
   make install 
 
@@ -310,7 +320,7 @@ RUN cd /opt/build/openvino && \
     -DBUILD_TESTS=OFF \
     -DTREAT_WARNING_AS_ERROR=OFF \
     .. && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   make install && \
   make install DESTDIR=/opt/dist 
 
@@ -326,11 +336,12 @@ ENV ngraph_DIR=${IE_INSTALL_DIR}/cmake
 
 
 ARG LIBJSONC_REPO=https://github.com/json-c/json-c/archive/json-c-0.16-20220414.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBJSONC_REPO} | tar xz && \
     cd json-c-json-c-0.16-20220414 && mkdir build && cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR=/usr/local/lib .. && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -338,11 +349,12 @@ RUN cd /opt/build && \
 
 ARG KAFKA_VER=1.9.2
 ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${KAFKA_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
     cd librdkafka-1.9.2 && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
@@ -371,7 +383,7 @@ RUN cd /opt/build/FFmpeg && \
 RUN cd /opt/build/FFmpeg && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-shared --disable-static --disable-doc --disable-htmlpages \
     --disable-manpages --disable-podpages --disable-txtpages \
-    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             --enable-libdav1d         && make -j$(nproc) && \
+    --extra-cflags=-w     --enable-nonfree     --enable-libass     --enable-libfreetype     --disable-xlib --disable-sdl2     --disable-hwaccels         --disable-vaapi     --enable-libv4l2 --enable-indev=v4l2         --enable-libfdk-aac     --enable-libopus     --enable-libvpx     --enable-libvorbis     --enable-gpl --enable-libx264     --enable-gpl --enable-libx265     --enable-libsvtav1     --enable-libsvthevc             --enable-libdav1d         && make -j"$(nproc)" && \
     make install DESTDIR=/opt/dist && \
     make install
 
