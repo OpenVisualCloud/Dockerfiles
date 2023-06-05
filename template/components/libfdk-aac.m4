@@ -48,7 +48,7 @@ RUN cd BUILD_HOME && \
     cd fdk-aac-LIBFDKAAC_VER && \
     ./autogen.sh && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

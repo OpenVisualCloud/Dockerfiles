@@ -51,7 +51,7 @@ RUN cd BUILD_HOME && \
     cd nasm-NASM_VER && \
     ./autogen.sh && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-     make -j$(nproc) && \
+     make -j"$(nproc)" && \
      make install
 ')
 

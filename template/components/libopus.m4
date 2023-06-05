@@ -47,7 +47,7 @@ RUN cd BUILD_HOME && \
     wget -O - ${LIBOPUS_REPO} | tar xz && \
     cd opus-LIBOPUS_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

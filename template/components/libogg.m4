@@ -49,7 +49,7 @@ RUN cd BUILD_HOME && \
     wget -O - ${LIBOGG_REPO} | tar xz && \
     cd libogg-LIBOGG_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

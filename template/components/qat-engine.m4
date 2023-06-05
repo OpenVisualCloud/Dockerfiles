@@ -53,7 +53,7 @@ RUN cd BUILD_HOME && \
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH=$}:BUILD_PREFIX/ssl/lib64 && \
     ./autogen.sh && \
     ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$(ls -1 -d BUILD_HOME/openssl-*)" --with-openssl_install_dir=BUILD_PREFIX/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE ifdef(`BUILD_QAT_CRYPTOMB',-I`'BUILD_HOME/ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/include)" ifdef(`BUILD_QAT_CRYPTOMB',--enable-multibuff_offload --enable-multibuff_ecx --enable-qat_sw, --enable-qat_hw --with-qat_hw_dir=/opt/intel/QAT) && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install && \
     tar cf - BUILD_PREFIX/ssl | (cd BUILD_DESTDIR && tar xf -)
 ')

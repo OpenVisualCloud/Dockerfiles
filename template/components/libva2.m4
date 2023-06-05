@@ -54,7 +54,7 @@ RUN cd BUILD_HOME && \
   wget -O - ${LIBVA2_REPO} | tar xz
 RUN cd BUILD_HOME/libva-LIBVA2_VER && \
   ./autogen.sh --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-  make -j$(nproc) && \
+  make -j"$(nproc)" && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
 ')

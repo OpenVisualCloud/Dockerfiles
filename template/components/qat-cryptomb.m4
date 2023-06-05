@@ -48,7 +48,7 @@ RUN cd BUILD_HOME && \
     cd ipp-crypto-QAT_CRYPTOMB_VER/sources/ippcp/crypto_mb/build && \
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/ssl/lib64 && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ') CFLAGS="-Wl,-rpath=BUILD_PREFIX/ssl/lib64" ifdef(`BUILD_CMAKE',cmake,ifelse(OS_NAME,centos,cmake3,cmake)) -DOPENSSL_INCLUDE_DIR=BUILD_PREFIX/ssl/include -DOPENSSL_LIBRARIES=BUILD_PREFIX/ssl/lib64 -DOPENSSL_ROOT_DIR=BUILD_PREFIX/ssl -DOPENSSL_CRYPTO_LIBRARY=/usr/local/ssl/lib64/libcrypto.so .. && \
-    make -j$(nproc) ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
+    make -j"$(nproc)" ifelse(OS_NAME:OS_VERSION,centos:7,`) ') && \
     make install && \
     make install DESTDIR=BUILD_DESTDIR
 ')

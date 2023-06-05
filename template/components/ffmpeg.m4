@@ -122,7 +122,7 @@ RUN cd BUILD_HOME/FFmpeg && \
     ifdef(`BUILD_LIBVMAF',--enable-libvmaf --enable-version3 )dnl
     ifdef(`BUILD_DAV1D',--enable-libdav1d )dnl
     ifdef(`BUILD_ONEVPL_DISP',--enable-libvpl )dnl
-    && make -j$(nproc) && \
+    && make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ifdef(`REBUILD_OPENCV_VIDEOIO',`dnl

@@ -61,7 +61,7 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
     -DWITH_OPENJPEG=OFF \
     -DWITH_JASPER=OFF \
     .. && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 ')
@@ -83,7 +83,7 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER/build && \
     -DWITH_JASPER=OFF \
     .. && \
   cd modules/videoio && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   cp -f ../../lib/libopencv_videoio.so.OPENCV_VER_TRUNC defn(`BUILD_DESTDIR',`BUILD_LIBDIR')ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 ')
 

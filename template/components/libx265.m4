@@ -51,7 +51,7 @@ RUN cd BUILD_HOME && \
     wget -O - ${LIBX265_REPO} | tar xz && \
     cd x265-LIBX265_VER/build/linux && \
     cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DLIB_INSTALL_DIR=BUILD_LIBDIR ../../source && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

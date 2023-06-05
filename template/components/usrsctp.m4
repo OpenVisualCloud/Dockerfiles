@@ -48,7 +48,7 @@ RUN cd BUILD_HOME && \
     cd usrsctp-* && \
     ./bootstrap && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

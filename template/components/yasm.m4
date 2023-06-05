@@ -52,7 +52,7 @@ RUN cd BUILD_HOME/yasm-YASM_VER && \
     # TODO remove the line below whether no other component inside this project requires it.
     # `sed -i "s/) ytasm.*/)/" Makefile.in' && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install
 ')
 

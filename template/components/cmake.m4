@@ -47,7 +47,7 @@ RUN cd BUILD_HOME && \
     wget -O - ${CMAKE_REPO}/v`'patsubst(CMAKE_VER,`.[0-9]$')/cmake-CMAKE_VER.tar.gz | tar xz && \
     cd cmake-CMAKE_VER && \
     ./bootstrap --prefix=BUILD_PREFIX --system-curl && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install
 ')
 

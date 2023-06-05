@@ -61,9 +61,9 @@ RUN cd BUILD_HOME && \
         --nasm=ifdef(BUILD_NASM,on,off) \
         --srt=ifdef(BUILD_LIBSRT,on,off) \
         --rtc=on \
-        --extra-flags=$(pkg-config --cflags openssl) \
-        --jobs=$(nproc) && \
-    make -j$(nproc) && touch research/api-server/static-dir/crossdomain.xml && \
+        --extra-flags="$(pkg-config --cflags openssl)" \
+        --jobs="$(nproc)" && \
+    make -j"$(nproc)" && touch research/api-server/static-dir/crossdomain.xml && \
     make install DESTDIR=BUILD_DESTDIR
 
 RUN echo BUILD_DESTDIR
