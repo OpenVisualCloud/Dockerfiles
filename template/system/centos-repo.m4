@@ -47,7 +47,7 @@ RUN dnf install -y http://repo.okay.com.mx/centos/$1/x86_64/release/okay-release
 define(`UPDATE_CENTOS_REPO',
 RUN yum update -y && \
     yum install -y wget python3-pip gcc-c++ git && \
-    pip3 install meson ninja && \
+    pip3 install --no-cache-dir meson ninja && \
     wget https://github.com/GNOME/glib/archive/refs/tags/2.68.0.tar.gz && \
     tar -zxf 2.68.0.tar.gz && \
     cd glib-2.68.0 && \
