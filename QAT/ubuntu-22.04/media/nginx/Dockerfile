@@ -238,7 +238,7 @@ RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
-FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:23.6
+FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:23.06
 LABEL Description="This is the base image for QAT NGINX ubuntu 22.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
