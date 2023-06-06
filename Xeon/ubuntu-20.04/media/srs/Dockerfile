@@ -77,7 +77,7 @@ RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
 HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
-FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:latest
+FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:23.6
 LABEL Description="This is the base image for Media SRS ubuntu 20.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
