@@ -20,7 +20,7 @@ sudo systemctl restart qat_service
 
 QATzip is a utility (`qzip`) for data compression. QATengine is a crypto engine that can be used in the openssl framework. The async mode NGINX requires both QATzip and QATengine.
 
-While the docker images contain QATzip and QATengine, you **must** configure QATzip and QATengine on each host that the containers run. The QATzip configuration files are located at [QATzip/config_file](https://github.com/intel/QATzip/tree/master/config_file) and the QATengine configuration files are located at [QATengine/qat/config](https://github.com/intel/QAT_Engine/tree/master/qat/config).
+While the docker images contain QATzip and QATengine, you **must** configure QATzip and QATengine on each host that the containers run. The QATzip configuration files are located at [QATzip/config_file](https://github.com/intel/QATzip/tree/master/config_file) and the QATengine configuration files are located at [QAT_Engine/qat_hw_config](https://github.com/intel/QAT_Engine/tree/master/qat_hw_config).
 
 There are multiple versions of the configuration files optimized for different adapaters and usage scenarios. Select the ones that meet your adapter and usage pattern. Copy them to the `/etc` directory. Note that QATzip looks for `NumberDcInstances` and QATengine looks for `NumberCyInstances`. Thus you will need to merge the QATzip and QATengine configuration files together as you need both in NGINX.
 
