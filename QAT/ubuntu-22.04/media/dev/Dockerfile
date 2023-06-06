@@ -264,7 +264,7 @@ RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
 HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
-FROM openvisualcloud/xeon-ubuntu2204-media-dev:23.6
+FROM openvisualcloud/xeon-ubuntu2204-media-dev:23.06
 LABEL Description="This is the QAT development image for ubuntu 22.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home

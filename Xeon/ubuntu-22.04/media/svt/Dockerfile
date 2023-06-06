@@ -81,7 +81,7 @@ RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
 HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
-FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:23.6
+FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:23.06
 LABEL Description="This is the showcase image for SVT ubuntu 22.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
