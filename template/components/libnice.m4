@@ -48,7 +48,7 @@ RUN cd BUILD_HOME && \
     wget -O - ${LIBNICE_REPO} | tar xz
 
 ifdef(`LIBNICE_PATCH_VER',`
-ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v`'LIBNICE_PATCH_VER.tar.gz
+ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/`'LIBNICE_PATCH_VER.tar.gz
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd BUILD_HOME/libnice-LIBNICE_VER && \
