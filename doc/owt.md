@@ -82,9 +82,9 @@ export no_proxy=localhost
 
 For more documents on OWT server and SDK, please refer to following links:
 
-[OWT server](https://github.com/open-webrtc-toolkit/owt-server/blob/4.3.x/doc/servermd/Server.md): OWT server installation and deployment guide.
+[OWT server](https://github.com/open-webrtc-toolkit/owt-server/blob/5.1.0/doc/servermd/Server.md): OWT server installation and deployment guide.
 
-[OWT RESTAPI](https://github.com/open-webrtc-toolkit/owt-server/blob/4.3.x/doc/servermd/RESTAPI.md): OWT RESTful API guide.
+[OWT RESTAPI](https://github.com/open-webrtc-toolkit/owt-server/blob/5.1.0/doc/servermd/RESTAPI.md): OWT RESTful API guide.
 
 [JS SDK API](https://github.com/open-webrtc-toolkit/owt-client-javascript/tree/4.3.x/docs): OWT javascript SDK API guide.
 
