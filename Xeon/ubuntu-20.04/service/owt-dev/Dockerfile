@@ -599,7 +599,7 @@ ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd /opt/build && \
     git clone -b master ${OWT_REPO} && \
     cd owt-server && \
-    git reset --hard v5.0.1
+    git reset --hard 5.1.0
 
 #Patch OWT for Analytics
 
