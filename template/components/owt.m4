@@ -32,7 +32,7 @@ include(begin.m4)
 
 DECLARE(`OWT_360',false)
 DECLARE(`OWT_BRANCH', master)
-DECLARE(`OWT_VER',5.1.0)
+DECLARE(`OWT_VER',5.1.x)
 DECLARE(`OWT_LICODE_VER',8b4692c88f1fc24dedad66b4f40b1f3d804b50ca)
 DECLARE(`OWT_WEBRTC_BRANCH',59-server)
 DECLARE(`OWT_WEBRTC_VER',)
@@ -78,11 +78,13 @@ define(`BUILD_OWT',`
 RUN npm install -g --loglevel error node-gyp@6.1.0 grunt-cli underscore jsdoc
 
 # Get owt-server Source
+# TODO: wait for the specific the release version
 ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd BUILD_HOME && \
     git clone -b OWT_BRANCH ${OWT_REPO} && \
     cd owt-server && \
-    git reset --hard OWT_VER
+    git switch 5.1.x && \
+    git reset --hard 22973995404b334115ce8ffab87bae73a63baa30
 
 ifelse(OWT_360, false,ifdef(`BUILD_DLDT',ifdef(`BUILD_MSDK',,
 #Patch OWT for Analytics
@@ -93,8 +95,7 @@ ARG OWT_AVREAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfil
 RUN cd BUILD_HOME/owt-server && \
     wget ${OWT_ANALYTICS_PATCH} && \
     wget ${OWT_AVREAD_PATCH} && \
-    patch -p1 < 0002-fix-the-analytics-restart.patch && \
-    patch -p1 < 0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
+    patch -p1 < 0002-fix-the-analytics-restart.patch
 
 )))
 
@@ -125,9 +126,9 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc && \
     ./tools-woogeen/build.sh
 
 ifelse(OWT_360, false, `
-# Get webrtc79
-RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc-m79 && \
-    cd BUILD_HOME/owt-server/third_party/webrtc-m79 && \
+# Get webrtc88
+RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc-m88 && \
+    cd BUILD_HOME/owt-server/third_party/webrtc-m88 && \
     sed -i "s/git clone/git clone --depth 1/" ../../scripts/installWebrtc.sh && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')bash ../../scripts/installWebrtc.sh`'ifelse(OS_NAME:OS_VERSION,centos:7,`)')
 ')
@@ -169,6 +170,8 @@ RUN cd BUILD_HOME/owt-server && \
 # Build and package
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_LIBDIR:/usr/local/ssl/lib64
 RUN cd BUILD_HOME/owt-server && \
+    sed -i "109a\cd /opt/build/owt-server/third_party/webrtc-m88" scripts/installWebrtc.sh && \
+    bash scripts/installWebrtc.sh && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable &&')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME:OS_VERSION,centos:7,`) ') &&\
     ./scripts/pack.js -t all --install-module --no-pseudo ifelse(OWT_360,true,--sample-path, --app-path) BUILD_HOME/owt-client-javascript/dist/samples/conference && \
     mkdir -p BUILD_DESTDIR/home && \
