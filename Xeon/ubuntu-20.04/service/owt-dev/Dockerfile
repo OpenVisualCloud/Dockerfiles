@@ -579,12 +579,12 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build node
-ARG NODE_REPO=https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz
+ARG NODE_REPO=https://nodejs.org/dist/v14.21.3/node-v14.21.3-linux-x64.tar.xz
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NODE_REPO} | tar xJ && \
-    cp node-v10.24.1-linux-x64/* /usr/local -rf && \
-    rm -rf node-v10.24.1-linux-x64
+    cp node-v14.21.3-linux-x64/* /usr/local -rf && \
+    rm -rf node-v14.21.3-linux-x64
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -595,11 +595,13 @@ RUN apt-get update && \
 RUN npm install -g --loglevel error node-gyp@6.1.0 grunt-cli underscore jsdoc
 
 # Get owt-server Source
+# TODO: wait for the specific the release version
 ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd /opt/build && \
     git clone -b master ${OWT_REPO} && \
     cd owt-server && \
-    git reset --hard 5.1.0
+    git switch 5.1.x && \
+    git reset --hard 22973995404b334115ce8ffab87bae73a63baa30
 
 #Patch OWT for Analytics
 
@@ -609,8 +611,7 @@ ARG OWT_AVREAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfil
 RUN cd /opt/build/owt-server && \
     wget ${OWT_ANALYTICS_PATCH} && \
     wget ${OWT_AVREAD_PATCH} && \
-    patch -p1 < 0002-fix-the-analytics-restart.patch && \
-    patch -p1 < 0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
+    patch -p1 < 0002-fix-the-analytics-restart.patch
 
 
 
@@ -641,9 +642,9 @@ RUN mkdir -p /opt/build/owt-server/third_party/webrtc && \
     ./tools-woogeen/build.sh
 
 
-# Get webrtc79
-RUN mkdir -p /opt/build/owt-server/third_party/webrtc-m79 && \
-    cd /opt/build/owt-server/third_party/webrtc-m79 && \
+# Get webrtc88
+RUN mkdir -p /opt/build/owt-server/third_party/webrtc-m88 && \
+    cd /opt/build/owt-server/third_party/webrtc-m88 && \
     sed -i "s/git clone/git clone --depth 1/" ../../scripts/installWebrtc.sh && \
     bash ../../scripts/installWebrtc.sh
 
@@ -679,6 +680,8 @@ RUN cd /opt/build/owt-server && \
 # Build and package
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/usr/local/ssl/lib64
 RUN cd /opt/build/owt-server && \
+    sed -i "109a\cd /opt/build/owt-server/third_party/webrtc-m88" scripts/installWebrtc.sh && \
+    bash scripts/installWebrtc.sh && \
     ./scripts/build.js -t mcu-all -r -c &&\
     ./scripts/pack.js -t all --install-module --no-pseudo --app-path /opt/build/owt-client-javascript/dist/samples/conference && \
     mkdir -p /opt/dist/home && \
@@ -740,10 +743,10 @@ ENV GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/local/lib/gstreamer-1.0/
 
 
 # install node
-ARG NODE_REPO=https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz
+ARG NODE_REPO=https://nodejs.org/dist/v14.21.3/node-v14.21.3-linux-x64.tar.xz
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /usr/local && \
     wget -O - ${NODE_REPO} | tar xJ && \
-    cp -r node-v10.24.1-linux-x64/* . && \
-    rm -rf node-v10.24.1-linux-x64
+    cp -r node-v14.21.3-linux-x64/* . && \
+    rm -rf node-v14.21.3-linux-x64
 HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
