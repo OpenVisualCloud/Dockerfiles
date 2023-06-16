@@ -44,11 +44,12 @@ define(`GMMLIB_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ make wget')
 define(`BUILD_GMMLIB',`
 # build gmmlib
 ARG GMMLIB_REPO=GMMLIB_SRC_REPO
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${GMMLIB_REPO} | tar xz
 RUN cd BUILD_HOME/gmmlib-GMMLIB_VER && mkdir build && cd build && \
   cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR .. && \
-  make -j$(nproc) && \
+  make -j"$(nproc)" && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
 ')

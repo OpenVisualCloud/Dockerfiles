@@ -13,6 +13,7 @@
 | media-svt | V | V |
 | media-srs | V | V |
 | media-dev | V | V |
+| media-imtl | V | V |
 | analytics-ffmpeg | V | V |
 | analytics-gst | V | V |
 | analytics-dev | V | V |
@@ -20,21 +21,20 @@
 | service-owt-dev | V | - |
 | service-owt360 | - | - |
 
-| Platform: QAT | Ubuntu 20.04 LTS |
-|-----|:---:|
-| media-nginx | V |
-| media-nginx_sw | V |
-| media-dev | V |
-
+| Platform: QAT | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS |
+|-----|:---:|:---:|
+| media-nginx | V | V |
+| media-nginx_sw | V | V |
+| media-dev | V | V |
 
 | Platform: SG1 | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS | CentOS-7 |
 |-----|:---:|:---:|:---:|
 | media-ffmpeg | V | V | V |
 | media-dev | V | V | V |
 
-| Platform: SG2 | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS |
+| Platform: Flex | Ubuntu 20.04 LTS | Ubuntu 22.04 LTS |
 |-----|:---:|:---:|
-| media-gst | V | V |
-| media-dev | V | V |
+| analytics-gst | V | V |
+| analytics-dev | V | V |
 | media-ffmpeg | V | V |
 | media-dev | V | V |

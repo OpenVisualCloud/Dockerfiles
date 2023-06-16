@@ -44,6 +44,7 @@ define(`ONEVPL_DISP_BUILD_DEPS',`ca-certificates gcc g++ make git ifdef(`BUILD_C
 define(`BUILD_ONEVPL_DISP',`
 # build onevpl dispatcher
 ARG ONEVPL_DISP_REPO=ONEVPL_DISP_SRC_REPO
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${ONEVPL_DISP_REPO} | tar xz 
 RUN cd BUILD_HOME/oneVPL-ONEVPL_DISP_VER_TRUNC && \
@@ -59,7 +60,7 @@ RUN cd BUILD_HOME/oneVPL-ONEVPL_DISP_VER_TRUNC && \
     -DBUILD_SAMPLES=MSDK_BUILD_SAMPLES \
     -DBUILD_TUTORIALS=OFF \
     .. && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

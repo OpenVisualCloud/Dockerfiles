@@ -7,21 +7,7 @@ This document describes the system setup to use Intel QAT within docker containe
 ### Install Driver and Service:
 
  - Follow the [instructions](https://www.intel.com/content/www/us/en/content-details/710059/intel-quickassist-technology-software-for-linux-getting-started-guide-hw-version-1-7.html) to install the supported OS, kernel, Intel QAT driver and service on the host.
- - For CentOS 7, get the Linux driver package from [here](https://www.intel.com/content/www/us/en/download/19734/intel-quickassist-technology-driver-for-linux-hw-version-1-7.html). Please check [IDZ](https://www.intel.com/content/www/us/en/developer/topic-technology/open/quick-assist-technology/resources.html?s=Newest) page for updated driver package if available. Continue following commands under Centos 7:
 
-```bash
-tar -zxof <QAT Driver package downloaded above>
-sudo yum -y groupinstall "Development Tools"
-sudo yum -y install pciutils
-sudo yum -y install libudev-devel
-sudo yum -y install kernel-devel-$(uname -r)
-sudo yum -y install gcc
-sudo yum -y install openssl-devel
-
-./configure
-make
-make install
-```
 
 - Enable kernel hugepage support:
 
@@ -34,7 +20,7 @@ sudo systemctl restart qat_service
 
 QATzip is a utility (`qzip`) for data compression. QATengine is a crypto engine that can be used in the openssl framework. The async mode NGINX requires both QATzip and QATengine.
 
-While the docker images contain QATzip and QATengine, you **must** configure QATzip and QATengine on each host that the containers run. The QATzip configuration files are located at [QATzip/config_file](https://github.com/intel/QATzip/tree/master/config_file) and the QATengine configuration files are located at [QATengine/qat/config](https://github.com/intel/QAT_Engine/tree/master/qat/config).
+While the docker images contain QATzip and QATengine, you **must** configure QATzip and QATengine on each host that the containers run. The QATzip configuration files are located at [QATzip/config_file](https://github.com/intel/QATzip/tree/master/config_file) and the QATengine configuration files are located at [QAT_Engine/qat_hw_config](https://github.com/intel/QAT_Engine/tree/master/qat_hw_config).
 
 There are multiple versions of the configuration files optimized for different adapaters and usage scenarios. Select the ones that meet your adapter and usage pattern. Copy them to the `/etc` directory. Note that QATzip looks for `NumberDcInstances` and QATengine looks for `NumberCyInstances`. Thus you will need to merge the QATzip and QATengine configuration files together as you need both in NGINX.
 
@@ -76,9 +62,9 @@ The table lists the available docker images:
 (*media-nginx* image uses QAT HW implementation & *dev/nginx_sw* images use QAT SW implmentation.)
 |Image|Dockerfile|Docker Image|
 |:-:|---|---|
-|media-dev|[centos-7/media/dev](centos-7/media/dev)<br>[ubuntu-20.04/media/dev](ubuntu-20.04/media/dev)|[openvisualcloud/qat-centos7-media-dev](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-dev)<br>[openvisualcloud/qat-ubuntu2004-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-dev)|
-|media-nginx|[centos-7/media/nginx](centos-7/media/nginx)<br>[ubuntu-20.04/media/nginx](ubuntu-20.04/media/nginx)|[openvisualcloud/qat-centos7-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx)<br>[openvisualcloud/qat-ubuntu2004-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx)|
-|media-nginx_sw|[centos-7/media/nginx_sw](centos-7/media/nginx_sw)<br>[ubuntu-20.04/media/nginx_sw](ubuntu-20.04/media/nginx_sw)|[openvisualcloud/qat-centos7-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-centos7-media-nginx_sw)<br>[openvisualcloud/qat-ubuntu2004-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx_sw)|
+|media-dev|[ubuntu-22.04/media/dev](ubuntu-22.04/media/dev)<br>[ubuntu-20.04/media/dev](ubuntu-20.04/media/dev)|[openvisualcloud/qat-ubuntu2204-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2204-media-dev)<br>[openvisualcloud/qat-ubuntu2004-media-dev](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-dev)|
+|media-nginx|[ubuntu-22.04/media/nginx](ubuntu-22.04/media/nginx)<br>[ubuntu-20.04/media/nginx](ubuntu-20.04/media/nginx)|[openvisualcloud/qat-ubuntu2204-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2204-media-nginx)<br>[openvisualcloud/qat-ubuntu2004-media-nginx](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx)|
+|media-nginx_sw|[ubuntu-22.04/media/nginx_sw](ubuntu-22.04/media/nginx_sw)<br>[ubuntu-20.04/media/nginx_sw](ubuntu-20.04/media/nginx_sw)|[openvisualcloud/qat-ubuntu2204-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2204-media-nginx_sw)<br>[openvisualcloud/qat-ubuntu2004-media-nginx_sw](https://hub.docker.com/r/openvisualcloud/qat-ubuntu2004-media-nginx_sw)|
 
 The docker images **must** run with the following devices attached:  
 - `/dev/hugepages`: The hugepage kernel pages.  

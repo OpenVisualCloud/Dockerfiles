@@ -44,6 +44,25 @@ RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-releas
 define(`INSTALL_CENTOS_OKEY_REPO',
 RUN dnf install -y http://repo.okay.com.mx/centos/$1/x86_64/release/okay-release-1-2.el$1.noarch.rpm)
 
+define(`UPDATE_CENTOS_REPO',
+RUN yum update -y && \
+    yum install -y wget python3-pip gcc-c++ git && \
+    pip3 install --no-cache-dir meson ninja && \
+    wget https://github.com/GNOME/glib/archive/refs/tags/2.68.0.tar.gz && \
+    tar -zxf 2.68.0.tar.gz && \
+    cd glib-2.68.0 && \
+    rm -rf build && \
+    meson build --prefix=/usr --libdir=/usr/lib64 && \
+    ninja -C build && \
+    ninja -C build install && \
+    cd /home && \
+    rm -rf 2.68.0.tar.gz glib-2.68.0 && \
+    pip3 uninstall -y meson ninja && \
+    yum remove -y wget python3-pip gcc-c++ git && \
+    yum autoremove -y && \
+    rm -rf /var/yum/cache/* && \
+    rpm -e --nodeps python-libs python openssl-libs nss-tools nss-sysinit nss glib2)
+
 define(`INSTALL_CENTOS_RAVEN_RELEASE_REPO',
 RUN dnf install -y https://pkgs.dyn.su/el$1/base/x86_64/raven-release-1.0-1.el$1.noarch.rpm
 RUN sed -i "s/enabled=0/enabled=1/g" /etc/yum.repos.d/raven.repo)dnl

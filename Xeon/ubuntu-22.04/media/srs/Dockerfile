@@ -49,7 +49,7 @@ ARG SRS_REPO=https://github.com/ossrs/srs.git
 RUN cd /opt/build && \
     git clone -b v4.0-r1 --depth 1 ${SRS_REPO} && \
     cd srs/trunk && \
-    sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=\/usr\/local\/ssl\/lib /" configure && \
+    sed -i "s/^SrsLinkOptions=\"/SrsLinkOptions=\"\$\(pkg-config --libs openssl\) -Wl,-rpath=\/usr\/local\/ssl\/lib64 /" configure && \
     ./configure --prefix=/usr/local/srs \
         --hds=on \
         --ssl=on --https=on --sys-ssl=on \
@@ -61,9 +61,9 @@ RUN cd /opt/build && \
         --nasm=off \
         --srt=off \
         --rtc=on \
-        --extra-flags=$(pkg-config --cflags openssl) \
-        --jobs=$(nproc) && \
-    make -j$(nproc) && touch research/api-server/static-dir/crossdomain.xml && \
+        --extra-flags="$(pkg-config --cflags openssl)" \
+        --jobs="$(nproc)" && \
+    make -j"$(nproc)" && touch research/api-server/static-dir/crossdomain.xml && \
     make install DESTDIR=/opt/dist
 
 RUN echo /opt/dist
@@ -75,8 +75,9 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
-FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:latest
+FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:23.06
 LABEL Description="This is the base image for Media SRS ubuntu 22.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
@@ -92,4 +93,4 @@ COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
 
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

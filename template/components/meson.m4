@@ -37,9 +37,9 @@ define(`MESON_BUILD_DEPS',`python3-pip ninja-build python3-setuptools')
 define(`BUILD_MESON',`
 # build meson
 ARG MESON_REPO=https://github.com/mesonbuild/meson
-RUN git clone ${MESON_REPO}; \
-    cd meson; \
-    git checkout MESON_VER; \
+RUN git clone ${MESON_REPO} && \
+    cd meson && \
+    git checkout MESON_VER && \
     python3 setup.py install;
 ')
 

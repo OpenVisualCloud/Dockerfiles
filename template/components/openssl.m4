@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`OPENSSL_VER',1_1_1s)
+DECLARE(`OPENSSL_VER',3.0.7)
 
 ifelse(OS_NAME,ubuntu,`
 define(`OPENSSL_BUILD_DEPS',`ca-certificates wget tar g++ make libtool autoconf')
@@ -42,17 +42,16 @@ define(`OPENSSL_BUILD_DEPS',`wget tar gcc-c++ make libtool autoconf')
 
 define(`BUILD_OPENSSL',`
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_`'OPENSSL_VER.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/releases/download/openssl-`'OPENSSL_VER/openssl-`'OPENSSL_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_`'OPENSSL_VER && \
-    ./config no-ssl3 shared --prefix=BUILD_PREFIX/ssl --openssldir=BUILD_PREFIX/ssl -fPIC -Wl,-rpath=BUILD_PREFIX/ssl/lib && \
+    cd openssl-`'OPENSSL_VER && \
+    ./config shared --prefix=BUILD_PREFIX/ssl --openssldir=BUILD_PREFIX/ssl -fPIC -Wl,-rpath=BUILD_PREFIX/ssl/lib64 && \
     make depend && \
-    make -s V=0 && \
+    make -j"$(nproc)" -s V=0 && \
     make install DESTDIR=BUILD_DESTDIR && \
-    (cd BUILD_DESTDIR && mkdir -p .BUILD_LIBDIR/pkgconfig && mv .BUILD_PREFIX/ssl/lib/pkgconfig/*.pc .BUILD_LIBDIR/pkgconfig/) && \
-    make install && \
-    (mkdir -p BUILD_LIBDIR/pkgconfig && mv BUILD_PREFIX/ssl/lib/pkgconfig/*.pc BUILD_LIBDIR/pkgconfig/)
+    make install
 ')
 
 define(`CLEANUP_OPENSSL',`dnl
@@ -65,6 +64,10 @@ RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/man
 ifelse(CLEANUP_DOC,yes,`dnl
 RUN rm -rf defn(`BUILD_DESTDIR',`BUILD_PREFIX')/ssl/share/doc
 ')dnl
+')
+
+define(`INSTALL_OPENSSL',`dnl
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:BUILD_PREFIX/ssl/lib64
 ')
 
 REG(OPENSSL)

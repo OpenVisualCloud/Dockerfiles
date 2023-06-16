@@ -46,11 +46,13 @@ RUN apt-get update && \
 
 ARG NGINX_FLV_PATCHES_REPO=https://github.com/VCDP/CDN/archive/v0.4.tar.gz
 ARG NGINX_FLV_PATCHES_PATH=/opt/build/CDN-0.4
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_PATCHES_REPO} | tar xz
 
 # build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.10.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_REPO} | tar xz && \
     cd nginx-http-flv-module-1.2.10 && \
@@ -62,6 +64,7 @@ RUN cd /opt/build && \
 
 # build nginx upload
 ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
@@ -72,6 +75,7 @@ RUN apt-get update && \
 
 # build nginx
 ARG NGINX_REPO=https://nginx.org/download/nginx-1.22.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_REPO} | tar xz && \
     cd nginx-1.22.0 && \
@@ -99,7 +103,7 @@ RUN cd /opt/build && \
         --with-stream_ssl_preread_module --with-pcre \
         --add-module=../nginx-http-flv-module-1.2.10 \
         --add-module=../nginx-upload-module-2.3.0 \
-    && make -j$(nproc) \
+    && make -j"$(nproc)" \
     && make install DESTDIR=/opt/dist
 
 # NGINX Setup
@@ -121,8 +125,9 @@ RUN rm -rf /opt/dist/usr/local/include && \
     find /opt/dist -name "*.a" -exec rm -f {} \; || echo ""
 RUN rm -rf /opt/dist/usr/local/share/doc /opt/dist/usr/local/share/gtk-doc
 RUN rm -rf /opt/dist/usr/local/share/man
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
-FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:-n
+FROM openvisualcloud/xeon-ubuntu2204-media-ffmpeg:23.06
 LABEL Description="This is the base image for NGINX+RTMP ubuntu 22.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
@@ -138,4 +143,4 @@ COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
 
-
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

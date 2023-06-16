@@ -30,7 +30,7 @@ dnl OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 dnl
 include(begin.m4)
 
-DECLARE(`QAT_NGINX_VER',v0.4.7)
+DECLARE(`QAT_NGINX_VER',v0.5.0)
 
 ifelse(OS_NAME,ubuntu,`
 define(`QAT_NGINX_BUILD_DEPS',`wget ca-certificates libpcre3-dev zlib1g-dev libxslt1-dev ifdef(`BUILD_OPENSSL',,libssl-dev)')
@@ -44,8 +44,9 @@ define(`QAT_NGINX_INSTALL_DEPS',`pcre zlib libxslt ifdef(`BUILD_OPENSSL',,openss
 
 define(`BUILD_QAT_NGINX',`
 ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/QAT_NGINX_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${QAT_NGINX_REPO} | tar xz && cd asynch_mode_nginx* && \
-    ./configure --with-ld-opt="-Wl,-rpath=BUILD_PREFIX/ssl/lib,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib64,-rpath=/opt/intel/QAT/build -L`'BUILD_PREFIX/ssl/lib -L/opt/intel/QATzip/lib64 -lqatzip -lz" \
+    ./configure --with-ld-opt="-Wl,-rpath=BUILD_PREFIX/ssl/lib64,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib,-rpath=/opt/intel/QAT/build -L`'BUILD_PREFIX/ssl/lib64 -L/opt/intel/QATzip/lib -lqatzip -lz" \
         --with-cc-opt="-DNGX_SECURE_MEM -I`'BUILD_PREFIX/ssl/include -I/opt/intel/QATzip/include -I/opt/intel/QAT/quickassist/include/dc -I/opt/intel/QAT/quickassist/include -Wno-error=deprecated-declarations" \
         --add-dynamic-module=modules/nginx_qatzip_module \
         --add-dynamic-module=modules/nginx_qat_module \
@@ -110,7 +111,7 @@ RUN mkdir -p BUILD_DESTDIR/var/www/tmp/client_body && \
 ')
 
 define(`QAT_NGINX_ENV_VARS',`dnl
-ENV OPENSSL_ENGINES=BUILD_PREFIX/ssl/lib/engines-1.1
+ENV OPENSSL_ENGINES=BUILD_PREFIX/ssl/lib64/engines-3
 ')
 
 REG(QAT_NGINX)

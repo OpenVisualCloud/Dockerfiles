@@ -39,3 +39,5 @@ INSTALL_CENTOS_REPO(epel-release)
 # Install
 INSTALL_ALL(runtime,build)
 
+UPDATE_CENTOS_REPO()
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

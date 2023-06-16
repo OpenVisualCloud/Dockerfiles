@@ -43,6 +43,7 @@ define(`NGINX_UPLOAD_DEPS',`wget')
 define(`BUILD_NGINX_UPLOAD',`
 # build nginx upload
 ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/NGINX_UPLOAD_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 ')

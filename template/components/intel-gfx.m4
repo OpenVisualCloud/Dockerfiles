@@ -38,6 +38,7 @@ pushdef(`_install_ubuntu',`dnl
 pushdef(`_tmp',`ifelse($1,`',UBUNTU_CODENAME(OS_VERSION),UBUNTU_CODENAME(OS_VERSION)-$1)')dnl
 INSTALL_PKGS(PKGS(ca-certificates gpg-agent software-properties-common wget))
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -qO - INTEL_GFX_URL/intel-graphics.key | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
 RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu ifelse(OS_VERSION,20.04,focal,jammy) nahi" | tee /etc/apt/sources.list.d/intel.gpu.focal.list
 

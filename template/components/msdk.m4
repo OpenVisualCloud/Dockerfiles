@@ -47,6 +47,7 @@ define(`MSDK_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc gcc-c++ make pkg-confi
 define(`BUILD_MSDK',`
 # build media sdk
 ARG MSDK_REPO=MSDK_SRC_REPO
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${MSDK_REPO} | tar xz
 RUN cd BUILD_HOME/MediaSDK-MSDK_VER && \
@@ -57,7 +58,7 @@ RUN cd BUILD_HOME/MediaSDK-MSDK_VER && \
     -DBUILD_SAMPLES=MSDK_BUILD_SAMPLES \
     -DBUILD_TUTORIALS=OFF \
     .. && \
-    make -j$(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,`)') && \
+    make -j"$(nproc)"ifelse(OS_NAME:OS_VERSION,centos:7,`)') && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

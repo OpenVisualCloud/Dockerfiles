@@ -50,17 +50,19 @@ define(`LIBVA2_INSTALL_DEPS',`libdrm ifelse(LIBVA2_X11,true,libX11 libXfixes lib
 define(`BUILD_LIBVA2',`
 # build libva2
 ARG LIBVA2_REPO=LIBVA2_SRC_REPO
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${LIBVA2_REPO} | tar xz
 RUN cd BUILD_HOME/libva-LIBVA2_VER && \
   ./autogen.sh --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-  make -j$(nproc) && \
+  make -j"$(nproc)" && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
 ')
 
 define(`FFMPEG_PATCH_VAAPI',`dnl
 ARG FFMPEG_PATCH_VAAPI_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/ffmpeg-patch-0041-lavc-vaapi_encode_h265-fix-max_transform_hierarchy_d.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${FFMPEG_PATCH_VAAPI_REPO} | tar xz && \
     cd $1 && \

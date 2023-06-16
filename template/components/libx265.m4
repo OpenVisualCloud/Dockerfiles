@@ -47,11 +47,12 @@ define(`LIBX265_INSTALL_DEPS',`numactl-libs libpciaccess')
 define(`BUILD_LIBX265',`
 # build libx265
 ARG LIBX265_REPO=https://github.com/videolan/x265/archive/LIBX265_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBX265_REPO} | tar xz && \
     cd x265-LIBX265_VER/build/linux && \
     cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DLIB_INSTALL_DIR=BUILD_LIBDIR ../../source && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

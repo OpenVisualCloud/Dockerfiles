@@ -23,7 +23,7 @@ for m4file in "${DIR}"/*.m4; do
     fi
 done || true
 
-if [[ $1 == -n ]]; then
+if [[ $6 == -n ]]; then
     exit 0
 fi
 

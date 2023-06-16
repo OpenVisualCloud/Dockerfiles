@@ -62,6 +62,7 @@ define(`GSTGOOD_INSTALL_DEPS',`glib2 ifelse(GST_XLIB,true,libX11 libXv libXt) if
 define(`BUILD_GSTGOOD',`
 # build gst-plugin-good
 ARG GSTGOOD_REPO=https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-GSTCORE_VER.tar.xz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${GSTGOOD_REPO} | tar xJ
 RUN cd BUILD_HOME/gst-plugins-good-GSTCORE_VER && \

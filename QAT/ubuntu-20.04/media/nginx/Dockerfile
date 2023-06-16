@@ -50,12 +50,13 @@ RUN apt-get update && \
 # TODO: Revert to NASM repo, this is temp fix is nasm repo certificate expired temporarily
 
 ARG NASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/nasm-2.15.05.tar.bz2
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NASM_REPO} | tar xj && \
     cd nasm-2.15.05 && \
     ./autogen.sh && \
     ./configure --prefix=/usr/local --libdir=/usr/local/lib && \
-     make -j$(nproc) && \
+     make -j"$(nproc)" && \
      make install
 
 
@@ -67,14 +68,16 @@ RUN mkdir -p /opt/intel /opt/dist/opt/intel && \
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    wget ca-certificates make gcc libzip-dev && \
+    wget ca-certificates make gcc libzip-dev automake libtool liblz4-dev libssl-dev && \
   rm -rf /var/lib/apt/lists/*
 
 # load qat-zip
-ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.0.6.tar.gz
+ARG QAT_ZIP_REPO=https://github.com/intel/QATzip/archive/v1.1.2.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${QAT_ZIP_REPO} | tar xz && \
     cd QATzip* && \
+    ./autogen.sh && \
     /bin/bash ./configure LDFLAGS="-Wl,-rpath=/opt/intel/QAT/build" --with-ICP_ROOT=/opt/intel/QAT --prefix=/opt/intel/QATzip && \
     make -j8 && \
     make install && \
@@ -86,17 +89,16 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # build openssl
-ARG OPENSSL_REPO=https://github.com/openssl/openssl/archive/OpenSSL_1_1_1s.tar.gz
+ARG OPENSSL_REPO=https://github.com/openssl/openssl/releases/download/openssl-3.0.7/openssl-3.0.7.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${OPENSSL_REPO} | tar xz && \
-    cd openssl-OpenSSL_1_1_1s && \
-    ./config no-ssl3 shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib && \
+    cd openssl-3.0.7 && \
+    ./config shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl -fPIC -Wl,-rpath=/usr/local/ssl/lib64 && \
     make depend && \
-    make -s V=0 && \
+    make -j"$(nproc)" -s V=0 && \
     make install DESTDIR=/opt/dist && \
-    (cd /opt/dist && mkdir -p ./usr/local/lib/pkgconfig && mv ./usr/local/ssl/lib/pkgconfig/*.pc ./usr/local/lib/pkgconfig/) && \
-    make install && \
-    (mkdir -p /usr/local/lib/pkgconfig && mv /usr/local/ssl/lib/pkgconfig/*.pc /usr/local/lib/pkgconfig/)
+    make install
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -104,14 +106,15 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # load qat-engine
-ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.15.tar.gz
+ARG QAT_ENGINE_REPO=https://github.com/intel/QAT_Engine/archive/v0.6.19.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${QAT_ENGINE_REPO} | tar xz && \
     cd QAT_Engine* && \
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH=$}:/usr/local/ssl/lib64 && \
     ./autogen.sh && \
-    export PERL5LIB="$(ls -1 -d /opt/build/openssl-*)" && \
-    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$PERL5LIB" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE " --enable-qat_hw --with-qat_hw_dir=/opt/intel/QAT && \
-    make -j8 && \
+    ./configure --with-qat_dir=/opt/intel/QAT --with-openssl_dir="$(ls -1 -d /opt/build/openssl-*)" --with-openssl_install_dir=/usr/local/ssl --prefix=/opt/intel/QATengine --disable-qat_ecx --with-cc-opt="-DQAT_DISABLE_NONZERO_MEMFREE " --enable-qat_hw --with-qat_hw_dir=/opt/intel/QAT && \
+    make -j"$(nproc)" && \
     make install && \
     tar cf - /usr/local/ssl | (cd /opt/dist && tar xf -)
 
@@ -122,11 +125,13 @@ RUN apt-get update && \
 
 ARG NGINX_FLV_PATCHES_REPO=https://github.com/VCDP/CDN/archive/v0.4.tar.gz
 ARG NGINX_FLV_PATCHES_PATH=/opt/build/CDN-0.4
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_PATCHES_REPO} | tar xz
 
 # build nginx flv
 ARG NGINX_FLV_REPO=https://github.com/winshining/nginx-http-flv-module/archive/v1.2.10.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_FLV_REPO} | tar xz && \
     cd nginx-http-flv-module-1.2.10 && \
@@ -138,6 +143,7 @@ RUN cd /opt/build && \
 
 # build nginx upload
 ARG NGINX_UPLOAD_REPO=https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd /opt/build && \
     wget -O - ${NGINX_UPLOAD_REPO} | tar xz
 
@@ -146,9 +152,10 @@ RUN apt-get update && \
     wget ca-certificates libpcre3-dev zlib1g-dev libxslt1-dev  && \
   rm -rf /var/lib/apt/lists/*
 
-ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.4.7.tar.gz
+ARG QAT_NGINX_REPO=https://github.com/intel/asynch_mode_nginx/archive/v0.5.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -O - ${QAT_NGINX_REPO} | tar xz && cd asynch_mode_nginx* && \
-    ./configure --with-ld-opt="-Wl,-rpath=/usr/local/ssl/lib,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib64,-rpath=/opt/intel/QAT/build -L/usr/local/ssl/lib -L/opt/intel/QATzip/lib64 -lqatzip -lz" \
+    ./configure --with-ld-opt="-Wl,-rpath=/usr/local/ssl/lib64,-rpath=/opt/intel/QATengine/lib,-rpath=/opt/intel/QATzip/lib,-rpath=/opt/intel/QAT/build -L/usr/local/ssl/lib64 -L/opt/intel/QATzip/lib -lqatzip -lz" \
         --with-cc-opt="-DNGX_SECURE_MEM -I/usr/local/ssl/include -I/opt/intel/QATzip/include -I/opt/intel/QAT/quickassist/include/dc -I/opt/intel/QAT/quickassist/include -Wno-error=deprecated-declarations" \
         --add-dynamic-module=modules/nginx_qatzip_module \
         --add-dynamic-module=modules/nginx_qat_module \
@@ -213,6 +220,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # Generate a self-certificate for testing purpose
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p /opt/dist/etc/nginx && \
     printf "US\nOR\nPortland\nOregon\nOpen Visual Cloud\nIntel Corporation\n%s\nnobody@intel.com\n" "$(hostname)" | openssl req -x509 -nodes -days 30 -newkey rsa:4096 -keyout /opt/dist/etc/nginx/cert.key -out /opt/dist/etc/nginx/cert.crt && \
     chmod 640 /opt/dist/etc/nginx/cert.key && \
@@ -228,8 +236,9 @@ RUN rm -rf /opt/intel/QATzip/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/include
 RUN rm -rf /opt/dist/usr/local/ssl/share/man
 RUN rm -rf /opt/dist/usr/local/ssl/share/doc
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1
 
-FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:-n
+FROM openvisualcloud/xeon-ubuntu2004-media-ffmpeg:23.06
 LABEL Description="This is the base image for QAT NGINX ubuntu 20.04"
 LABEL Vendor="Intel Corporation"
 WORKDIR /home
@@ -244,5 +253,7 @@ RUN apt-get update && \
 COPY --from=build /opt/dist /
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/all-libs.conf && ldconfig
 
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/ssl/lib64
 RUN echo "/opt/intel/QAT/build" >> /etc/ld.so.conf.d/qat.conf && ldconfig
 
+HEALTHCHECK CMD echo "This is a healthcheck test." || exit 1

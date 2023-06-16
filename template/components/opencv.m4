@@ -44,6 +44,7 @@ define(`OPENCV_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake3) gcc gcc-c++ make wget p
 define(`BUILD_OPENCV',`
 # build opencv
 ARG OPENCV_REPO=https://github.com/opencv/opencv/archive/OPENCV_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${OPENCV_REPO} | tar xz
 # TODO: file a bug against opencv since they do not accept full libdir
@@ -61,7 +62,7 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER && mkdir build && cd build && \
     -DWITH_OPENJPEG=OFF \
     -DWITH_JASPER=OFF \
     .. && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 ')
@@ -83,7 +84,7 @@ RUN cd BUILD_HOME/opencv-OPENCV_VER/build && \
     -DWITH_JASPER=OFF \
     .. && \
   cd modules/videoio && \
-  make -j $(nproc) && \
+  make -j "$(nproc)" && \
   cp -f ../../lib/libopencv_videoio.so.OPENCV_VER_TRUNC defn(`BUILD_DESTDIR',`BUILD_LIBDIR')ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 ')
 

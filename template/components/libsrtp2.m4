@@ -43,11 +43,12 @@ define(`LIBSRTP2_BUILD_DEPS',`wget gcc make pkg-config ifdef(`BUILD_OPENSSL',,op
 define(`BUILD_LIBSRTP2',`
 # build libsrtp2
 ARG LIBSRTP2_REPO=https://github.com/cisco/libsrtp/archive/LIBSRTP2_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBSRTP2_REPO} | tar xz && \
     cd libsrtp-patsubst(LIBSRTP2_VER,v) && \
-    CFLAGS="-fPIC`'ifdef(`BUILD_OPENSSL',` -Wl`,'-rpath=BUILD_PREFIX/ssl/lib')" ./configure --enable-openssl --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --with-openssl-dir=BUILD_PREFIX/ssl && \
-    make -s V=0 -j $(nproc) && \
+    CFLAGS="-fPIC`'ifdef(`BUILD_OPENSSL',` -Wl`,'-rpath=BUILD_PREFIX/ssl/lib64')" ./configure --enable-openssl --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --with-openssl-dir=BUILD_PREFIX/ssl && \
+    make -s V=0 -j "$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

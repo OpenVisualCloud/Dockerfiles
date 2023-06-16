@@ -45,6 +45,7 @@ define(`BUILD_YASM',`
 # ARG YASM_REPO=https://www.tortall.net/projects/yasm/releases/yasm-YASM_VER.tar.gz
 # At the time of 21.6 Release, yasm official site above had certificate problem, hence pulling from Dockerfiles-Resources.
 ARG YASM_REPO=https://github.com/OpenVisualCloud/Dockerfiles-Resources/raw/master/yasm-1.3.0.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd BUILD_HOME && \
     wget -O - ${YASM_REPO} | tar xz
@@ -52,7 +53,7 @@ RUN cd BUILD_HOME/yasm-YASM_VER && \
     # TODO remove the line below whether no other component inside this project requires it.
     # `sed -i "s/) ytasm.*/)/" Makefile.in' && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-    make -j $(nproc) && \
+    make -j "$(nproc)" && \
     make install
 ')
 

@@ -19,4 +19,8 @@ if [[ $IMAGE == *analytics* ]] || [[ $IMAGE == *nginx* ]]; then
     HOST_NETWORK="--network=host $HOST_NETWORK"
 fi
 
-docker run $DEVICE_DIR --rm $HOST_NETWORK -v "${TEST}:/mnt:ro" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/-e /') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG \([^=]*\)=.*/-e \1/') $DOCKER_IT "${DOCKER_PREFIX}/${IMAGE}" "${@:-/bin/bash}"
+if [[ $IMAGE == *imtl* ]]; then
+    HOST_MOUNT="--privileged -v /dev/vfio:/dev/vfio -v /usr/lib/firmware/intel/ice/ddp:/usr/lib/firmware/intel/ice/ddp -v /usr/lib/firmware/updates/intel/ice/ddp:/usr/lib/firmware/updates/intel/ice/ddp -v /lib/modules:/lib/modules $HOST_MOUNT"
+fi
+
+docker run $DEVICE_DIR --rm $HOST_NETWORK $HOST_MOUNT -v "${TEST}:/mnt:ro" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/-e /') $(grep '^ARG .*=' "${DIR}/Dockerfile" | sed 's/^ARG \([^=]*\)=.*/-e \1/') $DOCKER_IT "${DOCKER_PREFIX}/${IMAGE}" "${@:-/bin/bash}"

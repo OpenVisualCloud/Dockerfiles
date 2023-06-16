@@ -49,11 +49,12 @@ define(`MEDIA_DRIVER_BUILD_DEPS',`ifdef(`BUILD_CMAKE',,cmake) gcc-c++ libpciacce
 define(`BUILD_MEDIA_DRIVER',`
 # build media driver
 ARG MEDIA_DRIVER_REPO=MEDIA_DRIVER_SRC_REPO
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
   wget -O - ${MEDIA_DRIVER_REPO} | tar xz
 RUN cd BUILD_HOME/media-driver-MEDIA_DRIVER_VER && mkdir build && cd build && \
   ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR -DENABLE_PRODUCTION_KMD=ENABLE_PRODUCTION_KMD .. && \
-  make -j$(nproc)ifelse(OS_NAME:OS_VERSION,centos:7,` )') && \
+  make -j"$(nproc)"ifelse(OS_NAME:OS_VERSION,centos:7,` )') && \
   make install DESTDIR=BUILD_DESTDIR && \
   make install
 ')

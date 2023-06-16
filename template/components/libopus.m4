@@ -43,11 +43,12 @@ define(`LIBOPUS_BUILD_DEPS',`wget autoconf libtool make')
 define(`BUILD_LIBOPUS',`
 # build libopus
 ARG LIBOPUS_REPO=https://archive.mozilla.org/pub/opus/opus-LIBOPUS_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBOPUS_REPO} | tar xz && \
     cd opus-LIBOPUS_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

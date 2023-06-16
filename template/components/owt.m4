@@ -32,14 +32,14 @@ include(begin.m4)
 
 DECLARE(`OWT_360',false)
 DECLARE(`OWT_BRANCH', master)
-DECLARE(`OWT_VER',v5.0.1)
+DECLARE(`OWT_VER',5.1.x)
 DECLARE(`OWT_LICODE_VER',8b4692c88f1fc24dedad66b4f40b1f3d804b50ca)
 DECLARE(`OWT_WEBRTC_BRANCH',59-server)
 DECLARE(`OWT_WEBRTC_VER',)
 DECLARE(`OWT_SDK_BRANCH',master)
 DECLARE(`OWT_SDK_VER',v5.0)
 DECLARE(`OWT_QUIC_VER',v0.1)
-DECLARE(`LIBNICE_PATCH_VER',5.0)
+DECLARE(`LIBNICE_PATCH_VER',5.1.0)
 
 # required components for OWT
 define(`OPENH264_VER',v1.7.4)
@@ -66,11 +66,11 @@ define(`FFMPEG_ENABLE_X264',true)
 include(ffmpeg.m4)
 
 ifelse(OS_NAME,ubuntu,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev ) git gcc npm python libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config patch')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,libssl-dev ) git gcc npm python3 libglib2.0-dev libboost-thread-dev libboost-system-dev liblog4cxx-dev libsrtp2-dev pkg-config patch')
 ')
 
 ifelse(OS_NAME,centos,`
-define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel ) git gcc npm python glib2-devel boost-devel log4cxx-devel pkg-config ifelse(OS_VERSION,7,devtoolset-9)')
+define(`OWT_BUILD_DEPS',`ifdef(`BUILD_OPENSSL',,openssl-devel ) git gcc npm python3 glib2-devel boost-devel log4cxx-devel pkg-config ifelse(OS_VERSION,7,devtoolset-9)')
 ')
 
 define(`BUILD_OWT',`
@@ -78,11 +78,13 @@ define(`BUILD_OWT',`
 RUN npm install -g --loglevel error node-gyp@6.1.0 grunt-cli underscore jsdoc
 
 # Get owt-server Source
+# TODO: wait for the specific the release version
 ARG OWT_REPO=https://github.com/open-webrtc-toolkit/owt-server
 RUN cd BUILD_HOME && \
     git clone -b OWT_BRANCH ${OWT_REPO} && \
     cd owt-server && \
-    git reset --hard OWT_VER
+    git switch 5.1.x && \
+    git reset --hard 22973995404b334115ce8ffab87bae73a63baa30
 
 ifelse(OWT_360, false,ifdef(`BUILD_DLDT',ifdef(`BUILD_MSDK',,
 #Patch OWT for Analytics
@@ -93,8 +95,7 @@ ARG OWT_AVREAD_PATCH=https://raw.githubusercontent.com/OpenVisualCloud/Dockerfil
 RUN cd BUILD_HOME/owt-server && \
     wget ${OWT_ANALYTICS_PATCH} && \
     wget ${OWT_AVREAD_PATCH} && \
-    patch -p1 < 0002-fix-the-analytics-restart.patch && \
-    patch -p1 < 0001-Remove-av_read_play-which-already-called-inside-rtsp.patch
+    patch -p1 < 0002-fix-the-analytics-restart.patch
 
 )))
 
@@ -125,9 +126,9 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc && \
     ./tools-woogeen/build.sh
 
 ifelse(OWT_360, false, `
-# Get webrtc79
-RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc-m79 && \
-    cd BUILD_HOME/owt-server/third_party/webrtc-m79 && \
+# Get webrtc88
+RUN mkdir -p BUILD_HOME/owt-server/third_party/webrtc-m88 && \
+    cd BUILD_HOME/owt-server/third_party/webrtc-m88 && \
     sed -i "s/git clone/git clone --depth 1/" ../../scripts/installWebrtc.sh && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable && ')bash ../../scripts/installWebrtc.sh`'ifelse(OS_NAME:OS_VERSION,centos:7,`)')
 ')
@@ -142,6 +143,7 @@ RUN cd BUILD_HOME && \
     
 # Get quic
 ARG OWT_QUIC_REPO=https://github.com/open-webrtc-toolkit/owt-deps-quic/releases/download/OWT_QUIC_VER/dist.tgz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p BUILD_HOME/owt-server/third_party/quic-lib && \
     cd BUILD_HOME/owt-server/third_party/quic-lib && \
     wget -O - ${OWT_QUIC_REPO} | tar xz
@@ -149,7 +151,7 @@ RUN mkdir -p BUILD_HOME/owt-server/third_party/quic-lib && \
 # Build and pack owt
 RUN cd BUILD_HOME/owt-server && \
 ifdef(`BUILD_OPENSSL',`dnl
-    sed -i "/cflags_cc/s/\[/[\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib\"`,'/" ifelse(OWT_360,true, `source/agent/webrtc/webrtcLib/binding.gyp',`source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp') && \
+    sed -i "/cflags_cc/s/\[/[\"-Wl`,'rpath=patsubst(BUILD_PREFIX,`/',`\\/')\/ssl\/lib64\"`,'/" ifelse(OWT_360,true, `source/agent/webrtc/webrtcLib/binding.gyp',`source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp') && \
     sed -i "s/-lssl/<!@(pkg-config --libs openssl)/" ifelse(OWT_360,true, `source/agent/webrtc/webrtcLib/binding.gyp',`source/agent/webrtc/rtcConn/binding.gyp source/agent/webrtc/rtcFrame/binding.gyp') && \
 ')dnl
     sed -i "/DENABLE_SVT_HEVC_ENCODER/i\"<!@(pkg-config --cflags SvtHevcEnc)\"`,'" source/agent/video/videoMixer/videoMixer_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoTranscoder_sw/binding.sw.gyp source/agent/video/videoTranscoder/videoAnalyzer_sw/binding.sw.gyp && \
@@ -166,8 +168,10 @@ RUN cd BUILD_HOME/owt-server && \
     npm install nan
 
 # Build and package
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_LIBDIR:/usr/local/ssl/lib
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:BUILD_LIBDIR:/usr/local/ssl/lib64
 RUN cd BUILD_HOME/owt-server && \
+    sed -i "109a\cd /opt/build/owt-server/third_party/webrtc-m88" scripts/installWebrtc.sh && \
+    bash scripts/installWebrtc.sh && \
     ifelse(OS_NAME:OS_VERSION,centos:7,`(. /opt/rh/devtoolset-9/enable &&')./scripts/build.js -t mcu-all -r -c`'ifelse(OS_NAME:OS_VERSION,centos:7,`) ') &&\
     ./scripts/pack.js -t all --install-module --no-pseudo ifelse(OWT_360,true,--sample-path, --app-path) BUILD_HOME/owt-client-javascript/dist/samples/conference && \
     mkdir -p BUILD_DESTDIR/home && \

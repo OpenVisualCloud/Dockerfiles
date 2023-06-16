@@ -35,11 +35,12 @@ DECLARE(`LIBRDKAFKA_VER',1.9.2)
 define(`BUILD_LIBRDKAFKA',`
 ARG KAFKA_VER=LIBRDKAFKA_VER
 ARG LIBRDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${KAFKA_VER}.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBRDKAFKA_REPO} | tar xz && \
     cd librdkafka-LIBRDKAFKA_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

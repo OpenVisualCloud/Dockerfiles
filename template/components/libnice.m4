@@ -43,11 +43,13 @@ define(`LIBNICE_BUILD_DEPS',`wget ifdef(`BUILD_CMAKE',,cmake) make gcc libglib2.
 define(`BUILD_LIBNICE',`
 # build libnice
 ARG LIBNICE_REPO=http://nice.freedesktop.org/releases/libnice-LIBNICE_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBNICE_REPO} | tar xz
 
 ifdef(`LIBNICE_PATCH_VER',`
-ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/v`'LIBNICE_PATCH_VER.tar.gz
+ARG LIBNICE_PATCH_REPO=https://github.com/open-webrtc-toolkit/owt-server/archive/`'LIBNICE_PATCH_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN cd BUILD_HOME/libnice-LIBNICE_VER && \
     wget -O - ${LIBNICE_PATCH_REPO} | tar xz && \
@@ -64,7 +66,7 @@ ifelse(OWT_360,false,`dnl
 
 RUN cd BUILD_HOME/libnice-LIBNICE_VER && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR && \
-    make -j$(nproc) -s V=0 && \
+    make -j"$(nproc)" -s V=0 && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

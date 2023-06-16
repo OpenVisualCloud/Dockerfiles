@@ -49,7 +49,7 @@ RUN cd BUILD_HOME && \
     git clone ${LIBVPX_REPO} -b v`'LIBVPX_VER --depth 1 && \
     cd libvpx && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=nasm && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

@@ -43,12 +43,13 @@ define(`LIBFDKAAC_BUILD_DEPS',`wget gcc-c++ autoconf libtool make automake')
 define(`BUILD_LIBFDKAAC',`
 # build libfdkaac
 ARG LIBFDKAAC_REPO=https://github.com/mstorsjo/fdk-aac/archive/v`'LIBFDKAAC_VER.tar.gz
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${LIBFDKAAC_REPO} | tar xz && \
     cd fdk-aac-LIBFDKAAC_VER && \
     ./autogen.sh && \
     ./configure --prefix=BUILD_PREFIX --libdir=BUILD_LIBDIR --enable-shared && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 ')

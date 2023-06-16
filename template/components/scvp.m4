@@ -36,13 +36,14 @@ define(`BUILD_SCVP',`
 # build 360scvp
 ARG SCVP_REPO=https://github.com/OpenVisualCloud/Immersive-Video-Sample/archive/v`'SCVP_VER.tar.gz
 ENV PYTHONIOENCODING=UTF-8
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN cd BUILD_HOME && \
     wget -O - ${SCVP_REPO} | tar xz  && \
     cd Immersive-Video-Sample-SCVP_VER/src/360SCVP && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_INSTALL_PREFIX=BUILD_PREFIX -DCMAKE_INSTALL_LIBDIR=BUILD_LIBDIR ../ && \
-    make -j$(nproc) && \
+    make -j"$(nproc)" && \
     make install DESTDIR=BUILD_DESTDIR && \
     make install
 

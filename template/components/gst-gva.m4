@@ -78,7 +78,7 @@ RUN git clone -b GVA_VER $GVA_REPO BUILD_HOME/gst-video-analytics && \
     -DENABLE_AUDIO_INFERENCE_ELEMENTS=GVA_ENABLE_AUDIO_INFERENCE_ELEMENTS \
     -DTREAT_WARNING_AS_ERROR=GVA_ENABLE_WARNING_AS_ERRORS \
     .. \
-    && make -j $(nproc) \
+    && make -j "$(nproc)" \
     && make install \
     && make install DESTDIR=BUILD_DESTDIR ifelse(OS_NAME:OS_VERSION,centos:7,` )')
 
