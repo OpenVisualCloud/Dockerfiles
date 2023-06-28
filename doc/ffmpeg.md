@@ -27,7 +27,7 @@ The FFmpeg builds included the following patches for feature enhancement, better
 
 ### GPU Acceleration:
 
-In GPU images, the FFmpeg docker images are accelerated through `VAAPI` and/or `qsv` (Intel<sup>&reg;</sup> Media SDK). Note that `VAAPI` or `qsv` requires special setup for X11 authentication. Please see each platform README for setup details.
+In GPU images, the FFmpeg docker images are accelerated through `VAAPI` and/or `qsv` (Intel<sup>&reg;</sup> Media SDK). For Flex Series GPUs, [oneVPL](https://github.com/oneapi-src/oneVPL-intel-gpu) is used for acceleration. Note that `VAAPI` or `qsv` requires special setup for X11 authentication. Please see each platform README for setup details.
 
 ### Examples:
 

@@ -7,10 +7,10 @@
 [logo]: https://avatars3.githubusercontent.com/u/46843401?s=90&v=4
 
 
-This repository hosts docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.
+This repository hosts Docker build files of software stacks and services, designed to enable Open Visual Cloud prioritized use cases such as media delivery, media analytics, cloud gaming and cloud graphics, and immersive media.
 
 
-Validated docker images are available on [**Docker Hub**](https://hub.docker.com/u/openvisualcloud).   
+Validated Docker images are available on [**Docker Hub**](https://hub.docker.com/u/openvisualcloud).   
 Explore more container solutions on the [Intel® oneContainer Portal](https://software.intel.com/content/www/us/en/develop/tools/containers.html).   
 
 
@@ -22,11 +22,11 @@ The software stack images provide ready to use software stacks for application d
 
 | Image | Description |
 | :-----: | ----- | 
-| [ffmpeg](doc/ffmpeg.md) | <p>Docker images optimized for media creation and delivery based on the FFmpeg framework. Included the AAC, MP3, OPUS, OGG, Vorbis, X264, X265, VP8/9, AV1 and SVT-HEVC codecs. The GPU images are accelerated with VAAPI and QSV. See [`doc/ffmpeg.md`](doc/ffmpeg.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu2204-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2204-media-ffmpeg)<br>docker pull [openvisualcloud/xeon-ubuntu2004-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-media-ffmpeg)|
+| [ffmpeg](doc/ffmpeg.md) | <p>Docker images optimized for media creation and delivery based on the FFmpeg framework. Included the AAC, MP3, OPUS, OGG, Vorbis, X264, X265, VP8/9, SVT-AV1 and SVT-HEVC codecs. The GPU images are accelerated with FFmpeg VAAPI and QSV plugins. See [`doc/ffmpeg.md`](doc/ffmpeg.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu2204-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2204-media-ffmpeg)<br>docker pull [openvisualcloud/xeon-ubuntu2004-media-ffmpeg](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-media-ffmpeg)|
 | [gst](doc/gst.md) | <p>Docker images optimized for media creation and delivery based on the GStreamer framework. Included the base, good, bad, ugly and libav set of plugins. The GPU images are accelerated with VAAPI. See [`doc/gst.md`](doc/gst.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu2204-media-gst](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2204-media-gst)<br>docker pull [openvisualcloud/xeon-ubuntu2004-media-gst](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-media-gst)|
 | [nginx](doc/nginx.md) | <p>Docker images optimized for web hosting and caching. Included FFmpeg, NGINX the web server, and FLV the RTMP and DASH/HLS streaming module. See [`doc/nginx.md`](doc/nginx.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu2204-media-nginx](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2204-media-nginx)<br>docker pull [openvisualcloud/xeon-ubuntu2004-media-nginx](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-media-nginx)|
-| [svt](doc/svt.md) | <p>Docker images for the SVT (Scalable Video Technology) encoders and decoders. Easiest way to try SVT AV1, HEVC, and VP9 apps. See [`doc/svt.md`](doc/svt.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu2204-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2204-media-svt)<br>docker pull [openvisualcloud/xeon-ubuntu2004-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-media-svt)|
-| [imtl](https://github.com/OpenVisualCloud/Media-Transport-Library/blob/main/README.md) | <p>Docker images for the IMTL (Intel Media Transport Library), based on DPDK prepared for transmitting and receiving media data with high throughput and low latency. See [`imtl.md`](https://github.com/OpenVisualCloud/Media-Transport-Library/blob/main/README.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu2204-media-imtl](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2204-media-imtl)<br>docker pull [openvisualcloud/xeon-ubuntu2004-media-imtl](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-media-imtl)|
+| [SVT](doc/svt.md) | <p>Docker images for the SVT (Scalable Video Technology) encoders and decoders. Easiest way to try SVT-AV1, HEVC, and VP9 apps. See [`doc/svt.md`](doc/svt.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu2204-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2204-media-svt)<br>docker pull [openvisualcloud/xeon-ubuntu2004-media-svt](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-media-svt)|
+| [IMTL](https://github.com/OpenVisualCloud/Media-Transport-Library/blob/main/README.md) | <p>Docker images for the IMTL (Intel Media Transport Library), based on DPDK prepared for transmitting and receiving media data with high throughput and low latency. See [`imtl.md`](https://github.com/OpenVisualCloud/Media-Transport-Library/blob/main/README.md) for additional details.</p>docker pull [openvisualcloud/xeon-ubuntu2204-media-imtl](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2204-media-imtl)<br>docker pull [openvisualcloud/xeon-ubuntu2004-media-imtl](https://hub.docker.com/r/openvisualcloud/xeon-ubuntu2004-media-imtl)|
 - **Media Analytics**   
 
 | Image | Description |
@@ -63,10 +63,10 @@ The project supports the following platforms and OS'es:
 
 | Supported Platforms | Supported OS'es |
 | :---: | :--- |
-| [Xeon](Xeon) | Ubuntu 20.04 LTS, Ubuntu 22.04 LTS |
-| [QAT](QAT) | Ubuntu 20.04 LTS, Ubuntu 22.04 LTS |
+| [Xeon](https://www.intel.com/content/www/us/en/products/details/processors/xeon.html) | Ubuntu 20.04 LTS, Ubuntu 22.04 LTS |
+| [QAT](https://www.intel.com/content/www/us/en/architecture-and-technology/intel-quick-assist-technology-overview.html) | Ubuntu 20.04 LTS, Ubuntu 22.04 LTS |
 | [SG1](SG1) | Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, CentOS 7 |
-| [Flex](Flex) | Ubuntu 20.04 LTS, Ubuntu 22.04 LTS |
+| [Flex](https://www.intel.com/content/www/us/en/products/docs/discrete-gpus/data-center-gpu/flex-series/overview.html) | Ubuntu 20.04 LTS, Ubuntu 22.04 LTS |
 
 Please see [Development and Test Report](doc/test.md) for the latest development statuses.    
 
@@ -88,7 +88,7 @@ sudo systemctl restart docker
 
 ### Evaluate Image:
 
-The docker images are published on [Docker Hub](https://hub.docker.com/u/openvisualcloud) with name pattern ```openvisualcloud/<_platform_>-<_OS_>-<_usage_>-<_image_>```. Find and use the images as follows:  
+The Docker images are published on [Docker Hub](https://hub.docker.com/u/openvisualcloud) with name pattern ```openvisualcloud/<_platform_>-<_OS_>-<_usage_>-<_image_>```. Find and use the images as follows:  
 
 ```bash
 docker search openvisualcloud --limit=100 | grep analytics-ffmpeg #list media analytics ffmpeg images 
