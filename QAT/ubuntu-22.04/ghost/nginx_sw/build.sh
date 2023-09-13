@@ -1,0 +1,1 @@
+docker build -t nginx-qat-sw .

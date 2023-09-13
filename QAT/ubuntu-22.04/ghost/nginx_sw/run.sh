@@ -1,0 +1,1 @@
+docker run -it --privileged=true --cpuset-cpus=0,1 nginx-qat-sw bash

@@ -1,0 +1,24 @@
+{
+    "server": {
+        "port": 2368
+    },
+    "database": {
+        "client": "mysql",
+        "connection": {
+            "host"     : "127.0.0.1",
+            "user"     : "root",
+            "password" : "",
+            "database" : "ghost"
+        }
+    },
+    "paths": {
+        "contentPath": "content/"
+    },
+    "logging": {
+        "level": "error",
+        "rotation": {
+            "enabled": true
+        },
+        "transports": ["stdout"]
+    }
+}
