@@ -1,0 +1,66 @@
+# Documentation: https://nginx.org/en/docs/http/ngx_http_core_module.html
+
+# Copyright (C) 2021 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+# nginx_avg_version=v0.111
+
+worker_processes 2;
+error_log /home/ghost/nginx/error_log;
+pid /home/ghost/nginx/pid;
+
+
+# nginx_use_qat_engine=true
+#start_qat_engine_block
+load_module modules/ngx_ssl_engine_qat_module.so;
+ssl_engine {
+	use_engine qatengine;
+ 	default_algorithms ALL;
+ 	qat_engine {
+ 		qat_offload_mode async;
+ 		qat_notify_mode poll;
+ 	}
+}
+#end_qat_engine_block
+
+worker_rlimit_nofile 1000000;
+
+events {
+	use epoll;
+	worker_connections 8192;
+        multi_accept on;
+	accept_mutex on;
+}
+
+http {
+        upstream ghost {
+          server localhost:2368;
+        }
+        ssl_buffer_size 65536;
+        sendfile on;
+	# HTTPS server
+	server {
+		listen 8080 ssl;
+                keepalive_timeout 0s;
+		tcp_nopush on;
+		tcp_nodelay on;
+                ssl_verify_client off;
+                ssl_session_tickets off;
+		lingering_close off;
+                lingering_time 1;
+                ssl_asynch on;
+
+		ssl_certificate /home/ghost/certificates/rsa.crt;
+		ssl_certificate_key /home/ghost/certificates/rsa.key;
+
+		ssl_session_timeout 300s;
+		ssl_protocols TLSv1.3;
+		ssl_prefer_server_ciphers on;
+                ssl_ecdh_curve secp384r1;
+                #ssl_ecdh_curve X25519; #X25519 is default(empty) setting
+
+		location / {
+                  proxy_pass http://ghost;
+		}
+	}
+}
